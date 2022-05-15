@@ -2,22 +2,27 @@ Design notes for tech tree subcomponent.
 
 Attempt at specification:
 
- This system stores a directed graph of technologies. 
- It needs to store progress in unlocking these technologies.
- It needs to allow multiple clients to track their progress independently.
- It needs to load the tech nodes from an object store with the correct connections
- It needs to load the progress also.
- It needs to allow targets to be selected for research
- It needs to allow research to be applied to that target.
- It needs to track when the research is done.
- It needs to allow unlocked technologies to implement side effects
+ This system stores a directed graph of technologies. - global
+ It needs to store progress in unlocking these technologies. - player
+ It needs to allow multiple clients to track their progress independently. - player
+ It needs to load the tech nodes from an object store with the correct connections - global
+ It needs to load the progress also. - player
+ It needs to allow targets to be selected for research - player
+ It needs to allow research to be applied to that target. - player
+ It needs to track when the research is done. - player
+ It needs to allow unlocked technologies to implement side effects - player
     The side effects are essentially unrestricted. Best would be to allow extensibility and hooking of arbitrary side effects.
  It needs to allow querying:
-   - Pull entire tree (or subsections) for visualisation
-   - Pull current target
-   - Pull potential targets
-   - Pull completed technologies
-
+   - Pull entire tree (or subsections) for visualisation - global
+   - Pull current target - player
+   - Pull potential targets - player
+   - Pull completed technologies - player
+ It needs to support saving of current state - player
+ It needs to allow traversal of the tree
+   - Root node
+   - Find node
+   - Iterator
+ 
 Optional:
 May want to support tech families (biotech, physics etc)
 May want to support invisible techs 
@@ -30,6 +35,7 @@ Things to decide:
   - One global tree?
   - One per agency? 
   - Global tree but agencies track own progress?
+   - Global tree. Player tech model with reference to it that stores progress, targets etc
 - Node interface
 - Progress tracking 
   - In node?
