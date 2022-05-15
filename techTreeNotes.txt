@@ -1,0 +1,41 @@
+Design notes for tech tree subcomponent.
+
+Attempt at specification:
+
+ This system stores a directed graph of technologies. 
+ It needs to store progress in unlocking these technologies.
+ It needs to allow multiple clients to track their progress independently.
+ It needs to load the tech nodes from an object store with the correct connections
+ It needs to load the progress also.
+ It needs to allow targets to be selected for research
+ It needs to allow research to be applied to that target.
+ It needs to track when the research is done.
+ It needs to allow unlocked technologies to implement side effects
+    The side effects are essentially unrestricted. Best would be to allow extensibility and hooking of arbitrary side effects.
+ It needs to allow querying:
+   - Pull entire tree (or subsections) for visualisation
+   - Pull current target
+   - Pull potential targets
+   - Pull completed technologies
+
+Optional:
+May want to support tech families (biotech, physics etc)
+May want to support invisible techs 
+May want to support complex tech completion (i.e. not just rack up research points, requires milestones to be completed)
+
+
+Things to decide:
+
+- Instantiation 
+  - One global tree?
+  - One per agency? 
+  - Global tree but agencies track own progress?
+- Node interface
+- Progress tracking 
+  - In node?
+  - Top level?
+- Side effects
+  - Abstract node with subclasses implementing?
+  - Mixins?
+  - Pluggable interface?
+  - Tech effect class? 
