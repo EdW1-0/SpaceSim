@@ -22,6 +22,8 @@ Attempt at specification:
    - Root node
    - Find node
    - Iterator
+It needs to allow tech nodes to have their effects read out
+
  
 Optional:
 May want to support tech families (biotech, physics etc)
@@ -45,3 +47,42 @@ Things to decide:
   - Mixins?
   - Pluggable interface?
   - Tech effect class? 
+
+
+Proposed architecture:
+
+- Tech tree class
+  - Top level class to contain tech tree 
+  - Not really a tree, actually a directed acyclic graph - multiple roots
+  - Loads graph 
+  - Methods to look up, find neighbours etc. (decide this)
+  - Sensible data structure to support this (decide this)
+  - (Tech classes)
+
+- Player tech class
+  - Stores player state in tech tree
+  - Current target
+  - Researched techs
+  - Progress
+  - Potential targets
+  - (Visible techs)
+  - (Tech modifiers)
+  - Outer interface to player system
+
+- Tech node
+  - Represents an individual tech
+  - id 
+  - name
+  - description
+  - cost 
+  - prerequisites (likely derived)
+  - descendents (likely derived)
+  - (category)
+  - effects 
+  - (requirements) (non-tech milestones to unlock)
+
+- Tech effect
+  - Extensible class to allow arbitrary effects to be implemented
+  - Likely an abstract base class and specific subclasses for particular effects (unlock tech, unlock building, reduce costs etc)
+  - Effects need to be player specific
+  - Need to decide - architecture for distributing effects (message queues? Pub/sub? Direct call to player tech?) 
