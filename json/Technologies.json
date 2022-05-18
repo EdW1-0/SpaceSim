@@ -1,0 +1,50 @@
+{
+  "Technologies": [
+    {
+      "name": "Solid Fueled Rockets",
+      "id": 0,
+      "cost": 50,
+      "prerequisites": []
+    },
+    {
+      "name": "Lunar Excavation",
+      "id": 1,
+      "cost":  100,
+      "prerequisites": []
+    },
+    {
+      "name": "Pressure Hulls",
+      "id": 2,
+      "cost":  100,
+      "prerequisites": []
+    },
+    {
+      "name": "Lunar Construction",
+      "id": 3,
+      "cost": 200,
+      "prerequisites": [1, 2]
+    },
+    {
+      "name": "Lunar Mining",
+      "id": 4,
+      "cost": 100,
+      "prerequisites": [1]
+    },
+    {
+      "name": "Lunar Industry",
+      "id": 5,
+      "cost": 400,
+      "prerequisites": [3,4]
+    },
+    {
+      "name": "Lunar Bulk Storage",
+      "id": 6,
+      "cost": 200,
+      "prerequisites": [4]
+    }
+  ]
+
+
+
+
+}
