@@ -3,44 +3,46 @@
     {
       "name": "Solid Fueled Rockets",
       "id": 0,
+      "description": "Basic singe-staged rockets allow for sub-orbital space flight",
       "cost": 50,
-      "prerequisites": []
+      "ancestors": [],
+      "effects": []
     },
     {
       "name": "Lunar Excavation",
       "id": 1,
       "cost":  100,
-      "prerequisites": []
+      "ancestors": []
     },
     {
       "name": "Pressure Hulls",
       "id": 2,
       "cost":  100,
-      "prerequisites": []
+      "ancestors": []
     },
     {
       "name": "Lunar Construction",
       "id": 3,
       "cost": 200,
-      "prerequisites": [1, 2]
+      "ancestors": [1, 2]
     },
     {
       "name": "Lunar Mining",
       "id": 4,
       "cost": 100,
-      "prerequisites": [1]
+      "ancestors": [1]
     },
     {
       "name": "Lunar Industry",
       "id": 5,
       "cost": 400,
-      "prerequisites": [3,4]
+      "ancestors": [3,4]
     },
     {
       "name": "Lunar Bulk Storage",
       "id": 6,
       "cost": 200,
-      "prerequisites": [4]
+      "ancestors": [4]
     }
   ]
 

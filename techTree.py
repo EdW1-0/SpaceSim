@@ -6,12 +6,12 @@ import techNode
 
 
 class TechTree:
-    def __init__(self, jsonPath):
+    def __init__(self, jsonPath = "json/Technologies.json"):
         jsonFile = open(jsonPath, "r")
         jsonTechs = json.load(jsonFile)
 
         jsonNodes = jsonTechs["Technologies"]
-        self.nodes = [techNode.TechNode(node["id"]) for node in jsonNodes]
+        self.nodes = [techNode.TechNode(**node) for node in jsonNodes]
         self.totalNodes = len(self.nodes)
 
     def nodeById(self, id):

@@ -13,6 +13,7 @@ class TestTechTreeLoading(unittest.TestCase):
         self.assertTrue(techTree.TechTree("json/Technologies.json"))
         with self.assertRaises(FileNotFoundError):
             techTree.TechTree("")
+        self.assertTrue(techTree.TechTree())
 
 
 

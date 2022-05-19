@@ -29,7 +29,10 @@ Optional:
 May want to support tech families (biotech, physics etc)
 May want to support invisible techs 
 May want to support complex tech completion (i.e. not just rack up research points, requires milestones to be completed)
-
+May want general tech strategies:
+  - Insulate (use technology as barrier to overcome survivability)
+  - Cultivate (use technology to terraform environment to better suit humans)
+  - Assimilate (use technology to transform humans to be better adapted to environment)
 
 Things to decide:
 
