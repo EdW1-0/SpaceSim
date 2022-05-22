@@ -4,5 +4,5 @@ class TechNode:
         self.name = name
         self.description = description
         self.cost = cost
-        self.ancestors = []
-        self.effects = []
+        self.ancestors = ancestors
+        self.effects = effects
