@@ -1,0 +1,24 @@
+{
+    "Technologies": [
+      {
+        "name": "Solid Fueled Rockets",
+        "id": 0,
+        "description": "Basic singe-staged rockets allow for sub-orbital space flight",
+        "cost": 50,
+        "ancestors": [],
+        "effects": []
+      },
+      {
+        "name": "Lunar Excavation",
+        "id": 1,
+        "cost":  100,
+        "ancestors": []
+      },
+      {
+          "name": "Cosmic Ray Shielding",
+          "id": 0,
+          "cost": 700,
+          "ancestors": []
+      }
+    ]
+}
