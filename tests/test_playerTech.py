@@ -20,3 +20,64 @@ class TestPlayerTechDiscovered(unittest.TestCase):
 
     def test_playerTechDiscoveredEmpty(self):
         self.assertEqual(self.pt.discovered, [])        
+
+class TestPlayerTechActiveTech(unittest.TestCase):
+    def setUp(self):
+        tt = techTree.TechTree()
+        self.pt = playerTech.PlayerTech(tt)
+
+    def test_playerTechActiveTech(self):
+        self.assertEqual(self.pt.activeTech, None)
+
+    def test_playerTechSetActiveTech(self):
+        self.pt.setActiveTech(0)
+        self.assertEqual(self.pt.activeTech.id, 0)
+
+class TestPlayerTechDiscoverTech(unittest.TestCase):
+    def setUp(self):
+        tt = techTree.TechTree()
+        self.pt = playerTech.PlayerTech(tt)
+
+    def test_playerTechDiscoverTech(self):
+        self.pt.setActiveTech(0)
+        self.pt._completeTech()
+        self.assertEqual(self.pt.discovered, [0])
+        self.assertEqual(self.pt.activeTech, None)
+
+    def test_playerTechDiscoverException(self):
+        with self.assertRaises(ValueError):
+            self.pt._completeTech()
+
+class TestPlayerTechProgressTech(unittest.TestCase):
+    def setUp(self):
+        tt = techTree.TechTree()
+        self.pt = playerTech.PlayerTech(tt)
+
+    def test_playerTechReadProgress(self):
+        self.assertEqual(self.pt.progress, 0)
+    
+    def test_playerTechMakeProgress(self):
+        self.pt.addResearch(50)
+        self.assertEqual(self.pt.progress, 50)
+        self.pt.addResearch(100)
+        self.assertEqual(self.pt.progress, 150)
+
+    def test_playerTechMakeFullProgress(self):
+        self.pt.setActiveTech(1)
+        self.pt.addResearch(50)
+        self.assertEqual(self.pt.discovered, [])
+        self.pt.addResearch(100)
+        self.assertEqual(self.pt.discovered, [1])
+        self.assertEqual(self.pt.activeTech, None)
+        self.assertEqual(self.pt.progress, 0)
+
+    def test_playerTechResetProgress(self):
+        self.pt.setActiveTech(1)
+        self.pt.addResearch(50)
+        self.assertEqual(self.pt.progress, 50)
+        self.pt.setActiveTech(0)
+        self.assertEqual(self.pt.progress, 0)
+        self.assertEqual(self.pt.discovered, [])
+
+    
+
