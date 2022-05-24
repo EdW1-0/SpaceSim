@@ -4,7 +4,8 @@ import json
 
 import techNode
 
-
+# TODO: Make a singleton. I think we just make a class variable to store it and add to it
+# if needed. Maybe reinitialise if jsonPath changes.
 class TechTree:
     def __init__(self, jsonPath = "json/Technologies.json"):
         jsonFile = open(jsonPath, "r")

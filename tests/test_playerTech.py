@@ -1,6 +1,7 @@
 import unittest
 
 import playerTech
+import techTree
 
 class TestPlayerTechImport(unittest.TestCase):
     def test_playerTechImport(self):
@@ -10,6 +11,8 @@ class TestPlayerTechImport(unittest.TestCase):
 class TestPlayerTechConstructor(unittest.TestCase):
     def test_playerTechConstructor(self):
         self.assertTrue(playerTech.PlayerTech())
+        self.assertTrue(playerTech.PlayerTech(techTree.TechTree()))
+        
 
 class TestPlayerTechDiscovered(unittest.TestCase):
     def setUp(self):
