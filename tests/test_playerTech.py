@@ -19,7 +19,11 @@ class TestPlayerTechDiscovered(unittest.TestCase):
         self.pt = playerTech.PlayerTech()
 
     def test_playerTechDiscoveredEmpty(self):
-        self.assertEqual(self.pt.discovered, [])        
+        self.assertEqual(self.pt.discovered, set())        
+
+    def test_playerTechDiscoveredReadOnly(self):
+        with self.assertRaises(AttributeError):
+            self.pt.discovered = {4}
 
 class TestPlayerTechActiveTech(unittest.TestCase):
     def setUp(self):
@@ -41,7 +45,7 @@ class TestPlayerTechDiscoverTech(unittest.TestCase):
     def test_playerTechDiscoverTech(self):
         self.pt.setActiveTech(0)
         self.pt._completeTech()
-        self.assertEqual(self.pt.discovered, [0])
+        self.assertEqual(self.pt.discovered, {0})
         self.assertEqual(self.pt.activeTech, None)
 
     def test_playerTechDiscoverException(self):
@@ -65,9 +69,9 @@ class TestPlayerTechProgressTech(unittest.TestCase):
     def test_playerTechMakeFullProgress(self):
         self.pt.setActiveTech(1)
         self.pt.addResearch(50)
-        self.assertEqual(self.pt.discovered, [])
+        self.assertEqual(self.pt.discovered, set())
         self.pt.addResearch(100)
-        self.assertEqual(self.pt.discovered, [1])
+        self.assertEqual(self.pt.discovered, {1})
         self.assertEqual(self.pt.activeTech, None)
         self.assertEqual(self.pt.progress, 0)
 
@@ -77,7 +81,18 @@ class TestPlayerTechProgressTech(unittest.TestCase):
         self.assertEqual(self.pt.progress, 50)
         self.pt.setActiveTech(0)
         self.assertEqual(self.pt.progress, 0)
-        self.assertEqual(self.pt.discovered, [])
+        self.assertEqual(self.pt.discovered, set())
+
+class test_playerTechAccessPossibleTargets(unittest.TestCase):
+    def setUp(self):
+        tt = techTree.TechTree()
+        self.pt = playerTech.PlayerTech(tt)
+
+    def test_playerTechAccessPossibleTargets(self):
+        self.assertEqual(self.pt.possibleTargets, {0,1,2})
+        self.pt.setActiveTech(1)
+        self.pt.addResearch(1000)
+        self.assertEqual(self.pt.possibleTargets, {0,2,4})
 
     
 
