@@ -24,17 +24,7 @@
       "name": "Lunar Construction",
       "id": 3,
       "cost": 200,
-      "ancestors": [1, 2],
-      "effects": [
-         {
-           "effect": "BUILDING",
-           "value": 7
-         },
-         {
-           "effect": "VEHICLE",
-           "value": 3
-         }
-      ]
+      "ancestors": [1, 2]
     },
     {
       "name": "Lunar Mining",

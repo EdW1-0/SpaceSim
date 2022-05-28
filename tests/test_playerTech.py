@@ -94,5 +94,21 @@ class test_playerTechAccessPossibleTargets(unittest.TestCase):
         self.pt.addResearch(1000)
         self.assertEqual(self.pt.possibleTargets, {0,2,4})
 
+
+class test_playerTechEffects(unittest.TestCase):
+    def setUp(self):
+        tt = techTree.TechTree()
+        self.pt = playerTech.PlayerTech(tt)
+
+    def test_playerTechHasAllowedBuildings(self):
+        self.assertTrue(hasattr(self.pt, "allowedBuildings"))
+
+    def test_playerTechHasAllowedVehicles(self):
+        self.assertTrue(hasattr(self.pt, "allowedVehicles"))
+
+    def test_playerTechEffectsWork(self):
+        self.pt.setActiveTech(3)
+        self.pt.addResearch(500)
+        self.assertEqual(self.pt.allowedBuildings, [7])
     
 

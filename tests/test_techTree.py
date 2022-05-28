@@ -1,7 +1,6 @@
 import unittest
 
-from dataclasses import is_dataclass
-from enum import Enum
+
 
 import techTree
 import techNode
@@ -94,28 +93,7 @@ class TestTechTreeLinkage(unittest.TestCase):
         self.assertEqual(self.techTree.descendentsOfId(0), [])
 
 
-class TechTechTreeTechEffect(unittest.TestCase):
-    def test_techTreeTechEffectLoad(self):
-        self.assertNotEqual(techTree.TechEffect, False)
-        self.assertTrue(is_dataclass(techTree.TechEffect))
 
-    def test_techTreeTechEffectInit(self):
-        self.assertTrue(techTree.TechEffect(0, 0))
-
-    def test_techTreeTechEffectAttributes(self):
-        self.assertTrue(hasattr(techTree.TechEffect(0, 0), "effect"))
-        self.assertTrue(hasattr(techTree.TechEffect(0, 0), "value"))
-        self.assertTrue(isinstance(techTree.TechEffect(techTree.TechEffectClass.BUILDING, 0).effect, techTree.TechEffectClass))
-
-class TestTechTreeTechEffectClass(unittest.TestCase):
-        def test_techTreeTechEffectClassInit(self):
-            self.assertNotEqual(techTree.TechEffectClass, False)
-            self.assertTrue(techTree.TechEffectClass(0))
-
-        def test_techTreeTechEffectClassIntrospection(self):
-            self.assertTrue(issubclass(techTree.TechEffectClass, Enum))
-            self.assertTrue(isinstance(techTree.TechEffectClass.BUILDING, techTree.TechEffectClass))
-            self.assertTrue(isinstance(techTree.TechEffectClass(1), techTree.TechEffectClass))
 
 
 

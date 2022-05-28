@@ -1,3 +1,15 @@
+from dataclasses import dataclass
+from enum import Enum
+
+class TechEffectClass(Enum):
+    BUILDING = 0
+    VEHICLE = 1
+
+@dataclass
+class TechEffect:
+    effect: TechEffectClass
+    value: int
+
 class TechNode:
     def __init__(self, id, name = "", description = "", cost = 0, ancestors = [], effects = []):
         self.id = id
@@ -5,4 +17,5 @@ class TechNode:
         self.description = description
         self.cost = cost
         self.ancestors = ancestors
-        self.effects = effects
+        self.effects = [TechEffect(TechEffectClass[e["effect"]], e["value"]) for e in effects]
+
