@@ -1,8 +1,19 @@
 import os
 import json
-
+from dataclasses import dataclass
+from enum import Enum
 
 import techNode
+
+class TechEffectClass(Enum):
+    BUILDING = 0
+    VEHICLE = 1
+
+@dataclass
+class TechEffect:
+    effect: TechEffectClass
+    value: int
+
 
 # TODO: Make a singleton. I think we just make a class variable to store it and add to it
 # if needed. Maybe reinitialise if jsonPath changes.
