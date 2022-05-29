@@ -110,5 +110,6 @@ class test_playerTechEffects(unittest.TestCase):
         self.pt.setActiveTech(3)
         self.pt.addResearch(500)
         self.assertEqual(self.pt.allowedBuildings, [7])
+        self.assertEqual(self.pt.allowedVehicles, [3])
     
 

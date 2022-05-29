@@ -29,7 +29,7 @@ class PlayerTech:
             match effect.effect:
                 case TechEffectClass.BUILDING:
                     self.allowedBuildings.append(effect.value)
-                case TechEffectClass.BUILDING:
+                case TechEffectClass.VEHICLE:
                     self.allowedVehicles.append(effect.value)
                 case _:
                     assert(False, f"Invalid effect class, {effect.effect}")
