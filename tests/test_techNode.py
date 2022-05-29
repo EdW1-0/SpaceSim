@@ -1,8 +1,9 @@
 import unittest
 
-import techNode
-import techTree
-from techNode import TechEffect, TechEffectClass
+import techtree.techNode as techNode
+import techtree.techTree as techTree
+from techtree.techNode import TechEffect, TechEffectClass
+
 from dataclasses import is_dataclass
 from enum import Enum
 

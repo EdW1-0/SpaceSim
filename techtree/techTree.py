@@ -3,7 +3,7 @@ import json
 from dataclasses import dataclass
 from enum import Enum
 
-import techNode
+import techtree.techNode as techNode
 
 class TechEffectClass(Enum):
     BUILDING = 0

@@ -1,7 +1,7 @@
 import unittest
 
-import playerTech
-import techTree
+import techtree.playerTech as playerTech
+import techtree.techTree as techTree
 
 class TestPlayerTechImport(unittest.TestCase):
     def test_playerTechImport(self):

@@ -1,5 +1,5 @@
-import techTree
-from techNode import TechEffectClass
+import techtree.techTree as techTree
+from techtree.techNode import TechEffectClass
 # TODO: Not sure it should be resposibility of this class to be passed tech tree. 
 # Think it should just discover instance internally.
 class PlayerTech:

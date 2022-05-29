@@ -2,8 +2,8 @@ import unittest
 
 
 
-import techTree
-import techNode
+import techtree.techTree as techTree
+import techtree.techNode as techNode
 
 class TestTechTreeLoading(unittest.TestCase):
     
