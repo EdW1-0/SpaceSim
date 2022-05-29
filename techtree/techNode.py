@@ -5,7 +5,7 @@ class TechEffectClass(Enum):
     BUILDING = 0
     VEHICLE = 1
 
-@dataclass
+@dataclass(frozen=True)
 class TechEffect:
     effect: TechEffectClass
     value: int

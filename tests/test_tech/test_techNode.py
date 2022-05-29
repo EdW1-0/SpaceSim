@@ -4,7 +4,7 @@ import techtree.techNode as techNode
 import techtree.techTree as techTree
 from techtree.techNode import TechEffect, TechEffectClass
 
-from dataclasses import is_dataclass
+from dataclasses import is_dataclass, FrozenInstanceError
 from enum import Enum
 
 
@@ -82,6 +82,12 @@ class TestTechEffect(unittest.TestCase):
     def test_techEffectEquality(self):
         self.assertEqual(techNode.TechEffect(0,0), techNode.TechEffect(0,0))
         self.assertNotEqual(techNode.TechEffect(1,1), techNode.TechEffect(0,0))
+
+    def test_techEffectImmutable(self):
+        with self.assertRaises(FrozenInstanceError):
+            techNode.TechEffect(0,0).effect = 0
+        with self.assertRaises(FrozenInstanceError):
+            techNode.TechEffect(1,1).value = 3
 
 class TestTechEffectClass(unittest.TestCase):
         def test_techEffectClassInit(self):
