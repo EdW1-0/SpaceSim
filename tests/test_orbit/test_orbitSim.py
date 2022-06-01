@@ -8,5 +8,4 @@ class TestOrbitSim(unittest.TestCase):
         self.assertTrue(OrbitSim())
 
     def testOrbitSimParticles(self):
-        print(dir(OrbitSim()))
         self.assertTrue(hasattr(OrbitSim(), "_particles"))

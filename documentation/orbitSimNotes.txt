@@ -1,0 +1,104 @@
+This system encodes the interaction between particles in the N-body gravity simulator.
+It needs to store all particles in the system.
+It needs to store their positions
+It needs to store their masses, and decide which exert a meaningful SOI.
+It needs to do Keplerian parameterized orbits, so that we don't get cumulative floating point errors.
+
+For each particle,
+It needs to work out which orbit it currently belongs to (and probably store it on the particle)
+It needs to work out where in the orbit it currently is, for a given (x,y,z), (vx,vy,vz)
+It needs to update this for a given time evolution. 
+It needs to convert back from (r, theta) to (x,y,z), (vx,vy,vz)
+It needs to handle parabolic, circular, and hyperbolic orbits. 
+
+It needs to handle thrust - some particles are capable of applying a delta-v to change orbital parameters.
+- This can be either step change (chemical rockets) or constant (ion drives)
+
+It needs to handle transfer orbits.
+
+It needs a way to link back to relevant objects for some particles:
+- Planets - planetary system
+- Ships - Ships
+- Free-floating colonies - colony
+
+At first maybe make this simple - aim is not to muck around with details of inclination and eccentricity and Hohmann transfer windows
+For now maybe just have model:
+- Distance matters
+  - for flight time
+  - for SOI calculation
+  - for insolation
+  - for radiation
+- Delta V matters 
+  - for fuel requirements
+- Could have fixed distance and delta v cost. 
+  - Exceed delta v cost allows reduced flight time. 
+- Have model of tube network:
+  - Fixed delta v cost to move between bodies (essentially enter transfer orbit)
+  - Fixed delta v to enter orbit
+  - Fixed delta v to land.
+- e.g. Earth to Ganymede
+  - Launch delta v to LEO (LEO velocity plus gravity drag plus atmospheric drag)
+  - LEO to earth escape delta V
+  - Earth escape to Jupiter transfer delta V
+  - Jupiter insertion delta v 
+  - Ganymede transfer delta v
+  - Ganymede insertion delta v 
+  - Ganymede orbit to surface delta v
+
+Kepler parameterization:
+
+a^3/T^2 ~ M 
+So we can derive T by knowing M and a. 
+
+Parameterized orbit:
+1) Mean motion - n = (2pi)/T [rad/s]
+2) Mean anomaly - M = nt [rad] (t - time since perihelion)
+3) Eccentric anomaly - M = E - eta sin(E) [rad] (solve for E, generally numerically)
+4) True anomaly - (1-eta)tan^2(theta/2) = (1+eta)tan^2(E/2) [rad] (solve for theta)
+5) Radius - r = a(1-eta cos(E)) [m] (heliocentric distance)
+6) Velocity vector - V = sqrt(mu a)/r (-sin(E), sqrt(1-eta^2)cos(E))
+
+So given velocity vector and position:
+- solve for r and theta
+  - Ick!
+
+- Note there are existing orbital mechanics packages - e.g. Orbital.py. I think it would be reasonable to use one of these rather
+than rolling our own.
+
+Decision - going with tube map.
+- Set of "stations" - planetary surfaces or orbits.
+- Each has connectivity with neighbours.
+- Each connection has:
+  - delta v to make transition
+  - distance (for radiation calculations)
+  - travel time 
+
+Do given this, what is our object model?
+  - Objects are nodes, links are references to other nodes
+  - Nodes are objects, links are also objects
+  - Links are objects, with references to other links.
+
+I think we need nodes to be objects, because they have stable identity - particles can arrive and remain at these indefinitely.
+Elsewhere they are in transition. 
+So between links are:
+- Pure references
+- Single objects
+- Dataclass objects on each linking node. 
+
+What is identity of ships during travel? Do they belong to source or destination node? If neither, need link objects. 
+
+Leaning towards node & link objects:
+Nodes:
+- Have list of particles
+- Have some concept of class (orbit vs planet surface)
+- Have list of links 
+- May have link to planet surface 
+
+Links:
+- Have list of particles 
+  - With some way of storing progress (on link or on particle?)
+- Have endpoints
+- Have associated
+ - delta v 
+ - distance
+ - travel time
