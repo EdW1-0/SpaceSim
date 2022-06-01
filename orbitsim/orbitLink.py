@@ -1,0 +1,2 @@
+class OrbitLink:
+    pass

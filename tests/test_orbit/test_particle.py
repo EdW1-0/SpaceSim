@@ -8,7 +8,4 @@ class TestParticle(unittest.TestCase):
         self.assertTrue(Particle())
 
     def testParticleAttributes(self):
-        self.assertTrue(hasattr(Particle(), "x"))
-        self.assertTrue(hasattr(Particle(), "y"))
-        self.assertTrue(hasattr(Particle(), "z"))
         self.assertTrue(hasattr(Particle(), "mass"))

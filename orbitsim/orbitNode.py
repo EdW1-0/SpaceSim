@@ -1,0 +1,2 @@
+class OrbitNode:
+    pass
