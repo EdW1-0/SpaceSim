@@ -102,3 +102,8 @@ Links:
  - delta v 
  - distance
  - travel time
+
+ Particle:
+ - Have associated object (ship, asteroid, colony etc). 
+ - Probably not planets - these are handled separately now. Essentially unmovable. 
+ - Have interface for applying g, radiation, insolation
