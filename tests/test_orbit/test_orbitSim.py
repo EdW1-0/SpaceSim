@@ -21,3 +21,13 @@ class TestOrbitSim(unittest.TestCase):
         with self.assertRaises(json.JSONDecodeError):
             OrbitSim("test_json/test_orbits/malformed.json")
         self.assertNotEqual(OrbitSim("test_json/test_orbits/happy_case.json")._nodes, [])
+        self.assertNotEqual(OrbitSim("test_json/test_orbits/happy_case.json")._nodes, {})
+        
+    def testOrbitSimNodeById(self):
+        self.assertTrue(OrbitSim("test_json/test_orbits/happy_case.json").nodeById(0))
+        with self.assertRaises(TypeError):
+            OrbitSim().nodeById("Sun")
+        with self.assertRaises(ValueError):
+            OrbitSim().nodeById(-1)
+
+

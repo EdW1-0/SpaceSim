@@ -1,3 +1,8 @@
 {
-    
+    "Orbitals": [
+        { 
+            "name": "Sun",
+            "id": 0
+        }
+    ]
 }
