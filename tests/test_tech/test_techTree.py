@@ -49,11 +49,11 @@ class TestTechTreeInteraction(unittest.TestCase):
         self.assertEqual(self.techTree.totalNodes, 7)
 
     def test_techTreeNodeGap(self):
-        tt = techTree.TechTree("test_json/test_id_gap.json")
+        tt = techTree.TechTree("test_json/test_tech/test_id_gap.json")
         self.assertEqual(tt.nodeById(5).id, 5)
 
     def test_techTreeNodeReverseOrder(self):
-        tt = techTree.TechTree("test_json/test_id_out_of_order.json")
+        tt = techTree.TechTree("test_json/test_tech/test_id_out_of_order.json")
         self.assertEqual(tt.nodeById(3).id, 3)
         self.assertEqual(tt.nodeById(4).id, 4)
         self.assertEqual(tt.nodeById(5).id, 5)
@@ -61,25 +61,25 @@ class TestTechTreeInteraction(unittest.TestCase):
 class TestTechTreeValidation(unittest.TestCase):
     def test_techTreeRejectDuplicates(self):
         with self.assertRaises(AssertionError):
-            techTree.TechTree("test_json/test_duplicates.json")
+            techTree.TechTree("test_json/test_tech/test_duplicates.json")
 
 
     def test_techTreeRejectLoops(self):
         with self.assertRaises(AssertionError):
-            techTree.TechTree("test_json/test_loops_unary.json")
+            techTree.TechTree("test_json/test_tech/test_loops_unary.json")
         with self.assertRaises(AssertionError):
-            techTree.TechTree("test_json/test_loops_binary.json")
+            techTree.TechTree("test_json/test_tech/test_loops_binary.json")
         with self.assertRaises(AssertionError):
-            techTree.TechTree("test_json/test_loops_ternary.json")
+            techTree.TechTree("test_json/test_tech/test_loops_ternary.json")
 
 
     def test_techTreeNonExistantAncestor(self):
         with self.assertRaises(AssertionError):
-            techTree.TechTree("test_json/test_invalid_ancestor.json")
+            techTree.TechTree("test_json/test_tech/test_invalid_ancestor.json")
 
 class TestTechTreeLinkage(unittest.TestCase):
     def setUp(self):
-        self.techTree = techTree.TechTree("test_json/test_happy_case.json")
+        self.techTree = techTree.TechTree("test_json/test_tech/test_happy_case.json")
 
     def test_techTreeAncestorLookup(self):
         self.assertEqual([node.id for node in self.techTree.ancestorsOfId(5)], [3,4])
