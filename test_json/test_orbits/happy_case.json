@@ -2,7 +2,17 @@
     "Orbitals": [
         { 
             "name": "Sun",
-            "id": 0
+            "id": 0,
+            "gravity": 100,
+            "links": [
+                {
+                    "id": 1
+                }
+            ]
+        },
+        {
+            "name": "Sun Low Orbit",
+            "id": 1
         }
     ]
 }

@@ -9,7 +9,14 @@ class OrbitSim:
         jsonBlob = json.load(jsonFile)
 
         orbitalsArray = jsonBlob["Orbitals"]
-        self._nodes = {node["id"]: OrbitNode(**node) for node in orbitalsArray}
+
+        def stripLinks(x):
+            if "links" in x:
+                del x["links"]
+            return x
+        orbitalsDelinked = map(stripLinks, orbitalsArray)
+        self._nodes = {node["id"]: OrbitNode(**node) for node in orbitalsDelinked}
+        
         self._particles = []
         self._links = []
 
