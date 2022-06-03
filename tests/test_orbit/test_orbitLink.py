@@ -8,26 +8,31 @@ class NodeMock:
 class TestOrbitLink(unittest.TestCase):
     def testOrbitLink(self):
         self.assertTrue(OrbitLink)
-        self.assertTrue(OrbitLink(NodeMock(), NodeMock()))
+        self.assertTrue(OrbitLink(0, 0, 1))
 
 class TestOrbitLinkAttributes(unittest.TestCase):
     def testOrbitLinkAttributes(self):
-        self.assertTrue(hasattr(OrbitLink(NodeMock(), NodeMock()), "topNode"))
-        self.assertTrue(hasattr(OrbitLink(NodeMock(), NodeMock()), "bottomNode"))
-        self.assertTrue(hasattr(OrbitLink(NodeMock(), NodeMock()), "particles"))
-        self.assertTrue(hasattr(OrbitLink(NodeMock(), NodeMock()), "deltaV"))
-        self.assertTrue(hasattr(OrbitLink(NodeMock(), NodeMock()), "travelTime"))
-        self.assertTrue(hasattr(OrbitLink(NodeMock(), NodeMock()), "distance"))
+        self.assertTrue(hasattr(OrbitLink(0, 0, 1), "topNode"))
+        self.assertTrue(hasattr(OrbitLink(0, 0, 1), "bottomNode"))
+        self.assertTrue(hasattr(OrbitLink(0, 0, 1), "particles"))
+        self.assertTrue(hasattr(OrbitLink(0, 0, 1), "deltaV"))
+        self.assertTrue(hasattr(OrbitLink(0, 0, 1), "travelTime"))
+        self.assertTrue(hasattr(OrbitLink(0, 0, 1), "distance"))
+        self.assertTrue(hasattr(OrbitLink(0, 0, 1), "id"))
 
 class TestOrbitLinkConstructor(unittest.TestCase):
     def testOrbitLinkConstructor(self):
         with self.assertRaises(TypeError):
             OrbitLink()
         with self.assertRaises(TypeError):
-            OrbitLink(None, None)
+            OrbitLink(0)
+        with self.assertRaises(TypeError):
+            OrbitLink(0, None, None)
+        with self.assertRaises(TypeError):
+            OrbitLink(0,0,0)
 
-        self.assertTrue(OrbitLink(topNode = NodeMock(), bottomNode = NodeMock()))
-        self.assertTrue(OrbitLink(topNode = NodeMock(), bottomNode = NodeMock(), deltaV = 3.0, travelTime = 1000, distance = 10000))
+        self.assertTrue(OrbitLink(0, topNode = 0, bottomNode = 1))
+        self.assertTrue(OrbitLink(id = 0, topNode = 0, bottomNode = 1, deltaV = 3.0, travelTime = 1000, distance = 10000))
 
 
 class TestOrbitLinkConnections(unittest.TestCase):
