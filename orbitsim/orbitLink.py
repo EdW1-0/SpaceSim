@@ -9,5 +9,5 @@ class OrbitLink:
         if (self.topNode == self.bottomNode):
             raise TypeError
         self.deltaV = deltaV
-        self.travelTime = deltaV
-        self.distance = deltaV
+        self.travelTime = travelTime
+        self.distance = distance

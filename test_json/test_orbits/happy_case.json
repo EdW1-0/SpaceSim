@@ -6,10 +6,16 @@
             "gravity": 100,
             "links": [
                 {
-                    "id": 1
+                    "id": 1,
+                    "deltaV": 1000,
+                    "travelTime": 10000,
+                    "distance": 100000
                 },
                 {
-                    "id": 3
+                    "id": 3,
+                    "deltaV": 500,
+                    "travelTime": 100000,
+                    "distance": 200000
                 }
             ]
         },
@@ -18,7 +24,10 @@
             "id": 1,
             "links": [
                 {
-                    "id": 2
+                    "id": 2,
+                    "deltaV": 200,
+                    "travelTime": 5e6,
+                    "distance": 1e7
                 }
             ]
         },

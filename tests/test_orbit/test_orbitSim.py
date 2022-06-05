@@ -78,6 +78,29 @@ class TestOrbitSimLinks(unittest.TestCase):
         self.assertEqual(self.os.nodeById(1).links, [0, 2])
         self.assertEqual(self.os.nodeById(2).links, [2])
 
+class TestOrbitSimProperties(unittest.TestCase):
+    def setUp(self):
+        self.os = OrbitSim("test_json/test_orbits/happy_case.json")
+
+    def testOrbitSimLink0(self):
+        l0 = self.os.linkById(0)
+        self.assertEqual(l0.deltaV, 1000)
+        self.assertEqual(l0.travelTime, 10000)
+        self.assertEqual(l0.distance, 100000)
+
+    def testOrbitSimLink1(self):
+        l1 = self.os.linkById(1)
+        self.assertEqual(l1.deltaV, 500)
+        self.assertEqual(l1.travelTime, 100000)
+        self.assertEqual(l1.distance, 200000)
+
+    def testOrbitSimLinkAll(self):
+        for l in self.os._links.values():
+            self.assertGreater(l.deltaV, 0)
+            self.assertGreater(l.travelTime, 0)
+            self.assertGreater(l.travelTime, 0)
+
+
 
 
 
