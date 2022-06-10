@@ -38,3 +38,17 @@ class TestOrbitLinkConstructor(unittest.TestCase):
 class TestOrbitLinkConnections(unittest.TestCase):
     def testOrbitLinkConnections(self):
         pass
+
+class TestOrbitLinkParticles(unittest.TestCase):
+    def setUp(self):
+        self.l0 = OrbitLink(0, 0, 1)
+
+    def testOrbitNodeParticlesIsSet(self):
+        with self.assertRaises(TypeError):
+            self.l0.particles[0]
+
+        self.l0.particles.add(1)
+        self.l0.particles.add(1)
+
+        self.assertEqual(len(self.l0.particles), 1)
+        self.assertTrue(1 in self.l0.particles)

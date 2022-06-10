@@ -3,6 +3,7 @@ import unittest
 import json
 
 from orbitsim.orbitSim import OrbitSim
+from orbitsim.particle import Particle
 
 class TestOrbitSim(unittest.TestCase):
     def testOrbitSim(self):
@@ -99,6 +100,39 @@ class TestOrbitSimProperties(unittest.TestCase):
             self.assertGreater(l.deltaV, 0)
             self.assertGreater(l.travelTime, 0)
             self.assertGreater(l.travelTime, 0)
+
+class TestOrbitSimParticleCreation(unittest.TestCase):
+    def setUp(self):
+        self.os = OrbitSim("test_json/test_orbits/happy_case.json")
+        self.n0 = self.os.nodeById(0)
+        self.os.createParticle(self.n0)
+        self.os.createParticle(self.n0)
+        self.l0 = self.os.linkById(0)
+        self.os.createParticle(self.l0)
+
+    def testOrbitSimParticleCreationLength(self):
+        self.assertEqual(len(self.n0.particles), 2)
+        self.assertEqual(len(self.os._particles), 3)
+        self.assertEqual(len(self.l0.particles), 1)
+
+    def testOrbitSimParticleCreationTypes(self):
+        for p in self.os._particles.values():
+            self.assertTrue(isinstance(p, Particle))
+        for p in self.n0.particles:
+            self.assertFalse(isinstance(p, Particle))
+        for p in self.l0.particles:
+            self.assertFalse(isinstance(p, Particle))
+
+    def testOrbitSimParticlCreationIds(self):
+        for i in (0, 1):
+            self.assertTrue(i in self.n0.particles)
+        for i in (2,):
+            self.assertTrue(i in self.l0.particles)
+        for i in (0, 1, 2):
+            self.assertTrue(i in self.os._particles.keys())
+            self.assertEqual(self.os._particles[i].id, i)
+
+
 
 
 

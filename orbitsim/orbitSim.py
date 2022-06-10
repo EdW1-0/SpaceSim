@@ -2,6 +2,7 @@ import json
 
 from orbitsim.orbitNode import OrbitNode
 from orbitsim.orbitLink import OrbitLink
+from orbitsim.particle import Particle
 
 class OrbitSim:
     def __init__(self, jsonPath = "json/Orbits.json"):
@@ -39,7 +40,16 @@ class OrbitSim:
         # add it to our array
         # add link id to links for source and destination
 
-        self._particles = []
+        self._particles = {}
+        self.nodeIdCounter = 0
+
+
+    def createParticle(self, node):
+        id = self.nodeIdCounter 
+        self.nodeIdCounter += 1
+        self._particles[id] = Particle(id)
+        node.particles.add(id)
+        
 
     def nodeById(self, id):
         if not isinstance(id, int):

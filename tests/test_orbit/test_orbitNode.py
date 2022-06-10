@@ -30,3 +30,19 @@ class TestOrbitNodeConstructor(unittest.TestCase):
 class TestOrbitNodeLinks(unittest.TestCase):
     def testOrbitNodeLinks(self):
         self.assertEqual(OrbitNode(0).links, [])
+
+class TestOrbitNodeParticles(unittest.TestCase):
+    def setUp(self):
+        self.n0 = OrbitNode(0)
+
+    def testOrbitNodeParticlesIsSet(self):
+        with self.assertRaises(TypeError):
+            self.n0.particles[0]
+
+        self.n0.particles.add(1)
+        self.n0.particles.add(1)
+
+        self.assertEqual(len(self.n0.particles), 1)
+        self.assertTrue(1 in self.n0.particles)
+
+        
