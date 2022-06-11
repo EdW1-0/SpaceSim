@@ -107,3 +107,33 @@ Links:
  - Have associated object (ship, asteroid, colony etc). 
  - Probably not planets - these are handled separately now. Essentially unmovable. 
  - Have interface for applying g, radiation, insolation
+
+
+ So then, how do we use particles?
+- Creation
+- Destruction
+- Transition from links to nodes (time)
+- Transition from nodes to links (time)
+- Progress within links (time)
+  - Including directionality
+- Intercept other particles 
+  - This should put constraints on route planning, in fact we'll just neglect this.
+- Plan route for particle
+- Store route for particle and apply changes as needed. 
+
+- Creation
+  - Happens because:
+    - player initiated
+    - automated mission
+  - Responsibility of orbitSim
+    - Creates particle with id and node id
+    - Adds to _particle dictionary for node.
+
+- Destruction
+  - I think probably orbitSim again.
+  - Happens because:
+    - Reached destination and mission ended 
+    - Mission failed
+    - Collision
+
+    
