@@ -41,12 +41,16 @@ class OrbitSim:
         # add link id to links for source and destination
 
         self._particles = {}
-        self.nodeIdCounter = 0
+        self.idGenerator = self.newParticleId()
 
+    def newParticleId(self):
+        nodeIdCounter = 0
+        while True:
+            yield nodeIdCounter
+            nodeIdCounter += 1
 
     def createParticle(self, node):
-        id = self.nodeIdCounter 
-        self.nodeIdCounter += 1
+        id = next(self.idGenerator)
         self._particles[id] = Particle(id)
         node.particles.add(id)
         
