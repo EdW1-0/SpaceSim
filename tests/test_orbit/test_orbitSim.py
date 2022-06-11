@@ -123,7 +123,7 @@ class TestOrbitSimParticleCreation(unittest.TestCase):
         for p in self.l0.particles:
             self.assertFalse(isinstance(p, Particle))
 
-    def testOrbitSimParticlCreationIds(self):
+    def testOrbitSimParticleCreationIds(self):
         for i in (0, 1):
             self.assertTrue(i in self.n0.particles)
         for i in (2,):
@@ -133,6 +133,35 @@ class TestOrbitSimParticleCreation(unittest.TestCase):
             self.assertEqual(self.os._particles[i].id, i)
 
 
+class TestOrbitSimParticleDestruction(unittest.TestCase):
+    def setUp(self):
+        self.os = OrbitSim("test_json/test_orbits/happy_case.json")
+        self.n0 = self.os.nodeById(0)
+        self.l0 = self.os.linkById(0)
+        for i in range(10):
+            self.os.createParticle(self.n0)
+            self.os.createParticle(self.l0)
+
+    def testOrbitSimParticleDestructionNode(self):
+        self.os.destroyParticle(2)
+        self.assertEqual(len(self.os._particles), 19)
+        with self.assertRaises(KeyError):
+            self.os._particleLocation(2)
+        self.assertFalse(2 in self.n0.particles)
+
+        self.os.destroyParticle(3)
+        self.assertEqual(len(self.os._particles), 18)
+        with self.assertRaises(KeyError):
+            self.os._particleLocation(2)
+        self.assertFalse(3 in self.l0.particles)
+
+        self.os.createParticle(self.n0)
+        self.assertEqual(len(self.os._particles), 19)
+        try:
+            self.os.particleById(20)
+        except KeyError:
+            self.fail("particleById threw KeyError for id 20!")
+        self.assertEqual(self.os.particleById(20).id, 20)
 
 
 

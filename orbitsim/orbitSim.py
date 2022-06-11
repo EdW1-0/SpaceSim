@@ -53,6 +53,19 @@ class OrbitSim:
         id = next(self.idGenerator)
         self._particles[id] = Particle(id)
         node.particles.add(id)
+
+    def destroyParticle(self, id):
+        location = self._particleLocation(id)
+        location.particles.remove(id)
+        del self._particles[id]
+        
+    def _particleLocation(self, id):
+        for category in (self._nodes, self._links):
+            for n in category.values():
+                if (id in n.particles):
+                    return n
+
+        raise KeyError
         
 
     def nodeById(self, id):
@@ -68,3 +81,10 @@ class OrbitSim:
         elif id < 0:
             raise ValueError
         return self._links[id]
+
+    def particleById(self, id):
+        if not isinstance(id, int):
+            raise TypeError
+        elif id < 0:
+            raise ValueError
+        return self._particles[id]
