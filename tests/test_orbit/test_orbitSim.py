@@ -164,6 +164,29 @@ class TestOrbitSimParticleDestruction(unittest.TestCase):
         self.assertEqual(self.os.particleById(20).id, 20)
 
 
+class TestOrbitSimParticleTransit(unittest.TestCase):
+    def setUp(self):
+        self.os = OrbitSim("test_json/test_orbits/happy_case.json")
+        self.n0 = self.os.nodeById(0)
+        self.l0 = self.os.linkById(0)
+        for i in range(10):
+            self.os.createParticle(self.n0)
+            self.os.createParticle(self.l0)
 
+    def testOrbitSimParticleTransitToLink(self):
+        self.os.transitParticle(0, self.l0.id)
+        self.assertTrue(0 in self.l0.particles)
+        self.assertTrue(0 not in self.n0.particles)
 
+    def testOrbitSimParticleTransitToNode(self):
+        self.os.transitParticle(1, self.n0.id)
+        self.assertTrue(1 in self.n0.particles)
+        self.assertTrue(1 not in self.l0.particles)
 
+    def testOrbitSimParticleTransitInvalidParticle(self):
+        with self.assertRaises(KeyError):
+            self.os.transitParticle(30, self.n0.id)
+
+    def testOrbitSimParticleTransitInvalidTarget(self):
+        with self.assertRaises(KeyError):
+            self.os.transitParticle(1, 50)

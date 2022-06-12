@@ -58,6 +58,16 @@ class OrbitSim:
         location = self._particleLocation(id)
         location.particles.remove(id)
         del self._particles[id]
+
+    def transitParticle(self, id, targetId):
+        location = self._particleLocation(id)
+        location.particles.remove(id)
+        if isinstance(location, OrbitNode):
+            target = self.linkById(targetId)
+        else:
+            target = self.nodeById(targetId)
+        target.particles.add(id)
+
         
     def _particleLocation(self, id):
         for category in (self._nodes, self._links):
