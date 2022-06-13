@@ -87,6 +87,9 @@ class OrbitSim:
             else:
                 raise ValueError
 
+    def createTrajectory(self, targetId, particleId = None, sourceId = None, payload = None):
+        return [0]
+
     def tick(self, increment):
         for p in self._particles.values():
             location = self._particleLocation(p.id)

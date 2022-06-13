@@ -282,3 +282,20 @@ class TestOrbitSimParticleArrival(unittest.TestCase):
         self.os.tick(self.l0.travelTime + 100)
         self.assertTrue(6 in self.n0.particles)
         self.assertEqual(self.os.particleById(6).velocity, 0)
+
+class PayloadMock:
+    pass
+
+class TestOrbitSimTrajectoryCreation(unittest.TestCase):
+    def setUp(self):
+        self.os = OrbitSim("test_json/test_orbits/happy_case.json")
+        self.n0 = self.os.nodeById(0)
+        self.l0 = self.os.linkById(0)
+        for i in range(10):
+            self.os.createParticle(self.n0)
+
+    def testOrbitSimTrajectoryCreationExistingParticle(self):
+        self.assertTrue(self.os.createTrajectory(targetId = 2, particleId = 0))
+
+    def testOrbitSimTrajectoryCreationNewParticle(self):
+        self.assertTrue(self.os.createTrajectory(targetId = 2, sourceId = 0, payload = PayloadMock()))
