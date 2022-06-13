@@ -93,6 +93,11 @@ class OrbitSim:
             if isinstance(location, OrbitLink):
                 location.particles[p.id] += p.velocity * increment
 
+                if location.particles[p.id] > location.travelTime:
+                    self.transitParticle(p.id, location.topNode)
+                elif location.particles[p.id] < 0:
+                    self.transitParticle(p.id, location.bottomNode)
+
 
         
     def _particleLocation(self, id):
