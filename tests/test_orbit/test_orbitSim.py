@@ -225,5 +225,41 @@ class TestOrbitSimParticleTravel(unittest.TestCase):
         self.os.transitParticle(1, 1)
         self.os.transitParticle(1, 0)
         self.assertEqual(self.os.particleById(1).velocity, -1)
-        self.assertEqual(self.l0.particles[1], self.l0.distance)
+        self.assertEqual(self.l0.particles[1], self.l0.travelTime)
+
+
+class TestOrbitSimTick(unittest.TestCase):
+    def setUp(self):
+        self.os = OrbitSim("test_json/test_orbits/happy_case.json")
+        self.n0 = self.os.nodeById(0)
+        self.l0 = self.os.linkById(0)
+        for i in range(10):
+            self.os.createParticle(self.n0)
+        
+    def testOrbitSimTickUpMotion(self):
+        self.os.transitParticle(1, 0)
+        self.os.tick(100)
+        self.assertEqual(self.l0.particles[1], 100)
+
+    def testOrbitSimTickDownMotion(self):
+        self.os.transitParticle(5, 0)
+        self.os.transitParticle(5, 1)
+        self.os.transitParticle(5, 0)
+        self.os.tick(300)
+        self.assertEqual(self.l0.particles[5], self.l0.travelTime - 300)
+
+    def testOrbitSimTickUpMulti(self):
+        self.os.transitParticle(2, 0)
+        self.os.transitParticle(3, 1)
+        self.os.transitParticle(1, 0)
+        self.os.transitParticle(1, 1)
+        self.os.transitParticle(1, 0)
+        self.os.tick(30)
+        self.os.tick(50)
+        self.os.tick(110)
+        self.assertEqual(self.l0.particles[2], 190)
+        self.assertEqual(self.os.linkById(1).particles[3], 190)
+        self.assertEqual(self.l0.particles[1], self.l0.travelTime - 190)
+
+
 

@@ -71,7 +71,7 @@ class OrbitSim:
                 target.particles[id] = 0
                 particle.velocity = 1
             elif location.id == target.topNode:
-                target.particles[id] = target.distance
+                target.particles[id] = target.travelTime
                 particle.velocity = -1
             else:
                 raise ValueError
@@ -86,6 +86,12 @@ class OrbitSim:
                 del location.particles[id]
             else:
                 raise ValueError
+
+    def tick(self, increment):
+        for p in self._particles.values():
+            location = self._particleLocation(p.id)
+            if isinstance(location, OrbitLink):
+                location.particles[p.id] += p.velocity * increment
 
 
         
