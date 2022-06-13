@@ -1,6 +1,7 @@
 import unittest
 
 from orbitsim.orbitLink import OrbitLink
+from orbitsim.particle import Particle
 
 class NodeMock:
     pass
@@ -43,12 +44,14 @@ class TestOrbitLinkParticles(unittest.TestCase):
     def setUp(self):
         self.l0 = OrbitLink(0, 0, 1)
 
-    def testOrbitNodeParticlesIsSet(self):
-        with self.assertRaises(TypeError):
-            self.l0.particles[0]
+    def testOrbitNodeParticlesIsDict(self):
+        with self.assertRaises(AttributeError):
+            self.l0.particles.add(0)
 
-        self.l0.particles.add(1)
-        self.l0.particles.add(1)
+        self.assertTrue(isinstance(self.l0.particles, dict))
+
+        self.l0.particles[1] = 0
+        self.l0.particles[1] = 0
 
         self.assertEqual(len(self.l0.particles), 1)
         self.assertTrue(1 in self.l0.particles)

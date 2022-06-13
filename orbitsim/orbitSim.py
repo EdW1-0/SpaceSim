@@ -52,7 +52,10 @@ class OrbitSim:
     def createParticle(self, node):
         id = next(self.idGenerator)
         self._particles[id] = Particle(id)
-        node.particles.add(id)
+        if(isinstance(node, OrbitNode)):
+            node.particles.add(id)
+        else:
+            raise TypeError
 
     def destroyParticle(self, id):
         location = self._particleLocation(id)
@@ -61,19 +64,32 @@ class OrbitSim:
 
     def transitParticle(self, id, targetId):
         location = self._particleLocation(id)
-        location.particles.remove(id)
+        particle = self.particleById(id)
         if isinstance(location, OrbitNode):
+            location.particles.remove(id)
             target = self.linkById(targetId)
+            if location.id == target.bottomNode:
+                target.particles[id] = 0
+                particle.velocity = 1
+            elif location.id == target.topNode:
+                target.particles[id] = target.distance
+                particle.velocity = -1
         else:
             target = self.nodeById(targetId)
-        target.particles.add(id)
+            target.particles.add(id)
+            particle.velocity = 0
+            del location.particles[id]
+
 
         
     def _particleLocation(self, id):
-        for category in (self._nodes, self._links):
-            for n in category.values():
-                if (id in n.particles):
-                    return n
+        for n in self._nodes.values():
+            if id in n.particles:
+                return n
+
+        for l in self._links.values():
+            if id in l.particles.keys():
+                return l
 
         raise KeyError
         

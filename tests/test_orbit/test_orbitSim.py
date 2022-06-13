@@ -107,28 +107,21 @@ class TestOrbitSimParticleCreation(unittest.TestCase):
         self.n0 = self.os.nodeById(0)
         self.os.createParticle(self.n0)
         self.os.createParticle(self.n0)
-        self.l0 = self.os.linkById(0)
-        self.os.createParticle(self.l0)
 
     def testOrbitSimParticleCreationLength(self):
         self.assertEqual(len(self.n0.particles), 2)
-        self.assertEqual(len(self.os._particles), 3)
-        self.assertEqual(len(self.l0.particles), 1)
+        self.assertEqual(len(self.os._particles), 2)
 
     def testOrbitSimParticleCreationTypes(self):
         for p in self.os._particles.values():
             self.assertTrue(isinstance(p, Particle))
         for p in self.n0.particles:
             self.assertFalse(isinstance(p, Particle))
-        for p in self.l0.particles:
-            self.assertFalse(isinstance(p, Particle))
 
     def testOrbitSimParticleCreationIds(self):
         for i in (0, 1):
             self.assertTrue(i in self.n0.particles)
-        for i in (2,):
-            self.assertTrue(i in self.l0.particles)
-        for i in (0, 1, 2):
+        for i in (0, 1):
             self.assertTrue(i in self.os._particles.keys())
             self.assertEqual(self.os._particles[i].id, i)
 
@@ -140,28 +133,27 @@ class TestOrbitSimParticleDestruction(unittest.TestCase):
         self.l0 = self.os.linkById(0)
         for i in range(10):
             self.os.createParticle(self.n0)
-            self.os.createParticle(self.l0)
 
     def testOrbitSimParticleDestructionNode(self):
         self.os.destroyParticle(2)
-        self.assertEqual(len(self.os._particles), 19)
+        self.assertEqual(len(self.os._particles), 9)
         with self.assertRaises(KeyError):
             self.os._particleLocation(2)
         self.assertFalse(2 in self.n0.particles)
 
         self.os.destroyParticle(3)
-        self.assertEqual(len(self.os._particles), 18)
+        self.assertEqual(len(self.os._particles), 8)
         with self.assertRaises(KeyError):
-            self.os._particleLocation(2)
-        self.assertFalse(3 in self.l0.particles)
+            self.os._particleLocation(3)
+        self.assertFalse(3 in self.n0.particles)
 
         self.os.createParticle(self.n0)
-        self.assertEqual(len(self.os._particles), 19)
+        self.assertEqual(len(self.os._particles), 9)
         try:
-            self.os.particleById(20)
+            self.os.particleById(10)
         except KeyError:
             self.fail("particleById threw KeyError for id 20!")
-        self.assertEqual(self.os.particleById(20).id, 20)
+        self.assertEqual(self.os.particleById(10).id, 10)
 
 
 class TestOrbitSimParticleTransit(unittest.TestCase):
@@ -171,7 +163,6 @@ class TestOrbitSimParticleTransit(unittest.TestCase):
         self.l0 = self.os.linkById(0)
         for i in range(10):
             self.os.createParticle(self.n0)
-            self.os.createParticle(self.l0)
 
     def testOrbitSimParticleTransitToLink(self):
         self.os.transitParticle(0, self.l0.id)
@@ -179,6 +170,7 @@ class TestOrbitSimParticleTransit(unittest.TestCase):
         self.assertTrue(0 not in self.n0.particles)
 
     def testOrbitSimParticleTransitToNode(self):
+        self.os.transitParticle(1, self.l0.id)
         self.os.transitParticle(1, self.n0.id)
         self.assertTrue(1 in self.n0.particles)
         self.assertTrue(1 not in self.l0.particles)
@@ -190,3 +182,21 @@ class TestOrbitSimParticleTransit(unittest.TestCase):
     def testOrbitSimParticleTransitInvalidTarget(self):
         with self.assertRaises(KeyError):
             self.os.transitParticle(1, 50)
+
+    def testOrbitSimParticleTransitInvariants(self):
+        self.assertEqual(len(self.os._particles), 10)
+        self.os.transitParticle(0, 0)
+        self.os.transitParticle(3, 1)
+        self.assertEqual(len(self.os._particles), 10)
+        self.assertEqual(len(self.n0.particles), 8)
+        self.assertEqual(len(self.l0.particles), 1)
+        self.assertEqual(len(self.os.linkById(1).particles), 1)
+
+class TestOrbitSimParticleTravel(unittest.TestCase):
+    def setUp(self):
+        self.os = OrbitSim("test_json/test_orbits/happy_case.json")
+        self.n0 = self.os.nodeById(0)
+        self.l0 = self.os.linkById(0)
+        for i in range(10):
+            self.os.createParticle(self.n0)
+

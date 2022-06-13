@@ -117,7 +117,8 @@ Links:
 - Progress within links (time)
   - Including directionality
 - Intercept other particles 
-  - This should put constraints on route planning, in fact we'll just neglect this.
+  - This should put constraints on route planning due to need to plan intercept trajectory, 
+    in fact we'll just neglect this.
 - Plan route for particle
 - Store route for particle and apply changes as needed. 
 
@@ -136,4 +137,24 @@ Links:
     - Mission failed
     - Collision
 
+- Transitions
+   - orbitSim 
+   - Both node/link and link/node handled the same way.
+   - Happens due to explicit action by particle - requires a deltaV. 
+     - Generally at start (transfer) and end (capture). Potentially throughout (g drag, a drag)
+   - Generally this will be automatically done by route planner. 
+
+- Progress in link:
+  - Need a way to apply time delta to particle.
+  - Particle needs to know:
+     - How far along in link
+     - Direction in link 
+  - Store on particle? - This I think.
+    Just store particle velocity.
+    - 0 for static on node
+    - +/- 1 for upward/downward at base delta v
+    - >1 for faster transfer 
+  - Store on link?
+    - Store particle progress.
+    - Replace set with dictionary - id: progress
     

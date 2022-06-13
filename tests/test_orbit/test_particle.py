@@ -9,5 +9,11 @@ class TestParticle(unittest.TestCase):
 
     def testParticleAttributes(self):
         self.assertTrue(hasattr(Particle(0), "id"))
+        self.assertTrue(hasattr(Particle(0), "velocity"))
+
+    def testParticleConstructor(self):
+        self.assertEqual(Particle(7).id, 7)
+        self.assertEqual(Particle(3).velocity, 0)
+        self.assertEqual(Particle(3, -1).velocity, -1)
 
     
