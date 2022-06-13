@@ -175,6 +175,12 @@ class TestOrbitSimParticleTransit(unittest.TestCase):
         self.assertTrue(1 in self.n0.particles)
         self.assertTrue(1 not in self.l0.particles)
 
+    def testOrbitSimParticleTransitFullClimb(self):
+        self.os.transitParticle(1, self.l0.id)
+        self.os.transitParticle(1, 1)
+        self.assertTrue(1 in self.os.nodeById(1).particles)
+        self.assertEqual(self.os.particleById(1).velocity, 0)
+
     def testOrbitSimParticleTransitInvalidParticle(self):
         with self.assertRaises(KeyError):
             self.os.transitParticle(30, self.n0.id)
@@ -182,6 +188,15 @@ class TestOrbitSimParticleTransit(unittest.TestCase):
     def testOrbitSimParticleTransitInvalidTarget(self):
         with self.assertRaises(KeyError):
             self.os.transitParticle(1, 50)
+
+    def testOrbitSimParticleTransitUnconnectedLink(self):
+        with self.assertRaises(ValueError):
+            self.os.transitParticle(0, 2)
+
+    def testOrbitSimParticleTransitUnconnectedNode(self):
+        self.os.transitParticle(2, 0)
+        with self.assertRaises(ValueError):
+            self.os.transitParticle(2, 2)
 
     def testOrbitSimParticleTransitInvariants(self):
         self.assertEqual(len(self.os._particles), 10)
@@ -199,4 +214,16 @@ class TestOrbitSimParticleTravel(unittest.TestCase):
         self.l0 = self.os.linkById(0)
         for i in range(10):
             self.os.createParticle(self.n0)
+
+    def testOrbitSimParticleTravelUp(self):
+        self.os.transitParticle(0,0)
+        self.assertEqual(self.os.particleById(0).velocity, 1)
+        self.assertEqual(self.l0.particles[0], 0)
+
+    def testOrbitSimParticleTravelDown(self):
+        self.os.transitParticle(1, 0)
+        self.os.transitParticle(1, 1)
+        self.os.transitParticle(1, 0)
+        self.assertEqual(self.os.particleById(1).velocity, -1)
+        self.assertEqual(self.l0.particles[1], self.l0.distance)
 

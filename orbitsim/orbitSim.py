@@ -66,7 +66,6 @@ class OrbitSim:
         location = self._particleLocation(id)
         particle = self.particleById(id)
         if isinstance(location, OrbitNode):
-            location.particles.remove(id)
             target = self.linkById(targetId)
             if location.id == target.bottomNode:
                 target.particles[id] = 0
@@ -74,11 +73,19 @@ class OrbitSim:
             elif location.id == target.topNode:
                 target.particles[id] = target.distance
                 particle.velocity = -1
+            else:
+                raise ValueError
+
+            location.particles.remove(id)
+
         else:
             target = self.nodeById(targetId)
-            target.particles.add(id)
-            particle.velocity = 0
-            del location.particles[id]
+            if (location.id in target.links):
+                target.particles.add(id)
+                particle.velocity = 0
+                del location.particles[id]
+            else:
+                raise ValueError
 
 
         
