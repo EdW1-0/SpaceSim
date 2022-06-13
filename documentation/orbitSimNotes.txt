@@ -157,4 +157,24 @@ Links:
   - Store on link?
     - Store particle progress.
     - Replace set with dictionary - id: progress
+
+
+- Trajectory handling:
+  - Store a series of ids e.g [0, 0, 1, 3, 5]
+  - Should be enough to always find next link/node. 
+  - Lives in orbitSim
+  - Has a target particle
+  - Receives ticks (instead of particle)
+  - Keeps tick budget
+  - While tb > 0:
+    - If in link - advance by remaining tb. Decrement tb.
+    - If reached a boundary, apply dv cost and transit.
+
+- Trajectory creation:
+  - Done by orbit sim.
+  - Give particle, target. 
+    - Or source, target, cargo 
+  - From this
+    [Create particle]
+  - Derive sequence to travel source -> target. 
     
