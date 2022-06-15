@@ -121,6 +121,7 @@ class OrbitSim:
         sourceNode = self.nodeById(sourceId)
         validPaths = []
         for linkId in sourceNode.links:
+            # Don't traverse links we have already traversed in this path
             checkedLinks = [path[2*i+1] for i in range(int(len(path)/2))]
             if linkId not in checkedLinks:
                 nextPath = [*path, linkId]
@@ -131,9 +132,12 @@ class OrbitSim:
                     nextId = link.bottomNode
                 else:
                     assert False, "Invalid link id for this node!"
-                paths = self._findPath(nextId, targetId, nextPath)
-                for path in paths:
-                    validPaths.append(path)
+                # Reject paths with redundant loops
+                checkedNodes = [path[2*i] for i in range(int(len(path)/2))]
+                if nextId not in checkedNodes:
+                    paths = self._findPath(nextId, targetId, nextPath)
+                    for p in paths:
+                        validPaths.append(p)
 
         return validPaths
 

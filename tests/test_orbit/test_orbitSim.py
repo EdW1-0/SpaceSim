@@ -295,12 +295,30 @@ class PayloadMock:
 class TestOrbitSimFindPath(unittest.TestCase):
     def setUp(self):
         self.os = OrbitSim("test_json/test_orbits/happy_case.json")
+        self.ucos = OrbitSim("test_json/test_orbits/unconnected.json")
+        self.los = OrbitSim("test_json/test_orbits/loops.json")
+        self.udos = OrbitSim("test_json/test_orbits/up_down.json")
+
 
     def testOrbitSimFindPath1Hop(self):
         self.assertEqual(self.os._findPath(0, 1, []), [[0,0,1]])
 
     def testOrbitSimFindPath2Hop(self):
         self.assertEqual(self.os._findPath(0, 2, []), [[0,0,1,2,2]])
+
+    def testOrbitSimFindPathUnconnected(self):
+        self.assertEqual(self.ucos._findPath(0, 2, []), [[0,0,1,1,2]])
+        self.assertEqual(self.ucos._findPath(3, 4, []), [[3,2,4]])
+        self.assertEqual(self.ucos._findPath(0, 3, []), [])
+
+    def testOrbitSimLoops(self):
+        self.assertEqual(self.los._findPath(0, 3, []), [[0,0,1,2,2,3,3],[0,1,3]])
+        self.assertEqual(self.los._findPath(3, 4, []), [[3, 4, 4], [3,5,4], [3,6,4]])
+        self.assertEqual(self.los._findPath(0, 4, []), [[0,0,1,2,2,3,3,4,4],[0,0,1,2,2,3,3,5,4],[0,0,1,2,2,3,3,6,4],[0,1,3,4,4],[0,1,3,5,4],[0,1,3,6,4]])
+
+    def testOrbitSimUpDown(self):
+        self.assertEqual(self.udos._findPath(0, 10, []), [[0,0,1,1,2,2,3,4,7,7,8,9,9,10,10]])
+        self.assertEqual(self.udos._findPath(6, 10, []), [[6,6,5,5,4,3,3,4,7,7,8,9,9,10,10]])
 
 class TestOrbitSimTrajectory(unittest.TestCase):
     def setUp(self):
@@ -309,6 +327,8 @@ class TestOrbitSimTrajectory(unittest.TestCase):
         self.l0 = self.os.linkById(0)
         for i in range(10):
             self.os.createParticle(self.n0)
+
+        self.ucos = OrbitSim("test_json/test_orbits/unconnected.json")
 
     def testOrbitSimTrajectoryCreationExistingParticle(self):
         self.assertTrue(self.os.createTrajectory(targetId = 2, particleId = 0))
@@ -328,6 +348,9 @@ class TestOrbitSimTrajectory(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.os.createTrajectory(targetId = 1, payload = PayloadMock())
 
-
     def testOrbitSimTrajectory1Hop(self):
         self.assertEqual(self.os.createTrajectory(targetId = 1, particleId = 0).trajectory, [0,0,1])
+
+    def testOrbitSimTrajectoryNoncontiguous(self):
+        self.assertEqual(self.ucos.createTrajectory(targetId = 2, sourceId = 0).trajectory, [0,0,1,1,2])
+        self.assertEqual(self.ucos.createTrajectory(targetId = 4, sourceId = 3).trajectory, [3,2,4])

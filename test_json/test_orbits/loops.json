@@ -1,0 +1,75 @@
+{
+    "Orbitals": [
+        { 
+            "name": "Sun",
+            "id": 0,
+            "gravity": 100,
+            "links": [
+                {
+                    "id": 1,
+                    "deltaV": 1000,
+                    "travelTime": 10000,
+                    "distance": 100000
+                },
+                {
+                    "id": 3,
+                    "deltaV": 500,
+                    "travelTime": 100000,
+                    "distance": 200000
+                }
+            ]
+        },
+        {
+            "name": "Sun Low Orbit",
+            "id": 1,
+            "links": [
+                {
+                    "id": 2,
+                    "deltaV": 200,
+                    "travelTime": 5e6,
+                    "distance": 1e7
+                }
+            ]
+        },
+        {
+            "name": "Sun Heliostationary",
+            "id": 2,
+            "links": [
+                {
+                    "id": 3,
+                    "deltaV": 300,
+                    "travelTime": 3e6,
+                    "distance": 4e7
+                }
+            ]
+        },
+        {
+            "name": "Sun Transfer",
+            "id": 3,
+            "links": [
+                {
+                    "id": 4,
+                    "deltaV": 40,
+                    "travelTime": 1e7,
+                    "distance": 5e8
+                },
+                {
+                    "id": 4,
+                    "deltaV": 40,
+                    "travelTime": 1e7,
+                    "distance": 5e8
+                },
+                {
+                    "id": 4,
+                    "deltaV": 40,
+                    "travelTime": 1e7,
+                    "distance": 5e8
+                }
+            ]
+        },
+        {
+            "name": "Mercury insertion",
+            "id": 4
+        }
+    ]
+}

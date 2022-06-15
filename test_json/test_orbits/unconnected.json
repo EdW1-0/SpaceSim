@@ -1,0 +1,48 @@
+{
+    "Orbitals": [
+        {
+            "name": "Castor",
+            "id": 0,
+            "links": [
+                {
+                    "id": 1,
+                    "deltaV": 100,
+                    "travelTime": 100,
+                    "distance": 100
+                }
+            ]
+        },
+        {
+            "name": "Castor low orbit",
+            "id": 1,
+            "links": [
+                {
+                    "id": 2,
+                    "deltaV": 100,
+                    "travelTime": 100,
+                    "distance": 100
+                }
+            ]
+        },
+        {
+            "name": "Castor high orbit",
+            "id": 2
+        },
+        {
+            "name": "Pollux",
+            "id": 3,
+            "links": [
+                {
+                    "id": 4,
+                    "deltaV": 100,
+                    "travelTime": 100,
+                    "distance": 100
+                }
+            ] 
+        },
+        {
+            "name": "Pollux low orbit",
+            "id": 4
+        }
+    ]
+}
