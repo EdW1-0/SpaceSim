@@ -3,6 +3,7 @@ import json
 from orbitsim.orbitNode import OrbitNode
 from orbitsim.orbitLink import OrbitLink
 from orbitsim.particle import Particle
+from orbitsim.orbitTrajectory import OrbitTrajectory
 
 class OrbitSim:
     def __init__(self, jsonPath = "json/Orbits.json"):
@@ -54,6 +55,7 @@ class OrbitSim:
         self._particles[id] = Particle(id)
         if(isinstance(node, OrbitNode)):
             node.particles.add(id)
+            return id
         else:
             raise TypeError
 
@@ -88,7 +90,17 @@ class OrbitSim:
                 raise ValueError
 
     def createTrajectory(self, targetId, particleId = None, sourceId = None, payload = None):
-        return [0]
+        if particleId is not None:
+            sourceId = self._particleLocation(particleId).id
+            ot = OrbitTrajectory(particleId, self._findPath(sourceId, targetId, [])[0])
+        elif sourceId is not None:
+            id = self.createParticle(self.nodeById(sourceId))
+            ot = OrbitTrajectory(id, self._findPath(sourceId, targetId, [])[0])
+        else:
+            raise ValueError("Insufficient parameters to construct trajectory")
+        return ot
+
+
 
     def tick(self, increment):
         for p in self._particles.values():
@@ -101,6 +113,38 @@ class OrbitSim:
                 elif location.particles[p.id] < 0:
                     self.transitParticle(p.id, location.bottomNode)
 
+    def _findPath(self, sourceId, targetId, priorPath):
+        path = [*priorPath, sourceId]
+        if sourceId is targetId:
+            return [path]
+
+        sourceNode = self.nodeById(sourceId)
+        validPaths = []
+        for linkId in sourceNode.links:
+            checkedLinks = [path[2*i+1] for i in range(int(len(path)/2))]
+            if linkId not in checkedLinks:
+                nextPath = [*path, linkId]
+                link = self.linkById(linkId)
+                if sourceId is link.bottomNode:
+                    nextId = link.topNode
+                elif sourceId is link.topNode:
+                    nextId = link.bottomNode
+                else:
+                    assert False, "Invalid link id for this node!"
+                paths = self._findPath(nextId, targetId, nextPath)
+                for path in paths:
+                    validPaths.append(path)
+
+        return validPaths
+
+        # Given prior path
+        # Get node
+        # Append node id to path
+        # If node is target, return path
+        # Get all links for node
+        # For each unchecked link, append link id, call self on endpoint
+        # Collate array of subarrays
+        # Return arrays
 
         
     def _particleLocation(self, id):

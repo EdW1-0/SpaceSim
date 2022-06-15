@@ -4,6 +4,7 @@ import json
 
 from orbitsim.orbitSim import OrbitSim
 from orbitsim.particle import Particle
+from orbitsim.orbitTrajectory import OrbitTrajectory
 
 class TestOrbitSim(unittest.TestCase):
     def testOrbitSim(self):
@@ -124,6 +125,11 @@ class TestOrbitSimParticleCreation(unittest.TestCase):
         for i in (0, 1):
             self.assertTrue(i in self.os._particles.keys())
             self.assertEqual(self.os._particles[i].id, i)
+
+    def testOrbitSimParticleCreationReturnValue(self):
+        n1 = self.os.nodeById(1)
+        for i in range(5):
+            self.assertEqual(self.os.createParticle(n1), i+2)
 
 
 class TestOrbitSimParticleDestruction(unittest.TestCase):
@@ -286,7 +292,17 @@ class TestOrbitSimParticleArrival(unittest.TestCase):
 class PayloadMock:
     pass
 
-class TestOrbitSimTrajectoryCreation(unittest.TestCase):
+class TestOrbitSimFindPath(unittest.TestCase):
+    def setUp(self):
+        self.os = OrbitSim("test_json/test_orbits/happy_case.json")
+
+    def testOrbitSimFindPath1Hop(self):
+        self.assertEqual(self.os._findPath(0, 1, []), [[0,0,1]])
+
+    def testOrbitSimFindPath2Hop(self):
+        self.assertEqual(self.os._findPath(0, 2, []), [[0,0,1,2,2]])
+
+class TestOrbitSimTrajectory(unittest.TestCase):
     def setUp(self):
         self.os = OrbitSim("test_json/test_orbits/happy_case.json")
         self.n0 = self.os.nodeById(0)
@@ -296,6 +312,22 @@ class TestOrbitSimTrajectoryCreation(unittest.TestCase):
 
     def testOrbitSimTrajectoryCreationExistingParticle(self):
         self.assertTrue(self.os.createTrajectory(targetId = 2, particleId = 0))
+        self.assertIsInstance(self.os.createTrajectory(targetId = 2, particleId = 0), OrbitTrajectory)
+        self.assertEqual(self.os.createTrajectory(targetId = 2, particleId = 0).particleId, 0)
+        
 
     def testOrbitSimTrajectoryCreationNewParticle(self):
-        self.assertTrue(self.os.createTrajectory(targetId = 2, sourceId = 0, payload = PayloadMock()))
+        t = self.os.createTrajectory(targetId = 0, sourceId = 2, payload = PayloadMock())
+        self.assertTrue(t)
+        self.assertIsInstance(t, OrbitTrajectory)
+
+        self.assertTrue(self.os.particleById(t.particleId))
+        self.assertEqual(self.os._particleLocation(t.particleId).id, 2)
+
+    def testOrbitSimTrajectoryCreationException(self):
+        with self.assertRaises(ValueError):
+            self.os.createTrajectory(targetId = 1, payload = PayloadMock())
+
+
+    def testOrbitSimTrajectory1Hop(self):
+        self.assertEqual(self.os.createTrajectory(targetId = 1, particleId = 0).trajectory, [0,0,1])
