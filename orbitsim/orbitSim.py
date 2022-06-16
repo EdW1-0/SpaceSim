@@ -128,15 +128,40 @@ class OrbitSim:
 
 
     def tick(self, increment):
-        for p in self._particles.values():
-            location = self._particleLocation(p.id)
-            if isinstance(location, OrbitLink):
-                location.particles[p.id] += p.velocity * increment
+        for t in self._trajectories.values():
+            timeBudget = increment
+            while timeBudget > 0:
+                location = self._particleLocation(t.particleId)
+                if isinstance(location, OrbitNode):
+                    if (location.id is t.trajectory[-1]):
+                        timeBudget = 0
+                        continue
 
-                if location.particles[p.id] > location.travelTime:
-                    self.transitParticle(p.id, location.topNode)
-                elif location.particles[p.id] < 0:
-                    self.transitParticle(p.id, location.bottomNode)
+                    linkId = t.nextLink(location.id)
+                    self.transitParticle(t.particleId, linkId)
+                elif isinstance(location, OrbitLink):
+                    particle = self.particleById(t.particleId)
+                    delta = timeBudget * particle.velocity
+                    newTime = location.particles[t.particleId] + delta
+                    if newTime < 0:
+                        timeBudget = (newTime/particle.velocity)
+                        self.transitParticle(t.particleId, location.bottomNode)
+                    elif newTime > location.travelTime:
+                        timeBudget = int((newTime - location.travelTime)/particle.velocity)
+                        self.transitParticle(t.particleId, location.topNode)
+                    else:
+                        location.particles[t.particleId] += delta
+                        timeBudget = 0
+
+        #for p in self._particles.values():
+        #    location = self._particleLocation(p.id)
+        #    if isinstance(location, OrbitLink):
+        #        location.particles[p.id] += p.velocity * increment
+
+        #        if location.particles[p.id] > location.travelTime:
+        #            self.transitParticle(p.id, location.topNode)
+        #        elif location.particles[p.id] < 0:
+        #            self.transitParticle(p.id, location.bottomNode)
 
     def _findPath(self, sourceId, targetId, priorPath):
         path = [*priorPath, sourceId]

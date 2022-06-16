@@ -241,8 +241,11 @@ class TestOrbitSimTick(unittest.TestCase):
         self.l0 = self.os.linkById(0)
         for i in range(10):
             self.os.createParticle(self.n0)
+
         
     def testOrbitSimTickUpMotion(self):
+        self.os.createTrajectory(targetId = 1, particleId = 1)
+
         self.os.transitParticle(1, 0)
         self.os.tick(100)
         self.assertEqual(self.l0.particles[1], 100)
@@ -250,15 +253,19 @@ class TestOrbitSimTick(unittest.TestCase):
     def testOrbitSimTickDownMotion(self):
         self.os.transitParticle(5, 0)
         self.os.transitParticle(5, 1)
+        self.os.createTrajectory(particleId = 5, targetId = 0)
         self.os.transitParticle(5, 0)
         self.os.tick(300)
         self.assertEqual(self.l0.particles[5], self.l0.travelTime - 300)
 
     def testOrbitSimTickUpMulti(self):
+        self.os.createTrajectory(1, particleId = 2)
         self.os.transitParticle(2, 0)
+        self.os.createTrajectory(3, particleId = 3)
         self.os.transitParticle(3, 1)
         self.os.transitParticle(1, 0)
         self.os.transitParticle(1, 1)
+        self.os.createTrajectory(0, particleId = 1)
         self.os.transitParticle(1, 0)
         self.os.tick(30)
         self.os.tick(50)
@@ -276,6 +283,7 @@ class TestOrbitSimParticleArrival(unittest.TestCase):
             self.os.createParticle(self.n0)
 
     def testOrbitSimTopArrival(self):
+        self.os.createTrajectory(1, particleId = 2)
         self.os.transitParticle(2, 0)
         self.os.tick(self.l0.travelTime + 100)
         self.assertTrue(2 in self.os.nodeById(1).particles)
@@ -284,6 +292,7 @@ class TestOrbitSimParticleArrival(unittest.TestCase):
     def testOrbitSimBottomArrival(self):
         self.os.transitParticle(6, 0)
         self.os.transitParticle(6, 1)
+        self.os.createTrajectory(0, particleId = 6)
         self.os.transitParticle(6, 0)
         self.os.tick(self.l0.travelTime + 100)
         self.assertTrue(6 in self.n0.particles)
@@ -330,6 +339,7 @@ class TestOrbitSimTrajectory(unittest.TestCase):
 
         self.ucos = OrbitSim("test_json/test_orbits/unconnected.json")
         self.los = OrbitSim("test_json/test_orbits/loops.json")
+        self.udos = OrbitSim("test_json/test_orbits/up_down.json")
 
     def testOrbitSimTrajectoryCreationExistingParticle(self):
         self.assertTrue(self.os.createTrajectory(targetId = 2, particleId = 0))
@@ -371,3 +381,32 @@ class TestOrbitSimTrajectory(unittest.TestCase):
         self.os.createTrajectory(targetId = 1, particleId = 0)
         with self.assertRaises(KeyError):
             self.os.createTrajectory(targetId = 2, particleId = 0)
+
+    def testOrbitSimTrajectoryTimeStep(self):
+        self.os.createTrajectory(targetId = 1, particleId = 0)
+        self.os.tick(100)
+        self.assertTrue(0 in self.os.linkById(0).particles)
+        self.assertEqual(self.os.linkById(0).particles[0], 100)
+
+    def testOrbitSimTrajectoryFullLink(self):
+        self.os.createTrajectory(targetId = 1, particleId = 0)
+        self.os.tick(10100)
+        self.assertTrue(0 in self.os.nodeById(1).particles)
+
+    def testOrbitSimMultiHop(self):
+        self.udos.createTrajectory(targetId = 9, sourceId = 0)
+        self.udos.tick(1000)
+        self.assertTrue(0 in self.udos.nodeById(9).particles)
+
+    def testOrbitSimMultiHopDown(self):
+        self.udos.createTrajectory(targetId = 0, sourceId = 9)
+        self.udos.tick(1000)
+        self.assertTrue(0 in self.udos.nodeById(0).particles)
+
+    def testOrbitSimMultiHopPartial(self):
+        self.udos.createTrajectory(targetId = 10, sourceId = 6)
+        self.udos.tick(65)
+        self.assertTrue(0 in self.udos.linkById(10).particles)
+        self.assertEqual(self.udos.linkById(10).particles[0], 5)
+
+

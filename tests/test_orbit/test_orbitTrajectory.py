@@ -15,3 +15,14 @@ class TestOrbitTrajectoryAttributes(unittest.TestCase):
 class TestOrbitTrajectoryConstructor(unittest.TestCase):
     def testOrbitTrajectoryConstructor(self):
         self.assertTrue(OrbitTrajectory(0, [0, 0, 1]))
+        
+class TestOrbitTrajectoryUtilities(unittest.TestCase):
+    def setUp(self):
+        self.ot = OrbitTrajectory(0, [3,5,4,8,5,9,9])
+    def testOrbitTrajectoryNextLink(self):
+        self.assertEqual(self.ot.nextLink(3), 5)
+        self.assertEqual(self.ot.nextLink(5), 9)
+    def testOrbitTrajectoryNextNode(self):
+        self.assertEqual(self.ot.nextNode(5), 4)
+        self.assertEqual(self.ot.nextNode(9), 9)
+
