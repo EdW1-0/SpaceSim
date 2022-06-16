@@ -409,4 +409,26 @@ class TestOrbitSimTrajectory(unittest.TestCase):
         self.assertTrue(0 in self.udos.linkById(10).particles)
         self.assertEqual(self.udos.linkById(10).particles[0], 5)
 
+    def testOrbitSimPruneCompletedTrajectories(self):
+        self.os.createTrajectory(1, sourceId = 0)
+        self.os.createTrajectory(2, sourceId = 0)
+        self.assertEqual(len(self.os._trajectories), 2)
+        self.os.tick(1e6)
+        self.assertEqual(len(self.os._trajectories), 1)
+
+    def testOrbitSimCancelTrajectory(self):
+        self.os.createTrajectory(2, sourceId = 0)
+        self.os.tick(5000)
+        self.os.createTrajectory(2, sourceId = 0)
+        self.assertEqual(len(self.os._trajectories), 2)
+        self.os.cancelTrajectory(11)
+        self.assertEqual(len(self.os._trajectories), 1)
+        self.os.cancelTrajectory(10)
+        self.assertEqual(len(self.os._trajectories), 1)
+        self.assertEqual(self.os.trajectoryForParticle(10).trajectory, [0, 0, 1])
+        self.os.tick(6000)
+        self.assertEqual(len(self.os._trajectories), 0)
+        with self.assertRaises(KeyError):
+            self.os.cancelTrajectory(0)
+
 

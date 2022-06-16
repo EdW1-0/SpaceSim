@@ -125,6 +125,32 @@ class OrbitSim:
         self._trajectories[particleId] = ot
         return ot
 
+    def cancelTrajectory(self, id):
+        location = self._particleLocation(id)
+        # If on a node, can cancel immediately. Otherwise should target next node and stop there.
+        if (isinstance(location, OrbitNode)):
+            t = self.trajectoryForParticle(id)
+            t.trajectory = [location.id]
+        else:
+            t = self.trajectoryForParticle(id)
+            p = self.particleById(id)
+            if (p.velocity > 0):
+                t.trajectory = [location.bottomNode, location.id, location.topNode]
+            else:
+                t.trajectory = [location.topNode, location.id, location.bottomNode]
+
+        self._pruneTrajectories()
+
+    def _pruneTrajectories(self):
+        def isTerminal(t):
+            location = self._particleLocation(t.particleId)
+            if (isinstance(location, OrbitNode)) and (location.id is t.trajectory[-1]):
+                return True
+            else:
+                return False
+
+        self._trajectories = {t: self._trajectories[t] for t in self._trajectories if (not isTerminal(self.trajectoryForParticle(t)))}
+
 
 
     def tick(self, increment):
@@ -153,15 +179,8 @@ class OrbitSim:
                         location.particles[t.particleId] += delta
                         timeBudget = 0
 
-        #for p in self._particles.values():
-        #    location = self._particleLocation(p.id)
-        #    if isinstance(location, OrbitLink):
-        #        location.particles[p.id] += p.velocity * increment
+        self._pruneTrajectories()
 
-        #        if location.particles[p.id] > location.travelTime:
-        #            self.transitParticle(p.id, location.topNode)
-        #        elif location.particles[p.id] < 0:
-        #            self.transitParticle(p.id, location.bottomNode)
 
     def _findPath(self, sourceId, targetId, priorPath):
         path = [*priorPath, sourceId]
