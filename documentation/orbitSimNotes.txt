@@ -177,4 +177,13 @@ Links:
   - From this
     [Create particle]
   - Derive sequence to travel source -> target. 
+
+
+- Store trajectories in orbitSim
+- Add time evolution
+- Check existing trajectories on creation
+- Add cancel interface
+- Add deltav debiting (can fail!)
+- Think about aborts
+- Think about arrival
     

@@ -333,8 +333,8 @@ class TestOrbitSimTrajectory(unittest.TestCase):
 
     def testOrbitSimTrajectoryCreationExistingParticle(self):
         self.assertTrue(self.os.createTrajectory(targetId = 2, particleId = 0))
-        self.assertIsInstance(self.os.createTrajectory(targetId = 2, particleId = 0), OrbitTrajectory)
-        self.assertEqual(self.os.createTrajectory(targetId = 2, particleId = 0).particleId, 0)
+        self.assertIsInstance(self.os.createTrajectory(targetId = 2, particleId = 1), OrbitTrajectory)
+        self.assertEqual(self.os.createTrajectory(targetId = 2, particleId = 2).particleId, 2)
         
 
     def testOrbitSimTrajectoryCreationNewParticle(self):
@@ -360,3 +360,14 @@ class TestOrbitSimTrajectory(unittest.TestCase):
 
     def testOrbitSimTrajectoryDeltaV(self):
         self.assertEqual(self.los.createTrajectory(targetId = 3, sourceId = 0).trajectory, [0,1,3])
+
+    def testOrbitSimTrajectoryRetrieval(self):
+        self.os.createTrajectory(targetId = 1, sourceId = 0)
+        self.os.createTrajectory(targetId = 2, sourceId = 0)
+        self.assertEqual(self.os.trajectoryForParticle(10).trajectory, [0,0,1])
+        self.assertEqual(self.os.trajectoryForParticle(11).trajectory, [0,0,1,2,2])
+
+    def testOrbitSimTrajectoryExistingTrajectory(self):
+        self.os.createTrajectory(targetId = 1, particleId = 0)
+        with self.assertRaises(KeyError):
+            self.os.createTrajectory(targetId = 2, particleId = 0)

@@ -44,6 +44,8 @@ class OrbitSim:
         self._particles = {}
         self.idGenerator = self.newParticleId()
 
+        self._trajectories = {}
+
     def newParticleId(self):
         nodeIdCounter = 0
         while True:
@@ -91,7 +93,13 @@ class OrbitSim:
 
     def createTrajectory(self, targetId, particleId = None, sourceId = None, payload = None):
         if particleId is not None:
-            sourceId = self._particleLocation(particleId).id
+            try:
+                self.trajectoryForParticle(particleId)
+            except KeyError:
+                sourceId = self._particleLocation(particleId).id
+            else:
+                raise KeyError("Particle has existing trajectory")
+
         elif sourceId is None:
             raise ValueError("Insufficient parameters to construct trajectory")
 
@@ -113,6 +121,8 @@ class OrbitSim:
                 minPath = path
 
         ot = OrbitTrajectory(particleId, minPath)
+        #Key the trajectory using the particleId. This ensures 1-1 mapping. 
+        self._trajectories[particleId] = ot
         return ot
 
 
@@ -206,3 +216,12 @@ class OrbitSim:
         elif id < 0:
             raise ValueError
         return self._particles[id]
+    
+    def trajectoryForParticle(self, particleId):
+        if not isinstance(particleId, int):
+            raise TypeError
+        elif particleId < 0:
+            raise ValueError
+        return self._trajectories[particleId]
+
+
