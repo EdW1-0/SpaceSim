@@ -329,6 +329,7 @@ class TestOrbitSimTrajectory(unittest.TestCase):
             self.os.createParticle(self.n0)
 
         self.ucos = OrbitSim("test_json/test_orbits/unconnected.json")
+        self.los = OrbitSim("test_json/test_orbits/loops.json")
 
     def testOrbitSimTrajectoryCreationExistingParticle(self):
         self.assertTrue(self.os.createTrajectory(targetId = 2, particleId = 0))
@@ -354,3 +355,8 @@ class TestOrbitSimTrajectory(unittest.TestCase):
     def testOrbitSimTrajectoryNoncontiguous(self):
         self.assertEqual(self.ucos.createTrajectory(targetId = 2, sourceId = 0).trajectory, [0,0,1,1,2])
         self.assertEqual(self.ucos.createTrajectory(targetId = 4, sourceId = 3).trajectory, [3,2,4])
+        with self.assertRaises(ValueError):
+            self.ucos.createTrajectory(targetId = 3, sourceId = 0)
+
+    def testOrbitSimTrajectoryDeltaV(self):
+        self.assertEqual(self.los.createTrajectory(targetId = 3, sourceId = 0).trajectory, [0,1,3])

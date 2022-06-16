@@ -92,12 +92,27 @@ class OrbitSim:
     def createTrajectory(self, targetId, particleId = None, sourceId = None, payload = None):
         if particleId is not None:
             sourceId = self._particleLocation(particleId).id
-            ot = OrbitTrajectory(particleId, self._findPath(sourceId, targetId, [])[0])
-        elif sourceId is not None:
-            id = self.createParticle(self.nodeById(sourceId))
-            ot = OrbitTrajectory(id, self._findPath(sourceId, targetId, [])[0])
-        else:
+        elif sourceId is None:
             raise ValueError("Insufficient parameters to construct trajectory")
+
+        paths = self._findPath(sourceId, targetId, [])
+
+        # This seems to do the right thing if paths is empty, not sure this is pythonic though
+        if not paths:
+            raise ValueError("No valid path found between endpoints")
+
+        if particleId is None:
+            particleId = self.createParticle(self.nodeById(sourceId))
+
+        minDv = None
+        minPath = []
+        for path in paths:
+            dv = self._deltaVCost(path)
+            if (minDv is None) or (dv < minDv):
+                minDv = dv
+                minPath = path
+
+        ot = OrbitTrajectory(particleId, minPath)
         return ot
 
 
@@ -149,6 +164,14 @@ class OrbitSim:
         # For each unchecked link, append link id, call self on endpoint
         # Collate array of subarrays
         # Return arrays
+
+    def _deltaVCost(self, path):
+        dv = 0
+        for i in range(int(len(path)/2)):
+            dv += self.linkById(path[2*i+1]).deltaV
+        return dv
+
+
 
         
     def _particleLocation(self, id):
