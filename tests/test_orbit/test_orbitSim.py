@@ -3,8 +3,18 @@ import unittest
 import json
 
 from orbitsim.orbitSim import OrbitSim
-from orbitsim.particle import Particle
+from orbitsim.particle import DeltaVError, Particle
 from orbitsim.orbitTrajectory import OrbitTrajectory
+
+class PayloadMock:
+    def __init__(self, deltaV):
+        self.dV = deltaV
+
+    def deltaV(self):
+        return self.dV 
+
+    def burnDeltaV(self, dv):
+        self.dV -= dv
 
 class TestOrbitSim(unittest.TestCase):
     def testOrbitSim(self):
@@ -298,8 +308,6 @@ class TestOrbitSimParticleArrival(unittest.TestCase):
         self.assertTrue(6 in self.n0.particles)
         self.assertEqual(self.os.particleById(6).velocity, 0)
 
-class PayloadMock:
-    pass
 
 class TestOrbitSimFindPath(unittest.TestCase):
     def setUp(self):
@@ -335,7 +343,8 @@ class TestOrbitSimTrajectory(unittest.TestCase):
         self.n0 = self.os.nodeById(0)
         self.l0 = self.os.linkById(0)
         for i in range(10):
-            self.os.createParticle(self.n0)
+            pl = PayloadMock(10000.0)
+            self.os.createParticle(self.n0, payload = pl)
 
         self.ucos = OrbitSim("test_json/test_orbits/unconnected.json")
         self.los = OrbitSim("test_json/test_orbits/loops.json")
@@ -348,7 +357,7 @@ class TestOrbitSimTrajectory(unittest.TestCase):
         
 
     def testOrbitSimTrajectoryCreationNewParticle(self):
-        t = self.os.createTrajectory(targetId = 0, sourceId = 2, payload = PayloadMock())
+        t = self.os.createTrajectory(targetId = 0, sourceId = 2, payload = PayloadMock(30.0))
         self.assertTrue(t)
         self.assertIsInstance(t, OrbitTrajectory)
 
@@ -357,7 +366,7 @@ class TestOrbitSimTrajectory(unittest.TestCase):
 
     def testOrbitSimTrajectoryCreationException(self):
         with self.assertRaises(ValueError):
-            self.os.createTrajectory(targetId = 1, payload = PayloadMock())
+            self.os.createTrajectory(targetId = 1, payload = PayloadMock(20.0))
 
     def testOrbitSimTrajectory1Hop(self):
         self.assertEqual(self.os.createTrajectory(targetId = 1, particleId = 0).trajectory, [0,0,1])
@@ -394,32 +403,32 @@ class TestOrbitSimTrajectory(unittest.TestCase):
         self.assertTrue(0 in self.os.nodeById(1).particles)
 
     def testOrbitSimMultiHop(self):
-        self.udos.createTrajectory(targetId = 9, sourceId = 0)
+        self.udos.createTrajectory(targetId = 9, sourceId = 0, payload = PayloadMock(10000.0))
         self.udos.tick(1000)
         self.assertTrue(0 in self.udos.nodeById(9).particles)
 
     def testOrbitSimMultiHopDown(self):
-        self.udos.createTrajectory(targetId = 0, sourceId = 9)
+        self.udos.createTrajectory(targetId = 0, sourceId = 9, payload = PayloadMock(10000.0))
         self.udos.tick(1000)
         self.assertTrue(0 in self.udos.nodeById(0).particles)
 
     def testOrbitSimMultiHopPartial(self):
-        self.udos.createTrajectory(targetId = 10, sourceId = 6)
+        self.udos.createTrajectory(targetId = 10, sourceId = 6, payload = PayloadMock(10000.0))
         self.udos.tick(65)
         self.assertTrue(0 in self.udos.linkById(10).particles)
         self.assertEqual(self.udos.linkById(10).particles[0], 5)
 
     def testOrbitSimPruneCompletedTrajectories(self):
-        self.os.createTrajectory(1, sourceId = 0)
-        self.os.createTrajectory(2, sourceId = 0)
+        self.os.createTrajectory(1, sourceId = 0, payload = PayloadMock(10000.0))
+        self.os.createTrajectory(2, sourceId = 0, payload = PayloadMock(10000.0))
         self.assertEqual(len(self.os._trajectories), 2)
         self.os.tick(1e6)
         self.assertEqual(len(self.os._trajectories), 1)
 
     def testOrbitSimCancelTrajectory(self):
-        self.os.createTrajectory(2, sourceId = 0)
+        self.os.createTrajectory(2, sourceId = 0, payload = PayloadMock(10000.0))
         self.os.tick(5000)
-        self.os.createTrajectory(2, sourceId = 0)
+        self.os.createTrajectory(2, sourceId = 0, payload = PayloadMock(10000.0))
         self.assertEqual(len(self.os._trajectories), 2)
         self.os.cancelTrajectory(11)
         self.assertEqual(len(self.os._trajectories), 1)
@@ -431,4 +440,33 @@ class TestOrbitSimTrajectory(unittest.TestCase):
         with self.assertRaises(KeyError):
             self.os.cancelTrajectory(0)
 
+class TestOrbitSimDeltaVBudget(unittest.TestCase):
+    def setUp(self):
+        self.udos = OrbitSim("test_json/test_orbits/up_down.json")
+        self.n0 = self.udos.nodeById(0)
+        self.l0 = self.udos.linkById(0)
+        for i in range(10):
+            pl = PayloadMock(deltaV = 50.0)
+            self.udos.createParticle(self.n0, payload = pl)
 
+    def testOrbitSimDeltaVSingleHop(self):
+        self.udos.createTrajectory(1, particleId = 0)
+        self.assertEqual(self.udos.particleById(0).deltaV(), 50.0)
+        self.udos.tick(5)
+        self.assertTrue(0 in self.l0.particles)
+        self.assertEqual(self.udos.particleById(0).deltaV(), 40.0)
+
+    def testOrbitSimDeltaVMultiHop(self):
+        self.udos.createTrajectory(6, sourceId = 0, payload = PayloadMock(100.0))
+        self.assertEqual(self.udos.particleById(10).deltaV(), 100.0)
+        self.udos.tick(100)
+        self.assertEqual(self.udos.particleById(10).deltaV(), 40.0)
+        self.assertTrue(10 in self.udos.nodeById(6).particles)
+
+    def testOrbitSimDeltaVInsufficientDeltaV(self):
+        self.udos.createTrajectory(10, particleId = 3)
+        self.assertEqual(self.udos.particleById(3).deltaV(), 50.0)
+        self.udos.tick(100)
+        self.udos.tick(100)
+        self.assertEqual(self.udos.particleById(3).deltaV(), 0.0)
+        self.assertTrue(3 in self.udos.nodeById(8).particles)

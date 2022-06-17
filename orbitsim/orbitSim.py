@@ -2,7 +2,7 @@ import json
 
 from orbitsim.orbitNode import OrbitNode
 from orbitsim.orbitLink import OrbitLink
-from orbitsim.particle import Particle
+from orbitsim.particle import Particle, DeltaVError
 from orbitsim.orbitTrajectory import OrbitTrajectory
 
 class OrbitSim:
@@ -52,9 +52,9 @@ class OrbitSim:
             yield nodeIdCounter
             nodeIdCounter += 1
 
-    def createParticle(self, node):
+    def createParticle(self, node, payload = None):
         id = next(self.idGenerator)
-        self._particles[id] = Particle(id)
+        self._particles[id] = Particle(id, payload = payload)
         if(isinstance(node, OrbitNode)):
             node.particles.add(id)
             return id
@@ -110,7 +110,7 @@ class OrbitSim:
             raise ValueError("No valid path found between endpoints")
 
         if particleId is None:
-            particleId = self.createParticle(self.nodeById(sourceId))
+            particleId = self.createParticle(self.nodeById(sourceId), payload)
 
         minDv = None
         minPath = []
@@ -164,7 +164,17 @@ class OrbitSim:
                         continue
 
                     linkId = t.nextLink(location.id)
-                    self.transitParticle(t.particleId, linkId)
+
+                    deltaVCost = self.linkById(linkId).deltaV
+                    particle = self.particleById(t.particleId)
+                    try:
+                        particle.burnDeltaV(deltaVCost)
+                    except DeltaVError:
+                        timeBudget = 0
+                        continue
+                    else:
+                        self.transitParticle(t.particleId, linkId)
+
                 elif isinstance(location, OrbitLink):
                     particle = self.particleById(t.particleId)
                     delta = timeBudget * particle.velocity
