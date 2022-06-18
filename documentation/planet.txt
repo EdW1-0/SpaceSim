@@ -1,0 +1,53 @@
+Planet surface
+	⁃	planet object:
+	⁃	May have atmosphere
+	⁃	May have surface
+	⁃	Gravity
+	⁃	Magnetic field 
+
+Surface:
+	⁃	regions
+	⁃	Points
+	⁃	Scale (relates to converting travel space to lat/long, essentially radius)
+
+Region:
+	⁃	has list of borders 
+	⁃	Border specifies next region, start end in lat/long
+	⁃	Static
+	⁃	Has attributes - travers able, resources etc
+
+Point
+	⁃	has lat, long
+	⁃	Has attached object (vehicle, colony)
+	⁃	Has velocity
+
+
+Then detect border traversal
+Check whole surface covered
+Work out how to render
+
+Add mission planning & pathing
+
+
+Pathing:
+	⁃	given start & end lat/long
+	⁃	Can compute heading, distance
+	⁃	Then travel time from v
+	⁃	Then time evolve - given time delta, use v to find angular distance
+	⁃	Then compute waypoint for new lat long
+
+Rendering:
+	⁃	perhaps ray tracing - works ok for spheres. Find intersection of ray. Then just compute owning region.
+	⁃	Start with photon source - eg point source, or diffuse
+	⁃	Then give random trajectory
+	⁃	Compute intersections
+	⁃	Reflect/scatter, colour
+	⁃	Compute intersection with screen 
+	⁃	Histogram
+	⁃	Points may be trickier. Prob do as sprites.
+	⁃	
+
+Will need:
+	⁃	Region for point function
+	⁃	Algorithm to check region coverage
+	⁃	Algorithm to convert point sprite location from lat long to screen coords 
