@@ -51,3 +51,8 @@ Will need:
 	⁃	Region for point function
 	⁃	Algorithm to check region coverage
 	⁃	Algorithm to convert point sprite location from lat long to screen coords 
+
+
+Lean heavily on resources:
+http://www.movable-type.co.uk/scripts/latlong.html
+http://www.movable-type.co.uk/scripts/latlong-vectors.html#intersection

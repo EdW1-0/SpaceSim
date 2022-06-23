@@ -1,6 +1,6 @@
 import unittest
 
-from planetsim.planetSurface import PlanetSurface
+from planetsim.planetSurface import PlanetSurface, EARTH_RADIUS
 from planetsim.surfacePoint import SurfacePoint
 
 class TestPlanetSurface(unittest.TestCase):
@@ -11,9 +11,12 @@ class TestPlanetSurface(unittest.TestCase):
     def testPlanetSurfaceAttributes(self):
         self.assertTrue(hasattr(PlanetSurface(), "regions"))
         self.assertTrue(hasattr(PlanetSurface(), "points"))
+        self.assertTrue(hasattr(PlanetSurface(), "radius"))
 
     def testPlanetSurfaceConstructor(self):
         self.assertTrue(PlanetSurface("test_json/test_surfaces/single_region.json"))
+        self.assertEqual(PlanetSurface("test_json/test_surfaces/single_region.json").radius, EARTH_RADIUS)
+        
         
 class TestPlanetSurfaceLoading(unittest.TestCase):
     def setUp(self):
@@ -27,3 +30,12 @@ class TestPlanetSurfaceLoading(unittest.TestCase):
         self.assertEqual(len(self.ps.regions[0].borders), 3)
         for b in self.ps.regions[0].borders:
             self.assertIsInstance(b, SurfacePoint)
+
+    def testGreatCircleDistance(self):
+        pass #self.assertEqual()
+
+    def testPathsIntersect(self):
+        pass
+
+    def testPointInRegion(self):
+        pass

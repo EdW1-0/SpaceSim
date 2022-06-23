@@ -3,8 +3,11 @@ import json
 from planetsim.surfaceRegion import SurfaceRegion
 from planetsim.surfacePoint import SurfacePoint
 
+EARTH_RADIUS = 6371000
+
 class PlanetSurface:
-    def __init__(self, jsonPath = "json/Surface.json"):
+    def __init__(self, jsonPath = "json/Surface.json", radius = EARTH_RADIUS):
+        self.radius = radius
         self.regions = []
         self.points = []
         jsonFile = open(jsonPath, "r")
