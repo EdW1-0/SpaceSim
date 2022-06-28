@@ -1,6 +1,6 @@
 import unittest
 
-from planetsim.surfacePoint import SurfacePoint, normalisePoint
+from planetsim.surfacePoint import SurfacePoint, normalisePoint, dot, cross, magnitude, latLong
 
 class TestSurfacePoint(unittest.TestCase):
     def testSurfacePoint(self):
@@ -33,7 +33,37 @@ class TestSurfacePoint(unittest.TestCase):
         self.assertEqual(normalisePoint(SurfacePoint(-120.0, 20.0)), SurfacePoint(-60.0, 200.0))
         self.assertEqual(normalisePoint(SurfacePoint(-280.0, 20.0)), SurfacePoint(80.0, 20.0))
         self.assertEqual(normalisePoint(SurfacePoint(-400.0, 20.0)), SurfacePoint(-40.0, 20.0))
+
+class TestLatLong(unittest.TestCase):
+    def testKnownOutput(self):
+        self.assertEqual(latLong((0,0,1)), SurfacePoint(90,0))
+
+    def testSelfInverse(self):
+        self.assertEqual(latLong(SurfacePoint(0,0).vector()), SurfacePoint(0,0))
+        self.assertEqual(latLong(SurfacePoint(90,0).vector()), SurfacePoint(90,0))
+        self.assertEqual(latLong(SurfacePoint(54,0.1).vector()), SurfacePoint(54,0.1))
+        self.assertEqual(latLong(SurfacePoint(45,-70).vector()), SurfacePoint(45,-70))
         
+        
+        
+       
+class TestVectorProducts(unittest.TestCase):
+    def setUp(self):
+        self.v1 = SurfacePoint(0.0,0.0)
+        self.v2 = SurfacePoint(0.0,0.0)
+        self.v3 = SurfacePoint(0.0,90.0)
+        self.v4 = SurfacePoint(90.0,0.0)
+
+    def testDotProduct(self):
+        self.assertEqual(dot(self.v1.vector(), self.v2.vector()), 1.0)
+        self.assertAlmostEqual(dot(self.v1.vector(), SurfacePoint(90.0, 0.0).vector()), 0.0)
+
+    def testCrossProduct(self):
+        self.assertEqual(cross(self.v1.vector(), self.v2.vector()), (0, 0, 0))
+        self.assertEqual(cross(self.v1.vector(), SurfacePoint(0.0, 90.0).vector()), (0.0, 0.0, 1.0))
+    
+    def testMagnitude(self):
+        self.assertEqual(magnitude((1, 0, 0)), 1)
         
         
         
