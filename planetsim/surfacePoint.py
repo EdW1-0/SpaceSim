@@ -40,3 +40,6 @@ class SurfacePoint:
         y = cos(latr)*sin(longr)
         z = sin(latr)
         return (x, y, z)
+
+    def normalise(self):
+        return normalisePoint(self)

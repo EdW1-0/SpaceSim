@@ -87,14 +87,22 @@ class TestIntersectionTesting(unittest.TestCase):
         path2 = (SurfacePoint(-50, 20), SurfacePoint(-30, 30))
         self.assertFalse(self.ps.pathsIntersect(path1, path2))
         
-        
     def testPathsIntersectOnMeridian(self):
+        path1 = (SurfacePoint(0, 20), SurfacePoint(0, 60))
+        path2 = (SurfacePoint(-40, 40), SurfacePoint(40, 40))
+        self.assertTrue(self.ps.pathsIntersect(path1, path2))
+
+    def testPathsIntersectOnMeridianCrossDateline(self):
         path1 = (SurfacePoint(0,300), SurfacePoint(0,40))
         path2 = (SurfacePoint(-40, 0), SurfacePoint(40, 0))
         self.assertTrue(self.ps.pathsIntersect(path1, path2))
         # Negative - antipodes on neither arc
         # Negative - antipodes on one are
         # Edge cases
+        # Crosses date line
+        # Works for either direction of path
+        # Crosses pole
+        # Equatorial
 
     def testPointInRegion(self):
         pass

@@ -57,11 +57,29 @@ class PlanetSurface:
         return (i1, i2)
 
     def pathsIntersect(self, path1, path2):
-        intersections = tuple(latLong(i) for i in self.gcIntersections(path1, path2))
+        intersections = tuple(latLong(i).normalise() for i in self.gcIntersections(path1, path2))
         intersect = False
+        # If either path is on a meridian it won't describe a full 360 in longitude, so we  
+        # can't use longitude to test intermediacy. 
+        p1Meridian = path1[0].longitude == path1[1].longitude
+        p2Meridian = path2[0].longitude == path2[1].longitude
         for i in intersections:
-            if i.longitude > path1[0].longitude and i.longitude < path1[1].longitude:
-                if i.longitude > path2[0].longitude and i.longitude < path2[1].longitude:
-                    intersect = True
+            p1Intersect = False
+            p2Intersect = False
+            if p1Meridian:
+                if i.latitude > path1[0].latitude and i.latitude < path1[1].latitude:
+                    p1Intersect = True
+            elif i.longitude > path1[0].longitude and i.longitude < path1[1].longitude:
+                p1Intersect = True
+
+            if p2Meridian:
+                if i.latitude > path2[0].latitude and i.latitude < path2[1].latitude:
+                    p2Intersect = True
+            elif i.longitude > path2[0].longitude and i.longitude < path2[1].longitude:
+                p2Intersect = True
+
+            if p1Intersect and p2Intersect:
+                intersect = True
+
         return intersect
 
