@@ -132,6 +132,18 @@ class TestIntersectionTesting(unittest.TestCase):
         self.assertTrue(self.ps.pathsIntersect(path1, path2))
         self.assertTrue(self.ps.pathsIntersect(path1, path3))
         self.assertTrue(self.ps.pathsIntersect(path1, path4))
+
+    def testPathsDontIntersectCrossingBothPoles(self):
+        path1 = (SurfacePoint(70,60), SurfacePoint(-20, 60))
+        path2 = (SurfacePoint(80,57), SurfacePoint(80, 59))
+        path3 = (SurfacePoint(-40, 237), SurfacePoint(-40, 239))
+        path4 = (SurfacePoint(-30, 57), SurfacePoint(-30, 59))
+        self.assertFalse(self.ps.pathsIntersect(path2, path1))
+        self.assertFalse(self.ps.pathsIntersect(path3, path1))
+        self.assertFalse(self.ps.pathsIntersect(path4, path1))
+        self.assertFalse(self.ps.pathsIntersect(path1, path2))
+        self.assertFalse(self.ps.pathsIntersect(path1, path3))
+        self.assertFalse(self.ps.pathsIntersect(path1, path4))
         # Negative - antipodes on neither arc /
         # Negative - antipodes on one are /
         # Edge cases
