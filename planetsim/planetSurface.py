@@ -73,7 +73,11 @@ class PlanetSurface:
             if p1Meridian:
                 if math.isclose(path1[0].longitude,path1[1].longitude):
                     # Path stays in a single meridian
-                    if i.latitude > path1[0].latitude and i.latitude < path1[1].latitude:
+                    if path1[0].latitude > path1[1].latitude:
+                        #This is a transpolar path, crossing both north and south pole
+                        if i.latitude > path1[0].latitude or i.latitude < path1[1].latitude:
+                            p1Intersect = True
+                    elif i.latitude > path1[0].latitude and i.latitude < path1[1].latitude:
                         p1Intersect = True
                 else:
                     # Path crosses a pole
@@ -91,15 +95,19 @@ class PlanetSurface:
 
             if p2Meridian:
                 if math.isclose(path2[0].longitude, path2[1].longitude):
-                    if i.latitude > path2[0].latitude and i.latitude < path2[1].latitude:
+                    if path2[0].latitude > path2[1].latitude:
+                        #This is a transpolar path, crossing both north and south pole
+                        if i.latitude > path2[0].latitude or i.latitude < path2[1].latitude:
+                            p2Intersect = True
+                    elif i.latitude > path2[0].latitude and i.latitude < path2[1].latitude:
                         p2Intersect = True
                 else:
                     # Path crosses a pole
                     # Currently no way of handling south polar paths
                     if math.isclose(i.longitude, path2[0].longitude) and i.latitude > path2[0].latitude:
-                        p1Intersect = True
+                        p2Intersect = True
                     elif math.isclose(i.longitude, path2[1].longitude) and i.latitude > path2[1].latitude:
-                        p1Intersect = True
+                        p2Intersect = True
             elif path2[0].longitude > path2[1].longitude:
                 if i.longitude > path2[0].longitude or i.longitude < path2[1].longitude:
                     p2Intersect = True
