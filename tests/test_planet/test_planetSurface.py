@@ -77,6 +77,11 @@ class TestIntersectionTesting(unittest.TestCase):
         self.assertTrue(self.ps.pathsIntersect(path1, path2))
         # Positive case
 
+    def testPathsDontIntersectRespectsDirectionality(self):
+        path1 = (SurfacePoint(-50, 80), SurfacePoint(50, 20))
+        path2 = (SurfacePoint(-50, 20), SurfacePoint(50, 80))
+        self.assertFalse(self.ps.pathsIntersect(path1, path2))
+
     def testPathsDontIntersectNoWrapNoSingularity(self):
         path1 = (SurfacePoint(50, 20), SurfacePoint(-50, 80))
         path2 = (SurfacePoint(-50, 20), SurfacePoint(50, 10))
@@ -92,16 +97,35 @@ class TestIntersectionTesting(unittest.TestCase):
         path2 = (SurfacePoint(-40, 40), SurfacePoint(40, 40))
         self.assertTrue(self.ps.pathsIntersect(path1, path2))
 
+    def testPathsIntersectOnDateline(self):
+        path1 = (SurfacePoint(40, 300), SurfacePoint(-40, 60))
+        path2 = (SurfacePoint(-40, 300), SurfacePoint(40, 60))
+        self.assertTrue(self.ps.pathsIntersect(path1, path2))
+
+    def testPathsDontIntersectOnDateline(self):
+        path1 = (SurfacePoint(40, 300), SurfacePoint(20, 60))
+        path2 = (SurfacePoint(-40, 300), SurfacePoint(-20, 60))
+        self.assertFalse(self.ps.pathsIntersect(path1, path2))
+
     def testPathsIntersectOnMeridianCrossDateline(self):
         path1 = (SurfacePoint(0,300), SurfacePoint(0,40))
         path2 = (SurfacePoint(-40, 0), SurfacePoint(40, 0))
         self.assertTrue(self.ps.pathsIntersect(path1, path2))
-        # Negative - antipodes on neither arc
-        # Negative - antipodes on one are
+
+    def testPathsIntersectCrossingPole(self):
+        path1 = (SurfacePoint(70, 60), SurfacePoint(70, 240))
+        path2 = (SurfacePoint(80, 59), SurfacePoint(80, 61))
+        path3 = (SurfacePoint(80, 239), SurfacePoint(80, 241))
+        self.assertTrue(self.ps.pathsIntersect(path1, path2))
+        self.assertTrue(self.ps.pathsIntersect(path1, path3))
+        # Negative - antipodes on neither arc /
+        # Negative - antipodes on one are /
         # Edge cases
-        # Crosses date line
-        # Works for either direction of path
+        # Crosses date line /
+        # Works for either direction of path/
         # Crosses pole
+        # Crosses south pole
+        # Crosses both poles
         # Equatorial
 
     def testPointInRegion(self):

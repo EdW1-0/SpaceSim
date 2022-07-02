@@ -56,3 +56,18 @@ Will need:
 Lean heavily on resources:
 http://www.movable-type.co.uk/scripts/latlong.html
 http://www.movable-type.co.uk/scripts/latlong-vectors.html#intersection
+
+Paths:
+- I think we need a convention for this. We specify paths by a pair of points - however, by itself this isn't
+  sufficient to determine what the path is, because we could be going either way around the great circle to hit 
+  those two points.
+  I think the following should be OK:
+  - From p1: If p2 long > p1 long, bear N/NE/E/SE
+    Otherwise, bear S/SW/W/NW 
+  - But how to describe this mathematically?
+  - Or would it be easier just to store a bearing in the path?
+  - No - I think we should assume we always travel east from p1 regardless. 
+  - No need to figure about bearings
+  - Do need to consider edge case of meridian - I think always travel north from p1. 
+  - This has a special case of a path crossing south pole from same starting and end latitude - not possible to 
+  specify this.
