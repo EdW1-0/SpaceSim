@@ -1,5 +1,7 @@
 import unittest
 
+import math
+
 from planetsim.surfacePath import SurfacePath
 from planetsim.surfacePoint import SurfacePoint
 
@@ -18,3 +20,9 @@ class TestSurfacePath(unittest.TestCase):
         self.assertEqual(SurfacePath(p2 = SurfacePoint(-40, 270)).p2, SurfacePoint(-40, 270))
         self.assertEqual(SurfacePath().long, False)
         self.assertEqual(SurfacePath(long = True).long, True)
+
+class TestSurfacePathGeodetics(unittest.TestCase):
+    def testGreatCircleAngle(self):
+        self.assertEqual(SurfacePath(SurfacePoint(0.0, 0.0), SurfacePoint(0.0, 0.0)).gcAngle(), 0.0)
+        self.assertEqual(SurfacePath(SurfacePoint(0.0, 0.0), SurfacePoint(90.0, 0.0)).gcAngle(), math.pi/2)
+        self.assertEqual(SurfacePath(SurfacePoint(0.0, 0.0), SurfacePoint(0.0, 180.0)).gcAngle(), math.pi)
