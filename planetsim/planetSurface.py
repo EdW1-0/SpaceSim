@@ -47,57 +47,38 @@ class PlanetSurface:
         intersect = False
         # If either path is on a meridian it won't describe a full 360 in longitude, so we  
         # can't use longitude to test intermediacy. 
-        p1Meridian = path1.p1.longitude % 180.0 == path1.p2.longitude % 180.0
-        p2Meridian = path2.p1.longitude % 180.0 == path2.p2.longitude % 180.0
+        p1Meridian = path1.isMeridian()
+        p2Meridian = path2.isMeridian()
+
         for i in intersections:
-            p1Intersect = False
-            p2Intersect = False
-            if p1Meridian:
-                if math.isclose(path1.p1.longitude,path1.p2.longitude):
-                    # Path stays in a single meridian
-                    if path1.p1.latitude > path1.p2.latitude:
+            pIntersect = [False, False]
+            for index, path in enumerate((path1, path2)):
+                if path.isMeridian():
+                    if math.isclose(path.p1.longitude,path.p2.longitude):
+                        # Path stays in a single meridian
+                        if path.p1.latitude > path.p2.latitude:
                         #This is a transpolar path, crossing both north and south pole
-                        if i.latitude > path1.p1.latitude or i.latitude < path1.p2.latitude:
-                            p1Intersect = True
-                    elif i.latitude > path1.p1.latitude and i.latitude < path1.p2.latitude:
-                        p1Intersect = True
-                else:
+                            if i.latitude > path.p1.latitude or i.latitude < path.p2.latitude:
+                                pIntersect[index] = True
+                        elif i.latitude > path.p1.latitude and i.latitude < path.p2.latitude:
+                            pIntersect[index] = True
+                    else:
                     # Path crosses a pole
                     # Currently no way of handling south polar paths
-                    if math.isclose(i.longitude, path1.p1.longitude) and i.latitude > path1.p1.latitude:
-                        p1Intersect = True
-                    elif math.isclose(i.longitude, path1.p2.longitude) and i.latitude > path1.p2.latitude:
-                        p1Intersect = True
-            elif path1.p1.longitude > path1.p2.longitude: 
+                        if math.isclose(i.longitude, path.p1.longitude) and i.latitude > path.p1.latitude:
+                            pIntersect[index] = True
+                        elif math.isclose(i.longitude, path.p2.longitude) and i.latitude > path.p2.latitude:
+                            pIntersect[index] = True
+                elif path.crossesDateline(): 
                 # path crosses dateline so test if p1.lo < long < 360 or 0 < long < p2.lo
-                if i.longitude > path1.p1.longitude or i.longitude < path1.p2.longitude:
-                    p1Intersect = True
-            elif i.longitude > path1.p1.longitude and i.longitude < path1.p2.longitude:
-                p1Intersect = True
+                    if i.longitude > path.p1.longitude or i.longitude < path.p2.longitude:
+                        pIntersect[index] = True
+                elif i.longitude > path.p1.longitude and i.longitude < path.p2.longitude:
+                    pIntersect[index] = True
 
-            if p2Meridian:
-                if math.isclose(path2.p1.longitude, path2.p2.longitude):
-                    if path2.p1.latitude > path2.p2.latitude:
-                        #This is a transpolar path, crossing both north and south pole
-                        if i.latitude > path2.p1.latitude or i.latitude < path2.p2.latitude:
-                            p2Intersect = True
-                    elif i.latitude > path2.p1.latitude and i.latitude < path2.p2.latitude:
-                        p2Intersect = True
-                else:
-                    # Path crosses a pole
-                    # Currently no way of handling south polar paths
-                    if math.isclose(i.longitude, path2.p1.longitude) and i.latitude > path2.p1.latitude:
-                        p2Intersect = True
-                    elif math.isclose(i.longitude, path2.p2.longitude) and i.latitude > path2.p2.latitude:
-                        p2Intersect = True
-            elif path2.p1.longitude > path2.p2.longitude:
-                if i.longitude > path2.p1.longitude or i.longitude < path2.p2.longitude:
-                    p2Intersect = True
-            elif i.longitude > path2.p1.longitude and i.longitude < path2.p2.longitude:
-                p2Intersect = True
-
-            if p1Intersect and p2Intersect:
-                intersect = True
+            intersect = pIntersect[0] and pIntersect[1]
+            if intersect:
+                break
 
         return intersect
 

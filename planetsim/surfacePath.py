@@ -29,4 +29,25 @@ class SurfacePath:
         gc = tuple(i/mag for i in c)
         return gc
 
+    def isMeridian(self):
+        return self.p1.longitude % 180.0 == self.p2.longitude % 180.0
+
+    def crossesDateline(self):
+        if abs(self.p1.longitude - self.p2.longitude) < 180.0:
+            return self.long
+        else:
+            return not self.long
+
+    # Tests if a given great circle point falls within the arc described on the GC by this path.
+    # IMPORTANT: Does *NOT* test whether point falls on the great circle in the first place. It assumes it 
+    # does, and given that, just checks whether it falls on the arc between these points or the arc
+    # outside it. 
+    # Testing with a point not on the great circle will give unpredictable and probably wrong results!
+    def pointOnPath(self, point):
+        if self.p1.longitude > self.p2.longitude: 
+                # path crosses dateline so test if p1.lo < long < 360 or 0 < long < p2.lo
+            if point.longitude > self.p1.longitude or point.longitude < self.p2.longitude:
+                return True
+        else:
+            return point.longitude > self.p1.longitude and point.longitude < self.p2.longitude
         
