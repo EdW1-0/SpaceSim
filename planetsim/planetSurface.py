@@ -63,17 +63,17 @@ class PlanetSurface:
                         elif i.latitude > path.p1.latitude and i.latitude < path.p2.latitude:
                             pIntersect[index] = True
                     else:
-                    # Path crosses a pole
-                    # Currently no way of handling south polar paths
-                        if math.isclose(i.longitude, path.p1.longitude) and i.latitude > path.p1.latitude:
-                            pIntersect[index] = True
-                        elif math.isclose(i.longitude, path.p2.longitude) and i.latitude > path.p2.latitude:
-                            pIntersect[index] = True
+                        for p in (path.p1, path.p2):
+                            if math.isclose(i.longitude, p.longitude):
+                                if path.isNorthPolar() and i.latitude > p.latitude:
+                                    pIntersect[index] = True
+                                elif path.isSouthPolar() and i.latitude < p.latitude:
+                                    pIntersect[index] = True
                 elif path.crossesDateline(): 
                 # path crosses dateline so test if p1.lo < long < 360 or 0 < long < p2.lo
-                    if i.longitude > path.p1.longitude or i.longitude < path.p2.longitude:
+                    if not isIntermediate(i.longitude, (path.p1.longitude, path.p2.longitude)):
                         pIntersect[index] = True
-                elif i.longitude > path.p1.longitude and i.longitude < path.p2.longitude:
+                elif isIntermediate(i.longitude, (path.p1.longitude, path.p2.longitude)):
                     pIntersect[index] = True
 
             intersect = pIntersect[0] and pIntersect[1]
@@ -82,3 +82,14 @@ class PlanetSurface:
 
         return intersect
 
+def isIntermediate(value, range):
+    if range[0] > range[1]:
+        if value < range[0] and value > range[1]:
+            return True
+        else:
+            return False
+    else:
+        if value > range[0] and value < range[1]:
+            return True
+        else:
+            return False

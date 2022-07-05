@@ -73,10 +73,15 @@ class TestIntersectionTesting(unittest.TestCase):
         path1 = SurfacePath(SurfacePoint(50, 20), SurfacePoint(-50, 80))
         path2 = SurfacePath(SurfacePoint(-50, 20), SurfacePoint(50, 80))
         self.assertTrue(self.ps.pathsIntersect(path1, path2))
+        self.assertTrue(self.ps.pathsIntersect(path2, path1))
+        path3 = SurfacePath(SurfacePoint(-50, 80), SurfacePoint(50, 20))
+        path4 = SurfacePath(SurfacePoint(50, 80), SurfacePoint(-50, 20))
+        self.assertTrue(self.ps.pathsIntersect(path3, path4))
+        self.assertTrue(self.ps.pathsIntersect(path4, path3))
         # Positive case
 
     def testPathsDontIntersectRespectsDirectionality(self):
-        path1 = SurfacePath(SurfacePoint(-50, 80), SurfacePoint(50, 20))
+        path1 = SurfacePath(SurfacePoint(-50, 80), SurfacePoint(50, 20), long=True)
         path2 = SurfacePath(SurfacePoint(-50, 20), SurfacePoint(50, 80))
         self.assertFalse(self.ps.pathsIntersect(path1, path2))
 
@@ -114,10 +119,19 @@ class TestIntersectionTesting(unittest.TestCase):
         path1 = SurfacePath(SurfacePoint(70, 60), SurfacePoint(70, 240))
         path2 = SurfacePath(SurfacePoint(80, 59), SurfacePoint(80, 61))
         path3 = SurfacePath(SurfacePoint(80, 239), SurfacePoint(80, 241))
+        path4 = SurfacePath(SurfacePoint(70, 240), SurfacePoint(70, 60))
+        path5 = SurfacePath(SurfacePoint(-80, 60), SurfacePoint(-80, 240), long=True)
+        path6 = SurfacePath(SurfacePoint(70, 60), SurfacePoint(70, 240))
         self.assertTrue(self.ps.pathsIntersect(path1, path2))
         self.assertTrue(self.ps.pathsIntersect(path1, path3))
         self.assertTrue(self.ps.pathsIntersect(path2, path1))
         self.assertTrue(self.ps.pathsIntersect(path3, path1))
+        self.assertTrue(self.ps.pathsIntersect(path4, path2))
+        self.assertTrue(self.ps.pathsIntersect(path4, path3))
+        self.assertTrue(self.ps.pathsIntersect(path5, path3))
+        self.assertTrue(self.ps.pathsIntersect(path3, path5))
+        #self.assertFalse(self.ps.pathsIntersect(path6, path3))
+        #self.assertFalse(self.ps.pathsIntersect(path2, path6))
 
     def testPathsIntersectCrossingBothPoles(self):
         path1 = SurfacePath(SurfacePoint(70,60), SurfacePoint(-20, 60))

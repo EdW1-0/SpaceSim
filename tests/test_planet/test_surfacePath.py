@@ -39,6 +39,30 @@ class TestSurfacePathGeodetics(unittest.TestCase):
         self.assertFalse(SurfacePath(SurfacePoint(0.0, 340.0), SurfacePoint(80.0,60.0), long=True).crossesDateline())
         self.assertTrue(SurfacePath(SurfacePoint(0.0, 90.0), SurfacePoint(10.0,110.0), long=True).crossesDateline())
 
+    def testPathIsNorthPolar(self):
+        self.assertTrue(SurfacePath(SurfacePoint(80.0, 50.0), SurfacePoint(80.0, 230.0)).isNorthPolar())
+        self.assertTrue(SurfacePath(SurfacePoint(0.0, 50.0), SurfacePoint(0.0, 230.0)).isNorthPolar())
+        self.assertTrue(SurfacePath(SurfacePoint(70.0, 50.0), SurfacePoint(-60.0, 230.0)).isNorthPolar())   
+        self.assertTrue(SurfacePath(SurfacePoint(-10.0, 50.0), SurfacePoint(-10.0, 230.0), long = True).isNorthPolar())
+        self.assertFalse(SurfacePath(SurfacePoint(80.0, 50.0), SurfacePoint(80.0, 230.0), long=True).isNorthPolar())
+        self.assertFalse(SurfacePath(SurfacePoint(-10.0, 50.0), SurfacePoint(-10.0, 230.0)).isNorthPolar())
+        self.assertFalse(SurfacePath(SurfacePoint(70.0, 50.0), SurfacePoint(80.0, 50.0)).isNorthPolar())
+        self.assertFalse(SurfacePath(SurfacePoint(80.0, 50.0), SurfacePoint(80.0, 240.0)).isNorthPolar())
+
+    def testPathIsSouthPolar(self):
+        self.assertFalse(SurfacePath(SurfacePoint(80.0, 50.0), SurfacePoint(80.0, 230.0)).isSouthPolar())
+        self.assertFalse(SurfacePath(SurfacePoint(0.0, 50.0), SurfacePoint(0.0, 230.0)).isSouthPolar())
+        self.assertFalse(SurfacePath(SurfacePoint(70.0, 50.0), SurfacePoint(-60.0, 230.0)).isSouthPolar())   
+        self.assertFalse(SurfacePath(SurfacePoint(-10.0, 50.0), SurfacePoint(-10.0, 230.0), long = True).isSouthPolar())
+        self.assertTrue(SurfacePath(SurfacePoint(80.0, 50.0), SurfacePoint(80.0, 230.0), long=True).isSouthPolar())
+        self.assertTrue(SurfacePath(SurfacePoint(-10.0, 50.0), SurfacePoint(-10.0, 230.0)).isSouthPolar())
+        self.assertFalse(SurfacePath(SurfacePoint(70.0, 50.0), SurfacePoint(80.0, 50.0)).isSouthPolar())
+        self.assertFalse(SurfacePath(SurfacePoint(80.0, 50.0), SurfacePoint(80.0, 240.0)).isSouthPolar())
+
+    def testPathIsDoublePolar(self):
+        self.assertTrue(SurfacePath(SurfacePoint(-60.0, 100.0), SurfacePoint(80.0, 100.0), long=True).isDoublePolar())
+        self.assertFalse(SurfacePath(SurfacePoint(-60.0, 100.0), SurfacePoint(80.0, 100.0)).isDoublePolar())
+        self.assertFalse(SurfacePath(SurfacePoint(-60.0, 110.0), SurfacePoint(80.0, 100.0), long=True).isDoublePolar())
 
 class TestPointOnPath(unittest.TestCase):
     def setUp(self):

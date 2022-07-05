@@ -38,6 +38,37 @@ class SurfacePath:
         else:
             return not self.long
 
+    def isNorthPolar(self):
+        if not self.isMeridian():
+            return False
+
+        if self.p1.longitude == self.p2.longitude:
+            return False
+
+        # >= is important - convention if equidistant north/south to cross north pole.
+        if not self.long:
+            return (self.p1.latitude + self.p2.latitude >= 0.0)
+        else:
+            return (self.p1.latitude + self.p2.latitude <= 0.0)
+
+    def isSouthPolar(self):
+        if not self.isMeridian():
+            return False
+
+        if self.p1.longitude == self.p2.longitude:
+            return False
+
+        return not self.isNorthPolar()
+
+    def isDoublePolar(self):
+        if not self.isMeridian():
+            return False
+
+        if self.p1.longitude == self.p2.longitude:
+            return self.long
+        else:
+            return False
+
     # Tests if a given great circle point falls within the arc described on the GC by this path.
     # IMPORTANT: Does *NOT* test whether point falls on the great circle in the first place. It assumes it 
     # does, and given that, just checks whether it falls on the arc between these points or the arc
