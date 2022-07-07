@@ -60,7 +60,3 @@ class TestPlanetRegionTesting(unittest.TestCase):
         self.ps = PlanetSurface("test_json/test_surfaces/single_region.json")
         self.twor = PlanetSurface("test_json/test_surfaces/2_hemispheres.json")
 
-    def testPointInRegion(self):
-        r = self.ps.regions[0]
-        p = SurfacePoint(0.0,0.0)
-        #self.assertTrue(r.pointInRegion(p))
