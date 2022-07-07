@@ -1,7 +1,7 @@
 import json
 
 from planetsim.surfaceRegion import SurfaceRegion
-from planetsim.surfacePath import SurfacePath
+from planetsim.surfacePath import SurfacePath, gcIntersections
 from planetsim.surfacePoint import SurfacePoint, dot, cross, magnitude, latLong
 import math
 
@@ -31,19 +31,14 @@ class PlanetSurface:
    
 
 
-    def gcIntersections(self, path1, path2):
-        gc1 = path1.gc()
-        gc2 = path2.gc()
-        i1 = cross(gc1, gc2)
-        i2 = cross(gc2, gc1)
-        return (i1, i2)
+
 
     # Convention on path handling:
     # We always assume the path travels eastward from p1 to p2. 
     # This should let us consistently specify paths including with dateline.
     # Special handling needed for meridianal paths - in this case always travel north from p1. 
     def pathsIntersect(self, path1, path2):
-        intersections = tuple(latLong(i).normalise() for i in self.gcIntersections(path1, path2))
+        intersections = tuple(latLong(i).normalise() for i in gcIntersections(path1, path2))
         intersect = False
         # If either path is on a meridian it won't describe a full 360 in longitude, so we  
         # can't use longitude to test intermediacy. 
@@ -54,15 +49,16 @@ class PlanetSurface:
             pIntersect = [False, False]
             for index, path in enumerate((path1, path2)):
                 if path.isMeridian():
+                    # Meridianal paths don't describe a full 360 in longitude so need special handling
                     if math.isclose(path.p1.longitude,path.p2.longitude):
-                        # Path stays in a single meridian
-                        if path.p1.latitude > path.p2.latitude:
-                        #This is a transpolar path, crossing both north and south pole
-                            if i.latitude > path.p1.latitude or i.latitude < path.p2.latitude:
+                        # Path stays in a single meridian or else loops around both poles
+                        if path.isDoublePolar():
+                            if not isIntermediate(i.latitude, (path.p1.latitude, path.p2.latitude)):
                                 pIntersect[index] = True
-                        elif i.latitude > path.p1.latitude and i.latitude < path.p2.latitude:
+                        elif isIntermediate(i.latitude, (path.p1.latitude, path.p2.latitude)):
                             pIntersect[index] = True
                     else:
+                        # Path crosses a single pole, so figure out which hemisphere i is in and then test each pole
                         for p in (path.p1, path.p2):
                             if math.isclose(i.longitude, p.longitude):
                                 if path.isNorthPolar() and i.latitude > p.latitude:
@@ -74,6 +70,8 @@ class PlanetSurface:
                     if not isIntermediate(i.longitude, (path.p1.longitude, path.p2.longitude)):
                         pIntersect[index] = True
                 elif isIntermediate(i.longitude, (path.p1.longitude, path.p2.longitude)):
+                    # path is on a longitudinal great circle and doesn't cross the dateline, so a simple check 
+                    # longitude is intermediate
                     pIntersect[index] = True
 
             intersect = pIntersect[0] and pIntersect[1]
@@ -81,6 +79,7 @@ class PlanetSurface:
                 break
 
         return intersect
+
 
 def isIntermediate(value, range):
     if range[0] > range[1]:

@@ -81,4 +81,14 @@ class SurfacePath:
                 return True
         else:
             return point.longitude > self.p1.longitude and point.longitude < self.p2.longitude
+
+
+
+
+def gcIntersections(path1, path2):
+    gc1 = path1.gc()
+    gc2 = path2.gc()
+    i1 = cross(gc1, gc2)
+    i2 = cross(gc2, gc1)
+    return (i1, i2)
         

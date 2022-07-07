@@ -2,8 +2,8 @@ import unittest
 
 import math
 
-from planetsim.surfacePath import SurfacePath
-from planetsim.surfacePoint import SurfacePoint
+from planetsim.surfacePath import SurfacePath, gcIntersections
+from planetsim.surfacePoint import SurfacePoint, normalisePoint, latLong
 
 class TestSurfacePath(unittest.TestCase):
     def testSurfacePathInit(self):
@@ -80,3 +80,18 @@ class TestPointOnPath(unittest.TestCase):
     def testPointNotOnPath(self):
         self.assertFalse(self.path.pointOnPath(SurfacePoint(0,0)))
         self.assertFalse(self.path.pointOnPath(SurfacePoint(-20, 110)))
+
+class TestPathIntersections(unittest.TestCase):
+    def testPathsIntersectionPoints(self):
+        path1 = SurfacePath(SurfacePoint(0,0), SurfacePoint(0,90))
+        path2 = SurfacePath(SurfacePoint(0,0), SurfacePoint(90,0))
+        self.assertEqual(gcIntersections(path1, path2), ((1,0,0),(-1,0,0)))
+        path1 = SurfacePath(SurfacePoint(50, 20), SurfacePoint(-50, 80))
+        path2 = SurfacePath(SurfacePoint(-50, 20), SurfacePoint(50, 80))
+        ints = tuple(normalisePoint(latLong(i)) for i in gcIntersections(path1, path2))
+        self.assertAlmostEqual(ints[0].latitude, 0.0)
+        self.assertAlmostEqual(ints[0].longitude, 50.0)
+        self.assertEqual(ints[1], SurfacePoint(0.0, 230.0))
+        #path1 = (SurfacePoint(51.5,0.1), SurfacePoint(40.7, 74.0)) # London - New York
+        #path2 = (SurfacePoint(46.8, 71.2), SurfacePoint(44.6, 63.5)) # Quebec - Halifax
+        #self.assertEqual(self.ps.gcIntersections(path1, path2)[1], SurfacePoint(45.2, 65.4).vector())

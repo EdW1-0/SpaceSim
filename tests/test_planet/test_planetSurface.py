@@ -55,19 +55,7 @@ class TestIntersectionTesting(unittest.TestCase):
         self.ps = PlanetSurface("test_json/test_surfaces/single_region.json")
         self.twor = PlanetSurface("test_json/test_surfaces/2_hemispheres.json")
 
-    def testPathsIntersectionPoints(self):
-        path1 = SurfacePath(SurfacePoint(0,0), SurfacePoint(0,90))
-        path2 = SurfacePath(SurfacePoint(0,0), SurfacePoint(90,0))
-        self.assertEqual(self.ps.gcIntersections(path1, path2), ((1,0,0),(-1,0,0)))
-        path1 = SurfacePath(SurfacePoint(50, 20), SurfacePoint(-50, 80))
-        path2 = SurfacePath(SurfacePoint(-50, 20), SurfacePoint(50, 80))
-        ints = tuple(normalisePoint(latLong(i)) for i in self.ps.gcIntersections(path1, path2))
-        self.assertAlmostEqual(ints[0].latitude, 0.0)
-        self.assertAlmostEqual(ints[0].longitude, 50.0)
-        self.assertEqual(ints[1], SurfacePoint(0.0, 230.0))
-        #path1 = (SurfacePoint(51.5,0.1), SurfacePoint(40.7, 74.0)) # London - New York
-        #path2 = (SurfacePoint(46.8, 71.2), SurfacePoint(44.6, 63.5)) # Quebec - Halifax
-        #self.assertEqual(self.ps.gcIntersections(path1, path2)[1], SurfacePoint(45.2, 65.4).vector())
+
 
     def testPathsIntersectNoWrapNoSingularity(self):
         path1 = SurfacePath(SurfacePoint(50, 20), SurfacePoint(-50, 80))
@@ -121,7 +109,7 @@ class TestIntersectionTesting(unittest.TestCase):
         path3 = SurfacePath(SurfacePoint(80, 239), SurfacePoint(80, 241))
         path4 = SurfacePath(SurfacePoint(70, 240), SurfacePoint(70, 60))
         path5 = SurfacePath(SurfacePoint(-80, 60), SurfacePoint(-80, 240), long=True)
-        path6 = SurfacePath(SurfacePoint(70, 60), SurfacePoint(70, 240))
+        path6 = SurfacePath(SurfacePoint(70, 60), SurfacePoint(70, 240), long=True)
         self.assertTrue(self.ps.pathsIntersect(path1, path2))
         self.assertTrue(self.ps.pathsIntersect(path1, path3))
         self.assertTrue(self.ps.pathsIntersect(path2, path1))
@@ -130,20 +118,27 @@ class TestIntersectionTesting(unittest.TestCase):
         self.assertTrue(self.ps.pathsIntersect(path4, path3))
         self.assertTrue(self.ps.pathsIntersect(path5, path3))
         self.assertTrue(self.ps.pathsIntersect(path3, path5))
-        #self.assertFalse(self.ps.pathsIntersect(path6, path3))
-        #self.assertFalse(self.ps.pathsIntersect(path2, path6))
+        self.assertFalse(self.ps.pathsIntersect(path6, path3))
+        self.assertFalse(self.ps.pathsIntersect(path2, path6))
 
     def testPathsIntersectCrossingBothPoles(self):
         path1 = SurfacePath(SurfacePoint(70,60), SurfacePoint(-20, 60))
         path2 = SurfacePath(SurfacePoint(80,59), SurfacePoint(80, 61))
         path3 = SurfacePath(SurfacePoint(-40, 239), SurfacePoint(-40, 241))
         path4 = SurfacePath(SurfacePoint(-30, 59), SurfacePoint(-30, 61))
-        self.assertTrue(self.ps.pathsIntersect(path2, path1))
-        self.assertTrue(self.ps.pathsIntersect(path3, path1))
-        self.assertTrue(self.ps.pathsIntersect(path4, path1))
-        self.assertTrue(self.ps.pathsIntersect(path1, path2))
-        self.assertTrue(self.ps.pathsIntersect(path1, path3))
-        self.assertTrue(self.ps.pathsIntersect(path1, path4))
+        path5 = SurfacePath(SurfacePoint(70,60), SurfacePoint(-20, 60), long=True)
+        self.assertFalse(self.ps.pathsIntersect(path2, path1))
+        self.assertFalse(self.ps.pathsIntersect(path3, path1))
+        self.assertFalse(self.ps.pathsIntersect(path4, path1))
+        self.assertFalse(self.ps.pathsIntersect(path1, path2))
+        self.assertFalse(self.ps.pathsIntersect(path1, path3))
+        self.assertFalse(self.ps.pathsIntersect(path1, path4))
+        self.assertTrue(self.ps.pathsIntersect(path2, path5))
+        self.assertTrue(self.ps.pathsIntersect(path3, path5))
+        self.assertTrue(self.ps.pathsIntersect(path4, path5))
+        self.assertTrue(self.ps.pathsIntersect(path5, path2))
+        self.assertTrue(self.ps.pathsIntersect(path5, path3))
+        self.assertTrue(self.ps.pathsIntersect(path5, path4))
 
     def testPathsDontIntersectCrossingBothPoles(self):
         path1 = SurfacePath(SurfacePoint(70,60), SurfacePoint(-20, 60))
