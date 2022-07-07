@@ -2,7 +2,7 @@ import unittest
 
 import math
 
-from planetsim.surfacePath import SurfacePath, gcIntersections
+from planetsim.surfacePath import SurfacePath, gcIntersections, pathsIntersect
 from planetsim.surfacePoint import SurfacePoint, normalisePoint, latLong
 
 class TestSurfacePath(unittest.TestCase):
@@ -95,3 +95,108 @@ class TestPathIntersections(unittest.TestCase):
         #path1 = (SurfacePoint(51.5,0.1), SurfacePoint(40.7, 74.0)) # London - New York
         #path2 = (SurfacePoint(46.8, 71.2), SurfacePoint(44.6, 63.5)) # Quebec - Halifax
         #self.assertEqual(self.ps.gcIntersections(path1, path2)[1], SurfacePoint(45.2, 65.4).vector())
+
+
+    def testPathsIntersectNoWrapNoSingularity(self):
+        path1 = SurfacePath(SurfacePoint(50, 20), SurfacePoint(-50, 80))
+        path2 = SurfacePath(SurfacePoint(-50, 20), SurfacePoint(50, 80))
+        self.assertTrue(pathsIntersect(path1, path2))
+        self.assertTrue(pathsIntersect(path2, path1))
+        path3 = SurfacePath(SurfacePoint(-50, 80), SurfacePoint(50, 20))
+        path4 = SurfacePath(SurfacePoint(50, 80), SurfacePoint(-50, 20))
+        self.assertTrue(pathsIntersect(path3, path4))
+        self.assertTrue(pathsIntersect(path4, path3))
+        # Positive case
+
+    def testPathsDontIntersectRespectsDirectionality(self):
+        path1 = SurfacePath(SurfacePoint(-50, 80), SurfacePoint(50, 20), long=True)
+        path2 = SurfacePath(SurfacePoint(-50, 20), SurfacePoint(50, 80))
+        self.assertFalse(pathsIntersect(path1, path2))
+
+    def testPathsDontIntersectNoWrapNoSingularity(self):
+        path1 = SurfacePath(SurfacePoint(50, 20), SurfacePoint(-50, 80))
+        path2 = SurfacePath(SurfacePoint(-50, 20), SurfacePoint(50, 10))
+        self.assertFalse(pathsIntersect(path1, path2))
+
+    def testPathsDontIntersectAntipodeOnOneArc(self):
+        path1 = SurfacePath(SurfacePoint(50, 20), SurfacePoint(-50, 80))
+        path2 = SurfacePath(SurfacePoint(-50, 20), SurfacePoint(-30, 30))
+        self.assertFalse(pathsIntersect(path1, path2))
+        
+    def testPathsIntersectOnMeridian(self):
+        path1 = SurfacePath(SurfacePoint(0, 20), SurfacePoint(0, 60))
+        path2 = SurfacePath(SurfacePoint(-40, 40), SurfacePoint(40, 40))
+        self.assertTrue(pathsIntersect(path1, path2))
+
+    def testPathsIntersectOnDateline(self):
+        path1 = SurfacePath(SurfacePoint(40, 300), SurfacePoint(-40, 60))
+        path2 = SurfacePath(SurfacePoint(-40, 300), SurfacePoint(40, 60))
+        self.assertTrue(pathsIntersect(path1, path2))
+
+    def testPathsDontIntersectOnDateline(self):
+        path1 = SurfacePath(SurfacePoint(40, 300), SurfacePoint(20, 60))
+        path2 = SurfacePath(SurfacePoint(-40, 300), SurfacePoint(-20, 60))
+        self.assertFalse(pathsIntersect(path1, path2))
+
+    def testPathsIntersectOnMeridianCrossDateline(self):
+        path1 = SurfacePath(SurfacePoint(0,300), SurfacePoint(0,40))
+        path2 = SurfacePath(SurfacePoint(-40, 0), SurfacePoint(40, 0))
+        self.assertTrue(pathsIntersect(path1, path2))
+
+    def testPathsIntersectCrossingPole(self):
+        path1 = SurfacePath(SurfacePoint(70, 60), SurfacePoint(70, 240))
+        path2 = SurfacePath(SurfacePoint(80, 59), SurfacePoint(80, 61))
+        path3 = SurfacePath(SurfacePoint(80, 239), SurfacePoint(80, 241))
+        path4 = SurfacePath(SurfacePoint(70, 240), SurfacePoint(70, 60))
+        path5 = SurfacePath(SurfacePoint(-80, 60), SurfacePoint(-80, 240), long=True)
+        path6 = SurfacePath(SurfacePoint(70, 60), SurfacePoint(70, 240), long=True)
+        self.assertTrue(pathsIntersect(path1, path2))
+        self.assertTrue(pathsIntersect(path1, path3))
+        self.assertTrue(pathsIntersect(path2, path1))
+        self.assertTrue(pathsIntersect(path3, path1))
+        self.assertTrue(pathsIntersect(path4, path2))
+        self.assertTrue(pathsIntersect(path4, path3))
+        self.assertTrue(pathsIntersect(path5, path3))
+        self.assertTrue(pathsIntersect(path3, path5))
+        self.assertFalse(pathsIntersect(path6, path3))
+        self.assertFalse(pathsIntersect(path2, path6))
+
+    def testPathsIntersectCrossingBothPoles(self):
+        path1 = SurfacePath(SurfacePoint(70,60), SurfacePoint(-20, 60))
+        path2 = SurfacePath(SurfacePoint(80,59), SurfacePoint(80, 61))
+        path3 = SurfacePath(SurfacePoint(-40, 239), SurfacePoint(-40, 241))
+        path4 = SurfacePath(SurfacePoint(-30, 59), SurfacePoint(-30, 61))
+        path5 = SurfacePath(SurfacePoint(70,60), SurfacePoint(-20, 60), long=True)
+        self.assertFalse(pathsIntersect(path2, path1))
+        self.assertFalse(pathsIntersect(path3, path1))
+        self.assertFalse(pathsIntersect(path4, path1))
+        self.assertFalse(pathsIntersect(path1, path2))
+        self.assertFalse(pathsIntersect(path1, path3))
+        self.assertFalse(pathsIntersect(path1, path4))
+        self.assertTrue(pathsIntersect(path2, path5))
+        self.assertTrue(pathsIntersect(path3, path5))
+        self.assertTrue(pathsIntersect(path4, path5))
+        self.assertTrue(pathsIntersect(path5, path2))
+        self.assertTrue(pathsIntersect(path5, path3))
+        self.assertTrue(pathsIntersect(path5, path4))
+
+    def testPathsDontIntersectCrossingBothPoles(self):
+        path1 = SurfacePath(SurfacePoint(70,60), SurfacePoint(-20, 60))
+        path2 = SurfacePath(SurfacePoint(80,57), SurfacePoint(80, 59))
+        path3 = SurfacePath(SurfacePoint(-40, 237), SurfacePoint(-40, 239))
+        path4 = SurfacePath(SurfacePoint(-30, 57), SurfacePoint(-30, 59))
+        self.assertFalse(pathsIntersect(path2, path1))
+        self.assertFalse(pathsIntersect(path3, path1))
+        self.assertFalse(pathsIntersect(path4, path1))
+        self.assertFalse(pathsIntersect(path1, path2))
+        self.assertFalse(pathsIntersect(path1, path3))
+        self.assertFalse(pathsIntersect(path1, path4))
+        # Negative - antipodes on neither arc /
+        # Negative - antipodes on one are /
+        # Edge cases
+        # Crosses date line /
+        # Works for either direction of path/
+        # Crosses pole
+        # Crosses south pole
+        # Crosses both poles
+        # Equatorial
