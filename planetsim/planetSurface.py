@@ -19,9 +19,16 @@ class PlanetSurface:
 
         for r in jsonNodes:
             anchor = SurfacePoint(r["anchor"][0], r["anchor"][1])
+            vertices = r["edges"]
             borders = []
-            for b in r["edges"]:
-                borders.append(SurfacePoint(b[0], b[1]))
+            for i in range(len(vertices)-1):
+                p1 = vertices[i]
+                p2 = vertices[i+1]
+                borders.append(SurfacePath(SurfacePoint(p1[0], p1[1]), SurfacePoint(p2[0], p2[1])))
+            p1 = vertices[-i]
+            p2 = vertices[0]
+            borders.append(SurfacePath(SurfacePoint(p1[0], p1[1]), SurfacePoint(p2[0], p2[1])))
+
             region = SurfaceRegion(r["id"], anchor, borders)
             self.regions.append(region)
 

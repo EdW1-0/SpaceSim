@@ -25,6 +25,7 @@ class TestPlanetSurfaceLoading(unittest.TestCase):
     def setUp(self):
         self.ps = PlanetSurface("test_json/test_surfaces/single_region.json")
         self.twor = PlanetSurface("test_json/test_surfaces/2_hemispheres.json")
+        self.fulltile = PlanetSurface("test_json/test_surfaces/full_tiling.json")
 
     def testPlanetSurfaceRegionLoading(self):
         self.assertEqual(len(self.ps.regions), 1)
@@ -32,7 +33,9 @@ class TestPlanetSurfaceLoading(unittest.TestCase):
         self.assertIsInstance(self.ps.regions[0].homePoint, SurfacePoint)
         self.assertEqual(len(self.ps.regions[0].borders), 3)
         for b in self.ps.regions[0].borders:
-            self.assertIsInstance(b, SurfacePoint)
+            self.assertIsInstance(b, SurfacePath)
+        self.assertEqual(len(self.fulltile.regions), 8)
+        self.assertEqual(self.fulltile.regions[3].borders[1], SurfacePath(SurfacePoint(70,0),SurfacePoint(0,0)))
 
 class TestGreatCircleGeodetics(unittest.TestCase):
     def setUp(self):
