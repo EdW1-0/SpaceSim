@@ -3,15 +3,16 @@ import json
 from planetsim.surfaceRegion import SurfaceRegion
 from planetsim.surfacePath import SurfacePath
 from planetsim.surfacePoint import SurfacePoint
-import math
+from planetsim.surfaceObject import SurfaceObject
 
 EARTH_RADIUS = 6371000
 
 class PlanetSurface:
     def __init__(self, jsonPath = "json/Surface.json", radius = EARTH_RADIUS):
         self.radius = radius
-        self.regions = []
-        self.points = []
+        self.regions = {}
+        self.points = {}
+        self.pointIdGenerator = self.newPointId()
         jsonFile = open(jsonPath, "r")
         jsonTechs = json.load(jsonFile)
 
@@ -30,12 +31,38 @@ class PlanetSurface:
             borders.append(SurfacePath(SurfacePoint(p1[0], p1[1]), SurfacePoint(p2[0], p2[1])))
 
             region = SurfaceRegion(r["id"], anchor, borders)
-            self.regions.append(region)
+            self.regions[region.id] = region
 
+    def newPointId(self):
+        pointIdCounter = 0
+        while True:
+            yield pointIdCounter
+            pointIdCounter += 1
 
     def gcDistance(self, path):
         return self.radius * path.gcAngle()
-   
+
+    def createObject(self, content, position):
+        id = next(self.pointIdGenerator)
+        self.points[id] = SurfaceObject(id, content, position)
+
+    def destroyObject(self, id):
+        del self.points[id]
+
+
+    def regionById(self, id):
+        if not isinstance(id, int):
+            raise TypeError
+        elif id < 0:
+            raise ValueError
+        return self.regions[id]
+
+    def pointById(self, id):
+        if not isinstance(id, int):
+            raise TypeError
+        elif id < 0:
+            raise ValueError
+        return self.points[id]
 
 
 

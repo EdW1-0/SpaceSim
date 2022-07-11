@@ -15,6 +15,9 @@ class TestPlanetSurface(unittest.TestCase):
         self.assertTrue(hasattr(PlanetSurface(), "regions"))
         self.assertTrue(hasattr(PlanetSurface(), "points"))
         self.assertTrue(hasattr(PlanetSurface(), "radius"))
+        self.assertTrue(isinstance(PlanetSurface().regions, dict))
+        self.assertTrue(isinstance(PlanetSurface().points, dict))
+
 
     def testPlanetSurfaceConstructor(self):
         self.assertTrue(PlanetSurface("test_json/test_surfaces/single_region.json"))
@@ -41,6 +44,7 @@ class TestGreatCircleGeodetics(unittest.TestCase):
     def setUp(self):
         self.ps = PlanetSurface("test_json/test_surfaces/single_region.json")
         self.twor = PlanetSurface("test_json/test_surfaces/2_hemispheres.json")
+        
 
 
 
@@ -53,13 +57,34 @@ class TestGreatCircleGeodetics(unittest.TestCase):
         self.assertAlmostEqual(self.ps.gcDistance(SurfacePath(london, newYork)), 5585000, delta = 20000)
         self.assertAlmostEqual(self.ps.gcDistance(SurfacePath(london, oxford)), 81890, delta = 5000)
 
-
-
-
-
-
-class TestPlanetRegionTesting(unittest.TestCase):
+class TestPlanetSurfaceIdLookup(unittest.TestCase):
     def setUp(self):
         self.ps = PlanetSurface("test_json/test_surfaces/single_region.json")
         self.twor = PlanetSurface("test_json/test_surfaces/2_hemispheres.json")
+        self.ft = PlanetSurface("test_json/test_surfaces/full_tiling.json")
 
+    def testRegionIdLookup(self):
+        self.assertEqual(self.ft.regionById(3).id, 3)
+
+    def testPointIdLookup(self):
+        self.ft.createObject(None, SurfacePoint(10,10))
+        self.assertEqual(self.ft.pointById(0).id, 0)
+
+
+
+
+class TestPlanetSurfaceObjectLifecycle(unittest.TestCase):
+    def setUp(self):
+        self.ps = PlanetSurface("test_json/test_surfaces/single_region.json")
+        self.twor = PlanetSurface("test_json/test_surfaces/2_hemispheres.json")
+        self.ft = PlanetSurface("test_json/test_surfaces/full_tiling.json")
+
+    def testSurfaceObjectCreation(self):
+        self.ft.createObject(None, SurfacePoint(20, 20))
+        self.assertEqual(len(self.ft.points), 1)
+
+    def testSurfaceObjectDestruction(self):
+        self.ft.createObject(None, SurfacePoint(20, 20))
+        self.assertEqual(len(self.ft.points), 1)
+        self.ft.destroyObject(0)
+        self.assertEqual(len(self.ft.points), 0)
