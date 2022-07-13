@@ -42,6 +42,9 @@ class PlanetSurface:
     def gcDistance(self, path):
         return self.radius * path.gcAngle()
 
+    def _angleForDistance(self, distance):
+        return distance / self.radius
+
     def createObject(self, content, position):
         id = next(self.pointIdGenerator)
         self.points[id] = SurfaceObject(id, content, position)
@@ -49,6 +52,33 @@ class PlanetSurface:
     def destroyObject(self, id):
         del self.points[id]
 
+    def _distanceForTime(self, id, time):
+        point = self.pointById(id)
+        return time * point.maxV
+
+    def tick(self, increment):
+        for p in self.points.values():
+            if p.destination:
+                distance = self._distanceForTime(p.id, increment)
+                path = SurfacePath(p.point, p.destination)
+                remainingDistance = self.gcDistance(path)
+                if (distance >= remainingDistance):
+                    p.point = p.destination
+                    p.setDestination(None)
+                else:
+                    fraction = distance/remainingDistance
+                    waypoint = path.intermediatePoint(fraction)
+                    p.point = waypoint
+
+
+        # For each point
+        # If it has a destination,
+        # Work out how far it would travel in this increment
+        # Work out the total distance remaining.
+        # If travel > remaining, point reaches destination
+        # Otherwise, work out angle subtended by distance.
+        # Work out point reached on path by moving this angle from start. (see resource on intermediate point)
+        # Set point to this position.
 
     def regionById(self, id):
         if not isinstance(id, int):

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import math
 
-from planetsim.surfacePoint import SurfacePoint, magnitude, dot, cross, latLong
+from planetsim.surfacePoint import SurfacePoint, magnitude, dot, cross, latLong, normalise
 
 # Encodes an arc on a great circle path as a pair of points. 
 # By convention is the shortest GC path between them, unless long is set in which case it is the 
@@ -82,6 +82,15 @@ class SurfacePath:
         else:
             return point.longitude > self.p1.longitude and point.longitude < self.p2.longitude
 
+    def intermediatePoint(self, fraction):
+        v1 = self.p1.vector()
+        v2 = self.p2.vector()
+        v1scale = tuple(vi*(1-fraction) for vi in v1)
+        v2scale = tuple(vi*fraction for vi in v2)
+        m = tuple(v1i+v2i for v1i, v2i in zip(v1scale, v2scale))
+        mNorm = normalise(m)
+        return latLong(m)
+
 
 
 
@@ -97,7 +106,7 @@ def gcIntersections(path1, path2):
  # This should let us consistently specify paths including with dateline.
  # If path is equidistant, convention should be to take East/North route. 
 def pathsIntersect(path1, path2):
-    intersections = tuple(latLong(i).normalise() for i in gcIntersections(path1, path2))
+    intersections = tuple(latLong(i).canonical() for i in gcIntersections(path1, path2))
     intersect = False
     # If either path is on a meridian it won't describe a full 360 in longitude, so we  
     # can't use longitude to test intermediacy. 

@@ -3,8 +3,8 @@ import unittest
 import math
 
 from planetsim.planetSurface import PlanetSurface, EARTH_RADIUS
-from planetsim.surfacePath import SurfacePath, pathsIntersect
-from planetsim.surfacePoint import SurfacePoint, latLong, normalisePoint
+from planetsim.surfacePath import SurfacePath
+from planetsim.surfacePoint import SurfacePoint, almostEqual
 
 class TestPlanetSurface(unittest.TestCase):
     def testPlanetSurfaceModule(self):
@@ -57,6 +57,10 @@ class TestGreatCircleGeodetics(unittest.TestCase):
         self.assertAlmostEqual(self.ps.gcDistance(SurfacePath(london, newYork)), 5585000, delta = 20000)
         self.assertAlmostEqual(self.ps.gcDistance(SurfacePath(london, oxford)), 81890, delta = 5000)
 
+    def testAngleForDistance(self):
+        self.assertEqual(self.ps._angleForDistance(1000), 1000.0/self.ps.radius)
+        self.assertEqual(self.ps._angleForDistance(2000), 2000/self.ps.radius)
+
 class TestPlanetSurfaceIdLookup(unittest.TestCase):
     def setUp(self):
         self.ps = PlanetSurface("test_json/test_surfaces/single_region.json")
@@ -88,3 +92,51 @@ class TestPlanetSurfaceObjectLifecycle(unittest.TestCase):
         self.assertEqual(len(self.ft.points), 1)
         self.ft.destroyObject(0)
         self.assertEqual(len(self.ft.points), 0)
+
+
+class TestPlanetSurfaceObjectMovement(unittest.TestCase):
+    def setUp(self):
+        self.ft = PlanetSurface("test_json/test_surfaces/full_tiling.json")
+        self.ft.createObject(None, SurfacePoint(20,20))
+        self.pt = self.ft.pointById(0)
+        
+
+
+    def testSurfaceObjectNilMovement(self):
+        self.pt.setDestination(SurfacePoint(80, 100))
+        self.assertEqual(self.ft._distanceForTime(0, 100), 0)
+
+    def testSurfaceObjectFiniteMovement(self):
+        self.pt.maxV = 20
+        self.assertEqual(self.ft._distanceForTime(0, 100), 2000)
+
+class TestPlanetSurfaceTick(unittest.TestCase):
+    def setUp(self):
+        self.ft = PlanetSurface("test_json/test_surfaces/full_tiling.json")
+
+        
+
+class TestPlanetSurfaceObjectRegionCorrespondence(unittest.TestCase):
+    def setUp(self):
+        self.r = 100000000000
+        self.ft = PlanetSurface("test_json/test_surfaces/full_tiling.json", radius = self.r)
+        self.ft.createObject(None, SurfacePoint(20, 20))
+        self.ft.createObject(None, SurfacePoint(0, -10))
+        self.ft.pointById(1).setDestination(SurfacePoint(0, 10))
+        self.ft.pointById(1).maxV = 1
+
+    
+    def testPlanetSurfaceTickPartway(self):
+        self.ft.tick(100)
+        self.assertEqual(self.ft.pointById(0).point, SurfacePoint(20, 20))
+        self.assertNotEqual(self.ft.pointById(1).point, SurfacePoint(0, -10))
+
+    def testPlanetSurfaceTickMeasured(self):
+        self.ft.tick((self.r*2*math.pi)/36)
+        self.assertTrue(almostEqual(self.ft.pointById(1).point, SurfacePoint(0, 0)))
+
+
+    def testPlanetSurfaceTickArrival(self):
+        self.ft.tick(999999999999)
+        self.assertEqual(self.ft.pointById(1).point, SurfacePoint(0, 10))
+        self.assertIsNone(self.ft.pointById(1).destination)

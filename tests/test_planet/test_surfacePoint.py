@@ -1,6 +1,8 @@
 import unittest
 
-from planetsim.surfacePoint import SurfacePoint, normalisePoint, dot, cross, magnitude, latLong
+from math import sqrt
+
+from planetsim.surfacePoint import SurfacePoint, canonicalPoint, dot, cross, magnitude, latLong, normalise, almostEqual
 
 class TestSurfacePoint(unittest.TestCase):
     def testSurfacePoint(self):
@@ -19,20 +21,20 @@ class TestSurfacePoint(unittest.TestCase):
     def testSurfacePointVectorRep(self):
         self.assertEqual(SurfacePoint(0.0,0.0).vector(), (1.0, 0.0, 0.0))
 
-    def testSurfacePointNormalise(self):
-        self.assertEqual(normalisePoint(SurfacePoint(0.0,0.0)), SurfacePoint(0.0,0.0))
-        self.assertEqual(normalisePoint(SurfacePoint(0.0,120.0)), SurfacePoint(0.0,120.0))
-        self.assertEqual(normalisePoint(SurfacePoint(0.0,400.0)), SurfacePoint(0.0,40.0))
-        self.assertEqual(normalisePoint(SurfacePoint(0.0,-180.0)), SurfacePoint(0.0,180.0))
-        self.assertEqual(normalisePoint(SurfacePoint(110.0,20.0)), SurfacePoint(70.0,200.0))
-        self.assertEqual(normalisePoint(SurfacePoint(210.0,20.0)), SurfacePoint(-30.0,200.0))
-        self.assertEqual(normalisePoint(SurfacePoint(300.0,20.0)), SurfacePoint(-60.0,20.0))
-        self.assertEqual(normalisePoint(SurfacePoint(400.0,20.0)), SurfacePoint(40.0, 20.0))
-        self.assertEqual(normalisePoint(SurfacePoint(540.0,20.0)), SurfacePoint(0, 200.0))
-        self.assertEqual(normalisePoint(SurfacePoint(-60.0, 20.0)), SurfacePoint(-60.0, 20.0))
-        self.assertEqual(normalisePoint(SurfacePoint(-120.0, 20.0)), SurfacePoint(-60.0, 200.0))
-        self.assertEqual(normalisePoint(SurfacePoint(-280.0, 20.0)), SurfacePoint(80.0, 20.0))
-        self.assertEqual(normalisePoint(SurfacePoint(-400.0, 20.0)), SurfacePoint(-40.0, 20.0))
+    def testSurfacePointCanonical(self):
+        self.assertEqual(canonicalPoint(SurfacePoint(0.0,0.0)), SurfacePoint(0.0,0.0))
+        self.assertEqual(canonicalPoint(SurfacePoint(0.0,120.0)), SurfacePoint(0.0,120.0))
+        self.assertEqual(canonicalPoint(SurfacePoint(0.0,400.0)), SurfacePoint(0.0,40.0))
+        self.assertEqual(canonicalPoint(SurfacePoint(0.0,-180.0)), SurfacePoint(0.0,180.0))
+        self.assertEqual(canonicalPoint(SurfacePoint(110.0,20.0)), SurfacePoint(70.0,200.0))
+        self.assertEqual(canonicalPoint(SurfacePoint(210.0,20.0)), SurfacePoint(-30.0,200.0))
+        self.assertEqual(canonicalPoint(SurfacePoint(300.0,20.0)), SurfacePoint(-60.0,20.0))
+        self.assertEqual(canonicalPoint(SurfacePoint(400.0,20.0)), SurfacePoint(40.0, 20.0))
+        self.assertEqual(canonicalPoint(SurfacePoint(540.0,20.0)), SurfacePoint(0, 200.0))
+        self.assertEqual(canonicalPoint(SurfacePoint(-60.0, 20.0)), SurfacePoint(-60.0, 20.0))
+        self.assertEqual(canonicalPoint(SurfacePoint(-120.0, 20.0)), SurfacePoint(-60.0, 200.0))
+        self.assertEqual(canonicalPoint(SurfacePoint(-280.0, 20.0)), SurfacePoint(80.0, 20.0))
+        self.assertEqual(canonicalPoint(SurfacePoint(-400.0, 20.0)), SurfacePoint(-40.0, 20.0))
 
 class TestLatLong(unittest.TestCase):
     def testKnownOutput(self):
@@ -64,6 +66,14 @@ class TestVectorProducts(unittest.TestCase):
     
     def testMagnitude(self):
         self.assertEqual(magnitude((1, 0, 0)), 1)
+
+    def testNormalise(self):
+        self.assertEqual(normalise((3, 0, 0)), (1, 0, 0))
+        self.assertEqual(normalise((-3, 0, -4)), (-0.6, 0, -0.8))
+        self.assertEqual(normalise((1, -1, -1)), (1/sqrt(3), -1/sqrt(3), -1/sqrt(3)))
+
+    def testAlmostEqual(self):
+        self.assertTrue(almostEqual(SurfacePoint(0,0), SurfacePoint(0.001, -0.001)))
         
         
         

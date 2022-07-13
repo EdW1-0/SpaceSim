@@ -3,7 +3,7 @@ import unittest
 import math
 
 from planetsim.surfacePath import SurfacePath, gcIntersections, pathsIntersect
-from planetsim.surfacePoint import SurfacePoint, normalisePoint, latLong
+from planetsim.surfacePoint import SurfacePoint, canonicalPoint, latLong, almostEqual
 
 class TestSurfacePath(unittest.TestCase):
     def testSurfacePathInit(self):
@@ -88,7 +88,7 @@ class TestPathIntersections(unittest.TestCase):
         self.assertEqual(gcIntersections(path1, path2), ((1,0,0),(-1,0,0)))
         path1 = SurfacePath(SurfacePoint(50, 20), SurfacePoint(-50, 80))
         path2 = SurfacePath(SurfacePoint(-50, 20), SurfacePoint(50, 80))
-        ints = tuple(normalisePoint(latLong(i)) for i in gcIntersections(path1, path2))
+        ints = tuple(canonicalPoint(latLong(i)) for i in gcIntersections(path1, path2))
         self.assertAlmostEqual(ints[0].latitude, 0.0)
         self.assertAlmostEqual(ints[0].longitude, 50.0)
         self.assertEqual(ints[1], SurfacePoint(0.0, 230.0))
@@ -200,3 +200,19 @@ class TestPathIntersections(unittest.TestCase):
         # Crosses south pole
         # Crosses both poles
         # Equatorial
+
+class TestIntermediatePoint(unittest.TestCase):
+    def setUp(self):
+        self.p1 = SurfacePoint(0,0)
+        self.p2 = SurfacePoint(0,60)
+        self.p3 = SurfacePoint(-60, 0)
+        self.p4 = SurfacePoint(0,-60)
+        self.p5 = SurfacePoint(60,0)
+
+    def testIntermediatePoint(self):
+        path12 = SurfacePath(self.p1, self.p2)
+        path24 = SurfacePath(self.p2, self.p4)
+        path35 = SurfacePath(self.p3, self.p5)
+        self.assertTrue(almostEqual(path12.intermediatePoint(0.5), SurfacePoint(0, 30)))
+        self.assertEqual(path24.intermediatePoint(0.5), path35.intermediatePoint(0.5))
+

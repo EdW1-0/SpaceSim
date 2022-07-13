@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from math import cos, sin, pi, atan2, sqrt
 
-def normalisePoint(point):
+def canonicalPoint(point):
     normlat = point.latitude
     normlong = point.longitude
     normlat = normlat % 360.0
@@ -23,10 +23,19 @@ def cross(v1, v2):
 def magnitude(v1):
     return sqrt(sum([v1[i]**2 for i in range(3)]))
 
+def normalise(v):
+    m = magnitude(v)
+    return tuple(vi/m for vi in v)
+
 def latLong(v):
     lat = atan2(v[2], sqrt(v[0]**2 + v[1]**2))
     long = atan2(v[1], v[0])
     return SurfacePoint(lat*180.0/pi, long*180.0/pi)
+
+def almostEqual(p1, p2):
+    latTest = abs(p1.latitude - p2.latitude) < 0.01
+    longTest = abs(p1.longitude - p2.longitude) < 0.01
+    return latTest and longTest
 
 @dataclass
 class SurfacePoint:
@@ -41,5 +50,5 @@ class SurfacePoint:
         z = sin(latr)
         return (x, y, z)
 
-    def normalise(self):
-        return normalisePoint(self)
+    def canonical(self):
+        return canonicalPoint(self)
