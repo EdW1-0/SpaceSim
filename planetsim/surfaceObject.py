@@ -10,6 +10,7 @@ class SurfaceObject:
     fuel: int = 0
     maxV: int = 0
     destination: SurfacePoint = None
+    fuelPerM: float = 1.0
 
     def setDestination(self, destination):
         self.destination = destination

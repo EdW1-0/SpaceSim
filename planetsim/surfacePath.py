@@ -89,7 +89,35 @@ class SurfacePath:
         v2scale = tuple(vi*fraction for vi in v2)
         m = tuple(v1i+v2i for v1i, v2i in zip(v1scale, v2scale))
         mNorm = normalise(m)
-        return latLong(m)
+        return latLong(mNorm)
+
+
+#
+#Formula:	a = sin((1−f)⋅δ) / sin δ
+#b = sin(f⋅δ) / sin δ
+#x = a ⋅ cos φ1 ⋅ cos λ1 + b ⋅ cos φ2 ⋅ cos λ2
+#y = a ⋅ cos φ1 ⋅ sin λ1 + b ⋅ cos φ2 ⋅ sin λ2
+#z = a ⋅ sin φ1 + b ⋅ sin φ2
+#φi = atan2(z, √x² + y²)
+#λi = atan2(y, x)
+#where	f is fraction along great circle route (f=0 is point 1, f=1 is point 2), δ is the angular distance d/R between the two points.
+    def intermediatePointTrig(self, fraction):
+        d = self.gcAngle()
+        
+        a = math.sin((1-fraction)*d)/math.sin(d)
+        b = math.sin(fraction*d)/math.sin(d)
+        p1latR = self.p1.latitude * math.pi / 180
+        p2latR = self.p2.latitude * math.pi / 180
+        p1longR = self.p1.longitude * math.pi / 180
+        p2longR = self.p2.longitude * math.pi / 180
+        x = a*math.cos(p1latR)*math.cos(p1longR) + b*math.cos(p2latR)*math.cos(p2longR)
+        y = a*math.cos(p1latR)*math.sin(p1longR) + b*math.cos(p2latR)*math.sin(p2longR)
+        z = a*math.sin(p1latR) + b*math.sin(p2latR)
+        latiR = math.atan2(z, math.sqrt(x**2 + y**2))
+        longiR = math.atan2(y, x)
+        lati = latiR * 180 / math.pi
+        longi = longiR * 180 / math.pi
+        return SurfacePoint(lati, longi)
 
 
 

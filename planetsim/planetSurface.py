@@ -59,16 +59,31 @@ class PlanetSurface:
     def tick(self, increment):
         for p in self.points.values():
             if p.destination:
-                distance = self._distanceForTime(p.id, increment)
+                # First work out how far we can travel in this time
+                maxDistance = self._distanceForTime(p.id, increment)
                 path = SurfacePath(p.point, p.destination)
                 remainingDistance = self.gcDistance(path)
-                if (distance >= remainingDistance):
-                    p.point = p.destination
-                    p.setDestination(None)
+                if (maxDistance >= remainingDistance):
+                    distance = remainingDistance
                 else:
-                    fraction = distance/remainingDistance
-                    waypoint = path.intermediatePoint(fraction)
-                    p.point = waypoint
+                    distance = maxDistance
+
+                # Now see how far fuel load will get us
+                fuelBurn = p.fuelPerM * distance
+                if (fuelBurn <= p.fuel):
+                    p.fuel -= fuelBurn
+                else:
+                    distance = p.fuel / p.fuelPerM
+                    p.fuel = 0
+
+                # Now do the actual move
+                fraction = distance/remainingDistance
+                waypoint = path.intermediatePointTrig(fraction)
+                p.point = waypoint
+                    
+                # Check if we've arrived and clear destination
+                if p.point == p.destination:
+                    p.setDestination(None)
 
 
         # For each point

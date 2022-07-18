@@ -116,14 +116,19 @@ class TestPlanetSurfaceTick(unittest.TestCase):
 
         
 
-class TestPlanetSurfaceObjectRegionCorrespondence(unittest.TestCase):
+class TestPlanetSurfaceObjectTick(unittest.TestCase):
     def setUp(self):
         self.r = 100000000000
         self.ft = PlanetSurface("test_json/test_surfaces/full_tiling.json", radius = self.r)
         self.ft.createObject(None, SurfacePoint(20, 20))
         self.ft.createObject(None, SurfacePoint(0, -10))
+        self.ft.createObject(None, SurfacePoint(0, 0))
+        self.ft.pointById(2).setDestination(SurfacePoint(90, 0))
+        self.ft.pointById(2).maxV = 1
+        self.ft.pointById(2).fuel = 1000000000000000000
         self.ft.pointById(1).setDestination(SurfacePoint(0, 10))
         self.ft.pointById(1).maxV = 1
+        self.ft.pointById(1).fuel = 1000000000000000000
 
     
     def testPlanetSurfaceTickPartway(self):
@@ -131,12 +136,72 @@ class TestPlanetSurfaceObjectRegionCorrespondence(unittest.TestCase):
         self.assertEqual(self.ft.pointById(0).point, SurfacePoint(20, 20))
         self.assertNotEqual(self.ft.pointById(1).point, SurfacePoint(0, -10))
 
+    def testPlanetSurfaceTick45(self):
+        self.ft.pointById(1).setDestination(SurfacePoint(0, 30))
+        self.ft.tick((self.r*2*math.pi)/36)
+        self.assertAlmostEqual(self.ft.gcDistance(SurfacePath(self.ft.pointById(1).point, SurfacePoint(0, -10))),
+         (self.r*2*math.pi)/36,
+         places = 1)
+        self.assertTrue(almostEqual(self.ft.pointById(1).point, SurfacePoint(0, 0), True))
+
+    def testPlanetSurfaceTickQuarter(self):
+        self.ft.tick((self.r*2*math.pi)/8)
+        self.assertTrue(almostEqual(self.ft.pointById(2).point, SurfacePoint(45, 0)))
+
+
     def testPlanetSurfaceTickMeasured(self):
         self.ft.tick((self.r*2*math.pi)/36)
-        self.assertTrue(almostEqual(self.ft.pointById(1).point, SurfacePoint(0, 0)))
+        self.assertTrue(almostEqual(self.ft.pointById(1).point, SurfacePoint(0, 0), True))
+        self.assertTrue(almostEqual(self.ft.pointById(2).point, SurfacePoint(10, 0), True))
 
 
     def testPlanetSurfaceTickArrival(self):
         self.ft.tick(999999999999)
         self.assertEqual(self.ft.pointById(1).point, SurfacePoint(0, 10))
         self.assertIsNone(self.ft.pointById(1).destination)
+
+    def testPlanetSurfaceRepeatedTicks(self):
+        self.ft.tick((self.r*2*math.pi)/36)
+        self.ft.tick((self.r*2*math.pi)/36)
+        self.ft.tick((self.r*2*math.pi)/36)
+        self.assertTrue(almostEqual(self.ft.pointById(2).point, SurfacePoint(30, 0), True))
+        self.ft.pointById(2).point = SurfacePoint(0, 0)
+        self.ft.tick(3*(self.r*2*math.pi)/36)
+        self.assertTrue(almostEqual(self.ft.pointById(2).point, SurfacePoint(30, 0), True))
+
+class TestPlanetSurfaceFuelConsumption(unittest.TestCase):
+    def setUp(self):
+        self.r = 3.6*500/math.pi
+        self.ft = PlanetSurface("test_json/test_surfaces/full_tiling.json", radius = self.r)
+        self.ft.createObject(None, SurfacePoint(0, 0))
+        self.p1 = self.ft.pointById(0)
+        self.p1.setDestination(SurfacePoint(-45, -45))
+        self.p1.fuelPerM = 10.0
+        self.p1.maxV = 1
+        self.p1.fuel = 100
+
+    def testFuelConsumption(self):
+        self.ft.tick(3)
+        self.assertEqual(self.p1.fuel, 70)
+
+    def testFuelArrival(self):
+        self.p1.setDestination(SurfacePoint(0, -5))
+        self.p1.fuel = 1000
+        self.ft.tick(100)
+        self.assertEqual(self.p1.point, SurfacePoint(0, -5))
+        self.assertEqual(self.p1.fuel, 500)
+
+    def testFuelExhaustion(self):
+        self.p1.setDestination(SurfacePoint(0, -90))
+        self.ft.tick(50)
+        self.assertEqual(self.p1.fuel, 0)
+        self.assertEqual(self.p1.point, SurfacePoint(0, -1))
+
+    def testFuelExhaustionOnTarget(self):
+        self.p1.setDestination(SurfacePoint(0, -2))
+        self.ft.tick(1000)
+        self.assertEqual(self.p1.fuel, 0)
+        self.assertEqual(self.p1.point, SurfacePoint(0, -1))
+
+
+        
