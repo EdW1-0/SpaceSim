@@ -40,6 +40,10 @@ class TestPlanetSurfaceLoading(unittest.TestCase):
         self.assertEqual(len(self.fulltile.regions), 8)
         self.assertEqual(self.fulltile.regions[3].borders[1], SurfacePath(SurfacePoint(70,0),SurfacePoint(0,0)))
 
+    def testPlanetSurfaceFullTiling(self):
+        self.assertEqual(self.fulltile.regionById(2).borders[2].p1, SurfacePoint(0, 240))
+        self.assertEqual(self.fulltile.regionById(2).borders[2].p2, SurfacePoint(0, 120))
+
 class TestGreatCircleGeodetics(unittest.TestCase):
     def setUp(self):
         self.ps = PlanetSurface("test_json/test_surfaces/single_region.json")
@@ -204,4 +208,34 @@ class TestPlanetSurfaceFuelConsumption(unittest.TestCase):
         self.assertEqual(self.p1.point, SurfacePoint(0, -1))
 
 
+class TestPlanetSurfaceRegionTesting(unittest.TestCase):
+    def setUp(self):
+        self.r = 3.6*500/math.pi
+        self.ft = PlanetSurface("test_json/test_surfaces/full_tiling.json", radius = self.r)
+        self.ft.createObject(None, SurfacePoint(88, 0))
+        self.ft.createObject(None, SurfacePoint(-88, 0))
+        self.ft.createObject(None, SurfacePoint(10, 10))
+        self.ft.createObject(None, SurfacePoint(-10, 350))
+
+    def testRegionForPoint(self):
+        self.assertEqual(self.ft.regionForPoint(self.ft.pointById(0)).id, 0)
+        self.assertEqual(self.ft.regionForPoint(self.ft.pointById(1)).id, 7)
+        self.assertEqual(self.ft.regionForPoint(self.ft.pointById(2)).id, 1)
+        self.assertEqual(self.ft.regionForPoint(self.ft.pointById(3)).id, 6)
+
+    def testRegionForPointOnAnchor(self):
+        self.ft.createObject(None, SurfacePoint(90, 0))
+        self.assertEqual(self.ft.regionForPoint(self.ft.pointById(4)).id, 0)
+
+    @unittest.expectedFailure
+    def testRegionForPointOnAnchorFPError(self):
+        self.ft.createObject(None, SurfacePoint(-40, 300))
+        self.assertEqual(self.ft.regionForPoint(self.ft.pointById(4)).id, 6)
+
+    def testRegionForPointOnBorder(self):
+        pass
+
+    def testRegionForPointNotFullTiled(self):
+        pass
+        
         

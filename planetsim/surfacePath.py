@@ -26,7 +26,11 @@ class SurfacePath:
         v2 = self.p2.vector()
         c = cross(v1, v2)
         mag = magnitude(c)
-        gc = tuple(i/mag for i in c)
+        # Special case of degenerate path - divideb by zero, so arbitrarily set this to a meridian.
+        if self.p1 == self.p2:
+            gc = normalise((-v1[1], v1[0], 0.0))
+        else:
+            gc = tuple(i/mag for i in c)
         return gc
 
     def isMeridian(self):
@@ -136,10 +140,6 @@ def gcIntersections(path1, path2):
 def pathsIntersect(path1, path2):
     intersections = tuple(latLong(i).canonical() for i in gcIntersections(path1, path2))
     intersect = False
-    # If either path is on a meridian it won't describe a full 360 in longitude, so we  
-    # can't use longitude to test intermediacy. 
-    p1Meridian = path1.isMeridian()
-    p2Meridian = path2.isMeridian()
 
     for i in intersections:
         pIntersect = [False, False]
@@ -151,8 +151,11 @@ def pathsIntersect(path1, path2):
                     if path.isDoublePolar():
                         if not isIntermediate(i.latitude, (path.p1.latitude, path.p2.latitude)):
                             pIntersect[index] = True
-                    elif isIntermediate(i.latitude, (path.p1.latitude, path.p2.latitude)):
-                        pIntersect[index] = True
+                    # Single hemisphere, so check it's the same hemisphere.
+                    elif math.isclose(path.p1.longitude, i.longitude):
+                        # If it is, check if the latitude is on the arc.
+                        if isIntermediate(i.latitude, (path.p1.latitude, path.p2.latitude)):
+                            pIntersect[index] = True
                 else:
                     # Path crosses a single pole, so figure out which hemisphere i is in and then test each pole
                     for p in (path.p1, path.p2):
@@ -163,7 +166,7 @@ def pathsIntersect(path1, path2):
                                 pIntersect[index] = True
             elif path.crossesDateline(): 
             # path crosses dateline so test if p1.lo < long < 360 or 0 < long < p2.lo
-                if not isIntermediate(i.longitude, (path.p1.longitude, path.p2.longitude)):
+                if not isIntermediate(i.longitude, (path.p2.longitude, path.p1.longitude)):
                     pIntersect[index] = True
             elif isIntermediate(i.longitude, (path.p1.longitude, path.p2.longitude)):
                 # path is on a longitudinal great circle and doesn't cross the dateline, so a simple check 
@@ -179,12 +182,12 @@ def pathsIntersect(path1, path2):
 
 def isIntermediate(value, range):
     if range[0] > range[1]:
-        if value < range[0] and value > range[1]:
+        if value <= range[0] and value > range[1]:
             return True
         else:
             return False
     else:
-        if value > range[0] and value < range[1]:
+        if value >= range[0] and value < range[1]:
             return True
         else:
             return False

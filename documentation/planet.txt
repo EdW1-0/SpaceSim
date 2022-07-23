@@ -71,3 +71,6 @@ Paths:
   - Do need to consider edge case of meridian - I think always travel north from p1. 
   - This has a special case of a path crossing south pole from same starting and end latitude - not possible to 
   specify this.
+
+  - regionForPoint
+  - arrival

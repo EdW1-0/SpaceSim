@@ -27,6 +27,40 @@ class TestSurfacePathGeodetics(unittest.TestCase):
         self.assertEqual(SurfacePath(SurfacePoint(0.0, 0.0), SurfacePoint(90.0, 0.0)).gcAngle(), math.pi/2)
         self.assertEqual(SurfacePath(SurfacePoint(0.0, 0.0), SurfacePoint(0.0, 180.0)).gcAngle(), math.pi)
 
+    def testGreatCircleDegeneratePath(self):
+        meridianGc = SurfacePath(SurfacePoint(90,45), SurfacePoint(0,45)).gc()
+        degGc = SurfacePath(SurfacePoint(10, 45), SurfacePoint(10, 45)).gc()
+        for i in range(3):
+            self.assertAlmostEqual(meridianGc[i], degGc[i])
+
+    def testGreatCircleDegeneratePathOffDiagonal(self):
+        meridianGc = SurfacePath(SurfacePoint(90,10), SurfacePoint(0, 10)).gc()
+        degGc = SurfacePath(SurfacePoint(0,10), SurfacePoint(0, 10)).gc()
+        for i in range(3):
+            self.assertAlmostEqual(meridianGc[i], degGc[i])
+
+    def testGreatCircleDegeneratePathOnPrime(self):
+        meridianGc = SurfacePath(SurfacePoint(90,0), SurfacePoint(0, 0)).gc()
+        degGc = SurfacePath(SurfacePoint(0,0), SurfacePoint(0, 0)).gc()
+        for i in range(3):
+            self.assertAlmostEqual(meridianGc[i], degGc[i])
+
+    def testGreatCircleDegeneratePathHighLongitude(self):
+        meridianGc = SurfacePath(SurfacePoint(-90,220), SurfacePoint(0, 220)).gc()
+        degGc = SurfacePath(SurfacePoint(0,220), SurfacePoint(0, 220)).gc()
+        for i in range(3):
+            # We end up flipped 180, but because it's a great circle this is actually the same path.
+            # We don't care about the direction.
+            self.assertAlmostEqual(meridianGc[i], -degGc[i])
+
+    def testGreatCircleDegeneratePathPolar(self):
+        meridianGc = SurfacePath(SurfacePoint(90,0), SurfacePoint(0, 0)).gc()
+        degGc = SurfacePath(SurfacePoint(90,0), SurfacePoint(90, 0)).gc()
+        for i in range(3):
+            self.assertAlmostEqual(meridianGc[i], degGc[i])
+
+
+
     def testPathIsMeridian(self):
         self.assertTrue(SurfacePath(SurfacePoint(0.0, 0.0), SurfacePoint(80.0,0.0)).isMeridian())
         self.assertFalse(SurfacePath(SurfacePoint(0.0, 0.0), SurfacePoint(80.0, 10.0)).isMeridian())
@@ -138,6 +172,11 @@ class TestPathIntersections(unittest.TestCase):
         path2 = SurfacePath(SurfacePoint(-40, 300), SurfacePoint(-20, 60))
         self.assertFalse(pathsIntersect(path1, path2))
 
+    def testPathsDontIntersectFullMeridian(self):
+        path1 = SurfacePath(SurfacePoint(-90, 0), SurfacePoint(88, 0))
+        path2 = SurfacePath(SurfacePoint(70, 120), SurfacePoint(70, 240))
+        self.assertFalse(pathsIntersect(path1, path2))
+
     def testPathsIntersectOnMeridianCrossDateline(self):
         path1 = SurfacePath(SurfacePoint(0,300), SurfacePoint(0,40))
         path2 = SurfacePath(SurfacePoint(-40, 0), SurfacePoint(40, 0))
@@ -191,6 +230,38 @@ class TestPathIntersections(unittest.TestCase):
         self.assertFalse(pathsIntersect(path1, path2))
         self.assertFalse(pathsIntersect(path1, path3))
         self.assertFalse(pathsIntersect(path1, path4))
+
+    def testPathCrossingCorner(self):
+        pathToAnchor = SurfacePath(SurfacePoint(-40, 300), SurfacePoint(40, 60))
+        b1 = SurfacePath(SurfacePoint(0, 120), SurfacePoint(0, 0))
+        b2 = SurfacePath(SurfacePoint(0, 0), SurfacePoint(70, 0))
+        self.assertFalse(pathsIntersect(pathToAnchor, b1))
+        self.assertTrue(pathsIntersect(pathToAnchor, b2))
+
+    def testPathPolarCorner(self):
+        pathToAnchor = SurfacePath(SurfacePoint(-88, 0), SurfacePoint(90, 0))
+        b1 = SurfacePath(SurfacePoint(70, 0), SurfacePoint(70, 120))
+        b2 = SurfacePath(SurfacePoint(70, 240), SurfacePoint(70, 0))
+        self.assertTrue(pathsIntersect(pathToAnchor, b1))
+        self.assertFalse(pathsIntersect(pathToAnchor, b2))
+
+    # TODO
+    # This edge case is a bug in my current geodetics engine. It arises because we get some floating point error 
+    # in my code to compute the intersections between great circles used to determine whether two paths cross each 
+    # other or not. This is normally acceptable but shows up if a path happens to pass very close to the vertex
+    # between two consecutive borders. In this case, the intersections computed with their respective great circles
+    # should be identical since it is the same point, but in this implementation they aren't due to the above
+    # FP error. This means if we are unlucky, they will be shifted enough affect the hit test - meaning a path could
+    # test as crossing both borders or neither, either of which will give a wrong result when we want to use an odd
+    # number of crossings to denote the point being outside a polygon. 
+    @unittest.expectedFailure
+    def testBackDiagonalCornerFPError(self):
+        pathToAnchor = SurfacePath(SurfacePoint(-40, 300), SurfacePoint(40, 180))
+        b1 = SurfacePath(SurfacePoint(70, 240), SurfacePoint(0, 240))
+        b2 = SurfacePath(SurfacePoint(0, 240), SurfacePoint(0, 120))
+        self.assertFalse(pathsIntersect(pathToAnchor, b1))
+        self.assertTrue(pathsIntersect(pathToAnchor, b2))
+
         # Negative - antipodes on neither arc /
         # Negative - antipodes on one are /
         # Edge cases

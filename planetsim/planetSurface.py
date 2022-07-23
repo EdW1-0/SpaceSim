@@ -26,7 +26,7 @@ class PlanetSurface:
                 p1 = vertices[i]
                 p2 = vertices[i+1]
                 borders.append(SurfacePath(SurfacePoint(p1[0], p1[1]), SurfacePoint(p2[0], p2[1])))
-            p1 = vertices[-i]
+            p1 = vertices[-1]
             p2 = vertices[0]
             borders.append(SurfacePath(SurfacePoint(p1[0], p1[1]), SurfacePoint(p2[0], p2[1])))
 
@@ -51,6 +51,13 @@ class PlanetSurface:
 
     def destroyObject(self, id):
         del self.points[id]
+
+    def regionForPoint(self, point):
+        for r in self.regions.values():
+            if r.pointInRegion(point.point):
+                return r
+
+        return None
 
     def _distanceForTime(self, id, time):
         point = self.pointById(id)
