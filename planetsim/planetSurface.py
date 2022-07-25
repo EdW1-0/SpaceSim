@@ -64,6 +64,7 @@ class PlanetSurface:
         return time * point.maxV
 
     def tick(self, increment):
+        purgeIds = set()
         for p in self.points.values():
             if p.destination:
                 # First work out how far we can travel in this time
@@ -85,12 +86,24 @@ class PlanetSurface:
 
                 # Now do the actual move
                 fraction = distance/remainingDistance
-                waypoint = path.intermediatePointTrig(fraction)
+                waypoint = path.intermediatePointTrig(fraction).canonical()
                 p.point = waypoint
                     
                 # Check if we've arrived and clear destination
                 if p.point == p.destination:
                     p.setDestination(None)
+                    for dp in self.objectsAtPoint(p.point):
+                        if dp is p:
+                            continue
+                        terminal = dp.content.vehicleArrival(p.content)
+                        if (terminal):
+                            purgeIds.add(p.id)
+                            break
+
+        for id in purgeIds:
+            self.destroyObject(id)
+
+
 
 
         # For each point
@@ -101,6 +114,9 @@ class PlanetSurface:
         # Otherwise, work out angle subtended by distance.
         # Work out point reached on path by moving this angle from start. (see resource on intermediate point)
         # Set point to this position.
+
+    def objectsAtPoint(self, point):
+        return tuple(p for p in self.points.values() if p.point == point)
 
     def regionById(self, id):
         if not isinstance(id, int):
