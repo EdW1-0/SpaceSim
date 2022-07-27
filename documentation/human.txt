@@ -1,0 +1,14 @@
+Human model
+
+Eventually this will get very complex.
+
+At first I think just a simple model:
+
+Person:
+- Age
+- Name
+- Sex
+- Task
+
+PersonGenerator:
+- Randomly rolls people based on tables for above (M/F, M/F firstname, lastname, age)

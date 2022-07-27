@@ -1,0 +1,2 @@
+class PersonGenerator:
+    pass
