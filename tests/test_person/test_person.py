@@ -12,6 +12,7 @@ class TestPerson(unittest.TestCase):
         self.assertTrue(hasattr(Person(0), "name"))
         self.assertTrue(hasattr(Person(0), "age"))
         self.assertTrue(hasattr(Person(0), "sex"))
+        self.assertTrue(hasattr(Person(0), "task"))
 
     def testPersonConstructor(self):
         self.assertEqual(Person(5).id, 5)

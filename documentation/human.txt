@@ -12,3 +12,56 @@ Person:
 
 PersonGenerator:
 - Randomly rolls people based on tables for above (M/F, M/F firstname, lastname, age)
+
+Person interaction with task:
+- Humans assigned a task (or choose one)
+- Humans use time working on a task
+- Humans make progress on task (depending on time, also skill, difficulty, tools, environment etc)
+- Humans complete task
+- Humans abandon task
+
+Task model:
+- Tasks have a category 
+- Task may have outcomes (complete research, build module, prevent navigational error etc)
+- Task has side effects (consume resources, incur wear on module or tools)
+- Task has back effects on human (fatigue, boredom, injury, recovery)
+- Tasks very broad. May be work (e.g. build module), or may be personal (sleep, socialise)
+
+Draw distinction between task and work order:
+- Task: Belongs to person. Whatever person is doing right now based on dynamic determination of 
+priorities. Always exactly one task (including idle task)
+- Work order: Request from base module (or other generators? Mostly these I think) for item of work
+to be completed. Base keeps a queue (per module or global?)
+- Person will be assigned to work order based on priority and will generate an associated task.
+- Work orders will require 0 or more workers:
+  - some passive - e.g. solar panels produce electricity without intervention.
+  - some one person - e.g. pilot vehicle
+  - some many people - e.g. work in workshop
+- Some tasks passive. e.g. consume oxygen 
+    - actually I think maybe this is best handle by back effects? all tasks will have back effect
+      to consume oxygen. Some may have a strenuous modifier to increase it, or person has stressed
+      modifier, or environmental factors affect consumption rate - point is, I think determination
+      of this belongs with person when evaluating back effects of task.
+- Work orders can be parallel. E.g. large factory producing multiple production runs
+- Work orders can be automated (i.e. no workers). E.g. automated production line (c.f. solar panel example)
+
+Example tasks:
+- eat 
+- sleep
+- leisure
+- socialise
+- travel
+- pilot ship
+- pilot vehicle
+- work on construction
+- maintain module
+- do research
+- survey area
+
+Example work orders:
+- mine minerals
+- assemble rocket
+- research topic
+- grow food (passive)
+- tend food (active)
+- maintain module
