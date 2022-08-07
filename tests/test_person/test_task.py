@@ -17,6 +17,9 @@ class TestTask(unittest.TestCase):
         self.assertTrue(isinstance(Task().category, TaskCategory))
         self.assertTrue(isinstance(Task().progress, int))
 
+    def testTaskConstructor(self):
+        self.assertEqual(Task(TaskCategory.SLEEP).category, TaskCategory.SLEEP)
+
 class TestTaskCategory(unittest.TestCase):
     def testTaskCategoryInit(self):
         self.assertTrue(TaskCategory)

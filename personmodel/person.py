@@ -6,3 +6,6 @@ class Person:
         self.sex = sex
 
         self.task = None
+
+    def setTask(self, task):
+        self.task = task
