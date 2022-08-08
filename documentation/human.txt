@@ -65,3 +65,17 @@ Example work orders:
 - grow food (passive)
 - tend food (active)
 - maintain module
+
+
+Timing model:
+- Many entities receive time ticks.
+- Some will want to interrupt to solicit feedback.
+- E.g. task done, ask for new orders
+- Should have two modifications:
+  - Tick receives an absolute timestamp, not an increment
+    - That only works if it stores current time internally. 
+    - Needs a solution - e.g. work out if a colonist has a birthday? Needs current date. 
+  - Tick returns a timestamp - shows time advanced to to receive new input.
+  - Tick implements a stage/commit model - stage the tick for all receivers.
+                                         - Find lowest tick to input 
+                                         - Then commit this tick for all receivers

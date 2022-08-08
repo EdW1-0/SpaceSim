@@ -10,7 +10,7 @@ class TestTask(unittest.TestCase):
         self.assertTrue(Task())
 
     def testTaskAttributes(self):
-        attrs = ["category", "progress"]
+        attrs = ["category", "progress", "target"]
         for a in attrs:
             self.assertTrue(hasattr(Task(), a))
 
@@ -29,3 +29,22 @@ class TestTaskCategory(unittest.TestCase):
         self.assertTrue(issubclass(TaskCategory, Enum))
         self.assertTrue(isinstance(TaskCategory.IDLE, TaskCategory))
         self.assertTrue(isinstance(TaskCategory(1), TaskCategory))
+    
+    def testTaskCategoryEnum(self):
+        self.assertTrue(TaskCategory.IDLE)
+        self.assertTrue(TaskCategory.SLEEP)
+        self.assertTrue(TaskCategory.PLANT_WHEAT)
+
+class WOMock:
+    pass
+
+class TestTaskComplete(unittest.TestCase):
+    def setUp(self):
+        self.womock = WOMock()
+        self.womock.complete = unittest.mock.MagicMock()
+        self.task = Task(TaskCategory.PLANT_WHEAT, target = self.womock)
+        
+
+    def testTaskComplete(self):
+        self.task.complete(None)
+        self.assertTrue(self.womock.complete.called)
