@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import math
 
 from planetsim.surfacePoint import SurfacePoint, magnitude, dot, cross, latLong, normalise
@@ -12,9 +12,11 @@ from planetsim.surfacePoint import SurfacePoint, magnitude, dot, cross, latLong,
 
 @dataclass
 class SurfacePath:
-    p1: SurfacePoint = SurfacePoint(0,0)
-    p2: SurfacePoint = SurfacePoint(0,0) 
+    p1: SurfacePoint = field(default=SurfacePoint)
+    p2: SurfacePoint = field(default=SurfacePoint)
     long: bool = False
+
+
 
     def gcAngle(self):
         sine = magnitude(cross(self.p1.vector(), self.p2.vector()))
