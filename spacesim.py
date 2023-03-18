@@ -27,6 +27,19 @@ def main():
                 running = False
                 break
 
+        screen.fill((135, 206, 250))
+
+        pygame.draw.rect(screen, (10, 10, 10), pygame.Rect(200, 200, 100, 50))
+
+        font = pygame.font.Font()
+        text = font.render("Lorem Ipsum", True, (0, 0, 128))
+        textRect = text.get_rect()
+        textRect.center = (250, 225)
+
+        screen.blit(text, textRect)
+
+        pygame.display.flip()
+
     pygame.quit()
 
 if __name__ == '__main__':
