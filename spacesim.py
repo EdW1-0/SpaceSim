@@ -12,6 +12,7 @@ from pygame.locals import (
     K_RIGHT,
     K_ESCAPE,
     KEYDOWN,
+    MOUSEBUTTONUP,
     QUIT,
 )
 
@@ -19,7 +20,10 @@ class MenuItem(pygame.sprite.Sprite):
     def __init__(self, center=(0, 0), text="Default", handler=None):
         super(MenuItem, self).__init__()
         self.text = text
-        self.handler = handler
+        if (handler):
+            self.handler = handler
+        else:        
+            self.handler = self.click
         self.surf = pygame.surface.Surface((100, 50))
         pygame.draw.rect(self.surf, (10, 10, 10), pygame.Rect(0, 0, 100, 50))
         
@@ -33,7 +37,17 @@ class MenuItem(pygame.sprite.Sprite):
 
         self.rect = self.surf.get_rect(center=center)
 
+    def click(self):
+        print (self.text)
 
+
+def quitHandler():
+    print("Quitting...")
+    pygame.event.post(pygame.event.Event(QUIT))
+
+
+def loadHandler():
+    print("Loading...")
 
 
 def main():
@@ -41,8 +55,8 @@ def main():
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-    loadItem = MenuItem((200, 100), text="Load Game")
-    quitItem = MenuItem((200, 200), text="Quit Game")
+    loadItem = MenuItem((200, 100), text="Load Game", handler=loadHandler)
+    quitItem = MenuItem((200, 200), text="Quit Game", handler=quitHandler)
 
     all_sprites = pygame.sprite.Group()
     all_sprites.add(loadItem)
@@ -54,6 +68,12 @@ def main():
             if event.type == QUIT:
                 running = False
                 break
+            elif event.type == MOUSEBUTTONUP:
+                pos = pygame.mouse.get_pos()
+
+                clicked_items = [s for s in all_sprites if s.rect.collidepoint(pos)]
+                for c in clicked_items:
+                    c.handler()
 
         screen.fill((135, 206, 250))
 
