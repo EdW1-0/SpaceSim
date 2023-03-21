@@ -15,10 +15,38 @@ from pygame.locals import (
     QUIT,
 )
 
+class MenuItem(pygame.sprite.Sprite):
+    def __init__(self, center=(0, 0), text="Default", handler=None):
+        super(MenuItem, self).__init__()
+        self.text = text
+        self.handler = handler
+        self.surf = pygame.surface.Surface((100, 50))
+        pygame.draw.rect(self.surf, (10, 10, 10), pygame.Rect(0, 0, 100, 50))
+        
+
+        font = pygame.font.Font(size=20)
+        text = font.render(self.text, True, (128, 128, 230))
+        textRect = text.get_rect()
+        textRect.center = (50, 25)
+
+        self.surf.blit(text, textRect)
+
+        self.rect = self.surf.get_rect(center=center)
+
+
+
+
 def main():
     pygame.init()
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+    loadItem = MenuItem((200, 100), text="Load Game")
+    quitItem = MenuItem((200, 200), text="Quit Game")
+
+    all_sprites = pygame.sprite.Group()
+    all_sprites.add(loadItem)
+    all_sprites.add(quitItem)
 
     running = True
     while running:
@@ -29,14 +57,8 @@ def main():
 
         screen.fill((135, 206, 250))
 
-        pygame.draw.rect(screen, (10, 10, 10), pygame.Rect(200, 200, 100, 50))
-
-        font = pygame.font.Font()
-        text = font.render("Lorem Ipsum", True, (0, 0, 128))
-        textRect = text.get_rect()
-        textRect.center = (250, 225)
-
-        screen.blit(text, textRect)
+        for entity in all_sprites:
+            screen.blit(entity.surf, entity.rect)
 
         pygame.display.flip()
 
