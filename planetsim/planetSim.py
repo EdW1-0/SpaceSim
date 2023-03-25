@@ -3,7 +3,7 @@ import json
 from planetsim.planet import Planet
 
 class PlanetSim:
-    def __init__(self, jsonPath):
+    def __init__(self, jsonPath = "json/Planets.json"):
         jsonFile = open(jsonPath, "r")
         jsonPlanets = json.load(jsonFile)
 

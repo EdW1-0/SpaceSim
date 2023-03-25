@@ -1,4 +1,5 @@
 import pygame
+from gameModel import GameModel
 
 # Define constants for the screen width and height
 SCREEN_WIDTH = 800
@@ -15,6 +16,9 @@ from pygame.locals import (
     MOUSEBUTTONUP,
     QUIT,
 )
+
+# Annoyingly has to be a global, at least until we define some GUI context classes
+gameModel = GameModel()
 
 class MenuItem(pygame.sprite.Sprite):
     def __init__(self, center=(0, 0), text="Default", handler=None):
@@ -48,10 +52,13 @@ def quitHandler():
 
 def loadHandler():
     print("Loading...")
+    gameModel.load()
 
 
 def main():
     pygame.init()
+
+
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 

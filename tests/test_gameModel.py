@@ -14,6 +14,26 @@ class TestGameModelClass(unittest.TestCase):
         self.gm = GameModel()
 
     def testGameModelAttributes(self):
-        self.assertTrue(self.gm.techTree)
-        self.assertTrue(self.gm.orbitSim)
+        self.assertTrue(hasattr(self.gm, "techTree"))
+        self.assertTrue(hasattr(self.gm, "orbitSim"))
+        self.assertTrue(hasattr(self.gm, "planetSim"))
+
+    def testGameModelUnloaded(self):
+        self.assertIsNone(self.gm.techTree)
+        self.assertIsNone(self.gm.orbitSim)
+        self.assertIsNone(self.gm.planetSim)
+        self.assertFalse(self.gm.get_init())
+
+class TestGameModelLoading(unittest.TestCase):
+    def setUp(self):
+        self.gm = GameModel()
+
+    def testGameModelLoad(self):
+        self.gm.load()
+        self.assertTrue(self.gm.get_init())
+
+    def testGameModelFileNotFound(self):
+        with self.assertRaises(FileNotFoundError):
+            self.gm.load("not_a_json_path")
+            
 
