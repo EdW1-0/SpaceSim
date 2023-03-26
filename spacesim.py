@@ -1,5 +1,6 @@
 import pygame
 from gameModel import GameModel
+from views.menuContext import MenuContext
 
 # Define constants for the screen width and height
 SCREEN_WIDTH = 800
@@ -17,75 +18,27 @@ from pygame.locals import (
     QUIT,
 )
 
-# Annoyingly has to be a global, at least until we define some GUI context classes
-gameModel = GameModel()
-
-class MenuItem(pygame.sprite.Sprite):
-    def __init__(self, center=(0, 0), text="Default", handler=None):
-        super(MenuItem, self).__init__()
-        self.text = text
-        if (handler):
-            self.handler = handler
-        else:        
-            self.handler = self.click
-        self.surf = pygame.surface.Surface((100, 50))
-        pygame.draw.rect(self.surf, (10, 10, 10), pygame.Rect(0, 0, 100, 50))
-        
-
-        font = pygame.font.Font(size=20)
-        text = font.render(self.text, True, (128, 128, 230))
-        textRect = text.get_rect()
-        textRect.center = (50, 25)
-
-        self.surf.blit(text, textRect)
-
-        self.rect = self.surf.get_rect(center=center)
-
-    def click(self):
-        print (self.text)
 
 
-def quitHandler():
-    print("Quitting...")
-    pygame.event.post(pygame.event.Event(QUIT))
-
-
-def loadHandler():
-    print("Loading...")
-    gameModel.load()
 
 
 def main():
     pygame.init()
 
-
+    gameModel = GameModel()
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-    loadItem = MenuItem((200, 100), text="Load Game", handler=loadHandler)
-    quitItem = MenuItem((200, 200), text="Quit Game", handler=quitHandler)
-
-    all_sprites = pygame.sprite.Group()
-    all_sprites.add(loadItem)
-    all_sprites.add(quitItem)
+    menuContext = MenuContext(screen, gameModel)
 
     running = True
     while running:
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                running = False
-                break
-            elif event.type == MOUSEBUTTONUP:
-                pos = pygame.mouse.get_pos()
-
-                clicked_items = [s for s in all_sprites if s.rect.collidepoint(pos)]
-                for c in clicked_items:
-                    c.handler()
-
-        screen.fill((135, 206, 250))
-
-        for entity in all_sprites:
-            screen.blit(entity.surf, entity.rect)
+        
+        outerEvent = menuContext.run()
+        
+        if outerEvent == QUIT:
+            running = False
+        
 
         pygame.display.flip()
 
