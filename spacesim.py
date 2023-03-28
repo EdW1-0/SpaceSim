@@ -1,6 +1,7 @@
 import pygame
 from gameModel import GameModel
 from views.menuContext import MenuContext
+from views.orbitContext import OrbitContext
 
 # Define constants for the screen width and height
 SCREEN_WIDTH = 800
@@ -18,6 +19,9 @@ from pygame.locals import (
     QUIT,
 )
 
+from views.menuContext import LOADORBITVIEW
+from views.orbitContext import LOADMENUVIEW
+
 
 
 
@@ -25,19 +29,24 @@ from pygame.locals import (
 def main():
     pygame.init()
 
+    guiContext = None
     gameModel = GameModel()
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-    menuContext = MenuContext(screen, gameModel)
+    guiContext = MenuContext(screen, gameModel)
 
     running = True
     while running:
         
-        outerEvent = menuContext.run()
+        outerEvent = guiContext.run()
         
         if outerEvent == QUIT:
             running = False
+        elif outerEvent == LOADORBITVIEW:
+            guiContext = OrbitContext(screen, gameModel)
+        elif outerEvent == LOADMENUVIEW:
+            guiContext = MenuContext(screen, gameModel)
         
 
         pygame.display.flip()

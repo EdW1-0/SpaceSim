@@ -14,6 +14,8 @@ from pygame.locals import (
     QUIT,
 )
 
+LOADORBITVIEW = pygame.USEREVENT + 1
+
 class MenuItem(pygame.sprite.Sprite):
     def __init__(self, center=(0, 0), text="Default", handler=None):
         super(MenuItem, self).__init__()
@@ -65,7 +67,9 @@ class MenuContext(GUIContext):
 
                 clicked_items = [s for s in self.all_sprites if s.rect.collidepoint(pos)]
                 for c in clicked_items:
-                    c.handler()
+                    handlerCode = c.handler()
+                    if handlerCode == 1:
+                        returnCode = LOADORBITVIEW
 
         self.screen.fill((135, 206, 250))
 
@@ -78,8 +82,10 @@ class MenuContext(GUIContext):
     def quitHandler(self):
         print("Quitting...")
         pygame.event.post(pygame.event.Event(QUIT))
+        return 0
 
 
     def loadHandler(self):
         print("Loading...")
         self.model.load()
+        return 1
