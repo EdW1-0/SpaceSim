@@ -14,7 +14,12 @@ class GameModel:
         self.planetSim = None
         self.init = False
 
-    def load(self, jsonRoot = "json"):
+    def load(self, jsonRoot = "json", reload = False):
+
+        if not reload and self.init:
+            print ("Already loaded")
+            return
+        
         # TODO: Wrap these in a try/catch to do special exception handling rather than just the default file errors.
         self.techTree = TechTree(jsonRoot + "/Technologies.json")
         self.orbitSim = OrbitSim(jsonRoot + "/Orbits.json")
