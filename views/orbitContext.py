@@ -16,9 +16,9 @@ from pygame.locals import (
 
 LOADMENUVIEW = pygame.USEREVENT + 2
 
-class OrbitNode(pygame.sprite.Sprite):
+class OrbitNodeView(pygame.sprite.Sprite):
     def __init__(self, node, center=(0, 0)):
-        super(OrbitNode, self).__init__()
+        super(OrbitNodeView, self).__init__()
         self.center = center
         self.node = node
         self.surf = pygame.surface.Surface((20, 20))
@@ -64,7 +64,7 @@ class OrbitContext(GUIContext):
                 link = True
 
             node = model.orbitSim.nodeById(nodeId)
-            orbitView = OrbitNode(node, orbitSpot)
+            orbitView = OrbitNodeView(node, orbitSpot)
             self.all_sprites.add(orbitView)
             orbitSpot = (orbitSpot[0], orbitSpot[1] - 40)
 
