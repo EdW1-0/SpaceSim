@@ -68,6 +68,62 @@ class OrbitContext(GUIContext):
             self.all_sprites.add(orbitView)
             orbitSpot = (orbitSpot[0], orbitSpot[1] - 40)
 
+        # Now do branches - first find all the paths that aren't the longest
+        branchPaths = []
+        for path in paths:
+            if path is longestPath:
+                continue
+
+            branchPoint = 0
+            subPath = None
+            # Record all of the path beyond the point where it's identical to the longest
+            for i in range(len(path)):
+                if path[i] == longestPath[i]:
+                    branchPoint = path[i]
+                    continue
+                elif not subPath:
+                    # Include the branch point so we know where to start drawing
+                    subPath = [branchPoint]
+
+                subPath.append(path[i])
+
+            branchPaths.append(subPath)
+
+        # Now draw the branch.
+        count = 0
+        for path in branchPaths:
+            # Start by finding the view for the branch point, so we know what height to draw from
+            branchPoint = path[0]
+            branchRoot = (0,0)
+            for ov in self.all_sprites:
+                if ov.node.id == branchPoint:
+                    branchRoot = ov.center
+
+            # Alternate the direction of drawing
+            if count % 2:
+                reverse = 1
+            else:
+                reverse = -1
+            count += 1
+
+            # Now draw them as before, but stepping horizontally
+            link = False
+            for nodeId in path:
+                if link:
+                    link = False
+                    continue
+                else:
+                    link = True
+
+                # Skip the branch point as this has already been drawn by the trunk code
+                if nodeId == branchPoint:
+                    continue
+
+                branchRoot = (branchRoot[0] + (reverse*60), branchRoot[1])
+                node = model.orbitSim.nodeById(nodeId)
+                orbitView = OrbitNodeView(node, branchRoot)
+                self.all_sprites.add(orbitView)
+
 
 
 
