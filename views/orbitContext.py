@@ -45,48 +45,31 @@ class OrbitNodeView(pygame.sprite.Sprite):
 class OrbitContext(GUIContext):
     def __init__(self, screen, model):
         super(OrbitContext, self).__init__(screen, model)
-        orbitSpot = (400, 750)
         self.all_sprites = pygame.sprite.Group()
+        self.model = model
+        self.screen = screen
+        self.draw()
 
+    def draw(self):
         # First label root node. By convention node 0 (surface of sun)
-        rootNode = model.orbitSim.nodeById(0)
-        terminalNode = model.orbitSim.nodeById(99)
+        rootNode = self.model.orbitSim.nodeById(0)
+        terminalNode = self.model.orbitSim.nodeById(99)
+        sunSpot = (400, 750)
 
-        longestPath = model.orbitSim._findPath(rootNode.id, terminalNode.id, [])[0]
+        trunkPath = self.model.orbitSim._findPath(rootNode.id, terminalNode.id, [])[0]
+        # Draw trunk - path is node/link/node/link/node so just skip links for now
+        self.drawPath(trunkPath, start = sunSpot, yStep = -70)
+
 
         # Then find all planet leaf nodes
-        leafNodes = []
-        for node in model.orbitSim._nodes.values():
+        planetNodes = []
+        for node in self.model.orbitSim._nodes.values():
             if (node.leaf == LeafClass.PLANET and node.id != 0):
-                leafNodes.append(node)
+                planetNodes.append(node)
 
         # Then find all paths from root to leaves
-        paths = [model.orbitSim._findPath(rootNode.id, node.id, [])[0] for node in leafNodes]
-
-
-        # Draw trunk - path is node/link/node/link/node so just skip links for now
-        self.drawPath(longestPath, start = orbitSpot, yStep = -70)
-
-        # Now do branches - first find all the paths that aren't the longest
-        branchPaths = []
-        for path in paths:
-            if path is longestPath:
-                continue
-
-            branchPoint = 0
-            subPath = None
-            # Record all of the path beyond the point where it's identical to the longest
-            for i in range(len(path)):
-                if not subPath and (path[i] == longestPath[i]):
-                    branchPoint = path[i]
-                    continue
-                elif not subPath:
-                    # Include the branch point so we know where to start drawing
-                    subPath = [branchPoint]
-
-                subPath.append(path[i])
-
-            branchPaths.append(subPath)
+        planetPaths = [self.model.orbitSim._findPath(rootNode.id, node.id, [])[0] for node in planetNodes]
+        branchPaths = [self.branchPath(path, trunkPath) for path in planetPaths]
 
         # Now draw the branch.
         count = 0
@@ -110,50 +93,29 @@ class OrbitContext(GUIContext):
         
         # Now handle moons
         moonNodes = []
-        for node in model.orbitSim._nodes.values():
+        for node in self.model.orbitSim._nodes.values():
             if (node.leaf == LeafClass.MOON and node.id != 0):
                 moonNodes.append(node)
 
-        moonPaths = [model.orbitSim._findPath(rootNode.id, node.id, [])[0] for node in moonNodes]
+        moonPaths = [self.model.orbitSim._findPath(rootNode.id, node.id, [])[0] for node in moonNodes]
+        moonFromTrunkPaths = [self.branchPath(path, trunkPath) for path in moonPaths]
 
-        for moonPath in moonPaths:
-            # First work out which planet this moon belongs to
-            branchPoint = 0
-            subPath = None
-            # Strip off the main trunk
-            for i in range(len(moonPath)):
-                if not subPath and (moonPath[i] == longestPath[i]):
-                    branchPoint = moonPath[i]
-                    continue
-                elif not subPath:
-                    # Include the branch point so we know where to start drawing
-                    subPath = [branchPoint]
-
-                subPath.append(moonPath[i])
-            
+        for moonPath in moonFromTrunkPaths:
             # Now find the right branch
-            moonBranch = 0
-            subSubPath = None
+            moonSubPath = None
             for branch in branchPaths:
-                if branch[0] != subPath[0]:
+                if branch[0] != moonPath[0]:
                     continue
 
-                # Then repeat to find the branch from the planet's path
-                for i in range(len(subPath)):
-                    if not subSubPath and (subPath[i] == branch[i]):
-                        moonBranch = subPath[i]
-                        continue
-                    elif not subSubPath:
-                        subSubPath = [moonBranch]
-
-                    subSubPath.append(subPath[i])
+                moonSubPath = self.branchPath(moonPath, branch)
 
             moonSpot = (0,0)
+            moonRoot = moonSubPath[0]
             for ov in self.all_sprites:
-                if ov.node.id == subSubPath[0]:
+                if ov.node.id == moonRoot:
                     moonSpot = ov.center
 
-            self.drawPath(subSubPath, start = moonSpot, yStep = 30, skip = moonBranch)
+            self.drawPath(moonSubPath, start = moonSpot, yStep = 30, skip = moonRoot)
                 
 
     def drawPath(self, path, start=(0,0), xStep = 0, yStep = 0, skip = None):
@@ -174,8 +136,21 @@ class OrbitContext(GUIContext):
             orbitView = OrbitNodeView(node, spot)
             self.all_sprites.add(orbitView)
                 
+    def branchPath(self, path, compare, keepJunction = True):
+        branchPoint = 0
+        subPath = None
+        # Record all of the path beyond the point where it's identical to the longest
+        for i in range(len(path)):
+            if not subPath and (path[i] == compare[i]):
+                branchPoint = path[i]
+                continue
+            elif not subPath:
+                # Include the branch point so we know where to start drawing
+                subPath = [branchPoint]
 
+            subPath.append(path[i])
 
+        return subPath
 
     
 
