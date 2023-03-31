@@ -1,6 +1,6 @@
 import unittest
 
-from orbitsim.orbitNode import OrbitNode
+from orbitsim.orbitNode import OrbitNode, LeafClass
 
 class PlanetMock:
     pass
@@ -18,6 +18,7 @@ class TestOrbitNodeAttributes(unittest.TestCase):
         self.assertTrue(hasattr(OrbitNode(0), "gravity"))
         self.assertTrue(hasattr(OrbitNode(0), "name"))
         self.assertTrue(hasattr(OrbitNode(0), "id"))
+        self.assertTrue(hasattr(OrbitNode(0), "leaf"))
 
 class TestOrbitNodeConstructor(unittest.TestCase):
     def testOrbitNodeConstructor(self):
@@ -26,6 +27,10 @@ class TestOrbitNodeConstructor(unittest.TestCase):
         self.assertTrue(OrbitNode(0))
         self.assertTrue(OrbitNode(0, planet = PlanetMock()))
         self.assertTrue(OrbitNode(id = 0, planet = PlanetMock(), gravity = 9.8))
+        
+    def testOrbitNodeLeaf(self):
+        self.assertEqual(OrbitNode(0).leaf, LeafClass.NONE)
+        self.assertEqual(OrbitNode(0, leaf=2).leaf, LeafClass.PLANET)
 
 class TestOrbitNodeLinks(unittest.TestCase):
     def testOrbitNodeLinks(self):

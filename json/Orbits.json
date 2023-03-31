@@ -10,7 +10,8 @@
                     "travelTime": 10,
                     "distance": 10
                 }
-            ]
+            ],
+            "leaf": 1
         },
         {
             "name": "Sun orbit",
@@ -80,7 +81,8 @@
         },
         {
             "name": "Mercury",
-            "id": 6
+            "id": 6,
+            "leaf": 2
         },
         {
             "name": "Venus transfer",
@@ -126,7 +128,8 @@
         },
         {
             "name": "Venus",
-            "id": 10
+            "id": 10,
+            "leaf": 2
         },
         {
             "name": "Earth transfer",
@@ -172,7 +175,8 @@
         },
         {
             "name": "Earth",
-            "id": 14
+            "id": 14,
+            "leaf": 2
         },
         {
             "name": "Mars transfer",
@@ -218,7 +222,8 @@
         },
         {
             "name": "Mars",
-            "id": 18
+            "id": 18,
+            "leaf": 2
         },
         {
             "name": "Jupiter transfer",
@@ -246,7 +251,8 @@
         },
         {
             "name": "Jupiter",
-            "id": 21
+            "id": 21,
+            "leaf": 2
         }
 
     ]

@@ -1,5 +1,7 @@
 from views.guiContext import GUIContext
 
+from orbitsim.orbitNode import LeafClass
+
 import pygame
 
 from pygame.locals import (
@@ -37,10 +39,10 @@ class OrbitContext(GUIContext):
 
         # First label root node. By convention node 0 (surface of sun)
         rootNode = model.orbitSim.nodeById(0)
-        # Then find all leaf nodes
+        # Then find all planet leaf nodes
         leafNodes = []
         for node in model.orbitSim._nodes.values():
-            if (len(node.links) == 1 and node.id != 0):
+            if (node.leaf == LeafClass.PLANET and node.id != 0):
                 leafNodes.append(node)
 
         # Then find all paths from root to leaves
