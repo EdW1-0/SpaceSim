@@ -82,10 +82,7 @@ class OrbitContext(GUIContext):
                     branchRoot = ov.center
 
             # Alternate the direction of drawing
-            if count % 2:
-                reverse = 1
-            else:
-                reverse = -1
+            reverse = 2*(count % 2) - 1
             count += 1
 
             self.drawPath(path, start = branchRoot, xStep = reverse*60, skip = branchPoint)
