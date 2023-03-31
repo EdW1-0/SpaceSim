@@ -25,7 +25,18 @@ class OrbitNodeView(pygame.sprite.Sprite):
         self.node = node
         self.surf = pygame.surface.Surface((20, 20))
         self.surf.set_colorkey((0, 0, 0))
-        pygame.draw.circle(self.surf, (255, 255, 100, 100), (10, 10), 10.0)
+        color = None
+        if self.node.leaf == LeafClass.NONE:
+            color = (50, 50, 150)
+        elif self.node.leaf == LeafClass.ROOT:
+            color = (250, 250, 100)
+        elif self.node.leaf == LeafClass.PLANET:
+            color = (150, 250, 150)
+        elif self.node.leaf == LeafClass.MOON:
+            color = (100, 100, 100)
+        else:
+            color = (200, 0, 0)
+        pygame.draw.circle(self.surf, color, (10, 10), 10.0)
 
         self.rect = self.surf.get_rect(center = self.center)
 
