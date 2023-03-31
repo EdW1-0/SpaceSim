@@ -4,8 +4,8 @@ from views.menuContext import MenuContext
 from views.orbitContext import OrbitContext
 
 # Define constants for the screen width and height
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 1200
+SCREEN_HEIGHT = 800
 
 from pygame.locals import (
     RLEACCEL,

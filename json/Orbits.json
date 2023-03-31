@@ -154,12 +154,59 @@
             "id": 12,
             "links": [
                 {
+                    "id": 22,
+                    "deltaV": 10,
+                    "travelTime": 10,
+                    "distance": 10
+                }
+            ]
+        },
+        {
+            "name": "Moon transfer",
+            "id": 22,
+            "links": [
+                {
+                    "id": 23,
+                    "deltaV": 1,
+                    "travelTime": 1,
+                    "distance": 1
+                },
+                {
                     "id": 13,
                     "deltaV": 10,
                     "travelTime": 10,
                     "distance": 10
                 }
             ]
+        },
+        {
+            "name": "Moon capture",
+            "id": 23,
+            "links": [
+                {
+                    "id": 24,
+                    "deltaV": 1,
+                    "travelTime": 1,
+                    "distance": 1
+                }
+            ]
+        },
+        {
+            "name": "Moon orbit",
+            "id": 24,
+            "links": [
+                {
+                    "id": 25,
+                    "deltaV": 1,
+                    "travelTime": 1,
+                    "distance": 1
+                }
+            ]
+        },
+        {
+            "name": "Moon",
+            "id": 25,
+            "leaf": 3
         },
         {
             "name": "Earth orbit",
@@ -201,12 +248,106 @@
             "id": 16,
             "links": [
                 {
-                    "id": 17,
+                    "id": 26,
                     "deltaV": 3,
                     "travelTime": 3,
                     "distance": 10
                 }
             ]
+        },
+        {
+            "name": "Deimos transfer",
+            "id": 26,
+            "links": [
+                {
+                    "id": 27,
+                    "deltaV": 3,
+                    "travelTime": 3,
+                    "distance": 10
+                },
+                {
+                    "id": 28,
+                    "deltaV": 1,
+                    "travelTime": 1,
+                    "distance": 1
+                }
+            ]
+        },
+        {
+            "name": "Deimos capture",
+            "id": 28,
+            "links": [
+                {
+                    "id": 29,
+                    "deltaV": 1,
+                    "travelTime": 1,
+                    "distance": 1
+                }
+            ]
+        },
+        {
+            "name": "Deimos orbit",
+            "id": 29,
+            "links": [
+                {
+                    "id": 30,
+                    "deltaV": 1,
+                    "travelTime": 1,
+                    "distance": 1
+                }
+            ]
+        },
+        {
+            "name": "Deimos",
+            "id": 30,
+            "leaf": 3 
+        },
+        {
+            "name": "Phobos transfer",
+            "id": 27,
+            "links": [
+                {
+                    "id": 17,
+                    "deltaV": 3,
+                    "travelTime": 3,
+                    "distance": 10
+                },
+                {
+                    "id": 31,
+                    "deltaV": 1,
+                    "travelTime": 1,
+                    "distance": 1
+                }
+            ]
+        },
+        {
+            "name": "Phobos capture",
+            "id": 31,
+            "links": [
+                {
+                    "id": 32,
+                    "deltaV": 1,
+                    "travelTime": 1,
+                    "distance": 1
+                }
+            ]
+        },
+        {
+            "name": "Phobos orbit",
+            "id": 32,
+            "links": [
+                {
+                    "id": 33,
+                    "deltaV": 1,
+                    "travelTime": 1,
+                    "distance": 1
+                }
+            ]
+        },
+        {
+            "name": "Phobos",
+            "id": 33,
+            "leaf": 3 
         },
         {
             "name": "Mars orbit",
@@ -234,6 +375,12 @@
                     "deltaV": 7,
                     "travelTime": 7,
                     "distance": 10
+                },
+                {
+                    "id": 99,
+                    "deltaV": 100,
+                    "travelTime": 100,
+                    "distance": 100
                 }
             ]
         },
@@ -253,6 +400,11 @@
             "name": "Jupiter",
             "id": 21,
             "leaf": 2
+        },
+        {
+            "name": "Solar system escape",
+            "id": 99,
+            "leaf": 1
         }
 
     ]

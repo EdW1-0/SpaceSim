@@ -34,11 +34,15 @@ class OrbitNodeView(pygame.sprite.Sprite):
 class OrbitContext(GUIContext):
     def __init__(self, screen, model):
         super(OrbitContext, self).__init__(screen, model)
-        orbitSpot = (200, 550)
+        orbitSpot = (400, 750)
         self.all_sprites = pygame.sprite.Group()
 
         # First label root node. By convention node 0 (surface of sun)
         rootNode = model.orbitSim.nodeById(0)
+        terminalNode = model.orbitSim.nodeById(99)
+
+        longestPath = model.orbitSim._findPath(rootNode.id, terminalNode.id, [])[0]
+
         # Then find all planet leaf nodes
         leafNodes = []
         for node in model.orbitSim._nodes.values():
@@ -49,12 +53,12 @@ class OrbitContext(GUIContext):
         paths = [model.orbitSim._findPath(rootNode.id, node.id, [])[0] for node in leafNodes]
 
         # Find the longest - this will be our "trunk"
-        longestPathLength = 0
-        longestPath = paths[0]
-        for path in paths:
-            if len(path) > longestPathLength:
-                longestPathLength = len(path)
-                longestPath = path
+        #longestPathLength = 0
+        #longestPath = paths[0]
+        #for path in paths:
+        #    if len(path) > longestPathLength:
+        #        longestPathLength = len(path)
+        #        longestPath = path
 
         # Draw trunk - path is node/link/node/link/node so just skip links for now
         link = False
@@ -68,7 +72,7 @@ class OrbitContext(GUIContext):
             node = model.orbitSim.nodeById(nodeId)
             orbitView = OrbitNodeView(node, orbitSpot)
             self.all_sprites.add(orbitView)
-            orbitSpot = (orbitSpot[0], orbitSpot[1] - 40)
+            orbitSpot = (orbitSpot[0], orbitSpot[1] - 70)
 
         # Now do branches - first find all the paths that aren't the longest
         branchPaths = []
@@ -80,7 +84,7 @@ class OrbitContext(GUIContext):
             subPath = None
             # Record all of the path beyond the point where it's identical to the longest
             for i in range(len(path)):
-                if path[i] == longestPath[i]:
+                if not subPath and (path[i] == longestPath[i]):
                     branchPoint = path[i]
                     continue
                 elif not subPath:
@@ -125,6 +129,72 @@ class OrbitContext(GUIContext):
                 node = model.orbitSim.nodeById(nodeId)
                 orbitView = OrbitNodeView(node, branchRoot)
                 self.all_sprites.add(orbitView)
+        
+        # Now handle moons
+        moonNodes = []
+        for node in model.orbitSim._nodes.values():
+            if (node.leaf == LeafClass.MOON and node.id != 0):
+                moonNodes.append(node)
+
+        moonPaths = [model.orbitSim._findPath(rootNode.id, node.id, [])[0] for node in moonNodes]
+
+        for moonPath in moonPaths:
+            # First work out which planet this moon belongs to
+            branchPoint = 0
+            subPath = None
+            # Strip off the main trunk
+            for i in range(len(moonPath)):
+                if not subPath and (moonPath[i] == longestPath[i]):
+                    branchPoint = moonPath[i]
+                    continue
+                elif not subPath:
+                    # Include the branch point so we know where to start drawing
+                    subPath = [branchPoint]
+
+                subPath.append(moonPath[i])
+            
+            # Now find the right branch
+            moonBranch = 0
+            subSubPath = None
+            for branch in branchPaths:
+                if branch[0] != subPath[0]:
+                    continue
+
+                # Then repeat to find the branch from the planet's path
+                for i in range(len(subPath)):
+                    if not subSubPath and (subPath[i] == branch[i]):
+                        moonBranch = subPath[i]
+                        continue
+                    elif not subSubPath:
+                        subSubPath = [moonBranch]
+
+                    subSubPath.append(subPath[i])
+
+            moonSpot = (0,0)
+            for ov in self.all_sprites:
+                if ov.node.id == subSubPath[0]:
+                    moonSpot = ov.center
+
+            link = False
+            for nodeId in subSubPath:
+                if link:
+                    link = False
+                    continue
+                else:
+                    link = True
+
+                if nodeId == moonBranch:
+                    continue
+
+                moonSpot = (moonSpot[0], moonSpot[1] + 30)
+                node = model.orbitSim.nodeById(nodeId)
+                orbitView = OrbitNodeView(node, moonSpot)
+                self.all_sprites.add(orbitView)
+                
+
+            
+                
+
 
 
 
