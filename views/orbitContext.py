@@ -63,27 +63,9 @@ class OrbitContext(GUIContext):
         # Then find all paths from root to leaves
         paths = [model.orbitSim._findPath(rootNode.id, node.id, [])[0] for node in leafNodes]
 
-        # Find the longest - this will be our "trunk"
-        #longestPathLength = 0
-        #longestPath = paths[0]
-        #for path in paths:
-        #    if len(path) > longestPathLength:
-        #        longestPathLength = len(path)
-        #        longestPath = path
 
         # Draw trunk - path is node/link/node/link/node so just skip links for now
-        link = False
-        for nodeId in longestPath:
-            if link:
-                link = False
-                continue
-            else:
-                link = True
-
-            node = model.orbitSim.nodeById(nodeId)
-            orbitView = OrbitNodeView(node, orbitSpot)
-            self.all_sprites.add(orbitView)
-            orbitSpot = (orbitSpot[0], orbitSpot[1] - 70)
+        self.drawPath(longestPath, start = orbitSpot, yStep = -70)
 
         # Now do branches - first find all the paths that aren't the longest
         branchPaths = []
@@ -123,23 +105,8 @@ class OrbitContext(GUIContext):
                 reverse = -1
             count += 1
 
-            # Now draw them as before, but stepping horizontally
-            link = False
-            for nodeId in path:
-                if link:
-                    link = False
-                    continue
-                else:
-                    link = True
+            self.drawPath(path, start = branchRoot, xStep = reverse*60, skip = branchPoint)
 
-                # Skip the branch point as this has already been drawn by the trunk code
-                if nodeId == branchPoint:
-                    continue
-
-                branchRoot = (branchRoot[0] + (reverse*60), branchRoot[1])
-                node = model.orbitSim.nodeById(nodeId)
-                orbitView = OrbitNodeView(node, branchRoot)
-                self.all_sprites.add(orbitView)
         
         # Now handle moons
         moonNodes = []
@@ -186,42 +153,31 @@ class OrbitContext(GUIContext):
                 if ov.node.id == subSubPath[0]:
                     moonSpot = ov.center
 
-            link = False
-            for nodeId in subSubPath:
-                if link:
-                    link = False
-                    continue
-                else:
-                    link = True
-
-                if nodeId == moonBranch:
-                    continue
-
-                moonSpot = (moonSpot[0], moonSpot[1] + 30)
-                node = model.orbitSim.nodeById(nodeId)
-                orbitView = OrbitNodeView(node, moonSpot)
-                self.all_sprites.add(orbitView)
+            self.drawPath(subSubPath, start = moonSpot, yStep = 30, skip = moonBranch)
                 
 
-            
+    def drawPath(self, path, start=(0,0), xStep = 0, yStep = 0, skip = None):
+        link = False
+        spot = start
+        for nodeId in path:
+            if link:
+                link = False
+                continue
+            else:
+                link = True
+
+            if nodeId == skip:
+                continue
+
+            spot = (spot[0] + xStep, spot[1] + yStep)
+            node = self.model.orbitSim.nodeById(nodeId)
+            orbitView = OrbitNodeView(node, spot)
+            self.all_sprites.add(orbitView)
                 
 
 
 
-
-
-
- # Layout algorithm:
- # - Pick a node to be root node (probably convention to be node 0 as this is surface of sun)
- # - Make a list of paths from root node:
- # - For each unwalked link:
- #   - If only one onward link, add to path and continue
- #   - If multiple onward, branch - make a new path and iterate on that
- #   - If no onward, terminate recursion
- # - Once made, find longest path:
- #   - Compare branches at each branch point and transpose if needed
- # - For longest path, space nodes vertically
- # - For each subpath, space nodes horizontally       
+    
 
  # Alternative algo:
  # - OrbitSim has a _findPath method
