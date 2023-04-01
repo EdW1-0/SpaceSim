@@ -36,6 +36,9 @@ class TestOrbitSim(unittest.TestCase):
         self.assertNotEqual(OrbitSim("test_json/test_orbits/happy_case.json")._nodes, {})
         self.assertEqual(len(OrbitSim("test_json/test_orbits/happy_case.json")._nodes), 4)
         self.assertEqual(len(OrbitSim("test_json/test_orbits/happy_case.json")._links), 3)
+        with self.assertRaises(KeyError):
+            OrbitSim("test_json/test_orbits/duplicate.json")
+
         
 class TestOrbitSimNodes(unittest.TestCase):
     def setUp(self):

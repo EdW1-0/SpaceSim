@@ -1,0 +1,45 @@
+{
+    "Orbitals": [
+        { 
+            "name": "Sun",
+            "id": 0,
+            "gravity": 100,
+            "links": [
+                {
+                    "id": 1,
+                    "deltaV": 1000,
+                    "travelTime": 10000,
+                    "distance": 100000
+                }
+            ]
+        },
+        {
+            "name": "Sun Low Orbit",
+            "id": 1,
+            "links": [
+                {
+                    "id": 2,
+                    "deltaV": 200,
+                    "travelTime": 5e6,
+                    "distance": 1e7
+                }
+            ]
+        },
+        {
+            "name": "Sun Heliostationary",
+            "id": 2,
+            "links": [
+                {
+                    "id": 0,
+                    "deltaV": 200,
+                    "travelTime": 3,
+                    "distance": 100
+                }
+            ]
+        },
+        {
+            "name": "Iapetus",
+            "id": 0
+        }
+    ]
+}

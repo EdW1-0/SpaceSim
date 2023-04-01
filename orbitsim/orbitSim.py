@@ -18,7 +18,17 @@ class OrbitSim:
                 del x["links"]
             return x
         orbitalsDelinked = [stripLinks(orbital.copy()) for orbital in  orbitalsArray]
-        self._nodes = {node["id"]: OrbitNode(**node) for node in orbitalsDelinked}
+
+        # Unpack the nodes into self._nodes; use this rather than comprehension because we need to check for duplicates
+        self._nodes = {}
+        for node in orbitalsDelinked:
+            if node["id"] in self._nodes:
+                firstNode = self._nodes[node["id"]].name
+                secondNode = node["name"]
+                raise KeyError("Orbits file contains duplicate nodes {0} and {1} with same id {2})".format(firstNode, secondNode, node["id"]))
+            else:
+                self._nodes[node["id"]] = OrbitNode(**node)
+            
 
         self._links = {}
         linkIdCount = 0
@@ -213,6 +223,9 @@ class OrbitSim:
                     assert False, "Invalid link id for this node!"
                 # Reject paths with redundant loops
                 checkedNodes = [path[2*i] for i in range(int(len(path)/2))]
+                # Note we use in rather than direct equivalence - not perfect but here I think it's OK because we literally are 
+                # looking for the same id (so the same object, not just the same value). And the code to check properly would be
+                # ugly without actually covering any additional functionality.
                 if nextId not in checkedNodes:
                     paths = self._findPath(nextId, targetId, nextPath)
                     for p in paths:
