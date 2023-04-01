@@ -43,10 +43,14 @@ class TestOrbitSimNodes(unittest.TestCase):
 
     def testOrbitSimNodeById(self):
         self.assertTrue(self.os.nodeById(0))
-        with self.assertRaises(TypeError):
-            OrbitSim().nodeById("Sun")
         with self.assertRaises(ValueError):
-            OrbitSim().nodeById(-1)
+            OrbitSim().nodeById("Sun")
+        with self.assertRaises(TypeError):
+            OrbitSim().nodeById(6.31)
+        with self.assertRaises(TypeError):
+            OrbitSim().nodeById(True)
+        with self.assertRaises(TypeError):
+            OrbitSim().nodeById([])
     
     def testOrbitSimNode0(self):
         n0 = self.os.nodeById(0)

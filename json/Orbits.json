@@ -2,10 +2,10 @@
     "Orbitals": [
         {
             "name": "Sun",
-            "id": 0,
+            "id": "SUS",
             "links": [
                 {
-                    "id": 1,
+                    "id": "SUO",
                     "deltaV": 10,
                     "travelTime": 10,
                     "distance": 10
@@ -15,10 +15,10 @@
         },
         {
             "name": "Sun orbit",
-            "id": 1,
+            "id": "SUO",
             "links": [
                 {
-                    "id": 2,
+                    "id": "SUT",
                     "deltaV": 10,
                     "travelTime": 10,
                     "distance": 10
@@ -27,10 +27,10 @@
         },
         {
             "name": "Sun transfer",
-            "id": 2,
+            "id": "SUT",
             "links": [
                 {
-                    "id": 3,
+                    "id": "MET",
                     "deltaV": 10,
                     "travelTime": 10,
                     "distance": 10
@@ -39,16 +39,16 @@
         },
         {
             "name": "Mercury transfer",
-            "id": 3,
+            "id": "MET",
             "links": [
                 {
-                    "id": 4,
+                    "id": "MEC",
                     "deltaV": 10,
                     "travelTime": 10,
                     "distance": 10
                 },
                 {
-                    "id": 7,
+                    "id": "VET",
                     "deltaV": 10,
                     "travelTime": 10,
                     "distance": 10
@@ -57,10 +57,10 @@
         },
         {
             "name": "Mercury capture",
-            "id": 4,
+            "id": "MEC",
             "links": [
                 {
-                    "id": 5,
+                    "id": "MEO",
                     "deltaV": 10,
                     "travelTime": 10,
                     "distance": 10
@@ -69,10 +69,10 @@
         },
         {
             "name": "Mercury orbit",
-            "id": 5,
+            "id": "MEO",
             "links": [
                 {
-                    "id": 6,
+                    "id": "MES",
                     "deltaV": 10,
                     "travelTime": 10,
                     "distance": 10
@@ -81,21 +81,21 @@
         },
         {
             "name": "Mercury",
-            "id": 6,
+            "id": "MES",
             "leaf": 2
         },
         {
             "name": "Venus transfer",
-            "id": 7,
+            "id": "VET",
             "links": [
                 {
-                    "id": 8,
+                    "id": "VEC",
                     "deltaV": 10,
                     "travelTime": 10,
                     "distance": 10
                 },
                 {
-                    "id": 11,
+                    "id": "EAT",
                     "deltaV": 10,
                     "travelTime": 10,
                     "distance": 10   
@@ -104,10 +104,10 @@
         },
         {
             "name": "Venus capture",
-            "id": 8,
+            "id": "VEC",
             "links": [
                 {
-                    "id": 9,
+                    "id": "VEO",
                     "deltaV": 10,
                     "travelTime": 10,
                     "distance": 10
@@ -116,10 +116,10 @@
         },
         {
             "name": "Venus orbit",
-            "id": 9,
+            "id": "VEO",
             "links": [
                 {
-                    "id": 10,
+                    "id": "VES",
                     "deltaV": 10,
                     "travelTime": 10,
                     "distance": 10
@@ -128,21 +128,21 @@
         },
         {
             "name": "Venus",
-            "id": 10,
+            "id": "VES",
             "leaf": 2
         },
         {
             "name": "Earth transfer",
-            "id": 11,
+            "id": "EAT",
             "links": [
                 {
-                    "id": 12,
+                    "id": "EAC",
                     "deltaV": 5,
                     "travelTime": 20,
                     "distance": 20
                 },
                 {
-                    "id": 15,
+                    "id": "MAT",
                     "deltaV": 10,
                     "travelTime": 10,
                     "distance": 20
@@ -151,10 +151,10 @@
         },
         {
             "name": "Earth capture",
-            "id": 12,
+            "id": "EAC",
             "links": [
                 {
-                    "id": 22,
+                    "id": "MOT",
                     "deltaV": 10,
                     "travelTime": 10,
                     "distance": 10
@@ -163,16 +163,16 @@
         },
         {
             "name": "Moon transfer",
-            "id": 22,
+            "id": "MOT",
             "links": [
                 {
-                    "id": 23,
+                    "id": "MOC",
                     "deltaV": 1,
                     "travelTime": 1,
                     "distance": 1
                 },
                 {
-                    "id": 13,
+                    "id": "EAO",
                     "deltaV": 10,
                     "travelTime": 10,
                     "distance": 10
@@ -181,10 +181,10 @@
         },
         {
             "name": "Moon capture",
-            "id": 23,
+            "id": "MOC",
             "links": [
                 {
-                    "id": 24,
+                    "id": "MOO",
                     "deltaV": 1,
                     "travelTime": 1,
                     "distance": 1
@@ -193,10 +193,10 @@
         },
         {
             "name": "Moon orbit",
-            "id": 24,
+            "id": "MOO",
             "links": [
                 {
-                    "id": 25,
+                    "id": "MOS",
                     "deltaV": 1,
                     "travelTime": 1,
                     "distance": 1
@@ -205,15 +205,15 @@
         },
         {
             "name": "Moon",
-            "id": 25,
+            "id": "MOS",
             "leaf": 3
         },
         {
             "name": "Earth orbit",
-            "id": 13,
+            "id": "EAO",
             "links": [
                 {
-                    "id": 14,
+                    "id": "EAS",
                     "deltaV": 10,
                     "travelTime": 10,
                     "distance": 10
@@ -222,21 +222,21 @@
         },
         {
             "name": "Earth",
-            "id": 14,
+            "id": "EAS",
             "leaf": 2
         },
         {
             "name": "Mars transfer",
-            "id": 15,
+            "id": "MAT",
             "links": [
                 {
-                    "id": 16,
+                    "id": "MAC",
                     "deltaV": 10,
                     "travelTime": 10,
                     "distance": 10
                 },
                 {
-                    "id": 19,
+                    "id": "JUT",
                     "deltaV": 10,
                     "travelTime": 10,
                     "distance": 10
@@ -245,10 +245,10 @@
         },
         {
             "name": "Mars capture",
-            "id": 16,
+            "id": "MAC",
             "links": [
                 {
-                    "id": 26,
+                    "id": "DET",
                     "deltaV": 3,
                     "travelTime": 3,
                     "distance": 10
@@ -257,16 +257,16 @@
         },
         {
             "name": "Deimos transfer",
-            "id": 26,
+            "id": "DET",
             "links": [
                 {
-                    "id": 27,
+                    "id": "PHT",
                     "deltaV": 3,
                     "travelTime": 3,
                     "distance": 10
                 },
                 {
-                    "id": 28,
+                    "id": "DEC",
                     "deltaV": 1,
                     "travelTime": 1,
                     "distance": 1
@@ -275,10 +275,10 @@
         },
         {
             "name": "Deimos capture",
-            "id": 28,
+            "id": "DEC",
             "links": [
                 {
-                    "id": 29,
+                    "id": "DEO",
                     "deltaV": 1,
                     "travelTime": 1,
                     "distance": 1
@@ -287,10 +287,10 @@
         },
         {
             "name": "Deimos orbit",
-            "id": 29,
+            "id": "DEO",
             "links": [
                 {
-                    "id": 30,
+                    "id": "DES",
                     "deltaV": 1,
                     "travelTime": 1,
                     "distance": 1
@@ -299,21 +299,21 @@
         },
         {
             "name": "Deimos",
-            "id": 30,
+            "id": "DES",
             "leaf": 3 
         },
         {
             "name": "Phobos transfer",
-            "id": 27,
+            "id": "PHT",
             "links": [
                 {
-                    "id": 17,
+                    "id": "MAO",
                     "deltaV": 3,
                     "travelTime": 3,
                     "distance": 10
                 },
                 {
-                    "id": 31,
+                    "id": "PHC",
                     "deltaV": 1,
                     "travelTime": 1,
                     "distance": 1
@@ -322,10 +322,10 @@
         },
         {
             "name": "Phobos capture",
-            "id": 31,
+            "id": "PHC",
             "links": [
                 {
-                    "id": 32,
+                    "id": "PHO",
                     "deltaV": 1,
                     "travelTime": 1,
                     "distance": 1
@@ -334,10 +334,10 @@
         },
         {
             "name": "Phobos orbit",
-            "id": 32,
+            "id": "PHO",
             "links": [
                 {
-                    "id": 33,
+                    "id": "PHS",
                     "deltaV": 1,
                     "travelTime": 1,
                     "distance": 1
@@ -346,15 +346,15 @@
         },
         {
             "name": "Phobos",
-            "id": 33,
+            "id": "PHS",
             "leaf": 3 
         },
         {
             "name": "Mars orbit",
-            "id": 17,
+            "id": "MAO",
             "links": [
                 {
-                    "id": 18,
+                    "id": "MAS",
                     "deltaV": 3,
                     "travelTime": 3,
                     "distance": 10
@@ -363,21 +363,21 @@
         },
         {
             "name": "Mars",
-            "id": 18,
+            "id": "MAS",
             "leaf": 2
         },
         {
             "name": "Jupiter transfer",
-            "id": 19,
+            "id": "JUT",
             "links": [
                 {
-                    "id": 20,
+                    "id": "JUC",
                     "deltaV": 7,
                     "travelTime": 7,
                     "distance": 10
                 },
                 {
-                    "id": 99,
+                    "id": "SSE",
                     "deltaV": 100,
                     "travelTime": 100,
                     "distance": 100
@@ -386,10 +386,10 @@
         },
         {
             "name": "Jupiter capture",
-            "id": 20,
+            "id": "JUC",
             "links": [
                 {
-                    "id": 21,
+                    "id": "JUO",
                     "deltaV": 7,
                     "travelTime": 7,
                     "distance": 10
@@ -397,13 +397,25 @@
             ]
         },
         {
+            "name": "Jupiter orbit",
+            "id": "JUO",
+            "links":[
+                {
+                    "id": "JUS",
+                    "deltaV": 20,
+                    "travelTime": 1,
+                    "distance": 1
+                }
+            ]
+        },
+        {
             "name": "Jupiter",
-            "id": 21,
+            "id": "JUS",
             "leaf": 2
         },
         {
             "name": "Solar system escape",
-            "id": 99,
+            "id": "SSE",
             "leaf": 1
         }
 

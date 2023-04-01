@@ -52,8 +52,8 @@ class OrbitContext(GUIContext):
 
     def draw(self):
         # First label root node. By convention node 0 (surface of sun)
-        rootNode = self.model.orbitSim.nodeById(0)
-        terminalNode = self.model.orbitSim.nodeById(99)
+        rootNode = self.model.orbitSim.nodeById("SUS")
+        terminalNode = self.model.orbitSim.nodeById("SSE")
         sunSpot = (400, 750)
 
         trunkPath = self.model.orbitSim._findPath(rootNode.id, terminalNode.id, [])[0]

@@ -194,7 +194,7 @@ class OrbitSim:
 
     def _findPath(self, sourceId, targetId, priorPath):
         path = [*priorPath, sourceId]
-        if sourceId is targetId:
+        if sourceId == targetId:
             return [path]
 
         sourceNode = self.nodeById(sourceId)
@@ -205,9 +205,9 @@ class OrbitSim:
             if linkId not in checkedLinks:
                 nextPath = [*path, linkId]
                 link = self.linkById(linkId)
-                if sourceId is link.bottomNode:
+                if sourceId == link.bottomNode:
                     nextId = link.topNode
-                elif sourceId is link.topNode:
+                elif sourceId == link.topNode:
                     nextId = link.bottomNode
                 else:
                     assert False, "Invalid link id for this node!"
@@ -251,10 +251,10 @@ class OrbitSim:
         
 
     def nodeById(self, id):
-        if not isinstance(id, int):
+        if not (type(id) == int or isinstance(id, str)):
             raise TypeError
-        elif id < 0:
-            raise ValueError
+        elif isinstance(id, str) and not id.isupper():
+            raise ValueError 
         return self._nodes[id]
 
     def linkById(self, id):
