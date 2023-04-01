@@ -13,6 +13,7 @@ from pygame.locals import (
     K_ESCAPE,
     KEYDOWN,
     MOUSEBUTTONUP,
+    MOUSEWHEEL,
     QUIT,
 )
 
@@ -43,11 +44,13 @@ class OrbitNodeView(pygame.sprite.Sprite):
 
 
 class OrbitContext(GUIContext):
-    def __init__(self, screen, model):
+    def __init__(self, screen, model, boundsRect = pygame.Rect(-100, -100, 1400, 1000)):
         super(OrbitContext, self).__init__(screen, model)
         self.all_sprites = pygame.sprite.Group()
         self.model = model
         self.screen = screen
+        self.boundsRect = boundsRect
+        self.scale = 1.0
         self.basePoint = (400, 750)
 
         self.computeLayout()
@@ -132,7 +135,7 @@ class OrbitContext(GUIContext):
             if nodeId == skip:
                 continue
 
-            spot = (spot[0] + xStep, spot[1] + yStep)
+            spot = (spot[0] + xStep * self.scale, spot[1] + yStep * self.scale)
             node = self.model.orbitSim.nodeById(nodeId)
             orbitView = OrbitNodeView(node, spot)
             self.all_sprites.add(orbitView)
@@ -179,19 +182,25 @@ class OrbitContext(GUIContext):
                     
 
                 if pos[0] < 50 and pos[1] < 50:
-                    print ("foo")
                     returnCode = LOADMENUVIEW
                     break
 
+            elif event.type == MOUSEWHEEL:
+                if event.y == 1:
+                    self.scale = max(self.scale-0.1, 0.1)
+                elif event.y == -1:
+                    self.scale = min(self.scale+0.1, 2.0)
+                self.computeLayout()
+
             elif event.type == KEYDOWN:
                 if event.key == K_UP:
-                    self.basePoint = (self.basePoint[0], self.basePoint[1]-50)
+                    self.basePoint = (self.basePoint[0], max(self.basePoint[1]-50, self.boundsRect.top))
                 elif event.key == K_DOWN:
-                    self.basePoint = (self.basePoint[0], self.basePoint[1]+50)
+                    self.basePoint = (self.basePoint[0], min(self.basePoint[1]+50, self.boundsRect.bottom))
                 elif event.key == K_LEFT:
-                    self.basePoint = (self.basePoint[0]-50, self.basePoint[1])
+                    self.basePoint = (max(self.basePoint[0]-50, self.boundsRect.left), self.basePoint[1])
                 elif event.key == K_RIGHT:
-                    self.basePoint = (self.basePoint[0]+50, self.basePoint[1])
+                    self.basePoint = (min(self.basePoint[0]+50, self.boundsRect.right), self.basePoint[1])
                 self.computeLayout()
 
         self.screen.fill((20, 20, 120))
