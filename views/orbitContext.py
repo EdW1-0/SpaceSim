@@ -48,13 +48,17 @@ class OrbitContext(GUIContext):
         self.all_sprites = pygame.sprite.Group()
         self.model = model
         self.screen = screen
-        self.draw()
+        self.basePoint = (400, 750)
 
-    def draw(self):
+        self.computeLayout()
+
+    def computeLayout(self):
+        self.all_sprites.empty()
+
         # First label root node. By convention node 0 (surface of sun)
         rootNode = self.model.orbitSim.nodeById("SUS")
         terminalNode = self.model.orbitSim.nodeById("SSE")
-        sunSpot = (400, 750)
+        sunSpot = self.basePoint
 
         trunkPath = self.model.orbitSim._findPath(rootNode.id, terminalNode.id, [])[0]
         # Draw trunk - path is node/link/node/link/node so just skip links for now
@@ -178,6 +182,17 @@ class OrbitContext(GUIContext):
                     print ("foo")
                     returnCode = LOADMENUVIEW
                     break
+
+            elif event.type == KEYDOWN:
+                if event.key == K_UP:
+                    self.basePoint = (self.basePoint[0], self.basePoint[1]-50)
+                elif event.key == K_DOWN:
+                    self.basePoint = (self.basePoint[0], self.basePoint[1]+50)
+                elif event.key == K_LEFT:
+                    self.basePoint = (self.basePoint[0]-50, self.basePoint[1])
+                elif event.key == K_RIGHT:
+                    self.basePoint = (self.basePoint[0]+50, self.basePoint[1])
+                self.computeLayout()
 
         self.screen.fill((20, 20, 120))
 
