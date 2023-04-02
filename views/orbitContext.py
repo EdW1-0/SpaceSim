@@ -39,7 +39,28 @@ class OrbitNodeView(pygame.sprite.Sprite):
             color = (200, 0, 0)
         pygame.draw.circle(self.surf, color, (10, 10), 10.0)
 
+
+
         self.rect = self.surf.get_rect(center = self.center)
+
+class OrbitNodeViewLabel(pygame.sprite.Sprite):
+    def __init__(self, node, center=(0, 0)):
+        super(OrbitNodeViewLabel, self).__init__()
+        self.node = node
+        font = pygame.font.Font(size=18)
+        self.surf = font.render(self.node.name, True, (230, 230, 230))
+        self.rect = self.surf.get_rect()
+        self.rect.center = center
+
+class OrbitLinkViewLabel(pygame.sprite.Sprite):
+    def __init__(self, link, center=(0, 0)):
+        super(OrbitLinkViewLabel, self).__init__()
+        self.link = link
+        font = pygame.font.Font(size=18)
+        self.surf = font.render(str(self.link.deltaV), True, (230, 230, 120))
+        self.rect = self.surf.get_rect()
+        self.rect.center = center
+
 
 class OrbitLinkView(pygame.sprite.Sprite):
     def __init__(self, link, start = (0,0), end = (0,0)):
@@ -62,6 +83,9 @@ class OrbitLinkView(pygame.sprite.Sprite):
             left = left + 10
             width = width - 20
         
+        # May have shrunk to zero if zoomed, that's OK, but don't let it go below zero or we crash
+        width = max(width, 0)
+        height = max(height, 0)
         self.start = start
         self.end = end
         self.link = link
@@ -71,7 +95,7 @@ class OrbitLinkView(pygame.sprite.Sprite):
         self.rect = self.surf.get_rect(top = top, left=left)
 
 class OrbitContext(GUIContext):
-    def __init__(self, screen, model, boundsRect = pygame.Rect(-100, -100, 1400, 1000)):
+    def __init__(self, screen, model, boundsRect = pygame.Rect(-100, -100, 1400, 2000)):
         super(OrbitContext, self).__init__(screen, model)
         self.all_sprites = pygame.sprite.Group()
         self.node_sprites = pygame.sprite.Group()
@@ -96,7 +120,7 @@ class OrbitContext(GUIContext):
 
         trunkPath = self.model.orbitSim._findPath(rootNode.id, terminalNode.id, [])[0]
         # Draw trunk - path is node/link/node/link/node so just skip links for now
-        self.drawPath(trunkPath, start = sunSpot, yStep = -70)
+        self.drawPath(trunkPath, start = sunSpot, yStep = -140)
 
 
         # Then find all planet leaf nodes
@@ -123,7 +147,7 @@ class OrbitContext(GUIContext):
             reverse = 2*(count % 2) - 1
             count += 1
 
-            self.drawPath(path, start = branchRoot, xStep = reverse*60, skip = branchPoint)
+            self.drawPath(path, start = branchRoot, xStep = reverse*120, skip = branchPoint)
 
         
         # Now handle moons
@@ -150,7 +174,16 @@ class OrbitContext(GUIContext):
                 if ov.node.id == moonRoot:
                     moonSpot = ov.center
 
-            self.drawPath(moonSubPath, start = moonSpot, yStep = 30, skip = moonRoot)
+            self.drawPath(moonSubPath, start = moonSpot, yStep = 60, skip = moonRoot)
+
+        for view in self.node_sprites:
+            ov = OrbitNodeViewLabel(view.node, (view.center[0], view.center[1]+15))
+            self.all_sprites.add(ov)
+
+        for view in self.link_sprites:
+            ov = OrbitLinkViewLabel(view.link, view.rect.center)
+            self.all_sprites.add(ov)
+        
                 
 
     def drawPath(self, path, start=(0,0), xStep = 0, yStep = 0, skip = None):
