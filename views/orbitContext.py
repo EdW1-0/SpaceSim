@@ -52,6 +52,16 @@ class OrbitLinkView(pygame.sprite.Sprite):
         top = min(start[1], end[1])
         height = max(abs(end[1] - start[1]), 10)
 
+        # Adjust rect a bit to account for the margins needed for nodes, and to offset start to midpoint of rect
+        if height > width:
+            left = left - 5
+            top = top + 10
+            height = height - 20
+        else:
+            top = top - 5
+            left = left + 10
+            width = width - 20
+        
         self.start = start
         self.end = end
         self.link = link
@@ -149,34 +159,6 @@ class OrbitContext(GUIContext):
         for nodeId in path:
             if link:
                 linkSpot = (spot[0] + xStep * self.scale, spot[1] + yStep * self.scale)
-                # Adjust start and end point by a margin to account for overlap with nodes
-                # For now, let's cheat and assume only perpendicular paths
-                startSpotX = spot[0]
-                endSpotX = linkSpot[0]
-                startSpotY = spot[1]
-                endSpotY = linkSpot[1]
-                if xStep and yStep:
-                    assert("Non-perpendicular paths not implemented yet")
-                elif xStep:
-                    # Adjust big axis towards center by a bit
-                    if xStep > 0:
-                        startSpotX = spot[0] + 10
-                        endSpotX = linkSpot[0] - 10
-                    else:
-                        startSpotX = spot[0] - 10
-                        endSpotX = linkSpot[0] + 10
-                elif yStep:
-                    if yStep > 0:
-                        startSpotY = spot[1] + 10
-                        endSpotY = linkSpot[1] - 10
-                    else:
-                        startSpotY = spot[1] - 10
-                        endSpotY = linkSpot[1] + 10
-                else:
-                    assert("Drawing path with no step")
-                spot = (startSpotX, startSpotY)
-                linkSpot = (endSpotX, endSpotY)
-
                 link = self.model.orbitSim.linkById(nodeId)
                 linkView = OrbitLinkView(link, spot, linkSpot)
                 self.all_sprites.add(linkView)
