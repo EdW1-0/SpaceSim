@@ -41,12 +41,31 @@ class OrbitNodeView(pygame.sprite.Sprite):
 
         self.rect = self.surf.get_rect(center = self.center)
 
+class OrbitLinkView(pygame.sprite.Sprite):
+    def __init__(self, link, start = (0,0), end = (0,0)):
+        super(OrbitLinkView, self).__init__()
 
+
+        left = min(start[0], end[0])
+        width = max(abs(end[0] - start[0]), 10)
+
+        top = min(start[1], end[1])
+        height = max(abs(end[1] - start[1]), 10)
+
+        self.start = start
+        self.end = end
+        self.link = link
+        self.surf = pygame.surface.Surface((width, height))
+        self.surf.set_colorkey((0, 0, 0))
+        pygame.draw.rect(self.surf, (200, 50, 50), (0, 0, width, height))
+        self.rect = self.surf.get_rect(top = top, left=left)
 
 class OrbitContext(GUIContext):
     def __init__(self, screen, model, boundsRect = pygame.Rect(-100, -100, 1400, 1000)):
         super(OrbitContext, self).__init__(screen, model)
         self.all_sprites = pygame.sprite.Group()
+        self.node_sprites = pygame.sprite.Group()
+        self.link_sprites = pygame.sprite.Group()
         self.model = model
         self.screen = screen
         self.boundsRect = boundsRect
@@ -57,6 +76,8 @@ class OrbitContext(GUIContext):
 
     def computeLayout(self):
         self.all_sprites.empty()
+        self.node_sprites.empty()
+        self.link_sprites.empty()
 
         # First label root node. By convention node 0 (surface of sun)
         rootNode = self.model.orbitSim.nodeById("SUS")
@@ -84,7 +105,7 @@ class OrbitContext(GUIContext):
             # Start by finding the view for the branch point, so we know what height to draw from
             branchPoint = path[0]
             branchRoot = (0,0)
-            for ov in self.all_sprites:
+            for ov in self.node_sprites:
                 if ov.node.id == branchPoint:
                     branchRoot = ov.center
 
@@ -115,7 +136,7 @@ class OrbitContext(GUIContext):
 
             moonSpot = (0,0)
             moonRoot = moonSubPath[0]
-            for ov in self.all_sprites:
+            for ov in self.node_sprites:
                 if ov.node.id == moonRoot:
                     moonSpot = ov.center
 
@@ -127,18 +148,28 @@ class OrbitContext(GUIContext):
         spot = start
         for nodeId in path:
             if link:
+                linkSpot = (spot[0] + xStep * self.scale, spot[1] + yStep * self.scale)
+                link = self.model.orbitSim.linkById(nodeId)
+                linkView = OrbitLinkView(link, spot, linkSpot)
+                self.all_sprites.add(linkView)
+                self.link_sprites.add(linkView)
+
                 link = False
                 continue
             else:
+                if nodeId == skip:
+                    link = True
+                    continue
+                
+                spot = (spot[0] + xStep * self.scale, spot[1] + yStep * self.scale)
+                node = self.model.orbitSim.nodeById(nodeId)
+                orbitView = OrbitNodeView(node, spot)
+                self.all_sprites.add(orbitView)
+                self.node_sprites.add(orbitView)
+ 
                 link = True
 
-            if nodeId == skip:
-                continue
 
-            spot = (spot[0] + xStep * self.scale, spot[1] + yStep * self.scale)
-            node = self.model.orbitSim.nodeById(nodeId)
-            orbitView = OrbitNodeView(node, spot)
-            self.all_sprites.add(orbitView)
                 
     def branchPath(self, path, compare, keepJunction = True):
         branchPoint = 0
