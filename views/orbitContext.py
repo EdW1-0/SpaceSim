@@ -219,7 +219,10 @@ class OrbitContext(GUIContext):
 
                 clicked_items = [s for s in self.all_sprites if s.rect.collidepoint(pos)]
                 for c in clicked_items:
-                    print(c.node.name)
+                    if isinstance(c, OrbitNodeView):
+                        print(c.node.name)
+                    elif isinstance(c, OrbitLinkView):
+                        print(c.link.topNode, c.link.bottomNode)
                     
 
                 if pos[0] < 50 and pos[1] < 50:
