@@ -1,4 +1,6 @@
 import pygame
+import pygame_gui
+
 from gameModel import GameModel
 from views.menuContext import MenuContext
 from views.orbitContext import OrbitContext
@@ -29,27 +31,35 @@ from views.orbitContext import LOADMENUVIEW
 def main():
     pygame.init()
 
+    manager = pygame_gui.UIManager((1200, 800))
+
     guiContext = None
     gameModel = GameModel()
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-    guiContext = MenuContext(screen, gameModel)
+    guiContext = MenuContext(screen, gameModel, manager)
+
+    clock = pygame.time.Clock()
 
     running = True
     while running:
-        
+        time_delta = clock.tick(60)/1000.0
+
         outerEvent = guiContext.run()
         
         if outerEvent == QUIT:
             running = False
         elif outerEvent == LOADORBITVIEW:
-            guiContext = OrbitContext(screen, gameModel)
+            manager.clear_and_reset()
+            guiContext = OrbitContext(screen, gameModel, manager)
         elif outerEvent == LOADMENUVIEW:
-            guiContext = MenuContext(screen, gameModel)
+            manager.clear_and_reset()
+            guiContext = MenuContext(screen, gameModel, manager)
         
-
-        pygame.display.flip()
+        manager.update(time_delta)
+        manager.draw_ui(screen)
+        pygame.display.update()
 
     pygame.quit()
 

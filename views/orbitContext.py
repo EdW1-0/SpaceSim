@@ -1,8 +1,9 @@
+import pygame
+import pygame_gui
+
 from views.guiContext import GUIContext
 
 from orbitsim.orbitNode import LeafClass
-
-import pygame
 
 from pygame.locals import (
     RLEACCEL,
@@ -95,18 +96,21 @@ class OrbitLinkView(pygame.sprite.Sprite):
         self.rect = self.surf.get_rect(top = top, left=left)
 
 class OrbitContext(GUIContext):
-    def __init__(self, screen, model, boundsRect = pygame.Rect(-100, -100, 1400, 2000)):
-        super(OrbitContext, self).__init__(screen, model)
+    def __init__(self, screen, model, manager, boundsRect = pygame.Rect(-100, -100, 1400, 2000)):
+        super(OrbitContext, self).__init__(screen, model, manager)
         self.all_sprites = pygame.sprite.Group()
         self.node_sprites = pygame.sprite.Group()
         self.link_sprites = pygame.sprite.Group()
-        self.model = model
-        self.screen = screen
+
         self.boundsRect = boundsRect
         self.scale = 1.0
         self.basePoint = (400, 750)
 
         self.computeLayout()
+
+        self.hello_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((0, 0), (100, 50)),
+                                             text='Settings',
+                                             manager=manager)
 
     def computeLayout(self):
         self.all_sprites.empty()
@@ -257,11 +261,6 @@ class OrbitContext(GUIContext):
                     elif isinstance(c, OrbitLinkView):
                         print(c.link.topNode, c.link.bottomNode)
                     
-
-                if pos[0] < 50 and pos[1] < 50:
-                    returnCode = LOADMENUVIEW
-                    break
-
             elif event.type == MOUSEWHEEL:
                 if event.y == 1:
                     self.scale = max(self.scale-0.1, 0.1)
@@ -280,10 +279,14 @@ class OrbitContext(GUIContext):
                     self.basePoint = (min(self.basePoint[0]+50, self.boundsRect.right), self.basePoint[1])
                 self.computeLayout()
 
-        self.screen.fill((20, 20, 120))
+            if event.type == pygame_gui.UI_BUTTON_PRESSED:
+                if event.ui_element == self.hello_button:
+                    returnCode = LOADMENUVIEW
+                    break
 
-        surf = pygame.surface.Surface((50, 50))
-        pygame.draw.rect(self.screen, (10, 10, 10), pygame.Rect(0, 0, 50, 50))
+            self.manager.process_events(event)
+
+        self.screen.fill((20, 20, 120))
 
         for entity in self.all_sprites:
             self.screen.blit(entity.surf, entity.rect)
