@@ -112,6 +112,16 @@ class OrbitContext(GUIContext):
                                              text='Settings',
                                              manager=manager)
 
+        
+        self.planet_window = pygame_gui.core.UIContainer(pygame.Rect((800, 0), (400,800)), manager = manager)
+        background = pygame.Surface((400,800))
+        pygame.draw.rect(background, (10, 10, 10), (0, 0, 400, 800))
+        bgimage = pygame_gui.elements.UIImage((0,0,400,800), background, container=self.planet_window)
+
+        self.boop_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((100,100), (100, 50)), text='Boop', container=self.planet_window, manager=manager)
+        self.planet_window.add_element(self.boop_button)
+        self.planet_window.hide()
+
     def computeLayout(self):
         self.all_sprites.empty()
         self.node_sprites.empty()
@@ -258,6 +268,7 @@ class OrbitContext(GUIContext):
                 for c in clicked_items:
                     if isinstance(c, OrbitNodeView):
                         print(c.node.name)
+                        self.planet_window.show()
                     elif isinstance(c, OrbitLinkView):
                         print(c.link.topNode, c.link.bottomNode)
                     
@@ -283,6 +294,9 @@ class OrbitContext(GUIContext):
                 if event.ui_element == self.hello_button:
                     returnCode = LOADMENUVIEW
                     break
+                elif event.ui_element == self.boop_button:
+                    print("Boop!") 
+                    self.planet_window.hide()
 
             self.manager.process_events(event)
 
