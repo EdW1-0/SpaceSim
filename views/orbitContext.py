@@ -1,5 +1,7 @@
 import pygame
 import pygame_gui
+from pygame_gui.elements import UIButton, UIImage, UILabel
+from pygame_gui.core import UIContainer
 
 from views.guiContext import GUIContext
 
@@ -95,6 +97,38 @@ class OrbitLinkView(pygame.sprite.Sprite):
         pygame.draw.rect(self.surf, (200, 50, 50), (0, 0, width, height))
         self.rect = self.surf.get_rect(top = top, left=left)
 
+class PlanetStatusPanel:
+    def __init__(self, rect, manager=None):
+        self.rect = rect
+        self.container = UIContainer(rect, manager = manager)
+        background = pygame.Surface((rect.width,rect.height))
+        pygame.draw.rect(background, (10, 10, 10), (0, 0, rect.width, rect.height))
+        self.background = UIImage((0,0,rect.width,rect.height), background, manager = manager, container=self.container)
+
+        self.planet_name_label = UILabel(pygame.Rect(0,0,rect.width, 100), 
+                                         text="Planet placeholder", 
+                                         manager=manager, 
+                                         container=self.container)
+
+        self.hide_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((0,0), (20, 20)), text='X', container=self.container, manager=manager)
+
+    def hide(self):
+        self.container.hide()
+
+    def show(self):
+        self.container.show()
+
+    def handle_event(self, event):
+        if event.ui_element == self.hide_button:
+            print("Boop!") 
+            self.hide()
+            return True
+        else:
+            return False
+
+
+
+
 class OrbitContext(GUIContext):
     def __init__(self, screen, model, manager, boundsRect = pygame.Rect(-100, -100, 1400, 2000)):
         super(OrbitContext, self).__init__(screen, model, manager)
@@ -113,14 +147,9 @@ class OrbitContext(GUIContext):
                                              manager=manager)
 
         
-        self.planet_window = pygame_gui.core.UIContainer(pygame.Rect((800, 0), (400,800)), manager = manager)
-        background = pygame.Surface((400,800))
-        pygame.draw.rect(background, (10, 10, 10), (0, 0, 400, 800))
-        bgimage = pygame_gui.elements.UIImage((0,0,400,800), background, container=self.planet_window)
-
-        self.boop_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((100,100), (100, 50)), text='Boop', container=self.planet_window, manager=manager)
-        self.planet_window.add_element(self.boop_button)
-        self.planet_window.hide()
+        self.planet_summary = PlanetStatusPanel(pygame.Rect(800, 200, 400, 600), manager=manager)
+        #self.planet_window.add_element(self.boop_button)
+        self.planet_summary.hide()
 
     def computeLayout(self):
         self.all_sprites.empty()
@@ -268,7 +297,7 @@ class OrbitContext(GUIContext):
                 for c in clicked_items:
                     if isinstance(c, OrbitNodeView):
                         print(c.node.name)
-                        self.planet_window.show()
+                        self.planet_summary.show()
                     elif isinstance(c, OrbitLinkView):
                         print(c.link.topNode, c.link.bottomNode)
                     
@@ -294,9 +323,10 @@ class OrbitContext(GUIContext):
                 if event.ui_element == self.hello_button:
                     returnCode = LOADMENUVIEW
                     break
-                elif event.ui_element == self.boop_button:
-                    print("Boop!") 
-                    self.planet_window.hide()
+                elif self.planet_summary.handle_event(event):
+                    pass
+                else:
+                    assert("Unknown UI element {0}".format(event.ui_element))
 
             self.manager.process_events(event)
 
