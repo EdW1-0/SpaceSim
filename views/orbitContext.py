@@ -1,6 +1,6 @@
 import pygame
 import pygame_gui
-from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox
+from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox, UISelectionList
 from pygame_gui.core import UIContainer
 
 from views.guiContext import GUIContext
@@ -120,7 +120,27 @@ class PlanetStatusPanel:
         planet_text = "Placeholder stuff"
         self.planet_text = UITextBox(planet_text, (0, 200, 400, 200), manager=manager, container=self.container)
 
-        self.hide_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((0,0), (20, 20)), text='X', container=self.container, manager=manager)
+        atmosphere_text = "Atmosphere"
+        self.atmosphere_button = UIButton(pygame.Rect(0, 400, 200, 100), 
+                                          text=atmosphere_text, 
+                                          container = self.container, 
+                                          manager=manager)
+
+        surface_text = "Surface"
+        self.surface_button = UIButton(pygame.Rect(200, 400, 200, 100), 
+                                          text=surface_text, 
+                                          container = self.container, 
+                                          manager=manager)
+
+        self.station_list = UISelectionList(pygame.Rect(0, 500, 400, 100),
+                                            [("foo", "bar")],
+                                            manager=manager,
+                                            container=self.container)
+
+        self.hide_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((0,0), (20, 20)), 
+                                                        text='X', 
+                                                        container=self.container, 
+                                                        manager=manager)
 
     def hide(self):
         self.container.hide()
