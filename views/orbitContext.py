@@ -171,6 +171,21 @@ class PlanetStatusPanel(SideStatusPanel):
         self.planet_name_label.set_text(self.node.name)
         self.planet_text.set_text("Gravity: {0}m/s/s<br>Mass: madeupnumber".format(self.planet.gravity))
 
+class OrbitStatusPanel(SideStatusPanel):
+    def __init__(self, rect, manager=None):
+        super(OrbitStatusPanel, self).__init__(rect, manager)
+
+        self.orbit_name_label = UILabel(pygame.Rect(0,0,rect.width, 100), 
+                                         text="Orbit placeholder", 
+                                         manager=manager, 
+                                         container=self.container)
+
+    def set_node(self, node):
+        self.node = node 
+
+    def update(self):
+        self.orbit_name_label.set_text(self.node.name)
+
 
 class OrbitContext(GUIContext):
     def __init__(self, screen, model, manager, boundsRect = pygame.Rect(-100, -100, 1400, 2000)):
@@ -195,6 +210,11 @@ class OrbitContext(GUIContext):
         self.planet_summary = PlanetStatusPanel(pygame.Rect(800, 200, 400, 600), manager=manager)
         #self.planet_window.add_element(self.boop_button)
         self.planet_summary.hide()
+
+        self.orbit_summary = OrbitStatusPanel(pygame.Rect(800, 200, 400, 600), manager=manager)
+        self.orbit_summary.hide()
+
+        self.active_summary = None
 
     def computeLayout(self):
         self.all_sprites.empty()
@@ -349,14 +369,21 @@ class OrbitContext(GUIContext):
                         self.selected_node = c.node
                         self.computeLayout()
 
-                        if c.node.planet:
-                            self.planet_summary.set_node(c.node)
-                            self.planet_summary.set_planet(self.model.planetSim.planetById(c.node.planet))
-                            self.planet_summary.update()
-                            self.planet_summary.show()
+                        if self.active_summary:
+                            self.active_summary.hide()
 
-                        
-                        
+                        if c.node.planet:
+                            self.planet_summary.set_planet(self.model.planetSim.planetById(c.node.planet))
+                            self.active_summary = self.planet_summary
+                        else:
+                            self.active_summary = self.orbit_summary
+
+                        self.active_summary.set_node(c.node)
+                        self.active_summary.update()
+                        self.active_summary.show()
+
+
+
                     elif isinstance(c, OrbitLinkView):
                         print(c.link.topNode, c.link.bottomNode)
                     
@@ -382,7 +409,7 @@ class OrbitContext(GUIContext):
                 if event.ui_element == self.hello_button:
                     returnCode = LOADMENUVIEW
                     break
-                elif self.planet_summary.handle_event(event):
+                elif self.active_summary and self.active_summary.handle_event(event):
                     pass
                 else:
                     assert("Unknown UI element {0}".format(event.ui_element))
