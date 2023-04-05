@@ -24,6 +24,8 @@ class GameModel:
         self.techTree = TechTree(jsonRoot + "/Technologies.json")
         self.orbitSim = OrbitSim(jsonRoot + "/Orbits.json")
         self.planetSim = PlanetSim(jsonRoot + "/Planets.json")
+        
+        self.orbitSim.validatePlanets(self.planetSim)
         # If we got here all the module loads succeeded so set our init flag
         self.init = True
 
