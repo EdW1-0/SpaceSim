@@ -186,6 +186,22 @@ class OrbitStatusPanel(SideStatusPanel):
     def update(self):
         self.orbit_name_label.set_text(self.node.name)
 
+class LinkStatusPanel(SideStatusPanel):
+    def __init__(self, rect, manager=None):
+        super(LinkStatusPanel, self).__init__(rect, manager)
+
+        self.link_name_label = UILabel(pygame.Rect(0,0,rect.width, 100), 
+                                         text="Link placeholder", 
+                                         manager=manager, 
+                                         container=self.container)
+        
+    def set_link(self, link):
+        self.link = link
+
+    def update(self):
+        self.link_name_label.set_text("{0} - {1}".format(self.link.topNode, self.link.bottomNode))
+        
+
 
 class OrbitContext(GUIContext):
     def __init__(self, screen, model, manager, boundsRect = pygame.Rect(-100, -100, 1400, 2000)):
@@ -206,13 +222,17 @@ class OrbitContext(GUIContext):
                                              text='Settings',
                                              manager=manager)
 
+        summary_rect = pygame.Rect(800, 200, 400, 600)
         
-        self.planet_summary = PlanetStatusPanel(pygame.Rect(800, 200, 400, 600), manager=manager)
+        self.planet_summary = PlanetStatusPanel(summary_rect, manager=manager)
         #self.planet_window.add_element(self.boop_button)
         self.planet_summary.hide()
 
-        self.orbit_summary = OrbitStatusPanel(pygame.Rect(800, 200, 400, 600), manager=manager)
+        self.orbit_summary = OrbitStatusPanel(summary_rect, manager=manager)
         self.orbit_summary.hide()
+
+        self.link_summary = LinkStatusPanel(summary_rect, manager=manager)
+        self.link_summary.hide()
 
         self.active_summary = None
 
@@ -379,13 +399,17 @@ class OrbitContext(GUIContext):
                             self.active_summary = self.orbit_summary
 
                         self.active_summary.set_node(c.node)
-                        self.active_summary.update()
-                        self.active_summary.show()
-
-
 
                     elif isinstance(c, OrbitLinkView):
-                        print(c.link.topNode, c.link.bottomNode)
+                        if self.active_summary:
+                            self.active_summary.hide()
+
+                        self.link_summary.set_link(c.link)
+                        self.active_summary = self.link_summary
+
+                    self.active_summary.update()
+                    self.active_summary.show()
+
                     
             elif event.type == MOUSEWHEEL:
                 if event.y == 1:
