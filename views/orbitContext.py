@@ -23,11 +23,11 @@ from pygame.locals import (
 LOADMENUVIEW = pygame.USEREVENT + 2
 
 class OrbitNodeView(pygame.sprite.Sprite):
-    def __init__(self, node, center=(0, 0)):
+    def __init__(self, node, center=(0, 0), selected = False):
         super(OrbitNodeView, self).__init__()
         self.center = center
         self.node = node
-        self.surf = pygame.surface.Surface((20, 20))
+        self.surf = pygame.surface.Surface((22, 22))
         self.surf.set_colorkey((0, 0, 0))
         color = None
         if self.node.leaf == LeafClass.NONE:
@@ -40,11 +40,14 @@ class OrbitNodeView(pygame.sprite.Sprite):
             color = (100, 100, 100)
         else:
             color = (200, 0, 0)
-        pygame.draw.circle(self.surf, color, (10, 10), 10.0)
+        pygame.draw.circle(self.surf, color, (11, 11), 10.0)
 
-
+        if selected:
+            pygame.draw.circle(self.surf, (250, 0, 0), (11,11), 11.0, width=1)
 
         self.rect = self.surf.get_rect(center = self.center)
+
+        
 
 class OrbitNodeViewLabel(pygame.sprite.Sprite):
     def __init__(self, node, center=(0, 0)):
@@ -109,6 +112,10 @@ class PlanetStatusPanel:
                                          text="Planet placeholder", 
                                          manager=manager, 
                                          container=self.container)
+        
+        planet_image = pygame.Surface((50, 50))
+        pygame.draw.circle(planet_image, (200,200,10),(25,25), 25)
+        self.planet_image = UIImage(pygame.Rect(50, 100, 50, 50), planet_image, manager=manager, container=self.container)
 
         self.hide_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((0,0), (20, 20)), text='X', container=self.container, manager=manager)
 
@@ -125,8 +132,12 @@ class PlanetStatusPanel:
             return True
         else:
             return False
+        
+    def set_node(self, node):
+        self.node = node
 
-
+    def update(self):
+        self.planet_name_label.set_text(self.node.name)
 
 
 class OrbitContext(GUIContext):
@@ -135,6 +146,8 @@ class OrbitContext(GUIContext):
         self.all_sprites = pygame.sprite.Group()
         self.node_sprites = pygame.sprite.Group()
         self.link_sprites = pygame.sprite.Group()
+
+        self.selected_node = None
 
         self.boundsRect = boundsRect
         self.scale = 1.0
@@ -249,7 +262,11 @@ class OrbitContext(GUIContext):
                 
                 spot = (spot[0] + xStep * self.scale, spot[1] + yStep * self.scale)
                 node = self.model.orbitSim.nodeById(nodeId)
-                orbitView = OrbitNodeView(node, spot)
+                if node == self.selected_node:
+                    selected = True
+                else:
+                    selected = False
+                orbitView = OrbitNodeView(node, spot, selected)
                 self.all_sprites.add(orbitView)
                 self.node_sprites.add(orbitView)
  
@@ -297,7 +314,14 @@ class OrbitContext(GUIContext):
                 for c in clicked_items:
                     if isinstance(c, OrbitNodeView):
                         print(c.node.name)
+                        self.selected_node = c.node
+
+                        self.planet_summary.set_node(c.node)
+                        self.planet_summary.update()
                         self.planet_summary.show()
+
+                        self.computeLayout()
+                        
                     elif isinstance(c, OrbitLinkView):
                         print(c.link.topNode, c.link.bottomNode)
                     
