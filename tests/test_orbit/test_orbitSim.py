@@ -59,13 +59,11 @@ class TestOrbitSimNodes(unittest.TestCase):
         n0 = self.os.nodeById(0)
         self.assertEqual(n0.id, 0)
         self.assertEqual(n0.name, "Sun")
-        self.assertEqual(n0.gravity, 100)
 
     def testOrbitSimNode1(self):
         n1 = self.os.nodeById(1)
         self.assertEqual(n1.id, 1)
         self.assertEqual(n1.name, "Sun Low Orbit")
-        self.assertEqual(n1.gravity, 0)
 
 class TestOrbitSimLinks(unittest.TestCase):
     def setUp(self):

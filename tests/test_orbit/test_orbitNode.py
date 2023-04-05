@@ -15,7 +15,6 @@ class TestOrbitNodeAttributes(unittest.TestCase):
         self.assertTrue(hasattr(OrbitNode(0), "particles"))
         self.assertTrue(hasattr(OrbitNode(0), "links"))
         self.assertTrue(hasattr(OrbitNode(0), "planet"))
-        self.assertTrue(hasattr(OrbitNode(0), "gravity"))
         self.assertTrue(hasattr(OrbitNode(0), "name"))
         self.assertTrue(hasattr(OrbitNode(0), "id"))
         self.assertTrue(hasattr(OrbitNode(0), "leaf"))

@@ -22,12 +22,12 @@ class TestPlanetSimInteraction(unittest.TestCase):
         
 
     def test_planetSimAccessBadNode(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(KeyError):
             self.planetSim.planetById(-1)
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             self.planetSim.planetById("Foo")
         with self.assertRaises(KeyError):
             self.planetSim.planetById(99)
 
     def test_planetSimAccessNode(self):
-        self.assertNotEqual(self.planetSim.planetById(1), None)
+        self.assertNotEqual(self.planetSim.planetById("MERCURY"), None)

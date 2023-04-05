@@ -14,13 +14,13 @@ class TestGUIContextModule(unittest.TestCase):
         self.assertTrue(GUIContext)
 
     def testGUIContextConstructor(self):
-        self.assertTrue(GUIContext(screen = ScreenMock(), model = ModelMock()))
+        self.assertTrue(GUIContext(screen = ScreenMock(), model = ModelMock(), manager=None))
 
     def testGUIContextAttributes(self):
-        self.assertTrue(hasattr(GUIContext(ScreenMock(), ModelMock()), "screen"))
-        self.assertTrue(hasattr(GUIContext(ScreenMock(), ModelMock()), "model"))
+        self.assertTrue(hasattr(GUIContext(ScreenMock(), ModelMock(), manager=None), "screen"))
+        self.assertTrue(hasattr(GUIContext(ScreenMock(), ModelMock(), manager=None), "model"))
 
     def testGUIContextRun(self):
         with self.assertRaises(NotImplementedError):
-            GUIContext(ScreenMock(), ModelMock()).run()
+            GUIContext(ScreenMock(), ModelMock(), manager=None).run()
 

@@ -3,7 +3,6 @@
         { 
             "name": "Sun",
             "id": 0,
-            "gravity": 100,
             "links": [
                 {
                     "id": 1,

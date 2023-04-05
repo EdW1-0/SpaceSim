@@ -17,14 +17,14 @@ class TestMenuContext(unittest.TestCase):
         self.assertTrue(MenuContext)
 
     def testMenuContextConstructor(self):
-        mc = MenuContext(ScreenMock(), ModelMock())
+        mc = MenuContext(ScreenMock(), ModelMock(), None)
         self.assertTrue(mc)
         self.assertTrue(issubclass(MenuContext, GUIContext))
         self.assertTrue(isinstance(mc, GUIContext))
 
 
     def testMenuContextRun(self):
-        mc = MenuContext(self.sm, ModelMock())
+        mc = MenuContext(self.sm, ModelMock(), None)
         mc.run()
         mc.screen.fill.assert_called()
         mc.screen.blit.assert_called()

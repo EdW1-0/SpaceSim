@@ -13,6 +13,5 @@ class OrbitNode:
 
         self.id = id
         self.name = name
-        self.gravity = gravity ###TODO: I think this attribute is redundant, only Planet needs to know this. Confirm this and delete if so.
         self.planet = planet
         self.leaf = LeafClass(leaf)
