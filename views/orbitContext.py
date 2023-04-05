@@ -100,7 +100,7 @@ class OrbitLinkView(pygame.sprite.Sprite):
         pygame.draw.rect(self.surf, (200, 50, 50), (0, 0, width, height))
         self.rect = self.surf.get_rect(top = top, left=left)
 
-class PlanetStatusPanel:
+class SideStatusPanel:
     def __init__(self, rect, manager=None):
         self.rect = rect
         self.container = UIContainer(rect, manager = manager)
@@ -108,6 +108,30 @@ class PlanetStatusPanel:
         pygame.draw.rect(background, (10, 10, 10), (0, 0, rect.width, rect.height))
         self.background = UIImage((0,0,rect.width,rect.height), background, manager = manager, container=self.container)
 
+        self.hide_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((0,0), (20, 20)), 
+                                                        text='X', 
+                                                        container=self.container, 
+                                                        manager=manager)
+        
+    def hide(self):
+        self.container.hide()
+
+    def show(self):
+        self.container.show()
+
+    def handle_event(self, event):
+        if event.ui_element == self.hide_button:
+            print("Boop!") 
+            self.hide()
+            return True
+        else:
+            return False
+
+
+class PlanetStatusPanel(SideStatusPanel):
+    def __init__(self, rect, manager=None):
+        super(PlanetStatusPanel, self).__init__(rect, manager)
+        
         self.planet_name_label = UILabel(pygame.Rect(0,0,rect.width, 100), 
                                          text="Planet placeholder", 
                                          manager=manager, 
@@ -136,26 +160,7 @@ class PlanetStatusPanel:
                                             [("foo", "bar")],
                                             manager=manager,
                                             container=self.container)
-
-        self.hide_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((0,0), (20, 20)), 
-                                                        text='X', 
-                                                        container=self.container, 
-                                                        manager=manager)
-
-    def hide(self):
-        self.container.hide()
-
-    def show(self):
-        self.container.show()
-
-    def handle_event(self, event):
-        if event.ui_element == self.hide_button:
-            print("Boop!") 
-            self.hide()
-            return True
-        else:
-            return False
-        
+     
     def set_node(self, node):
         self.node = node
 
