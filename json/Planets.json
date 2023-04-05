@@ -4,6 +4,46 @@
             "name": "Mercury",
             "id": "MERCURY",
             "gravity": 3.7
+        },
+        {
+            "name": "Sun",
+            "id": "SUN",
+            "gravity": 274
+        },
+        {
+            "name": "Venus",
+            "id": "VENUS",
+            "gravity": 8.87
+        },
+        {
+            "name": "Earth",
+            "id": "EARTH",
+            "gravity": 9.81
+        },
+        {
+            "name": "Moon",
+            "id": "MOON",
+            "gravity": 2.38
+        },
+        {
+            "name": "Mars",
+            "id": "MARS",
+            "gravity": 3.72
+        },
+        {
+            "name": "Phobos",
+            "id": "PHOBOS",
+            "gravity": 0.0057
+        },
+        {
+            "name": "Deimos",
+            "id": "DEIMOS",
+            "gravity": 0.003
+        },
+        {
+            "name": "Jupiter",
+            "id": "JUPITER",
+            "gravity": 24.79
         }
     ]
 }

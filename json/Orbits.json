@@ -131,6 +131,7 @@
         {
             "name": "Venus",
             "id": "VES",
+            "planet": "VENUS",
             "leaf": 2
         },
         {
@@ -208,6 +209,7 @@
         {
             "name": "Moon",
             "id": "MOS",
+            "planet": "MOON",
             "leaf": 3
         },
         {
@@ -225,6 +227,7 @@
         {
             "name": "Earth",
             "id": "EAS",
+            "planet": "EARTH",
             "leaf": 2
         },
         {
@@ -302,6 +305,7 @@
         {
             "name": "Deimos",
             "id": "DES",
+            "planet": "DEIMOS",
             "leaf": 3 
         },
         {
@@ -349,6 +353,7 @@
         {
             "name": "Phobos",
             "id": "PHS",
+            "planet": "PHOBOS",
             "leaf": 3 
         },
         {
@@ -366,6 +371,7 @@
         {
             "name": "Mars",
             "id": "MAS",
+            "planet": "MARS",
             "leaf": 2
         },
         {
@@ -413,6 +419,7 @@
         {
             "name": "Jupiter",
             "id": "JUS",
+            "planet": "JUPITER",
             "leaf": 2
         },
         {
