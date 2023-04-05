@@ -12,8 +12,9 @@ class PlanetSim:
         self.planets = {node["id"]: Planet(**node) for node in jsonNodes}
 
     def planetById(self, id):
-        if not isinstance(id, int):
+        if not (type(id) == int or isinstance(id, str)):
             raise TypeError
-        elif id < 0:
+        elif isinstance(id, str) and not id.isupper():
             raise ValueError
         return self.planets[id]
+

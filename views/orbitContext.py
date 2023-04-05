@@ -136,6 +136,9 @@ class PlanetStatusPanel:
     def set_node(self, node):
         self.node = node
 
+    def set_planet(self, planet):
+        self.planet = planet
+
     def update(self):
         self.planet_name_label.set_text(self.node.name)
 
@@ -315,12 +318,15 @@ class OrbitContext(GUIContext):
                     if isinstance(c, OrbitNodeView):
                         print(c.node.name)
                         self.selected_node = c.node
-
-                        self.planet_summary.set_node(c.node)
-                        self.planet_summary.update()
-                        self.planet_summary.show()
-
                         self.computeLayout()
+
+                        if c.node.planet:
+                            self.planet_summary.set_node(c.node)
+                            self.planet_summary.set_planet(self.model.planetSim.planetById(c.node.planet))
+                            self.planet_summary.update()
+                            self.planet_summary.show()
+
+                        
                         
                     elif isinstance(c, OrbitLinkView):
                         print(c.link.topNode, c.link.bottomNode)
