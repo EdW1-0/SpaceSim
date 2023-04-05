@@ -1,6 +1,6 @@
 import pygame
 import pygame_gui
-from pygame_gui.elements import UIButton, UIImage, UILabel
+from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox
 from pygame_gui.core import UIContainer
 
 from views.guiContext import GUIContext
@@ -117,6 +117,9 @@ class PlanetStatusPanel:
         pygame.draw.circle(planet_image, (200,200,10),(25,25), 25)
         self.planet_image = UIImage(pygame.Rect(50, 100, 50, 50), planet_image, manager=manager, container=self.container)
 
+        planet_text = "Placeholder stuff"
+        self.planet_text = UITextBox(planet_text, (0, 200, 400, 200), manager=manager, container=self.container)
+
         self.hide_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((0,0), (20, 20)), text='X', container=self.container, manager=manager)
 
     def hide(self):
@@ -141,6 +144,7 @@ class PlanetStatusPanel:
 
     def update(self):
         self.planet_name_label.set_text(self.node.name)
+        self.planet_text.set_text("Gravity: {0}m/s/s<br>Mass: madeupnumber".format(self.planet.gravity))
 
 
 class OrbitContext(GUIContext):

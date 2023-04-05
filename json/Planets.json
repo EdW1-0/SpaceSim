@@ -2,8 +2,8 @@
     "Planets": [
         {
             "name": "Mercury",
-            "id": 1,
-            "gravity": 0.0
+            "id": "MERCURY",
+            "gravity": 3.7
         }
     ]
 }

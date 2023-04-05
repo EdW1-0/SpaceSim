@@ -56,6 +56,9 @@ class OrbitSim:
 
         self._trajectories = {}
 
+    def validatePlanets(self, planetSim):
+        pass
+
     def newParticleId(self):
         nodeIdCounter = 0
         while True:

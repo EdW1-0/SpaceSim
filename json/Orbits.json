@@ -82,6 +82,7 @@
         {
             "name": "Mercury",
             "id": "MES",
+            "planet": "MERCURY",
             "leaf": 2
         },
         {
