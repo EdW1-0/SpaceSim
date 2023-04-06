@@ -46,6 +46,8 @@ def main():
     while running:
         time_delta = clock.tick(60)/1000.0
 
+        gameModel.tick()
+
         outerEvent = guiContext.run()
         
         if outerEvent == QUIT:

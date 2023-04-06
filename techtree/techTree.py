@@ -66,3 +66,7 @@ class TechTree:
 
     def descendentsOfId(self, id):
         return [node for node in self.nodes.values() if id in node.ancestors]
+    
+    def tick(self, increment):
+        # Intentionally does nothing - this is supposed to be a static object store. 
+        pass

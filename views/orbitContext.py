@@ -4,6 +4,7 @@ from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox, UISelecti
 from pygame_gui.core import UIContainer
 
 from views.guiContext import GUIContext
+from views.timingView import TimingPanel
 
 from orbitsim.orbitNode import LeafClass
 
@@ -223,6 +224,7 @@ class OrbitContext(GUIContext):
                                              manager=manager)
 
         summary_rect = pygame.Rect(800, 200, 400, 600)
+        timing_rect = pygame.Rect(800, 0, 400, 200)
         
         self.planet_summary = PlanetStatusPanel(summary_rect, manager=manager)
         #self.planet_window.add_element(self.boop_button)
@@ -235,6 +237,8 @@ class OrbitContext(GUIContext):
         self.link_summary.hide()
 
         self.active_summary = None
+
+        self.timing_panel = TimingPanel(timing_rect, manager=manager, timingMaster=self.model.timingMaster)
 
     def computeLayout(self):
         self.all_sprites.empty()
@@ -435,12 +439,16 @@ class OrbitContext(GUIContext):
                     break
                 elif self.active_summary and self.active_summary.handle_event(event):
                     pass
+                elif self.timing_panel.handle_event(event):
+                    pass
                 else:
                     assert("Unknown UI element {0}".format(event.ui_element))
 
             self.manager.process_events(event)
 
         self.screen.fill((20, 20, 120))
+
+        self.timing_panel.update()
 
         for entity in self.all_sprites:
             self.screen.blit(entity.surf, entity.rect)

@@ -17,4 +17,7 @@ class PlanetSim:
         elif isinstance(id, str) and not id.isupper():
             raise ValueError
         return self.planets[id]
+    
+    def tick(self, increment):
+        pass
 

@@ -1,6 +1,7 @@
 from techtree.techTree import TechTree
 from orbitsim.orbitSim import OrbitSim
 from planetsim.planetSim import PlanetSim
+from timingMaster import TimingMaster
 
 class GameModel:
     # Needs:
@@ -12,6 +13,7 @@ class GameModel:
         self.techTree = None
         self.orbitSim = None
         self.planetSim = None
+        self.timingMaster = None
         self.init = False
 
     def load(self, jsonRoot = "json", reload = False):
@@ -26,8 +28,25 @@ class GameModel:
         self.planetSim = PlanetSim(jsonRoot + "/Planets.json")
         
         self.orbitSim.validatePlanets(self.planetSim)
+
+        self.timingMaster = TimingMaster(0)
         # If we got here all the module loads succeeded so set our init flag
         self.init = True
 
     def get_init(self):
         return self.init
+    
+    def tick(self):
+        if not self.timingMaster:
+            return
+        
+        start = self.timingMaster.timestamp
+        self.timingMaster.tick()
+        end = self.timingMaster.timestamp
+        
+        increment = end - start
+        if increment:
+            self.techTree.tick(increment)
+            self.orbitSim.tick(increment)
+            self.planetSim.tick(increment)
+    
