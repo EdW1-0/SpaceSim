@@ -5,8 +5,10 @@ from orbitsim.orbitLink import OrbitLink
 from orbitsim.particle import Particle, DeltaVError
 from orbitsim.orbitTrajectory import OrbitTrajectory
 
+from colonysim.ship import Ship
+
 class OrbitSim:
-    def __init__(self, jsonPath = "json/Orbits.json"):
+    def __init__(self, jsonPath = "json/Orbits.json", particlePath = None):
         jsonFile = open(jsonPath, "r")
 
         jsonBlob = json.load(jsonFile)
@@ -50,9 +52,21 @@ class OrbitSim:
         # create a link object
         # add it to our array
         # add link id to links for source and destination
-
-        self._particles = {}
+        
         self.idGenerator = self.newParticleId()
+        self._particles = {}
+        if (particlePath):
+            particlesFile = open(particlePath, "r")
+
+            particleBlob = json.load(particlesFile)
+
+            particleArray = particleBlob["Particles"]
+
+            for particle in particleArray:
+                ship = Ship(particle["name"], 100)
+
+                node = self.nodeById(particle["location"])
+                self.createParticle(node, ship)
 
         self._trajectories = {}
 
@@ -70,6 +84,9 @@ class OrbitSim:
 
     def createParticle(self, node, payload = None):
         id = next(self.idGenerator)
+        while(id in self._particles):
+            id = next(self.idGenerator)
+
         self._particles[id] = Particle(id, payload = payload)
         if(isinstance(node, OrbitNode)):
             node.particles.add(id)

@@ -130,9 +130,10 @@ class SideStatusPanel:
 
 
 class PlanetStatusPanel(SideStatusPanel):
-    def __init__(self, rect, manager=None):
+    def __init__(self, rect, manager=None, model=None):
         super(PlanetStatusPanel, self).__init__(rect, manager)
         
+        self.model = model
         self.planet_name_label = UILabel(pygame.Rect(0,0,rect.width, 100), 
                                          text="Planet placeholder", 
                                          manager=manager, 
@@ -171,6 +172,7 @@ class PlanetStatusPanel(SideStatusPanel):
     def update(self):
         self.planet_name_label.set_text(self.node.name)
         self.planet_text.set_text("Gravity: {0}m/s/s<br>Mass: madeupnumber".format(self.planet.gravity))
+        self.station_list.set_item_list([self.model.orbitSim.particleById(id).payload.name for id in self.node.particles])
 
 class OrbitStatusPanel(SideStatusPanel):
     def __init__(self, rect, manager=None):
@@ -226,7 +228,7 @@ class OrbitContext(GUIContext):
         summary_rect = pygame.Rect(800, 200, 400, 600)
         timing_rect = pygame.Rect(800, 0, 400, 200)
         
-        self.planet_summary = PlanetStatusPanel(summary_rect, manager=manager)
+        self.planet_summary = PlanetStatusPanel(summary_rect, manager=manager, model = self.model)
         #self.planet_window.add_element(self.boop_button)
         self.planet_summary.hide()
 

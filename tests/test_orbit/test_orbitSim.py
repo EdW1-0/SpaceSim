@@ -39,6 +39,10 @@ class TestOrbitSim(unittest.TestCase):
         with self.assertRaises(KeyError):
             OrbitSim("test_json/test_orbits/duplicate.json")
 
+    def testOrbitSimParticleLoad(self):
+        os = OrbitSim(particlePath = "json/Particles.json")
+        self.assertEqual(len(os._particles.values()), 1)
+
         
 class TestOrbitSimNodes(unittest.TestCase):
     def setUp(self):

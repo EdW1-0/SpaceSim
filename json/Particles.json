@@ -1,0 +1,19 @@
+{
+    "Particles": [
+        {
+            "name": "USS Enterprise",
+            "velocity": 100,
+            "location": "EAS"
+        },
+        {
+            "name": "USS Constitution",
+            "velocity": 100,
+            "location": "EAS"
+        },
+        {
+            "name": "USS Ticonderoga",
+            "velocity": 10,
+            "location": "EAS"
+        }
+    ]
+}

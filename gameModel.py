@@ -24,7 +24,7 @@ class GameModel:
         
         # TODO: Wrap these in a try/catch to do special exception handling rather than just the default file errors.
         self.techTree = TechTree(jsonRoot + "/Technologies.json")
-        self.orbitSim = OrbitSim(jsonRoot + "/Orbits.json")
+        self.orbitSim = OrbitSim(jsonRoot + "/Orbits.json", jsonRoot + "/Particles.json")
         self.planetSim = PlanetSim(jsonRoot + "/Planets.json")
         
         self.orbitSim.validatePlanets(self.planetSim)
