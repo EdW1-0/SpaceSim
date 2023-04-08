@@ -205,6 +205,22 @@ class LinkStatusPanel(SideStatusPanel):
         self.link_name_label.set_text("{0} - {1}".format(self.link.topNode, self.link.bottomNode))
         
 
+class ShipStatusPanel(SideStatusPanel):
+    def __init__(self, rect, manager=None):
+        super(ShipStatusPanel, self).__init__(rect, manager)
+
+        self.ship_name_label = UILabel(pygame.Rect(0, 0, rect.width, 100),
+                                       text = "Ship placeholder",
+                                       manager = manager,
+                                       container = self.container)
+        
+    def set_ship(self, ship):
+        self.ship = ship
+
+    def update(self):
+        self.ship_name_label.set_text(self.ship.payload.name)
+
+
 
 class OrbitContext(GUIContext):
     def __init__(self, screen, model, manager, boundsRect = pygame.Rect(-100, -100, 1400, 2000)):
@@ -237,6 +253,9 @@ class OrbitContext(GUIContext):
 
         self.link_summary = LinkStatusPanel(summary_rect, manager=manager)
         self.link_summary.hide()
+
+        self.ship_summary = ShipStatusPanel(summary_rect, manager=manager)
+        self.ship_summary.hide()
 
         self.active_summary = None
 
@@ -445,6 +464,27 @@ class OrbitContext(GUIContext):
                     pass
                 else:
                     assert("Unknown UI element {0}".format(event.ui_element))
+            elif event.type == pygame_gui.UI_SELECTION_LIST_NEW_SELECTION:
+                if event.ui_element == self.active_summary.station_list:
+                    ship = None
+                    for s in self.model.orbitSim._particles.values():
+                        if s.payload.name == event.text:
+                            ship = s
+
+                    assert(ship)
+
+                    if self.active_summary:
+                        self.active_summary.hide()
+
+                    self.ship_summary.set_ship(ship)
+                    self.active_summary = self.ship_summary
+
+                    self.active_summary.update()
+                    self.active_summary.show()
+
+                    
+
+            
 
             self.manager.process_events(event)
 
