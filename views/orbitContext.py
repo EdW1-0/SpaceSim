@@ -6,7 +6,7 @@ from pygame_gui.core import UIContainer
 from views.guiContext import GUIContext
 from views.timingView import TimingPanel
 
-from orbitsim.orbitNode import LeafClass
+from orbitsim.orbitNode import LeafClass, OrbitNode
 
 from pygame.locals import (
     RLEACCEL,
@@ -206,19 +206,68 @@ class LinkStatusPanel(SideStatusPanel):
         
 
 class ShipStatusPanel(SideStatusPanel):
-    def __init__(self, rect, manager=None):
+    def __init__(self, rect, manager=None, model = None):
         super(ShipStatusPanel, self).__init__(rect, manager)
-
+        self.model = model
         self.ship_name_label = UILabel(pygame.Rect(0, 0, rect.width, 100),
                                        text = "Ship placeholder",
                                        manager = manager,
                                        container = self.container)
         
+        ship_text = "Placeholder text"
+        self.ship_text = UITextBox(ship_text, (0, 100, 400, 200), manager=manager, container=self.container)
+
+        self.locationButton = UIButton(pygame.Rect(0, 300, 200, 100), 
+                                          text="Location",  
+                                          container = self.container, 
+                                          manager=manager)
+
+        #self.targetButton = UIButton(pygame.Rect(0, 300, 200, 100), 
+        #                                  text="Set Target",  
+        #                                  container = self.container, 
+        #                                  manager=manager)
+        
+        # This is how we end up passing control up to OrbitContext to switch out a view or otherwise do something.
+        # I think there must be a better way, so revise this later.
+        ###TODO: Improve on this mess!
+        self.upperAction = 0
+
+    def handle_event(self, event):
+        self.upperAction = 0
+        if super(ShipStatusPanel, self).handle_event(event):
+            return True
+        elif event.ui_element == self.locationButton:
+            self.upperAction = 1
+            return True
+        elif event.ui_element == self.targetButton:
+            self.upperAction = 2
+            return True
+
+        
     def set_ship(self, ship):
         self.ship = ship
 
+    def ship_location(self):
+        return self.model.orbitSim._particleLocation(self.ship.id)
+
     def update(self):
         self.ship_name_label.set_text(self.ship.payload.name)
+
+        location = self.ship_location()
+
+        if isinstance(location, OrbitNode):
+            locationText = location.name 
+        else:
+            locationText = location.topNode.name + "/" + location.bottomNode.name
+
+
+        self.ship_text.set_text("Delta V: {0}m/s<br>Velocity: {1}m/s<br>Location: {2}".format(self.ship.deltaV, 
+                                                                                              self.ship.velocity, 
+                                                                                              locationText))
+        
+
+
+
 
 
 
@@ -254,7 +303,7 @@ class OrbitContext(GUIContext):
         self.link_summary = LinkStatusPanel(summary_rect, manager=manager)
         self.link_summary.hide()
 
-        self.ship_summary = ShipStatusPanel(summary_rect, manager=manager)
+        self.ship_summary = ShipStatusPanel(summary_rect, manager=manager, model = self.model)
         self.ship_summary.hide()
 
         self.active_summary = None
@@ -387,6 +436,48 @@ class OrbitContext(GUIContext):
 
         return subPath
 
+
+    def resolveNodeClick(self, c):
+        if isinstance(c, OrbitNodeView):
+            print(c.node.name)
+            self.selected_node = c.node
+            self.computeLayout()
+
+            if self.active_summary:
+                self.active_summary.hide()
+
+            if c.node.planet:
+                self.planet_summary.set_planet(self.model.planetSim.planetById(c.node.planet))
+                self.active_summary = self.planet_summary
+            else:
+                self.active_summary = self.orbit_summary
+
+            self.active_summary.set_node(c.node)
+
+        elif isinstance(c, OrbitLinkView):
+            if self.active_summary:
+                self.active_summary.hide()
+
+            self.link_summary.set_link(c.link)
+            self.active_summary = self.link_summary
+
+        self.active_summary.update()
+        self.active_summary.show()
+
+    def handleShip(self, event):
+        if self.ship_summary.upperAction == 1:
+            location = self.ship_summary.ship_location()
+            locationView = None
+            for ov in self.node_sprites:
+                if ov.node == location:
+                    locationView = ov
+                    break
+            for ov in self.link_sprites:
+                if ov.link  == location:
+                    locationView = ov
+                    break
+            self.resolveNodeClick(locationView)
+
     
 
  # Alternative algo:
@@ -409,31 +500,7 @@ class OrbitContext(GUIContext):
 
                 clicked_items = [s for s in self.all_sprites if s.rect.collidepoint(pos)]
                 for c in clicked_items:
-                    if isinstance(c, OrbitNodeView):
-                        print(c.node.name)
-                        self.selected_node = c.node
-                        self.computeLayout()
-
-                        if self.active_summary:
-                            self.active_summary.hide()
-
-                        if c.node.planet:
-                            self.planet_summary.set_planet(self.model.planetSim.planetById(c.node.planet))
-                            self.active_summary = self.planet_summary
-                        else:
-                            self.active_summary = self.orbit_summary
-
-                        self.active_summary.set_node(c.node)
-
-                    elif isinstance(c, OrbitLinkView):
-                        if self.active_summary:
-                            self.active_summary.hide()
-
-                        self.link_summary.set_link(c.link)
-                        self.active_summary = self.link_summary
-
-                    self.active_summary.update()
-                    self.active_summary.show()
+                    self.resolveNodeClick(c)
 
                     
             elif event.type == MOUSEWHEEL:
@@ -459,7 +526,8 @@ class OrbitContext(GUIContext):
                     returnCode = LOADMENUVIEW
                     break
                 elif self.active_summary and self.active_summary.handle_event(event):
-                    pass
+                    if isinstance(self.active_summary, ShipStatusPanel):
+                        self.handleShip(event)
                 elif self.timing_panel.handle_event(event):
                     pass
                 else:
