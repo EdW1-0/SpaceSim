@@ -270,6 +270,54 @@ class TargetSettingPanel(SideStatusPanel):
     def __init__(self, rect, manager=None, model = None):
         super(TargetSettingPanel, self).__init__(rect, manager)
         self.model = model
+        self.ship = None
+        self.source = None
+        self.target = None
+
+        self.source_label = UILabel(pygame.Rect(0,0,200, 100), 
+                                         text="Source placeholder", 
+                                         manager=manager, 
+                                         container=self.container)
+        self.target_label = UILabel(pygame.Rect(200,0,200, 100), 
+                                         text="Target placeholder", 
+                                         manager=manager, 
+                                         container=self.container)
+        self.route_text = UITextBox("Route text", 
+                                    pygame.Rect(0, 100, 200, 200), 
+                                    manager=manager, 
+                                    container=self.container)
+        self.confirm_button = UIButton(pygame.Rect(200, 100, 200, 200), 
+                                       text = "Confirm", 
+                                       manager = manager, 
+                                       container = self.container)
+
+    def set_ship(self, ship):
+        self.ship = ship
+
+    def set_source(self, source):
+        self.source = source
+
+    def set_target(self, target):
+        self.target = target
+
+    def clear_state(self):
+        self.ship = None
+        self.source = None
+        self.target = None
+        self.update()
+
+    def update(self):
+        if self.source:
+            self.source_label.set_text(self.source.name)
+        else:
+            self.source_label.set_text("")
+        
+        if self.target:
+            self.target_label.set_text(self.target.name)
+        else:
+            self.target_label.set_text("")
+
+
 
 
 
@@ -316,6 +364,8 @@ class OrbitContext(GUIContext):
         self.target_panel.hide()
 
         self.timing_panel = TimingPanel(timing_rect, manager=manager, timingMaster=self.model.timingMaster)
+
+        self.target_mode = False
 
     def computeLayout(self):
         self.all_sprites.empty()
@@ -445,31 +495,37 @@ class OrbitContext(GUIContext):
 
 
     def resolveNodeClick(self, c):
-        if isinstance(c, OrbitNodeView):
-            print(c.node.name)
-            self.selected_node = c.node
-            self.computeLayout()
+        if self.target_mode:
+            if isinstance(c, OrbitNodeView):
+                if c.node != self.target_panel.source:
+                    self.target_panel.set_target(c.node)
+                    self.target_panel.update()
+        else:
+            if isinstance(c, OrbitNodeView):
+                print(c.node.name)
+                self.selected_node = c.node
+                self.computeLayout()
 
-            if self.active_summary:
-                self.active_summary.hide()
+                if self.active_summary:
+                    self.active_summary.hide()
 
-            if c.node.planet:
-                self.planet_summary.set_planet(self.model.planetSim.planetById(c.node.planet))
-                self.active_summary = self.planet_summary
-            else:
-                self.active_summary = self.orbit_summary
+                if c.node.planet:
+                    self.planet_summary.set_planet(self.model.planetSim.planetById(c.node.planet))
+                    self.active_summary = self.planet_summary
+                else:
+                    self.active_summary = self.orbit_summary
 
-            self.active_summary.set_node(c.node)
+                self.active_summary.set_node(c.node)
 
-        elif isinstance(c, OrbitLinkView):
-            if self.active_summary:
-                self.active_summary.hide()
+            elif isinstance(c, OrbitLinkView):
+                if self.active_summary:
+                    self.active_summary.hide()
 
-            self.link_summary.set_link(c.link)
-            self.active_summary = self.link_summary
+                self.link_summary.set_link(c.link)
+                self.active_summary = self.link_summary
 
-        self.active_summary.update()
-        self.active_summary.show()
+            self.active_summary.update()
+            self.active_summary.show()
 
     def handleShip(self, event):
         if self.ship_summary.upperAction == 1:
@@ -485,7 +541,11 @@ class OrbitContext(GUIContext):
                     break
             self.resolveNodeClick(locationView)
         elif self.ship_summary.upperAction == 2:
+            self.target_panel.set_ship(self.ship_summary.ship)
+            self.target_panel.set_source(self.ship_summary.ship_location())
+            self.target_panel.update()
             self.target_panel.show()
+            self.target_mode = True
 
 
     
@@ -541,7 +601,9 @@ class OrbitContext(GUIContext):
                 elif self.timing_panel.handle_event(event):
                     pass
                 elif self.target_panel.handle_event(event):
-                    pass
+                    if event.ui_element == self.target_panel.hide_button:
+                        self.target_mode = False
+                        self.target_panel.clear_state()
                 else:
                     assert("Unknown UI element {0}".format(event.ui_element))
             elif event.type == pygame_gui.UI_SELECTION_LIST_NEW_SELECTION:
