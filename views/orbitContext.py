@@ -222,10 +222,10 @@ class ShipStatusPanel(SideStatusPanel):
                                           container = self.container, 
                                           manager=manager)
 
-        #self.targetButton = UIButton(pygame.Rect(0, 300, 200, 100), 
-        #                                  text="Set Target",  
-        #                                  container = self.container, 
-        #                                  manager=manager)
+        self.targetButton = UIButton(pygame.Rect(200, 300, 200, 100), 
+                                          text="Set Target",  
+                                          container = self.container, 
+                                          manager=manager)
         
         # This is how we end up passing control up to OrbitContext to switch out a view or otherwise do something.
         # I think there must be a better way, so revise this later.
@@ -266,7 +266,10 @@ class ShipStatusPanel(SideStatusPanel):
                                                                                               locationText))
         
 
-
+class TargetSettingPanel(SideStatusPanel):
+    def __init__(self, rect, manager=None, model = None):
+        super(TargetSettingPanel, self).__init__(rect, manager)
+        self.model = model
 
 
 
@@ -292,6 +295,7 @@ class OrbitContext(GUIContext):
 
         summary_rect = pygame.Rect(800, 200, 400, 600)
         timing_rect = pygame.Rect(800, 0, 400, 200)
+        target_rect = pygame.Rect(400, 600, 400, 200)
         
         self.planet_summary = PlanetStatusPanel(summary_rect, manager=manager, model = self.model)
         #self.planet_window.add_element(self.boop_button)
@@ -307,6 +311,9 @@ class OrbitContext(GUIContext):
         self.ship_summary.hide()
 
         self.active_summary = None
+
+        self.target_panel = TargetSettingPanel(target_rect, manager=manager, model = self.model)
+        self.target_panel.hide()
 
         self.timing_panel = TimingPanel(timing_rect, manager=manager, timingMaster=self.model.timingMaster)
 
@@ -477,6 +484,9 @@ class OrbitContext(GUIContext):
                     locationView = ov
                     break
             self.resolveNodeClick(locationView)
+        elif self.ship_summary.upperAction == 2:
+            self.target_panel.show()
+
 
     
 
@@ -529,6 +539,8 @@ class OrbitContext(GUIContext):
                     if isinstance(self.active_summary, ShipStatusPanel):
                         self.handleShip(event)
                 elif self.timing_panel.handle_event(event):
+                    pass
+                elif self.target_panel.handle_event(event):
                     pass
                 else:
                     assert("Unknown UI element {0}".format(event.ui_element))
