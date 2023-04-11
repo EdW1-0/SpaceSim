@@ -7,6 +7,7 @@ from views.guiContext import GUIContext
 from views.timingView import TimingPanel
 
 from orbitsim.orbitNode import LeafClass, OrbitNode
+from orbitsim.orbitLink import OrbitLink
 
 from pygame.locals import (
     RLEACCEL,
@@ -98,8 +99,18 @@ class OrbitLinkView(pygame.sprite.Sprite):
         self.link = link
         self.surf = pygame.surface.Surface((width, height))
         self.surf.set_colorkey((0, 0, 0))
-        pygame.draw.rect(self.surf, (200, 50, 50), (0, 0, width, height))
+        pygame.draw.rect(self.surf, (50, 200, 50), (0, 0, width, height))
         self.rect = self.surf.get_rect(top = top, left=left)
+
+class ParticleView(pygame.sprite.Sprite):
+    def __init__(self, particle, center = (0, 0)):
+        super(ParticleView, self).__init__()
+        self.particle = particle
+        self.surf = pygame.surface.Surface((10, 10))
+        self.surf.set_colorkey((0, 0, 0))
+        pygame.draw.rect(self.surf, (200, 50, 50), (0, 0, 10, 10))
+        self.rect = self.surf.get_rect(center=center)
+
 
 class SideStatusPanel:
     def __init__(self, rect, manager=None):
@@ -342,6 +353,7 @@ class OrbitContext(GUIContext):
         self.all_sprites = pygame.sprite.Group()
         self.node_sprites = pygame.sprite.Group()
         self.link_sprites = pygame.sprite.Group()
+        self.particle_sprites = pygame.sprite.Group()
 
         self.selected_node = None
 
@@ -385,6 +397,7 @@ class OrbitContext(GUIContext):
         self.all_sprites.empty()
         self.node_sprites.empty()
         self.link_sprites.empty()
+        self.particle_sprites.empty()
 
         # First label root node. By convention node 0 (surface of sun)
         rootNode = self.model.orbitSim.nodeById("SUS")
@@ -456,6 +469,27 @@ class OrbitContext(GUIContext):
         for view in self.link_sprites:
             ov = OrbitLinkViewLabel(view.link, view.rect.center)
             self.all_sprites.add(ov)
+
+        for particle in self.model.orbitSim._particles.values():
+            location = self.model.orbitSim._particleLocation(particle.id)
+            center = None
+            if isinstance(location, OrbitNode):
+                view = None
+                for ov in self.node_sprites:
+                    if ov.node == location:
+                        view = ov
+                        break
+                center = ov.center
+            elif isinstance(location, OrbitLink):
+                view = None
+                for ov in self.link_sprites:
+                    if ov.link == location:
+                        view = ov
+                        break
+                center = ov.center
+            particleView = ParticleView(particle, center)
+            self.particle_sprites.add(particleView)
+            self.all_sprites.add(particleView)
         
                 
 
@@ -507,6 +541,31 @@ class OrbitContext(GUIContext):
 
         return subPath
 
+    def updateParticles(self):
+        for particle in self.model.orbitSim._particles.values():
+            location = self.model.orbitSim._particleLocation(particle.id)
+            center = None
+            if isinstance(location, OrbitNode):
+                view = None
+                for ov in self.node_sprites:
+                    if ov.node == location:
+                        view = ov
+                        break
+                center = ov.center
+            elif isinstance(location, OrbitLink):
+                view = None
+                for ov in self.link_sprites:
+                    if ov.link == location:
+                        view = ov
+                        break
+                center = ov.rect.center
+            
+            particleView = None
+            for pv in self.particle_sprites:
+                if pv.particle == particle:
+                    particleView = pv
+                    break
+            particleView.rect.center = center
 
     def resolveNodeClick(self, c):
         if self.target_mode:
@@ -647,6 +706,7 @@ class OrbitContext(GUIContext):
         self.screen.fill((20, 20, 120))
 
         self.timing_panel.update()
+        self.updateParticles()
 
         for entity in self.all_sprites:
             self.screen.blit(entity.surf, entity.rect)
