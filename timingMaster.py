@@ -3,7 +3,7 @@ class TimingMaster:
         self.timestamp = timestamp
         self.running = False
         self.stepping = False
-        self.increment = 1000
+        self.increment = 1
 
     def start(self):
         self.running = True
