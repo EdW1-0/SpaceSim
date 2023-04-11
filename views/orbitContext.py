@@ -220,13 +220,16 @@ class ShipStatusPanel(SideStatusPanel):
     def __init__(self, rect, manager=None, model = None):
         super(ShipStatusPanel, self).__init__(rect, manager)
         self.model = model
+        self.ship = None
         self.ship_name_label = UILabel(pygame.Rect(0, 0, rect.width, 100),
                                        text = "Ship placeholder",
                                        manager = manager,
                                        container = self.container)
         
         ship_text = "Placeholder text"
-        self.ship_text = UITextBox(ship_text, (0, 100, 400, 200), manager=manager, container=self.container)
+        self.ship_text = UITextBox(ship_text, (0, 100, 200, 200), manager=manager, container=self.container)
+
+        self.trajectory_text = UITextBox("No trajectory", (200, 100, 200, 200), manager=manager, container=self.container)
 
         self.locationButton = UIButton(pygame.Rect(0, 300, 200, 100), 
                                           text="Location",  
@@ -260,8 +263,20 @@ class ShipStatusPanel(SideStatusPanel):
 
     def ship_location(self):
         return self.model.orbitSim._particleLocation(self.ship.id)
+    
+    def ship_trajectory(self):
+        trajectory = None
+        try:
+            trajectory = self.model.orbitSim.trajectoryForParticle(self.ship.id)
+        except KeyError:
+            trajectory = None
+
+        return trajectory
 
     def update(self):
+        if not self.ship:
+            return
+        
         self.ship_name_label.set_text(self.ship.payload.name)
 
         location = self.ship_location()
@@ -269,13 +284,25 @@ class ShipStatusPanel(SideStatusPanel):
         if isinstance(location, OrbitNode):
             locationText = location.name 
         else:
-            locationText = location.topNode.name + "/" + location.bottomNode.name
+            locationText = self.model.orbitSim.nodeById(location.topNode).name + "/" + self.model.orbitSim.nodeById(location.bottomNode).name
 
 
-        self.ship_text.set_text("Delta V: {0}m/s<br>Velocity: {1}m/s<br>Location: {2}".format(self.ship.deltaV, 
+        self.ship_text.set_text("Delta V: {0}m/s<br>Velocity: {1}m/s<br>Location: {2}".format(self.ship.deltaV(), 
                                                                                               self.ship.velocity, 
                                                                                               locationText))
         
+        
+        trajectory = self.ship_trajectory()
+        if trajectory:
+            trajectoryText = ""
+            for node in trajectory.allNodes():
+                orbitNode = self.model.orbitSim.nodeById(node)
+                trajectoryText += (orbitNode.name + "<br>")
+
+            self.trajectory_text.set_text(trajectoryText)
+        
+        else:
+            self.trajectory_text.set_text("No trajectory")
 
 class TargetSettingPanel(SideStatusPanel):
     def __init__(self, rect, manager=None, model = None):
@@ -706,6 +733,7 @@ class OrbitContext(GUIContext):
         self.screen.fill((20, 20, 120))
 
         self.timing_panel.update()
+        self.ship_summary.update()
         self.updateParticles()
 
         for entity in self.all_sprites:
