@@ -13,13 +13,19 @@ class TimingPanel:
         self.background = UIImage((0,0,rect.width,rect.height), background, manager = manager, container=self.container)
 
         start_text = ">"
-        self.start_button = UIButton(pygame.Rect(10, 10, 80, 80), 
+        self.start_button = UIButton(pygame.Rect(10, 10, 40, 80), 
                                           text=start_text, 
+                                          container = self.container, 
+                                          manager=manager)
+        
+        step_text = ">|"
+        self.step_button = UIButton(pygame.Rect(60, 10, 40, 80), 
+                                          text=step_text, 
                                           container = self.container, 
                                           manager=manager)
 
         stop_text = "[]"
-        self.stop_button = UIButton(pygame.Rect(110, 10, 80, 80), 
+        self.stop_button = UIButton(pygame.Rect(110, 10, 40, 80), 
                                           text=stop_text, 
                                           container = self.container, 
                                           manager=manager)
@@ -34,6 +40,8 @@ class TimingPanel:
         print(self.timingMaster.timestamp)
         if event.ui_element == self.start_button:
             self.timingMaster.start()
+        elif event.ui_element == self.step_button:
+            self.timingMaster.step()
         elif event.ui_element == self.stop_button:
             self.timingMaster.stop()
 

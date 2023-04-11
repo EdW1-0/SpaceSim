@@ -159,6 +159,12 @@ class OrbitSim:
         return ot
 
     def cancelTrajectory(self, id):
+        try:
+            t = self.trajectoryForParticle(id)
+        except KeyError:
+            print ("Tried to cancel non-existant trajectory ", id)
+            return 
+        
         location = self._particleLocation(id)
         # If on a node, can cancel immediately. Otherwise should target next node and stop there.
         if (isinstance(location, OrbitNode)):
@@ -177,7 +183,7 @@ class OrbitSim:
     def _pruneTrajectories(self):
         def isTerminal(t):
             location = self._particleLocation(t.particleId)
-            if (isinstance(location, OrbitNode)) and (location.id is t.trajectory[-1]):
+            if (isinstance(location, OrbitNode)) and (location.id == t.trajectory[-1]):
                 return True
             else:
                 return False
@@ -192,7 +198,7 @@ class OrbitSim:
             while timeBudget > 0:
                 location = self._particleLocation(t.particleId)
                 if isinstance(location, OrbitNode):
-                    if (location.id is t.trajectory[-1]):
+                    if (location.id == t.trajectory[-1]):
                         timeBudget = 0
                         continue
 
@@ -270,7 +276,18 @@ class OrbitSim:
         for i in range(int(len(path)/2)):
             dv += self.linkById(path[2*i+1]).deltaV
         return dv
+    
+    def _totalTime(self, path):
+        time = 0
+        for i in range(int(len(path)/2)):
+            time += self.linkById(path[2*i+1]).travelTime
+        return time
 
+    def _totalDistance(self, path):
+        distance = 0
+        for i in range(int(len(path)/2)):
+            distance += self.linkById(path[2*i+1]).distance
+        return distance
 
 
         

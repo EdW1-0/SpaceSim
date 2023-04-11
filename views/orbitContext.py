@@ -273,6 +273,7 @@ class TargetSettingPanel(SideStatusPanel):
         self.ship = None
         self.source = None
         self.target = None
+        self.trajectory = None
 
         self.source_label = UILabel(pygame.Rect(0,0,200, 100), 
                                          text="Source placeholder", 
@@ -299,11 +300,16 @@ class TargetSettingPanel(SideStatusPanel):
 
     def set_target(self, target):
         self.target = target
+        if self.trajectory:
+            self.model.orbitSim.cancelTrajectory(self.ship.id)
+        self.trajectory = self.model.orbitSim.createTrajectory(self.target.id, self.ship.id, self.source.id)
+        self.update()
 
     def clear_state(self):
         self.ship = None
         self.source = None
         self.target = None
+        self.trajectory = None
         self.update()
 
     def update(self):
@@ -316,6 +322,14 @@ class TargetSettingPanel(SideStatusPanel):
             self.target_label.set_text(self.target.name)
         else:
             self.target_label.set_text("")
+
+        if self.trajectory:
+            dv = self.model.orbitSim._deltaVCost(self.trajectory.trajectory)
+            time = self.model.orbitSim._totalTime(self.trajectory.trajectory)
+            distance = self.model.orbitSim._totalDistance(self.trajectory.trajectory)
+            self.route_text.set_text("Delta V: {0}m/s<br>Total time: {1}<br>Total distance: {2}".format(dv, time, distance))
+        else:
+            self.route_text.set_text("")
 
 
 
