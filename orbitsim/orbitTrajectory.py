@@ -1,7 +1,17 @@
+from enum import Enum
+
+class TrajectoryState(Enum):
+    DEFINITION = 0
+    PENDING = 1
+    ACTIVE = 2
+    COMPLETE = 3
+
 class OrbitTrajectory:
     def __init__(self, particleId, trajectory):
         self.particleId = particleId
         self.trajectory = trajectory
+        self.state = TrajectoryState.DEFINITION
+
 
     def nextLink(self, nodeId):
         nodes = [self.trajectory[2*i] for i in range(int(len(self.trajectory)/2)+1)]

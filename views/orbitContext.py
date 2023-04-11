@@ -8,6 +8,7 @@ from views.timingView import TimingPanel
 
 from orbitsim.orbitNode import LeafClass, OrbitNode
 from orbitsim.orbitLink import OrbitLink
+from orbitsim.orbitTrajectory import TrajectoryState
 
 from pygame.locals import (
     RLEACCEL,
@@ -339,7 +340,10 @@ class TargetSettingPanel(SideStatusPanel):
     def set_target(self, target):
         self.target = target
         if self.trajectory:
-            self.model.orbitSim.cancelTrajectory(self.ship.id)
+            if self.trajectory.state == TrajectoryState.COMPLETE or self.trajectory.state == TrajectoryState.DEFINITION:
+                self.model.orbitSim.cancelTrajectory(self.ship.id)
+            else:
+                return
         self.trajectory = self.model.orbitSim.createTrajectory(self.target.id, self.ship.id, self.source.id)
         self.update()
 

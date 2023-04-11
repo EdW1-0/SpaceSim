@@ -3,7 +3,7 @@ import json
 from orbitsim.orbitNode import OrbitNode
 from orbitsim.orbitLink import OrbitLink
 from orbitsim.particle import Particle, DeltaVError
-from orbitsim.orbitTrajectory import OrbitTrajectory
+from orbitsim.orbitTrajectory import OrbitTrajectory, TrajectoryState
 
 from colonysim.ship import Ship
 
@@ -170,6 +170,7 @@ class OrbitSim:
         if (isinstance(location, OrbitNode)):
             t = self.trajectoryForParticle(id)
             t.trajectory = [location.id]
+            t.state = TrajectoryState.COMPLETE
         else:
             t = self.trajectoryForParticle(id)
             p = self.particleById(id)
@@ -182,11 +183,12 @@ class OrbitSim:
 
     def _pruneTrajectories(self):
         def isTerminal(t):
-            location = self._particleLocation(t.particleId)
-            if (isinstance(location, OrbitNode)) and (location.id == t.trajectory[-1]):
-                return True
-            else:
-                return False
+            return t.state == TrajectoryState.COMPLETE
+            # location = self._particleLocation(t.particleId)
+            # if (isinstance(location, OrbitNode)) and (location.id == t.trajectory[-1]):
+            #     return True
+            # else:
+            #     return False
 
         self._trajectories = {t: self._trajectories[t] for t in self._trajectories if (not isTerminal(self.trajectoryForParticle(t)))}
 
@@ -194,11 +196,18 @@ class OrbitSim:
 
     def tick(self, increment):
         for t in self._trajectories.values():
+            if t.state == TrajectoryState.PENDING:
+                t.state = TrajectoryState.ACTIVE
+
+            if t.state != TrajectoryState.ACTIVE:
+                continue 
+
             timeBudget = increment
             while timeBudget > 0:
                 location = self._particleLocation(t.particleId)
                 if isinstance(location, OrbitNode):
                     if (location.id == t.trajectory[-1]):
+                        t.state = TrajectoryState.COMPLETE
                         timeBudget = 0
                         continue
 
