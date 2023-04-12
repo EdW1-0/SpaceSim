@@ -383,6 +383,8 @@ class TargetSettingPanel(SideStatusPanel):
                 self.hide()
                 self.upperAction = 1
                 return True
+            else: 
+                return True
 
 
 
