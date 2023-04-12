@@ -10,6 +10,8 @@ from orbitsim.orbitNode import LeafClass, OrbitNode
 from orbitsim.orbitLink import OrbitLink
 from orbitsim.orbitTrajectory import TrajectoryState
 
+from views.surfaceContext import LOADSURFACEVIEW
+
 from pygame.locals import (
     RLEACCEL,
     K_UP,
@@ -186,6 +188,16 @@ class PlanetStatusPanel(SideStatusPanel):
         self.planet_text.set_text("Gravity: {0}m/s/s<br>Mass: madeupnumber".format(self.planet.gravity))
         self.station_list.set_item_list([self.model.orbitSim.particleById(id).payload.name for id in self.node.particles])
 
+    def handle_event(self, event):
+        self.upperAction = 0
+        if super(PlanetStatusPanel, self).handle_event(event):
+            return True
+        elif event.ui_element == self.surface_button:
+            self.upperAction = 1
+            return True
+        else:
+            return False
+
 class OrbitStatusPanel(SideStatusPanel):
     def __init__(self, rect, manager=None):
         super(OrbitStatusPanel, self).__init__(rect, manager)
@@ -257,6 +269,8 @@ class ShipStatusPanel(SideStatusPanel):
         elif event.ui_element == self.targetButton:
             self.upperAction = 2
             return True
+        else:
+            return False
 
         
     def set_ship(self, ship):
@@ -385,6 +399,8 @@ class TargetSettingPanel(SideStatusPanel):
                 return True
             else: 
                 return True
+        else:
+            return False
 
 
 
@@ -715,6 +731,10 @@ class OrbitContext(GUIContext):
                 elif self.active_summary and self.active_summary.handle_event(event):
                     if isinstance(self.active_summary, ShipStatusPanel):
                         self.handleShip(event)
+                    elif isinstance(self.active_summary, PlanetStatusPanel):
+                        if self.planet_summary.upperAction == 1:
+                            returnCode = LOADSURFACEVIEW
+                            break
                 elif self.timing_panel.handle_event(event):
                     pass
                 elif self.target_panel.handle_event(event):

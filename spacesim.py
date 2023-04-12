@@ -4,6 +4,7 @@ import pygame_gui
 from gameModel import GameModel
 from views.menuContext import MenuContext
 from views.orbitContext import OrbitContext
+from views.surfaceContext import SurfaceContext
 
 # Define constants for the screen width and height
 SCREEN_WIDTH = 1200
@@ -23,6 +24,7 @@ from pygame.locals import (
 
 from views.menuContext import LOADORBITVIEW
 from views.orbitContext import LOADMENUVIEW
+from views.surfaceContext import LOADSURFACEVIEW
 
 
 
@@ -58,6 +60,10 @@ def main():
         elif outerEvent == LOADMENUVIEW:
             manager.clear_and_reset()
             guiContext = MenuContext(screen, gameModel, manager)
+        elif outerEvent == LOADSURFACEVIEW:
+            manager.clear_and_reset()
+            guiContext = SurfaceContext(screen, gameModel, manager)
+
         
         manager.update(time_delta)
         manager.draw_ui(screen)
