@@ -183,7 +183,7 @@ class OrbitSim:
 
     def _pruneTrajectories(self):
         def isTerminal(t):
-            return t.state == TrajectoryState.COMPLETE
+            return (t.state == TrajectoryState.COMPLETE or t.state == TrajectoryState.DEFINITION)
             # location = self._particleLocation(t.particleId)
             # if (isinstance(location, OrbitNode)) and (location.id == t.trajectory[-1]):
             #     return True

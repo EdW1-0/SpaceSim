@@ -323,10 +323,10 @@ class TargetSettingPanel(SideStatusPanel):
                                          manager=manager, 
                                          container=self.container)
         self.route_text = UITextBox("Route text", 
-                                    pygame.Rect(0, 100, 200, 200), 
+                                    pygame.Rect(0, 100, 200, 100), 
                                     manager=manager, 
                                     container=self.container)
-        self.confirm_button = UIButton(pygame.Rect(200, 100, 200, 200), 
+        self.confirm_button = UIButton(pygame.Rect(200, 100, 200, 100), 
                                        text = "Confirm", 
                                        manager = manager, 
                                        container = self.container)
@@ -372,6 +372,17 @@ class TargetSettingPanel(SideStatusPanel):
             self.route_text.set_text("Delta V: {0}m/s<br>Total time: {1}<br>Total distance: {2}".format(dv, time, distance))
         else:
             self.route_text.set_text("")
+
+    def handle_event(self, event):
+        self.upperAction = 0
+        if super(TargetSettingPanel, self).handle_event(event):
+            return True
+        elif event.ui_element == self.confirm_button:
+            if self.trajectory and self.trajectory.state == TrajectoryState.DEFINITION:
+                self.trajectory.state = TrajectoryState.PENDING
+                self.hide()
+                self.upperAction = 1
+                return True
 
 
 
@@ -705,7 +716,7 @@ class OrbitContext(GUIContext):
                 elif self.timing_panel.handle_event(event):
                     pass
                 elif self.target_panel.handle_event(event):
-                    if event.ui_element == self.target_panel.hide_button:
+                    if event.ui_element == self.target_panel.hide_button or self.target_panel.upperAction == 1:
                         self.target_mode = False
                         self.target_panel.clear_state()
                 else:
