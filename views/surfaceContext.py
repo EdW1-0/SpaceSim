@@ -19,7 +19,7 @@ LOADSURFACEVIEW = pygame.USEREVENT + 3
 
 
 center = (500, 400)
-radius = 300
+radius = 300.0
 
 class SurfaceContext(GUIContext):
     def __init__(self, screen, model, manager):
@@ -45,6 +45,24 @@ class SurfaceContext(GUIContext):
 
         del pxArray
 
+    def xyToLatLong(self, pos = center):
+        print (pos)
+        (x, y) = (pos[0] - center[0], pos[1] - center[1])
+        print((x, y))
+        height = y/radius
+        if abs(height) > 1.0:
+            return (-999, -999)
+        
+        lat = -math.asin(height)
+
+        width = x/radius/math.cos(lat) 
+        if abs(width) > 1.0:
+            return (999, 999)
+        long = math.asin(width) 
+        
+        return (math.degrees(lat), math.degrees(long) % 360.0)
+
+
     def run(self):
         returnCode = 0
 
@@ -52,6 +70,11 @@ class SurfaceContext(GUIContext):
             if event.type == QUIT:
                 returnCode = QUIT
                 break
+            elif event.type == MOUSEBUTTONUP:
+                pos = pygame.mouse.get_pos()
+                print (self.xyToLatLong(pos))
+
+
 
 
 
