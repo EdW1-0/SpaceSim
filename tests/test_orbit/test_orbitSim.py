@@ -4,7 +4,7 @@ import json
 
 from orbitsim.orbitSim import OrbitSim
 from orbitsim.particle import DeltaVError, Particle
-from orbitsim.orbitTrajectory import OrbitTrajectory
+from orbitsim.orbitTrajectory import OrbitTrajectory, TrajectoryState
 
 class PayloadMock:
     def __init__(self, deltaV):
@@ -41,7 +41,7 @@ class TestOrbitSim(unittest.TestCase):
 
     def testOrbitSimParticleLoad(self):
         os = OrbitSim(particlePath = "json/Particles.json")
-        self.assertEqual(len(os._particles.values()), 1)
+        self.assertEqual(len(os._particles.values()), 4)
 
         
 class TestOrbitSimNodes(unittest.TestCase):
@@ -263,8 +263,7 @@ class TestOrbitSimTick(unittest.TestCase):
 
         
     def testOrbitSimTickUpMotion(self):
-        self.os.createTrajectory(targetId = 1, particleId = 1)
-
+        self.os.createTrajectory(targetId = 1, particleId = 1, initialState=TrajectoryState.ACTIVE)
         self.os.transitParticle(1, 0)
         self.os.tick(100)
         self.assertEqual(self.l0.particles[1], 100)
@@ -272,19 +271,19 @@ class TestOrbitSimTick(unittest.TestCase):
     def testOrbitSimTickDownMotion(self):
         self.os.transitParticle(5, 0)
         self.os.transitParticle(5, 1)
-        self.os.createTrajectory(particleId = 5, targetId = 0)
+        self.os.createTrajectory(particleId = 5, targetId = 0, initialState = TrajectoryState.ACTIVE)
         self.os.transitParticle(5, 0)
         self.os.tick(300)
         self.assertEqual(self.l0.particles[5], self.l0.travelTime - 300)
 
     def testOrbitSimTickUpMulti(self):
-        self.os.createTrajectory(1, particleId = 2)
+        self.os.createTrajectory(1, particleId = 2, initialState = TrajectoryState.ACTIVE)
         self.os.transitParticle(2, 0)
-        self.os.createTrajectory(3, particleId = 3)
+        self.os.createTrajectory(3, particleId = 3, initialState = TrajectoryState.ACTIVE)
         self.os.transitParticle(3, 1)
         self.os.transitParticle(1, 0)
         self.os.transitParticle(1, 1)
-        self.os.createTrajectory(0, particleId = 1)
+        self.os.createTrajectory(0, particleId = 1, initialState = TrajectoryState.ACTIVE)
         self.os.transitParticle(1, 0)
         self.os.tick(30)
         self.os.tick(50)
@@ -302,7 +301,7 @@ class TestOrbitSimParticleArrival(unittest.TestCase):
             self.os.createParticle(self.n0)
 
     def testOrbitSimTopArrival(self):
-        self.os.createTrajectory(1, particleId = 2)
+        self.os.createTrajectory(1, particleId = 2, initialState = TrajectoryState.ACTIVE)
         self.os.transitParticle(2, 0)
         self.os.tick(self.l0.travelTime + 100)
         self.assertTrue(2 in self.os.nodeById(1).particles)
@@ -311,7 +310,7 @@ class TestOrbitSimParticleArrival(unittest.TestCase):
     def testOrbitSimBottomArrival(self):
         self.os.transitParticle(6, 0)
         self.os.transitParticle(6, 1)
-        self.os.createTrajectory(0, particleId = 6)
+        self.os.createTrajectory(0, particleId = 6, initialState = TrajectoryState.ACTIVE)
         self.os.transitParticle(6, 0)
         self.os.tick(self.l0.travelTime + 100)
         self.assertTrue(6 in self.n0.particles)
@@ -401,43 +400,43 @@ class TestOrbitSimTrajectory(unittest.TestCase):
             self.os.createTrajectory(targetId = 2, particleId = 0)
 
     def testOrbitSimTrajectoryTimeStep(self):
-        self.os.createTrajectory(targetId = 1, particleId = 0)
+        self.os.createTrajectory(targetId = 1, particleId = 0, initialState=TrajectoryState.ACTIVE)
         self.os.tick(100)
         self.assertTrue(0 in self.os.linkById(0).particles)
         self.assertEqual(self.os.linkById(0).particles[0], 100)
 
     def testOrbitSimTrajectoryFullLink(self):
-        self.os.createTrajectory(targetId = 1, particleId = 0)
+        self.os.createTrajectory(targetId = 1, particleId = 0, initialState=TrajectoryState.ACTIVE)
         self.os.tick(10100)
         self.assertTrue(0 in self.os.nodeById(1).particles)
 
     def testOrbitSimMultiHop(self):
-        self.udos.createTrajectory(targetId = 9, sourceId = 0, payload = PayloadMock(10000.0))
+        self.udos.createTrajectory(targetId = 9, sourceId = 0, payload = PayloadMock(10000.0), initialState=TrajectoryState.ACTIVE)
         self.udos.tick(1000)
         self.assertTrue(0 in self.udos.nodeById(9).particles)
 
     def testOrbitSimMultiHopDown(self):
-        self.udos.createTrajectory(targetId = 0, sourceId = 9, payload = PayloadMock(10000.0))
+        self.udos.createTrajectory(targetId = 0, sourceId = 9, payload = PayloadMock(10000.0), initialState=TrajectoryState.ACTIVE)
         self.udos.tick(1000)
         self.assertTrue(0 in self.udos.nodeById(0).particles)
 
     def testOrbitSimMultiHopPartial(self):
-        self.udos.createTrajectory(targetId = 10, sourceId = 6, payload = PayloadMock(10000.0))
+        self.udos.createTrajectory(targetId = 10, sourceId = 6, payload = PayloadMock(10000.0), initialState=TrajectoryState.ACTIVE)
         self.udos.tick(65)
         self.assertTrue(0 in self.udos.linkById(10).particles)
         self.assertEqual(self.udos.linkById(10).particles[0], 5)
 
     def testOrbitSimPruneCompletedTrajectories(self):
-        self.os.createTrajectory(1, sourceId = 0, payload = PayloadMock(10000.0))
-        self.os.createTrajectory(2, sourceId = 0, payload = PayloadMock(10000.0))
+        self.os.createTrajectory(1, sourceId = 0, payload = PayloadMock(10000.0), initialState=TrajectoryState.ACTIVE)
+        self.os.createTrajectory(2, sourceId = 0, payload = PayloadMock(10000.0), initialState=TrajectoryState.ACTIVE)
         self.assertEqual(len(self.os._trajectories), 2)
         self.os.tick(1e6)
         self.assertEqual(len(self.os._trajectories), 1)
 
     def testOrbitSimCancelTrajectory(self):
-        self.os.createTrajectory(2, sourceId = 0, payload = PayloadMock(10000.0))
+        self.os.createTrajectory(2, sourceId = 0, payload = PayloadMock(10000.0), initialState=TrajectoryState.ACTIVE)
         self.os.tick(5000)
-        self.os.createTrajectory(2, sourceId = 0, payload = PayloadMock(10000.0))
+        self.os.createTrajectory(2, sourceId = 0, payload = PayloadMock(10000.0), initialState=TrajectoryState.ACTIVE)
         self.assertEqual(len(self.os._trajectories), 2)
         self.os.cancelTrajectory(11)
         self.assertEqual(len(self.os._trajectories), 1)
@@ -446,8 +445,12 @@ class TestOrbitSimTrajectory(unittest.TestCase):
         self.assertEqual(self.os.trajectoryForParticle(10).trajectory, [0, 0, 1])
         self.os.tick(6000)
         self.assertEqual(len(self.os._trajectories), 0)
-        with self.assertRaises(KeyError):
+        
+    def testOrbitSimCancelNonexistant(self):
+        try:
             self.os.cancelTrajectory(0)
+        except:
+            self.fail("Unexpected exception thrown on cancelling nonexistant trajectory")
 
 class TestOrbitSimDeltaVBudget(unittest.TestCase):
     def setUp(self):
@@ -459,21 +462,21 @@ class TestOrbitSimDeltaVBudget(unittest.TestCase):
             self.udos.createParticle(self.n0, payload = pl)
 
     def testOrbitSimDeltaVSingleHop(self):
-        self.udos.createTrajectory(1, particleId = 0)
+        self.udos.createTrajectory(1, particleId = 0, initialState = TrajectoryState.ACTIVE)
         self.assertEqual(self.udos.particleById(0).deltaV(), 50.0)
         self.udos.tick(5)
         self.assertTrue(0 in self.l0.particles)
         self.assertEqual(self.udos.particleById(0).deltaV(), 40.0)
 
     def testOrbitSimDeltaVMultiHop(self):
-        self.udos.createTrajectory(6, sourceId = 0, payload = PayloadMock(100.0))
+        self.udos.createTrajectory(6, sourceId = 0, payload = PayloadMock(100.0), initialState = TrajectoryState.ACTIVE)
         self.assertEqual(self.udos.particleById(10).deltaV(), 100.0)
         self.udos.tick(100)
         self.assertEqual(self.udos.particleById(10).deltaV(), 40.0)
         self.assertTrue(10 in self.udos.nodeById(6).particles)
 
     def testOrbitSimDeltaVInsufficientDeltaV(self):
-        self.udos.createTrajectory(10, particleId = 3)
+        self.udos.createTrajectory(10, particleId = 3, initialState = TrajectoryState.ACTIVE)
         self.assertEqual(self.udos.particleById(3).deltaV(), 50.0)
         self.udos.tick(100)
         self.udos.tick(100)

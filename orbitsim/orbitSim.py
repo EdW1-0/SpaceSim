@@ -124,7 +124,7 @@ class OrbitSim:
             else:
                 raise ValueError
 
-    def createTrajectory(self, targetId, particleId = None, sourceId = None, payload = None):
+    def createTrajectory(self, targetId, particleId = None, sourceId = None, payload = None, initialState = TrajectoryState.DEFINITION):
         if particleId is not None:
             try:
                 self.trajectoryForParticle(particleId)
@@ -153,7 +153,7 @@ class OrbitSim:
                 minDv = dv
                 minPath = path
 
-        ot = OrbitTrajectory(particleId, minPath)
+        ot = OrbitTrajectory(particleId, minPath, state = initialState)
         #Key the trajectory using the particleId. This ensures 1-1 mapping. 
         self._trajectories[particleId] = ot
         return ot
