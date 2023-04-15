@@ -11,6 +11,7 @@ class TestOrbitTrajectoryAttributes(unittest.TestCase):
     def testOrbitTrajectoryAttributes(self):
         self.assertTrue(hasattr(OrbitTrajectory(0, []), "particleId"))
         self.assertTrue(hasattr(OrbitTrajectory(0, []), "trajectory"))
+        self.assertTrue(hasattr(OrbitTrajectory(0, []), "state"))
         
 class TestOrbitTrajectoryConstructor(unittest.TestCase):
     def testOrbitTrajectoryConstructor(self):

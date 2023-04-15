@@ -316,6 +316,41 @@ class TestOrbitSimParticleArrival(unittest.TestCase):
         self.assertTrue(6 in self.n0.particles)
         self.assertEqual(self.os.particleById(6).velocity, 0)
 
+class TestOrbitSimTrajectoryState(unittest.TestCase):
+    def setUp(self):
+        self.os = OrbitSim("test_json/test_orbits/happy_case.json")
+        pl = PayloadMock(deltaV = 100000.0)
+        self.os.createParticle(self.os.nodeById(0), payload = pl)
+
+    def testOrbitSimTrajectoryDefinition(self):
+        self.os.createTrajectory(1, sourceId = 0, particleId=0)
+        self.assertEqual(self.os.trajectoryForParticle(0).state, TrajectoryState.DEFINITION)
+        self.os.tick(1e6)
+        self.assertEqual(self.os.particleById(0).deltaV(), 100000.0)
+        self.assertTrue(0 in self.os.nodeById(0).particles)
+
+    def testOrbitSimTrajectoryPending(self):
+        self.os.createTrajectory(1, sourceId = 0, particleId = 0, initialState = TrajectoryState.PENDING)
+        self.assertEqual(self.os.trajectoryForParticle(0).state, TrajectoryState.PENDING)
+        self.os.tick(100)
+        self.assertEqual(self.os.trajectoryForParticle(0).state, TrajectoryState.ACTIVE)
+        self.assertFalse(0 in self.os.nodeById(0).particles)
+
+    def testOrbitSimTrajectoryActive(self):
+        self.os.createTrajectory(1, sourceId = 0, particleId = 0, initialState = TrajectoryState.ACTIVE)
+        self.assertEqual(self.os.trajectoryForParticle(0).state, TrajectoryState.ACTIVE)
+        self.os.tick(100)
+        self.assertFalse(0 in self.os.nodeById(0).particles)
+
+    def testOrbitSimTrajectoryComplete(self):
+        self.os.createTrajectory(1, sourceId = 0, particleId = 0, initialState = TrajectoryState.COMPLETE)
+        self.assertEqual(self.os.trajectoryForParticle(0).state, TrajectoryState.COMPLETE)
+        self.os.tick(100)
+        with self.assertRaises(KeyError):
+            self.os.trajectoryForParticle(0)
+        
+
+
 
 class TestOrbitSimFindPath(unittest.TestCase):
     def setUp(self):
