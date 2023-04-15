@@ -33,6 +33,8 @@ class PlanetSurface:
             region = SurfaceRegion(r["id"], anchor, borders)
             self.regions[region.id] = region
 
+        jsonFile.close()
+
     def newPointId(self):
         pointIdCounter = 0
         while True:

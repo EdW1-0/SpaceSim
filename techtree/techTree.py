@@ -51,6 +51,8 @@ class TechTree:
             checked = set()
             cycleCheck(node, checked)
 
+        jsonFile.close()
+
 
 
     def nodeById(self, id):

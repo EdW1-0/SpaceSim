@@ -70,6 +70,8 @@ class OrbitSim:
 
         self._trajectories = {}
 
+        jsonFile.close()
+
     def validatePlanets(self, planetSim):
         for node in self._nodes.values():
             if node.planet:
