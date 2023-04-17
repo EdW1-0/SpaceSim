@@ -35,6 +35,8 @@ class SurfaceContext(GUIContext):
 
         self.extractPolygons()
 
+        self.triangularise()
+
         for r in self.polygons.values():
 
             for polygon in r:
@@ -62,12 +64,18 @@ class SurfaceContext(GUIContext):
 
     def triangularise(self):
         for loopSet in self.polygons.values():
-            noQuads = True
-            while noQuads:
-                noQuads = False
+            quads = True
+            while quads:
+                quads = False
+                dropList = []
                 for loop in loopSet:
                     if len(loop) > 3:
-                        pass
+                        dropList.append(loop)
+                        loopSet.append(loop[:3])
+                        loopSet.append(loop[2:] + loop[:1])
+                        quads = True
+                for loop in dropList:
+                    loopSet.remove(loop)
             
             
 
