@@ -1,7 +1,11 @@
 from views.guiContext import GUIContext
 
+from planetsim.planetSurface import PlanetSurface
+from planetsim.surfacePoint import SurfacePoint
+from planetsim.surfaceRegion import SurfaceRegion
+
 import pygame
-import math
+import math, random
 
 from pygame.locals import (
     RLEACCEL,
@@ -24,31 +28,67 @@ radius = 300.0
 class SurfaceContext(GUIContext):
     def __init__(self, screen, model, manager):
         super(SurfaceContext, self).__init__(screen, model, manager)
+        self.planet = PlanetSurface("json/planets/Mercury.json", radius = 1000)
+
         self.surf = pygame.Surface((1200, 800))
         self.surf.fill((50, 50, 50))
-        pxArray = pygame.surfarray.pixels3d(self.surf)
-        shape = pxArray.shape
-        for i in range(shape[0]):
-            for j in range(shape[1]):
-                x = i - center[0]
-                y = j - center[1]
-                measure = (x*x + y*y)
-                r = math.sqrt(measure)
-                if r < 300:
-                    pxArray[i, j, 0] = 200
-                    pxArray[i, j, 1] = 100
-                    pxArray[i, j, 2] = 10
-                else:
-                    pxArray[i, j, 0] = 10
-                    pxArray[i, j, 1] = 10
-                    pxArray[i, j, 2] = 10
 
-        del pxArray
+        for r in self.planet.regions.values():
+            if r.homePoint.longitude > 90.0 and r.homePoint.longitude < 270.0:
+                continue
+
+            coordinates = []
+            for path in r.borders:
+                # Assume here that each path p2 is equal to the following path p1, i.e. border 
+                # forms a contiguous loop.
+                vertex = path.p1
+                screenVertex = self.latLongToXY((vertex.latitude, vertex.longitude))
+                coordinates.append(screenVertex)
+
+            colour = (random.random()*255, random.random()*255, random.random()*255)
+
+            pygame.draw.polygon(self.surf, colour, coordinates)
+            # For each region
+            # Decide if drawing
+            # Find each vertex and covert to screen coordinates
+            # Pick a random colour
+            # Draw a polygon with those coordinates
+            
+            
+
+
+        # pxArray = pygame.surfarray.pixels3d(self.surf)
+        # shape = pxArray.shape
+        # for i in range(shape[0]):
+        #     for j in range(shape[1]):
+        #         x = i - center[0]
+        #         y = j - center[1]
+        #         measure = (x*x + y*y)
+        #         r = math.sqrt(measure)
+        #         if r < 300:
+        #             (lat, long) = self.xyToLatLong((x, y))
+        #             sp = SurfacePoint(lat, long)
+        #             for r in self.planet.regions.values():
+        #                 if r.pointInRegion(sp):
+        #                     if r.id % 2:
+        #                         pxArray[i, j, 0] = 200
+        #                         pxArray[i, j, 1] = 100
+        #                         pxArray[i, j, 2] = 10
+        #                     else:
+        #                         pxArray[i, j, 0] = 10
+        #                         pxArray[i, j, 1] = 200
+        #                         pxArray[i, j, 2] = 100
+
+  
+        #         else:
+        #             pxArray[i, j, 0] = 10
+        #             pxArray[i, j, 1] = 10
+        #             pxArray[i, j, 2] = 10
+
+        # del pxArray
 
     def xyToLatLong(self, pos = center):
-        print (pos)
         (x, y) = (pos[0] - center[0], pos[1] - center[1])
-        print((x, y))
         height = y/radius
         if abs(height) > 1.0:
             return (-999, -999)
@@ -61,6 +101,15 @@ class SurfaceContext(GUIContext):
         long = math.asin(width) 
         
         return (math.degrees(lat), math.degrees(long) % 360.0)
+    
+    def latLongToXY(self, pos = (0, 0)):
+        (lat, long) = (math.radians(pos[0]), math.radians(pos[1]))
+        height = math.sin(-lat)
+        y = height * radius
+        width = math.sin(long)
+        x = width * radius * math.cos(lat)
+        return (x + center[0], y + center[1])
+        
 
 
     def run(self):

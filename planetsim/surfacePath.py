@@ -9,6 +9,8 @@ from planetsim.surfacePoint import SurfacePoint, magnitude, dot, cross, latLong,
 # For antipodes the choice of path is ambiguous. In this case we follow a convention:
 # "Short" path is the path travelling east from p1.
 # If path is on a meridian, then "short" path is northwards. 
+# I got all the formulae for doing these calculations from here:
+# https://www.movable-type.co.uk/scripts/latlong.html
 
 @dataclass
 class SurfacePath:
