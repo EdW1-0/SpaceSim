@@ -33,26 +33,41 @@ class SurfaceContext(GUIContext):
         self.surf = pygame.Surface((1200, 800))
         self.surf.fill((50, 50, 50))
 
-        for r in self.planet.regions.values():
-            if r.homePoint.longitude > 90.0 and r.homePoint.longitude < 270.0:
-                continue
+        self.extractPolygons()
 
-            coordinates = []
-            for path in r.borders:
-                # Assume here that each path p2 is equal to the following path p1, i.e. border 
-                # forms a contiguous loop.
-                vertex = path.p1
-                screenVertex = self.latLongToXY((vertex.latitude, vertex.longitude))
-                coordinates.append(screenVertex)
+        for r in self.polygons.values():
 
-            colour = (random.random()*255, random.random()*255, random.random()*255)
+            for polygon in r:
+                colour = (random.random()*255, random.random()*255, random.random()*255)
+                coordinates = []
+                for vertex in polygon:
+                    screenVertex = self.latLongToXY(vertex)
+                    coordinates.append(screenVertex)
 
-            pygame.draw.polygon(self.surf, colour, coordinates)
+                pygame.draw.polygon(self.surf, colour, coordinates)
             # For each region
             # Decide if drawing
             # Find each vertex and covert to screen coordinates
             # Pick a random colour
             # Draw a polygon with those coordinates
+
+    def extractPolygons(self):
+        self.polygons = {}
+        for r in self.planet.regions.values():
+            if r.homePoint.longitude > 90.0 and r.homePoint.longitude < 270.0:
+                continue
+
+            loop = tuple((path.p1.latitude, path.p1.longitude) for path in r.borders)
+            self.polygons[r.id] = [loop]
+
+    def triangularise(self):
+        for loopSet in self.polygons.values():
+            noQuads = True
+            while noQuads:
+                noQuads = False
+                for loop in loopSet:
+                    if len(loop) > 3:
+                        pass
             
             
 
