@@ -3,6 +3,7 @@ from views.guiContext import GUIContext
 from planetsim.planetSurface import PlanetSurface
 from planetsim.surfacePoint import SurfacePoint
 from planetsim.surfaceRegion import SurfaceRegion
+from planetsim.surfacePath import SurfacePath
 
 import pygame
 import math, random
@@ -25,6 +26,11 @@ LOADSURFACEVIEW = pygame.USEREVENT + 3
 center = (500, 400)
 radius = 300.0
 
+polygonScale = 1.4
+
+# For debugging polygon code
+patchwork = False
+
 class SurfaceContext(GUIContext):
     def __init__(self, screen, model, manager):
         super(SurfaceContext, self).__init__(screen, model, manager)
@@ -37,10 +43,13 @@ class SurfaceContext(GUIContext):
 
         self.triangularise()
 
-        for r in self.polygons.values():
+        self.polygonise(polygonScale)
 
+        for r in self.polygons.values():
+            colour = (random.random()*255, random.random()*255, random.random()*255)
             for polygon in r:
-                colour = (random.random()*255, random.random()*255, random.random()*255)
+                if patchwork:
+                    colour = (random.random()*255, random.random()*255, random.random()*255)
                 coordinates = []
                 for vertex in polygon:
                     screenVertex = self.latLongToXY(vertex)
@@ -77,6 +86,45 @@ class SurfaceContext(GUIContext):
                 for loop in dropList:
                     loopSet.remove(loop)
             
+    def polygonise(self, scale):
+        for loopSet in self.polygons.values():
+            bigPolygons = True
+            while bigPolygons:
+                bigPolygons = False
+                dropList = []
+                for loop in loopSet:
+                    for i in range(len(loop)):
+                        if i == 0:
+                            p1, p2, p3 = loop[0], loop[2], loop[1]
+                        elif i == 1:
+                            p1, p2, p3 = loop[1], loop[2], loop[0]
+                        else:
+                            p1, p2, p3 = loop[2], loop[0], loop[1]
+
+                        sp = SurfacePath(SurfacePoint(p1[0], p1[1]), SurfacePoint(p2[0], p2[1]))
+                        angle = sp.gcAngle()
+                        if angle > scale:
+                            
+                            bigPolygons = True
+                            midpoint = sp.intermediatePoint(0.5)
+                            dropList.append(loop)
+                            # Two triangles to make:
+                            # One from p1 - midpoint - (other)
+                            # One from midpoint - p2 - (other)
+                            pm = (midpoint.latitude, midpoint.longitude)
+                            t1 = (p1, pm, p3)
+                            t2 = (pm, p2, p3)
+                            #print("Splitting", p1, p2, p3, "into", t1, "and" , t2)
+                            loopSet.append(t1)
+                            loopSet.append(t2)
+                for loop in dropList:
+                    if loop in loopSet:
+                        loopSet.remove(loop)
+
+
+
+
+
             
 
 
