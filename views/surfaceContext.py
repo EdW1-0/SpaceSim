@@ -26,22 +26,25 @@ LOADSURFACEVIEW = pygame.USEREVENT + 3
 center = (500, 400)
 radius = 300.0
 
-polygonScale = 1.4
+polygonScale = 0.2
 
 # For debugging polygon code
-patchwork = False
+patchwork = True
 
 class SurfaceContext(GUIContext):
     def __init__(self, screen, model, manager):
         super(SurfaceContext, self).__init__(screen, model, manager)
         self.planet = PlanetSurface("json/planets/Mercury.json", radius = 1000)
+        #self.planet = PlanetSurface("test_json/test_surfaces/single_region_square.json", radius = 1000)
+        self.polyCount = 0
 
         self.surf = pygame.Surface((1200, 800))
         self.surf.fill((50, 50, 50))
 
         self.extractPolygons()
-
+        print(self.polyCount)
         self.triangularise()
+        print(self.polyCount)
 
         self.polygonise(polygonScale)
 
@@ -70,6 +73,7 @@ class SurfaceContext(GUIContext):
 
             loop = tuple((path.p1.latitude, path.p1.longitude) for path in r.borders)
             self.polygons[r.id] = [loop]
+            self.polyCount+=1
 
     def triangularise(self):
         for loopSet in self.polygons.values():
@@ -82,6 +86,7 @@ class SurfaceContext(GUIContext):
                         dropList.append(loop)
                         loopSet.append(loop[:3])
                         loopSet.append(loop[2:] + loop[:1])
+                        self.polyCount +=1
                         quads = True
                 for loop in dropList:
                     loopSet.remove(loop)
@@ -92,6 +97,7 @@ class SurfaceContext(GUIContext):
             while bigPolygons:
                 bigPolygons = False
                 dropList = []
+                addList = []
                 for loop in loopSet:
                     for i in range(len(loop)):
                         if i == 0:
@@ -101,10 +107,28 @@ class SurfaceContext(GUIContext):
                         else:
                             p1, p2, p3 = loop[2], loop[0], loop[1]
 
-                        sp = SurfacePath(SurfacePoint(p1[0], p1[1]), SurfacePoint(p2[0], p2[1]))
-                        angle = sp.gcAngle()
-                        if angle > scale:
+                        sp12 = SurfacePath(SurfacePoint(p1[0], p1[1]), SurfacePoint(p2[0], p2[1]))
+                        angle12 = sp12.gcAngle()
+                        sp23 = SurfacePath(SurfacePoint(p2[0], p2[1]), SurfacePoint(p3[0], p3[1]))
+                        angle23 = sp23.gcAngle()
+                        sp31 = SurfacePath(SurfacePoint(p3[0], p3[1]), SurfacePoint(p1[0], p1[1]))
+                        angle31 = sp31.gcAngle()
+                        if angle12 >= angle23 and angle12 >= angle31:
+                            sp = sp12
+                            angle = angle12
+                            (pi, pj, pk) = (p1, p2, p3)
+                        elif angle23 >= angle12 and angle23 >= angle31:
+                            sp = sp23
+                            angle = angle23
+                            (pi, pj, pk) = (p2, p3, p1)
+                        elif angle31 >= angle12 and angle31 >= angle23:
+                            sp = sp31
+                            angle = angle31
+                            (pi, pj, pk) = (p3, p1, p2)
+                        else:
+                            assert("Should never reach here!")
                             
+                        if angle > scale:                            
                             bigPolygons = True
                             midpoint = sp.intermediatePoint(0.5)
                             dropList.append(loop)
@@ -112,14 +136,25 @@ class SurfaceContext(GUIContext):
                             # One from p1 - midpoint - (other)
                             # One from midpoint - p2 - (other)
                             pm = (midpoint.latitude, midpoint.longitude)
-                            t1 = (p1, pm, p3)
-                            t2 = (pm, p2, p3)
+                            t1 = (pi, pm, pk)
+                            t2 = (pm, pj, pk)
                             #print("Splitting", p1, p2, p3, "into", t1, "and" , t2)
-                            loopSet.append(t1)
-                            loopSet.append(t2)
+                            addList.append(t1)
+                            addList.append(t2)
+                            self.polyCount += 2
+                            if self.polyCount % 100 == 0:
+                                print (self.polyCount)
+                            break
                 for loop in dropList:
                     if loop in loopSet:
                         loopSet.remove(loop)
+                        self.polyCount -= 1
+                    else:
+                        print ("Already removed ", loop)
+
+                loopSet += addList
+                if self.polyCount > 10000:
+                    return
 
 
 
