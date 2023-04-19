@@ -1,7 +1,7 @@
 from views.guiContext import GUIContext
 
 from planetsim.planetSurface import PlanetSurface
-from planetsim.surfacePoint import SurfacePoint
+from planetsim.surfacePoint import SurfacePoint, dot
 from planetsim.surfaceRegion import SurfaceRegion
 from planetsim.surfacePath import SurfacePath
 
@@ -26,7 +26,9 @@ LOADSURFACEVIEW = pygame.USEREVENT + 3
 center = (500, 400)
 radius = 300.0
 
-polygonScale = 0.2
+meridian = (0, 0)
+
+polygonScale = 0.1
 
 # For debugging polygon code
 patchwork = True
@@ -47,23 +49,54 @@ class SurfaceContext(GUIContext):
         print(self.polyCount)
 
         self.polygonise(polygonScale)
+        print(self.polyCount)
 
+        self.renderGlobe()
+
+    ###TODO: Copy/pasted from SurfacePoint. Should pull both instances into a shared utility function
+    def vector(self, latitude, longitude):
+        latr = latitude / 180 * math.pi
+        longr = longitude / 180 * math.pi
+        x = math.cos(latr)*math.cos(longr)
+        y = math.cos(latr)*math.sin(longr)
+        z = math.sin(latr)
+        return (x, y, z)
+    
+    def vsum(self, v1, v2):
+        assert(len(v1) == len(v2))
+        v = tuple(v1[i] + v2[i] for i in range(len(v1)))
+        return v
+
+
+
+    def renderGlobe(self):
+        print("Total: ", self.polyCount)
+        drawCount = 0
+        hideCount = 0
         for r in self.polygons.values():
             colour = (random.random()*255, random.random()*255, random.random()*255)
             for polygon in r:
+                vectors = tuple(self.vector(v[0], v[1]) for v in polygon)
+                v12 = self.vsum(vectors[0], vectors[1])
+                v123 = self.vsum(v12, vectors[2])
+
+                meridianV = self.vector(meridian[0], meridian[1])
+                if (dot(meridianV, v123) <= 0):
+                    hideCount += 1
+                    continue
+
+                drawCount += 1
                 if patchwork:
                     colour = (random.random()*255, random.random()*255, random.random()*255)
                 coordinates = []
                 for vertex in polygon:
+                    
                     screenVertex = self.latLongToXY(vertex)
                     coordinates.append(screenVertex)
 
                 pygame.draw.polygon(self.surf, colour, coordinates)
-            # For each region
-            # Decide if drawing
-            # Find each vertex and covert to screen coordinates
-            # Pick a random colour
-            # Draw a polygon with those coordinates
+
+        print("Total drawn:", drawCount)
 
     def extractPolygons(self):
         self.polygons = {}
@@ -153,7 +186,7 @@ class SurfaceContext(GUIContext):
                         print ("Already removed ", loop)
 
                 loopSet += addList
-                if self.polyCount > 10000:
+                if self.polyCount > 100000:
                     return
 
 
