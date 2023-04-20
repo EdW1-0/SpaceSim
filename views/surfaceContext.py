@@ -26,22 +26,22 @@ LOADSURFACEVIEW = pygame.USEREVENT + 3
 center = (500, 400)
 radius = 300.0
 
-meridian = (0, 0)
 
-polygonScale = 0.1
+polygonScale = 1.0
 
 # For debugging polygon code
 patchwork = True
 
 class SurfaceContext(GUIContext):
-    def __init__(self, screen, model, manager):
+    def __init__(self, screen, model, manager, meridian = (0, 0)):
         super(SurfaceContext, self).__init__(screen, model, manager)
         self.planet = PlanetSurface("json/planets/Mercury.json", radius = 1000)
+        self.meridian = meridian
         #self.planet = PlanetSurface("test_json/test_surfaces/single_region_square.json", radius = 1000)
         self.polyCount = 0
 
         self.surf = pygame.Surface((1200, 800))
-        self.surf.fill((50, 50, 50))
+        
 
         self.extractPolygons()
         print(self.polyCount)
@@ -62,14 +62,44 @@ class SurfaceContext(GUIContext):
         z = math.sin(latr)
         return (x, y, z)
     
+    def latLong(self, v):
+        lat = math.atan2(v[2], math.sqrt(v[0]**2 + v[1]**2))
+        long = math.atan2(v[1], v[0])
+        return (lat*180.0/math.pi, long*180.0/math.pi)
+    
     def vsum(self, v1, v2):
         assert(len(v1) == len(v2))
         v = tuple(v1[i] + v2[i] for i in range(len(v1)))
         return v
+    
+    def zRot(self, v, angle):
+        phi = math.radians(angle)
+        vx = v[0]*math.cos(phi) - v[1]*math.sin(phi)
+        vy = v[0]*math.sin(phi) + v[1]*math.cos(phi)
+        vz = v[2]
+        return (vx, vy, vz)
+    
+    def yRot(self, v, angle):
+        phi = math.radians(angle)
+        vx = v[0]*math.cos(phi) + v[2]*math.sin(phi)
+        vy = v[1]
+        vz = -v[0]*math.sin(phi) + v[2]*math.cos(phi)
+        return (vx, vy, vz)
+    
+    def xRot(self, v, angle):
+        phi = math.radians(angle)
+        vx = v[0]
+        vy = v[1]*math.cos(phi) - v[2]*math.sin(phi)
+        vz = v[1]*math.sin(phi) + v[2]*math.cos(phi)
+        
+        return (vx, vy, vz)
+    
 
 
 
     def renderGlobe(self):
+        self.surf.fill((50, 50, 50))
+
         print("Total: ", self.polyCount)
         drawCount = 0
         hideCount = 0
@@ -80,7 +110,7 @@ class SurfaceContext(GUIContext):
                 v12 = self.vsum(vectors[0], vectors[1])
                 v123 = self.vsum(v12, vectors[2])
 
-                meridianV = self.vector(meridian[0], meridian[1])
+                meridianV = self.vector(self.meridian[0], self.meridian[1])
                 if (dot(meridianV, v123) <= 0):
                     hideCount += 1
                     continue
@@ -89,21 +119,28 @@ class SurfaceContext(GUIContext):
                 if patchwork:
                     colour = (random.random()*255, random.random()*255, random.random()*255)
                 coordinates = []
-                for vertex in polygon:
+                for vertex in vectors:  
+                    # Rotate vertex into coordinate system of meridian
                     
-                    screenVertex = self.latLongToXY(vertex)
+                    # if rx > 90.0:
+                    #     delta = rx - 90.0
+                    #     rx -= 2*delta
+                    r = self.zRot(vertex, self.meridian[1])
+                    r2 = self.yRot(r, self.meridian[0])
+                    rotatedVertex = self.latLong(r2)
+                    print(rotatedVertex)
+
+                    screenVertex = self.latLongToXY(rotatedVertex)
                     coordinates.append(screenVertex)
 
                 pygame.draw.polygon(self.surf, colour, coordinates)
 
         print("Total drawn:", drawCount)
+        print("Total hidden:", hideCount)
 
     def extractPolygons(self):
         self.polygons = {}
         for r in self.planet.regions.values():
-            if r.homePoint.longitude > 90.0 and r.homePoint.longitude < 270.0:
-                continue
-
             loop = tuple((path.p1.latitude, path.p1.longitude) for path in r.borders)
             self.polygons[r.id] = [loop]
             self.polyCount+=1
@@ -250,6 +287,27 @@ class SurfaceContext(GUIContext):
         return (x + center[0], y + center[1])
         
 
+    def meridianLatitude(self, delta):
+        lat = self.meridian[0]
+        lat += delta
+        if lat > 90.0:
+            lat = 90.0
+        elif lat < -90.0:
+            lat = -90.0
+
+        self.meridian = (lat, self.meridian[1])
+
+        print (self.meridian)
+
+    def meridianLongitude(self, delta):
+        long = self.meridian[1]
+        long += delta
+        long = long % 360.0
+        self.meridian = (self.meridian[0], long)
+
+        print (self.meridian)
+
+        #lat = max(min(lat+delta, 90.0), -90.0)
 
     def run(self):
         returnCode = 0
@@ -261,6 +319,20 @@ class SurfaceContext(GUIContext):
             elif event.type == MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
                 print (self.xyToLatLong(pos))
+            elif event.type == KEYDOWN:
+                if event.key == K_DOWN:
+                    self.meridianLatitude(-20.0)
+                    self.renderGlobe()
+                elif event.key == K_UP:
+                    self.meridianLatitude(20.0)
+                    self.renderGlobe()
+                elif event.key == K_RIGHT:
+                    self.meridianLongitude(20.0)
+                    self.renderGlobe()
+                elif event.key == K_LEFT:
+                    self.meridianLongitude(-20.0)
+                    self.renderGlobe()
+
 
 
 
