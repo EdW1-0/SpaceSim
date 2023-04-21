@@ -17,6 +17,7 @@ from pygame.locals import (
     K_ESCAPE,
     KEYDOWN,
     MOUSEBUTTONUP,
+    MOUSEWHEEL,
     QUIT,
 )
 
@@ -24,7 +25,6 @@ LOADSURFACEVIEW = pygame.USEREVENT + 3
 
 
 center = (500, 400)
-radius = 300.0
 
 
 polygonScale = 0.4
@@ -33,10 +33,11 @@ polygonScale = 0.4
 patchwork = False
 
 class SurfaceContext(GUIContext):
-    def __init__(self, screen, model, manager, meridian = (0, 0)):
+    def __init__(self, screen, model, manager, meridian = (0, 0), radius = 300.0):
         super(SurfaceContext, self).__init__(screen, model, manager)
         self.planet = PlanetSurface("json/planets/Mercury.json", radius = 1000)
         self.meridian = meridian
+        self.radius = radius
         #self.planet = PlanetSurface("test_json/test_surfaces/single_region_square.json", radius = 1000)
         #self.planet = PlanetSurface("test_json/test_surfaces/four_squares.json", radius = 1000)
         self.polyCount = 0
@@ -275,13 +276,13 @@ class SurfaceContext(GUIContext):
 
     def xyToLatLong(self, pos = center):
         (x, y) = (pos[0] - center[0], pos[1] - center[1])
-        height = y/radius
+        height = y/self.radius
         if abs(height) > 1.0:
             return (-999, -999)
         
         lat = -math.asin(height)
 
-        width = x/radius/math.cos(lat) 
+        width = x/self.radius/math.cos(lat) 
         if abs(width) > 1.0:
             return (999, 999)
         long = math.asin(width) 
@@ -291,9 +292,9 @@ class SurfaceContext(GUIContext):
     def latLongToXY(self, pos = (0, 0)):
         (lat, long) = (math.radians(pos[0]), math.radians(pos[1]))
         height = math.sin(-lat)
-        y = height * radius
+        y = height * self.radius
         width = math.sin(long)
-        x = width * radius * math.cos(lat)
+        x = width * self.radius * math.cos(lat)
         return (x + center[0], y + center[1])
         
 
@@ -329,6 +330,12 @@ class SurfaceContext(GUIContext):
             elif event.type == MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
                 print (self.xyToLatLong(pos))
+            elif event.type == MOUSEWHEEL:
+                if event.y >= 1:
+                    self.radius = max(self.radius-100.0, 100.0)
+                elif event.y <= -1:
+                    self.radius = min(self.radius+100.0, 800.0)
+                self.renderGlobe()
             elif event.type == KEYDOWN:
                 if event.key == K_DOWN:
                     self.meridianLatitude(-20.0)
