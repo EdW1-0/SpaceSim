@@ -27,7 +27,7 @@ center = (500, 400)
 radius = 300.0
 
 
-polygonScale = 1.0
+polygonScale = 0.9
 
 # For debugging polygon code
 patchwork = True
@@ -38,6 +38,7 @@ class SurfaceContext(GUIContext):
         self.planet = PlanetSurface("json/planets/Mercury.json", radius = 1000)
         self.meridian = meridian
         #self.planet = PlanetSurface("test_json/test_surfaces/single_region_square.json", radius = 1000)
+        #self.planet = PlanetSurface("test_json/test_surfaces/four_squares.json", radius = 1000)
         self.polyCount = 0
 
         self.surf = pygame.Surface((1200, 800))
@@ -110,7 +111,7 @@ class SurfaceContext(GUIContext):
                 v12 = self.vsum(vectors[0], vectors[1])
                 v123 = self.vsum(v12, vectors[2])
 
-                meridianV = self.vector(self.meridian[0], self.meridian[1])
+                meridianV = self.vector(self.meridian[0], -self.meridian[1])
                 if (dot(meridianV, v123) <= 0):
                     hideCount += 1
                     continue
@@ -137,6 +138,7 @@ class SurfaceContext(GUIContext):
 
         print("Total drawn:", drawCount)
         print("Total hidden:", hideCount)
+        print(self.meridian)
 
     def extractPolygons(self):
         self.polygons = {}
