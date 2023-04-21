@@ -27,10 +27,10 @@ center = (500, 400)
 radius = 300.0
 
 
-polygonScale = 0.9
+polygonScale = 0.4
 
 # For debugging polygon code
-patchwork = True
+patchwork = False
 
 class SurfaceContext(GUIContext):
     def __init__(self, screen, model, manager, meridian = (0, 0)):
@@ -40,6 +40,11 @@ class SurfaceContext(GUIContext):
         #self.planet = PlanetSurface("test_json/test_surfaces/single_region_square.json", radius = 1000)
         #self.planet = PlanetSurface("test_json/test_surfaces/four_squares.json", radius = 1000)
         self.polyCount = 0
+
+        self.regionColours = {}
+        for r in self.planet.regions.values():
+            colour = (random.random()*255, random.random()*255, random.random()*255)
+            self.regionColours[r.id] = colour
 
         self.surf = pygame.Surface((1200, 800))
         
@@ -53,6 +58,8 @@ class SurfaceContext(GUIContext):
         print(self.polyCount)
 
         self.renderGlobe()
+
+    
 
     ###TODO: Copy/pasted from SurfacePoint. Should pull both instances into a shared utility function
     def vector(self, latitude, longitude):
@@ -104,8 +111,9 @@ class SurfaceContext(GUIContext):
         print("Total: ", self.polyCount)
         drawCount = 0
         hideCount = 0
-        for r in self.polygons.values():
-            colour = (random.random()*255, random.random()*255, random.random()*255)
+        for id in self.polygons.keys():
+            r = self.polygons[id]
+            colour = self.regionColours[id]
             for polygon in r:
                 vectors = tuple(self.vector(v[0], v[1]) for v in polygon)
                 v12 = self.vsum(vectors[0], vectors[1])
