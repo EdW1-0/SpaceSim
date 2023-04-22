@@ -1,6 +1,7 @@
 import json
 
 from planetsim.planet import Planet
+from planetsim.planetSurface import PlanetSurface
 
 class PlanetSim:
     def __init__(self, jsonPath = "json/Planets.json"):
@@ -10,6 +11,14 @@ class PlanetSim:
         jsonNodes = jsonPlanets["Planets"]
 
         self.planets = {node["id"]: Planet(**node) for node in jsonNodes}
+        jsonFile.close()
+
+        surface = PlanetSurface("json/planets/surfaces/Mercury.json", 1000)
+        for planetId in self.planets.keys():
+            if planetId == surface.id:
+                ###TODO: Bit of a kludge to set this later when it should go in via constructor. Should load all these first, then call constructor
+                self.planets[planetId].surface = surface
+
 
     def planetById(self, id):
         if not (type(id) == int or isinstance(id, str)):

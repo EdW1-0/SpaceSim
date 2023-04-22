@@ -733,6 +733,7 @@ class OrbitContext(GUIContext):
                         self.handleShip(event)
                     elif isinstance(self.active_summary, PlanetStatusPanel):
                         if self.planet_summary.upperAction == 1:
+                            self.upperContext = {"planet": self.planet_summary.planet.id}
                             returnCode = LOADSURFACEVIEW
                             break
                 elif self.timing_panel.handle_event(event):

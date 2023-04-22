@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 import math
 
-from planetsim.surfacePoint import SurfacePoint, magnitude, dot, cross, latLong, normalise
+from planetsim.surfacePoint import SurfacePoint, magnitude, dot, cross, pointFromVector, normalise
 
 # Encodes an arc on a great circle path as a pair of points. 
 # By convention is the shortest GC path between them, unless long is set in which case it is the 
@@ -97,7 +97,7 @@ class SurfacePath:
         v2scale = tuple(vi*fraction for vi in v2)
         m = tuple(v1i+v2i for v1i, v2i in zip(v1scale, v2scale))
         mNorm = normalise(m)
-        return latLong(mNorm)
+        return pointFromVector(mNorm)
 
 
 #
@@ -142,7 +142,7 @@ def gcIntersections(path1, path2):
  # This should let us consistently specify paths including with dateline.
  # If path is equidistant, convention should be to take East/North route. 
 def pathsIntersect(path1, path2):
-    intersections = tuple(latLong(i).canonical() for i in gcIntersections(path1, path2))
+    intersections = tuple(pointFromVector(i).canonical() for i in gcIntersections(path1, path2))
     intersect = False
 
     for i in intersections:

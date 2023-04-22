@@ -3,7 +3,7 @@ import unittest
 import math
 
 from planetsim.surfacePath import SurfacePath, gcIntersections, pathsIntersect
-from planetsim.surfacePoint import SurfacePoint, canonicalPoint, latLong, almostEqual
+from planetsim.surfacePoint import SurfacePoint, canonicalPoint, pointFromVector, almostEqual
 
 class TestSurfacePath(unittest.TestCase):
     def testSurfacePathInit(self):
@@ -122,7 +122,7 @@ class TestPathIntersections(unittest.TestCase):
         self.assertEqual(gcIntersections(path1, path2), ((1,0,0),(-1,0,0)))
         path1 = SurfacePath(SurfacePoint(50, 20), SurfacePoint(-50, 80))
         path2 = SurfacePath(SurfacePoint(-50, 20), SurfacePoint(50, 80))
-        ints = tuple(canonicalPoint(latLong(i)) for i in gcIntersections(path1, path2))
+        ints = tuple(canonicalPoint(pointFromVector(i)) for i in gcIntersections(path1, path2))
         self.assertAlmostEqual(ints[0].latitude, 0.0)
         self.assertAlmostEqual(ints[0].longitude, 50.0)
         self.assertEqual(ints[1], SurfacePoint(0.0, 230.0))

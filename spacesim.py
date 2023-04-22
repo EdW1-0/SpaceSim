@@ -61,8 +61,13 @@ def main():
             manager.clear_and_reset()
             guiContext = MenuContext(screen, gameModel, manager)
         elif outerEvent == LOADSURFACEVIEW:
+            if "planet" not in guiContext.upperContext:
+                print("Invalid state - tried to load planet surface with no planet")
+                assert(False)
+            planetId = guiContext.upperContext["planet"]
+            planet = gameModel.planetSim.planetById(planetId)
             manager.clear_and_reset()
-            guiContext = SurfaceContext(screen, gameModel, manager)
+            guiContext = SurfaceContext(screen, gameModel, manager, planet)
 
         
         manager.update(time_delta)

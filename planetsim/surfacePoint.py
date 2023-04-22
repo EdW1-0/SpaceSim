@@ -27,10 +27,15 @@ def normalise(v):
     m = magnitude(v)
     return tuple(vi/m for vi in v)
 
+def pointFromVector(v):
+    ll = latLong(v)
+    return SurfacePoint(ll[0], ll[1])
+
 def latLong(v):
     lat = atan2(v[2], sqrt(v[0]**2 + v[1]**2))
     long = atan2(v[1], v[0])
-    return SurfacePoint(lat*180.0/pi, long*180.0/pi)
+    return (lat*180.0/pi, long*180.0/pi)
+
 
 def almostEqual(p1, p2, debug=False):
     latTest = abs(p1.latitude - p2.latitude) < 0.01
@@ -40,12 +45,21 @@ def almostEqual(p1, p2, debug=False):
 
     return latTest and longTest
 
+def vector(lat, long):
+    latr = lat / 180 * pi
+    longr = long / 180 * pi
+    x = cos(latr)*cos(longr)
+    y = cos(latr)*sin(longr)
+    z = sin(latr)
+    return (x, y, z)
+
 @dataclass
 class SurfacePoint:
     latitude: float
     longitude: float
 
     def vector(self):
+        return vector(self.latitude, self.longitude)
         latr = self.latitude / 180 * pi
         longr = self.longitude / 180 * pi
         x = cos(latr)*cos(longr)

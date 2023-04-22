@@ -8,17 +8,18 @@ from planetsim.surfaceObject import SurfaceObject
 EARTH_RADIUS = 6371000
 
 class PlanetSurface:
-    def __init__(self, jsonPath = "json/Surface.json", radius = EARTH_RADIUS):
+    def __init__(self, jsonPath = "json/planets/surfaces/Surface.json", radius = EARTH_RADIUS):
         self.radius = radius
         self.regions = {}
         self.points = {}
         self.pointIdGenerator = self.newPointId()
         jsonFile = open(jsonPath, "r")
-        jsonTechs = json.load(jsonFile)
+        jsonNodes = json.load(jsonFile)
 
-        jsonNodes = jsonTechs["Regions"]
+        self.id = jsonNodes["id"]
+        jsonRegions = jsonNodes["Regions"]
 
-        for r in jsonNodes:
+        for r in jsonRegions:
             anchor = SurfacePoint(r["anchor"][0], r["anchor"][1])
             vertices = r["edges"]
             borders = []

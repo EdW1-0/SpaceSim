@@ -1,7 +1,7 @@
 from views.guiContext import GUIContext
 
 from planetsim.planetSurface import PlanetSurface
-from planetsim.surfacePoint import SurfacePoint, dot
+from planetsim.surfacePoint import SurfacePoint, dot, vector, latLong
 from planetsim.surfaceRegion import SurfaceRegion
 from planetsim.surfacePath import SurfacePath
 
@@ -33,9 +33,10 @@ polygonScale = 0.4
 patchwork = False
 
 class SurfaceContext(GUIContext):
-    def __init__(self, screen, model, manager, meridian = (0, 0), radius = 300.0):
+    def __init__(self, screen, model, manager, planet, meridian = (0, 0), radius = 300.0):
         super(SurfaceContext, self).__init__(screen, model, manager)
-        self.planet = PlanetSurface("json/planets/Mercury.json", radius = 1000)
+        self.planet = planet
+        self.planetSurface = self.planet.surface
         self.meridian = meridian
         self.radius = radius
         #self.planet = PlanetSurface("test_json/test_surfaces/single_region_square.json", radius = 1000)
@@ -43,7 +44,7 @@ class SurfaceContext(GUIContext):
         self.polyCount = 0
 
         self.regionColours = {}
-        for r in self.planet.regions.values():
+        for r in self.planetSurface.regions.values():
             colour = (random.random()*255, random.random()*255, random.random()*255)
             self.regionColours[r.id] = colour
 
@@ -60,21 +61,7 @@ class SurfaceContext(GUIContext):
 
         self.renderGlobe()
 
-    
 
-    ###TODO: Copy/pasted from SurfacePoint. Should pull both instances into a shared utility function
-    def vector(self, latitude, longitude):
-        latr = latitude / 180 * math.pi
-        longr = longitude / 180 * math.pi
-        x = math.cos(latr)*math.cos(longr)
-        y = math.cos(latr)*math.sin(longr)
-        z = math.sin(latr)
-        return (x, y, z)
-    
-    def latLong(self, v):
-        lat = math.atan2(v[2], math.sqrt(v[0]**2 + v[1]**2))
-        long = math.atan2(v[1], v[0])
-        return (lat*180.0/math.pi, long*180.0/math.pi)
     
     def vsum(self, v1, v2):
         assert(len(v1) == len(v2))
@@ -116,11 +103,11 @@ class SurfaceContext(GUIContext):
             r = self.polygons[id]
             colour = self.regionColours[id]
             for polygon in r:
-                vectors = tuple(self.vector(v[0], v[1]) for v in polygon)
+                vectors = tuple(vector(v[0], v[1]) for v in polygon)
                 v12 = self.vsum(vectors[0], vectors[1])
                 v123 = self.vsum(v12, vectors[2])
 
-                meridianV = self.vector(self.meridian[0], -self.meridian[1])
+                meridianV = vector(self.meridian[0], -self.meridian[1])
                 if (dot(meridianV, v123) <= 0):
                     hideCount += 1
                     continue
@@ -137,7 +124,7 @@ class SurfaceContext(GUIContext):
                     #     rx -= 2*delta
                     r = self.zRot(vertex, self.meridian[1])
                     r2 = self.yRot(r, self.meridian[0])
-                    rotatedVertex = self.latLong(r2)
+                    rotatedVertex = latLong(r2)
                     print(rotatedVertex)
 
                     screenVertex = self.latLongToXY(rotatedVertex)
@@ -151,7 +138,7 @@ class SurfaceContext(GUIContext):
 
     def extractPolygons(self):
         self.polygons = {}
-        for r in self.planet.regions.values():
+        for r in self.planetSurface.regions.values():
             loop = tuple((path.p1.latitude, path.p1.longitude) for path in r.borders)
             self.polygons[r.id] = [loop]
             self.polyCount+=1
