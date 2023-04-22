@@ -36,28 +36,30 @@ class SurfaceContext(GUIContext):
     def __init__(self, screen, model, manager, planet, meridian = (0, 0), radius = 300.0):
         super(SurfaceContext, self).__init__(screen, model, manager)
         self.planet = planet
-        self.planetSurface = self.planet.surface
         self.meridian = meridian
         self.radius = radius
         #self.planet = PlanetSurface("test_json/test_surfaces/single_region_square.json", radius = 1000)
         #self.planet = PlanetSurface("test_json/test_surfaces/four_squares.json", radius = 1000)
         self.polyCount = 0
-
-        self.regionColours = {}
-        for r in self.planetSurface.regions.values():
-            colour = (random.random()*255, random.random()*255, random.random()*255)
-            self.regionColours[r.id] = colour
-
         self.surf = pygame.Surface((1200, 800))
-        
 
-        self.extractPolygons()
-        print(self.polyCount)
-        self.triangularise()
-        print(self.polyCount)
+        if self.planet.surface:
+            self.planetSurface = self.planet.surface
+    
+            self.regionColours = {}
+            for r in self.planetSurface.regions.values():
+                colour = (random.random()*255, random.random()*255, random.random()*255)
+                self.regionColours[r.id] = colour
 
-        self.polygonise(polygonScale)
-        print(self.polyCount)
+            self.extractPolygons()
+            print(self.polyCount)
+            self.triangularise()
+            print(self.polyCount)
+
+            self.polygonise(polygonScale)
+            print(self.polyCount)
+        else:
+            self.planetSurface = None
 
         self.renderGlobe()
 
@@ -96,45 +98,48 @@ class SurfaceContext(GUIContext):
     def renderGlobe(self):
         self.surf.fill((50, 50, 50))
 
-        print("Total: ", self.polyCount)
-        drawCount = 0
-        hideCount = 0
-        for id in self.polygons.keys():
-            r = self.polygons[id]
-            colour = self.regionColours[id]
-            for polygon in r:
-                vectors = tuple(vector(v[0], v[1]) for v in polygon)
-                v12 = self.vsum(vectors[0], vectors[1])
-                v123 = self.vsum(v12, vectors[2])
+        if self.planetSurface:
+            print("Total: ", self.polyCount)
+            drawCount = 0
+            hideCount = 0
+            for id in self.polygons.keys():
+                r = self.polygons[id]
+                colour = self.regionColours[id]
+                for polygon in r:
+                    vectors = tuple(vector(v[0], v[1]) for v in polygon)
+                    v12 = self.vsum(vectors[0], vectors[1])
+                    v123 = self.vsum(v12, vectors[2])
 
-                meridianV = vector(self.meridian[0], -self.meridian[1])
-                if (dot(meridianV, v123) <= 0):
-                    hideCount += 1
-                    continue
+                    meridianV = vector(self.meridian[0], -self.meridian[1])
+                    if (dot(meridianV, v123) <= 0):
+                        hideCount += 1
+                        continue
 
-                drawCount += 1
-                if patchwork:
-                    colour = (random.random()*255, random.random()*255, random.random()*255)
-                coordinates = []
-                for vertex in vectors:  
-                    # Rotate vertex into coordinate system of meridian
+                    drawCount += 1
+                    if patchwork:
+                        colour = (random.random()*255, random.random()*255, random.random()*255)
+                    coordinates = []
+                    for vertex in vectors:  
+                        # Rotate vertex into coordinate system of meridian
                     
-                    # if rx > 90.0:
-                    #     delta = rx - 90.0
-                    #     rx -= 2*delta
-                    r = self.zRot(vertex, self.meridian[1])
-                    r2 = self.yRot(r, self.meridian[0])
-                    rotatedVertex = latLong(r2)
-                    print(rotatedVertex)
+                        # if rx > 90.0:
+                        #     delta = rx - 90.0
+                        #     rx -= 2*delta
+                        r = self.zRot(vertex, self.meridian[1])
+                        r2 = self.yRot(r, self.meridian[0])
+                        rotatedVertex = latLong(r2)
+                        print(rotatedVertex)
 
-                    screenVertex = self.latLongToXY(rotatedVertex)
-                    coordinates.append(screenVertex)
+                        screenVertex = self.latLongToXY(rotatedVertex)
+                        coordinates.append(screenVertex)
 
-                pygame.draw.polygon(self.surf, colour, coordinates)
+                    pygame.draw.polygon(self.surf, colour, coordinates)
 
-        print("Total drawn:", drawCount)
-        print("Total hidden:", hideCount)
-        print(self.meridian)
+            print("Total drawn:", drawCount)
+            print("Total hidden:", hideCount)
+            print(self.meridian)
+        else:
+            pygame.draw.circle(self.surf, (250, 250, 50), center = center, radius = self.radius)
 
     def extractPolygons(self):
         self.polygons = {}
