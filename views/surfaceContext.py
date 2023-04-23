@@ -32,6 +32,19 @@ polygonScale = 0.4
 # For debugging polygon code
 patchwork = False
 
+class SurfaceObjectSprite(pygame.sprite.Sprite):
+    def __init__(self, surfaceObject, center=(0, 0), selected = False):
+        super(SurfaceObjectSprite, self).__init__()
+        self.center = center
+        self.surfaceObject = surfaceObject
+        self.surf = pygame.surface.Surface((22, 22))
+        self.surf.set_colorkey((0, 0, 0))
+        pygame.draw.circle(self.surf, (5, 250, 5), (11, 11), 10.0)
+        self.rect = self.surf.get_rect(center = self.center)
+    
+    def latLong(self):
+        return (self.surfaceObject.point.latitude, self.surfaceObject.point.longitude)
+
 class SurfaceContext(GUIContext):
     def __init__(self, screen, model, manager, planet, meridian = (0, 0), radius = 300.0):
         super(SurfaceContext, self).__init__(screen, model, manager)
@@ -65,6 +78,18 @@ class SurfaceContext(GUIContext):
             self.planetSurface = None
 
         self.renderGlobe()
+
+        all_sprites = pygame.sprite.Group()
+        object_sprites = pygame.sprite.Group()
+        self.all_sprites = all_sprites
+        self.object_sprites = object_sprites
+
+        for object in self.planetSurface.points.values():
+            location = object.point
+            locationXY = self.latLongToXY((location.latitude, location.longitude))
+            objectSprite = SurfaceObjectSprite(object, center=locationXY)
+            self.object_sprites.add(objectSprite)
+            self.all_sprites.add(objectSprite)
 
 
     
@@ -345,10 +370,18 @@ class SurfaceContext(GUIContext):
                     self.meridianLongitude(-20.0)
                     self.renderGlobe()
 
+        for object in self.object_sprites:
+            vertex = vector(object.surfaceObject.point.latitude, object.surfaceObject.point.longitude)
+            r = self.zRot(vertex, self.meridian[1])
+            r2 = self.yRot(r, self.meridian[0])
+            rotatedVertex = latLong(r2)
+            print(rotatedVertex)
 
+            screenVertex = self.latLongToXY(rotatedVertex)
+            object.rect.center = screenVertex
 
-
-
+        for entity in self.all_sprites:
+            self.surf.blit(entity.surf, entity.rect)
 
         self.screen.blit(self.surf, pygame.Rect(0, 0, 1200, 800))
         

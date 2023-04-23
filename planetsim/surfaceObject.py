@@ -7,6 +7,7 @@ class SurfaceObject:
     id: int
     content: object
     point: SurfacePoint = None
+    name: str = "Default object"
     fuel: int = 0
     maxV: int = 0
     destination: SurfacePoint = None

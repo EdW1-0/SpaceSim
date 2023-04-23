@@ -36,6 +36,23 @@ class PlanetSurface:
             region = SurfaceRegion(r["id"], anchor, borders, name=r.get("name"), terrain=r.get("terrain"))
             self.regions[region.id] = region
 
+
+        jsonObjects = jsonNodes.get("Objects")
+
+        if jsonObjects:
+            for object in jsonObjects:
+                pointArray = object["point"]
+                point = SurfacePoint(pointArray[0], pointArray[1])
+
+                id = self.createObject(None, point)
+                ###TODO: Placeholder code, eventually we will create a lower level vehicle/base/landmark object and add this as content
+                vehicle = self.pointById(id)
+                vehicle.name = object["name"]
+                if "fuel" in object:
+                    vehicle.fuel = object["fuel"]
+                if "maxV" in object:
+                    vehicle.maxV = object["maxV"]
+
         jsonFile.close()
 
     def newPointId(self):
@@ -53,6 +70,7 @@ class PlanetSurface:
     def createObject(self, content, position):
         id = next(self.pointIdGenerator)
         self.points[id] = SurfaceObject(id, content, position)
+        return id
 
     def destroyObject(self, id):
         del self.points[id]
