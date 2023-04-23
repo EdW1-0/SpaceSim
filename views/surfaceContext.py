@@ -121,7 +121,13 @@ class SurfaceContext(GUIContext):
         return (vx, vy, vz)
     
 
-
+    def latLongOccluded(self, lat, long):
+        v = vector(lat, long)
+        meridianV = vector(self.meridian[0], -self.meridian[1])
+        if (dot(meridianV, v) <= 0):
+            return True
+        else:
+            return False
 
     def renderGlobe(self):
         self.surf.fill((50, 50, 50))
@@ -371,14 +377,18 @@ class SurfaceContext(GUIContext):
                     self.renderGlobe()
 
         for object in self.object_sprites:
-            vertex = vector(object.surfaceObject.point.latitude, object.surfaceObject.point.longitude)
-            r = self.zRot(vertex, self.meridian[1])
-            r2 = self.yRot(r, self.meridian[0])
-            rotatedVertex = latLong(r2)
-            print(rotatedVertex)
+            (lat, long) = (object.surfaceObject.point.latitude, object.surfaceObject.point.longitude)
+            if self.latLongOccluded(lat, long):
+                self.all_sprites.remove(object)
+            else:
+                coordinate = vector(lat, long)
+                rotatedLong = self.zRot(coordinate, self.meridian[1])
+                rotatedLat = self.yRot(rotatedLong, self.meridian[0])
+                rotatedCoordinate = latLong(rotatedLat)                
+                screenCoordinate = self.latLongToXY(rotatedCoordinate)
+                object.rect.center = screenCoordinate
+                self.all_sprites.add(object)
 
-            screenVertex = self.latLongToXY(rotatedVertex)
-            object.rect.center = screenVertex
 
         for entity in self.all_sprites:
             self.surf.blit(entity.surf, entity.rect)
