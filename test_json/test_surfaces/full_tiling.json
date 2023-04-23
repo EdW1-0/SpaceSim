@@ -1,5 +1,6 @@
 {
     "id": "FULLTILE",
+    "class": "MARTIAN",
     "Regions": [
         {
             "id": 0,

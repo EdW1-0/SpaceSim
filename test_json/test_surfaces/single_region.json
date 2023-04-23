@@ -1,5 +1,6 @@
 {
     "id": "SINGLEREGION",
+    "class": "MARTIAN",
     "Regions": [
         {
             "id": 0,

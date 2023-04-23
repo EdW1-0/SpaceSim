@@ -14,11 +14,14 @@ class TestSurfaceRegion(unittest.TestCase):
     def testSurfaceRegion(self):
         self.assertTrue(SurfaceRegion)
         self.assertTrue(SurfaceRegion(0, [], []))
+        self.assertTrue(SurfaceRegion(0, [], [], name = "Belgium", terrain = "WAFFLE"))
 
     def testSurfaceAttributes(self):
         self.assertTrue(hasattr(SurfaceRegion(0, [], []), "id"))
         self.assertTrue(hasattr(SurfaceRegion(0, [], []), "borders"))
         self.assertTrue(hasattr(SurfaceRegion(0, [], []), "homePoint"))
+        self.assertTrue(hasattr(SurfaceRegion(0, [], []), "name"))
+        self.assertTrue(hasattr(SurfaceRegion(0, [], []), "terrain"))
 
     def testSurfacePathConstructor(self):
         self.assertEqual(SurfaceRegion(7, [], []).id, 7)

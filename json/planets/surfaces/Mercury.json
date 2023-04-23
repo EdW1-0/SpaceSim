@@ -1,44 +1,61 @@
 {
     "id": "MERCURY",
+    "class": "MARTIAN",
     "Regions": [
         {
             "id": 0,
+            "name": "North Pole",
+            "terrain": "ICECAP",
             "anchor": [90, 0],
             "edges": [[70,0], [70, 120], [70, 240]]
         },
         {
             "id": 1,
+            "name": "Acidalia Planitia",
+            "terrain": "LOWLAND",
             "anchor": [40, 60],
             "edges": [[70,0], [70, 120], [0, 120], [0, 0]]
         },
         {
             "id": 2,
+            "name": "Utopia Planitia",
+            "terrain": "LOWLAND",
             "anchor": [40, 180],
             "edges": [[70,120], [70, 240], [0, 240], [0, 120]]
         },
         {
             "id": 3,
+            "name": "Tharsis Plateau",
+            "terrain": "VOLCANIC",
             "anchor": [40, 300],
             "edges": [[70,240], [70, 0], [0, 0], [0, 240]]
         },
         {
             "id": 4,
+            "name": "Hellas Basin",
+            "terrain": "CRATER",
             "anchor": [-40, 60],
             "edges": [[-70,0], [-70, 120], [0, 120], [0, 0]]
         },
         {
             "id": 5,
+            "name": "Terra Sirenum",
+            "terrain": "HIGHLAND",
             "anchor": [-40, 180],
             "edges": [[-70,120], [-70, 240], [0, 240], [0, 120]]
         },
         {
             "id": 6,
             "anchor": [-40, 300],
+            "name": "Terra Cimmeria",
+            "terrain": "HIGHLAND",
             "edges": [[-70,240], [-70, 0], [0, 0], [0, 240]]
         },
         {
             "id": 7,
             "anchor": [-90, 0],
+            "name": "South Pole",
+            "terrain": "ICECAP",
             "edges": [[-70,0], [-70, 120], [-70, 240]]
         }
     ]

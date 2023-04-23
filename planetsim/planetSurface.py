@@ -17,6 +17,7 @@ class PlanetSurface:
         jsonNodes = json.load(jsonFile)
 
         self.id = jsonNodes["id"]
+        self.planetClass = jsonNodes["class"]
         jsonRegions = jsonNodes["Regions"]
 
         for r in jsonRegions:
@@ -31,7 +32,8 @@ class PlanetSurface:
             p2 = vertices[0]
             borders.append(SurfacePath(SurfacePoint(p1[0], p1[1]), SurfacePoint(p2[0], p2[1])))
 
-            region = SurfaceRegion(r["id"], anchor, borders)
+
+            region = SurfaceRegion(r["id"], anchor, borders, name=r.get("name"), terrain=r.get("terrain"))
             self.regions[region.id] = region
 
         jsonFile.close()

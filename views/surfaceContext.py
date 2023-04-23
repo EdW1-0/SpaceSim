@@ -48,7 +48,10 @@ class SurfaceContext(GUIContext):
     
             self.regionColours = {}
             for r in self.planetSurface.regions.values():
-                colour = (random.random()*255, random.random()*255, random.random()*255)
+                planetClass = self.planetSurface.planetClass
+                terrain = model.planetSim.planetClassById(planetClass)[r.terrain]
+                colour = terrain.colour
+                #colour = (random.random()*255, random.random()*255, random.random()*255)
                 self.regionColours[r.id] = colour
 
             self.extractPolygons()

@@ -1,0 +1,25 @@
+{
+    "id": "MARTIAN",
+    "Terrain": [
+        {
+            "id": "ICECAP",
+            "colour": [150, 150, 250]
+        },
+        {
+            "id": "LOWLAND",
+            "colour": [150, 10, 10]
+        },
+        {
+            "id": "VOLCANIC",
+            "colour": [250, 200, 50]
+        },
+        {
+            "id": "HIGHLAND",
+            "colour": [210, 100, 20]
+        },
+        {
+            "id": "CRATER",
+            "colour": [180, 100, 40]
+        }
+    ]
+}
