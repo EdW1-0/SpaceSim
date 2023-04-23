@@ -6,9 +6,14 @@ from tests.test_views.test_guiContext import ScreenMock, ModelMock
 
 import pygame
 
+class SurfaceMock:
+    def __init__(self):
+        self.points = {}
+        self.regions = {}
+
 class PlanetMock:
     def __init__(self):
-        self.surface = None
+        self.surface = SurfaceMock()
 
 class TestSurfaceContext(unittest.TestCase):
     def testSurfaceContext(self):
