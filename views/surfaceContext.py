@@ -37,13 +37,25 @@ class SurfaceObjectSprite(pygame.sprite.Sprite):
         super(SurfaceObjectSprite, self).__init__()
         self.center = center
         self.surfaceObject = surfaceObject
+        self.selected = selected
+        self.update()
         self.surf = pygame.surface.Surface((22, 22))
         self.surf.set_colorkey((0, 0, 0))
         pygame.draw.circle(self.surf, (5, 250, 5), (11, 11), 10.0)
-        self.rect = self.surf.get_rect(center = self.center)
     
     def latLong(self):
         return (self.surfaceObject.point.latitude, self.surfaceObject.point.longitude)
+    
+    def update(self):
+        self.surf = pygame.surface.Surface((22, 22))
+        self.surf.set_colorkey((0, 0, 0))
+        if self.selected:
+            colour = (230, 230, 5)
+        else:
+            colour = (5, 250, 5)
+        pygame.draw.circle(self.surf, colour, (11, 11), 10.0)
+        self.rect = self.surf.get_rect(center = self.center)
+        
 
 class SurfaceContext(GUIContext):
     def __init__(self, screen, model, manager, planet, meridian = (0, 0), radius = 300.0):
@@ -91,43 +103,11 @@ class SurfaceContext(GUIContext):
             self.object_sprites.add(objectSprite)
             self.all_sprites.add(objectSprite)
 
+        self.selectedObject = None
+
 
     
-    def vsum(self, v1, v2):
-        assert(len(v1) == len(v2))
-        v = tuple(v1[i] + v2[i] for i in range(len(v1)))
-        return v
-    
-    def zRot(self, v, angle):
-        phi = math.radians(angle)
-        vx = v[0]*math.cos(phi) - v[1]*math.sin(phi)
-        vy = v[0]*math.sin(phi) + v[1]*math.cos(phi)
-        vz = v[2]
-        return (vx, vy, vz)
-    
-    def yRot(self, v, angle):
-        phi = math.radians(angle)
-        vx = v[0]*math.cos(phi) + v[2]*math.sin(phi)
-        vy = v[1]
-        vz = -v[0]*math.sin(phi) + v[2]*math.cos(phi)
-        return (vx, vy, vz)
-    
-    def xRot(self, v, angle):
-        phi = math.radians(angle)
-        vx = v[0]
-        vy = v[1]*math.cos(phi) - v[2]*math.sin(phi)
-        vz = v[1]*math.sin(phi) + v[2]*math.cos(phi)
-        
-        return (vx, vy, vz)
-    
 
-    def latLongOccluded(self, lat, long):
-        v = vector(lat, long)
-        meridianV = vector(self.meridian[0], -self.meridian[1])
-        if (dot(meridianV, v) <= 0):
-            return True
-        else:
-            return False
 
     def renderGlobe(self):
         self.surf.fill((50, 50, 50))
@@ -264,42 +244,42 @@ class SurfaceContext(GUIContext):
                     return
 
 
+    def vsum(self, v1, v2):
+        assert(len(v1) == len(v2))
+        v = tuple(v1[i] + v2[i] for i in range(len(v1)))
+        return v
+    
+    def zRot(self, v, angle):
+        phi = math.radians(angle)
+        vx = v[0]*math.cos(phi) - v[1]*math.sin(phi)
+        vy = v[0]*math.sin(phi) + v[1]*math.cos(phi)
+        vz = v[2]
+        return (vx, vy, vz)
+    
+    def yRot(self, v, angle):
+        phi = math.radians(angle)
+        vx = v[0]*math.cos(phi) + v[2]*math.sin(phi)
+        vy = v[1]
+        vz = -v[0]*math.sin(phi) + v[2]*math.cos(phi)
+        return (vx, vy, vz)
+    
+    def xRot(self, v, angle):
+        phi = math.radians(angle)
+        vx = v[0]
+        vy = v[1]*math.cos(phi) - v[2]*math.sin(phi)
+        vz = v[1]*math.sin(phi) + v[2]*math.cos(phi)
+        
+        return (vx, vy, vz)
+    
 
-
-
-            
-
-
-        # pxArray = pygame.surfarray.pixels3d(self.surf)
-        # shape = pxArray.shape
-        # for i in range(shape[0]):
-        #     for j in range(shape[1]):
-        #         x = i - center[0]
-        #         y = j - center[1]
-        #         measure = (x*x + y*y)
-        #         r = math.sqrt(measure)
-        #         if r < 300:
-        #             (lat, long) = self.xyToLatLong((x, y))
-        #             sp = SurfacePoint(lat, long)
-        #             for r in self.planet.regions.values():
-        #                 if r.pointInRegion(sp):
-        #                     if r.id % 2:
-        #                         pxArray[i, j, 0] = 200
-        #                         pxArray[i, j, 1] = 100
-        #                         pxArray[i, j, 2] = 10
-        #                     else:
-        #                         pxArray[i, j, 0] = 10
-        #                         pxArray[i, j, 1] = 200
-        #                         pxArray[i, j, 2] = 100
-
-  
-        #         else:
-        #             pxArray[i, j, 0] = 10
-        #             pxArray[i, j, 1] = 10
-        #             pxArray[i, j, 2] = 10
-
-        # del pxArray
-
+    def latLongOccluded(self, lat, long):
+        v = vector(lat, long)
+        meridianV = vector(self.meridian[0], -self.meridian[1])
+        if (dot(meridianV, v) <= 0):
+            return True
+        else:
+            return False
+        
     def xyToLatLong(self, pos = center):
         (x, y) = (pos[0] - center[0], pos[1] - center[1])
         height = y/self.radius
@@ -344,7 +324,6 @@ class SurfaceContext(GUIContext):
 
         print (self.meridian)
 
-        #lat = max(min(lat+delta, 90.0), -90.0)
 
     def run(self):
         returnCode = 0
@@ -355,7 +334,20 @@ class SurfaceContext(GUIContext):
                 break
             elif event.type == MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
-                print (self.xyToLatLong(pos))
+                (lat, long) = self.xyToLatLong(pos)
+                print ((lat, long))
+
+                if self.selectedObject:
+                    self.selectedObject.selected = False
+                    self.selectedObject.update()
+                    self.selectedObject = None
+
+                clicked_items = [s for s in self.all_sprites if s.rect.collidepoint(pos)] 
+                if len(clicked_items):
+                    self.selectedObject = clicked_items[0]
+                    self.selectedObject.selected = True
+                    self.selectedObject.update()
+
             elif event.type == MOUSEWHEEL:
                 if event.y >= 1:
                     self.radius = max(self.radius-100.0, 100.0)
