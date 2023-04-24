@@ -27,7 +27,7 @@ LOADSURFACEVIEW = pygame.USEREVENT + 3
 center = (500, 400)
 
 
-polygonScale = 0.4
+polygonScale = 0.2
 
 # For debugging polygon code
 patchwork = False
@@ -162,7 +162,7 @@ class SurfaceContext(GUIContext):
                         r = self.zRot(vertex, self.meridian[1])
                         r2 = self.yRot(r, self.meridian[0])
                         rotatedVertex = latLong(r2)
-                        print(rotatedVertex)
+                        #print(rotatedVertex)
 
                         screenVertex = self.latLongToXY(rotatedVertex)
                         coordinates.append(screenVertex)
