@@ -68,16 +68,14 @@ class SurfaceContext(GUIContext):
         self.polyCount = 0
         self.surf = pygame.Surface((1200, 800))
 
+        self.selectedObject = None
+
         if self.planet.surface:
             self.planetSurface = self.planet.surface
     
             self.regionColours = {}
             for r in self.planetSurface.regions.values():
-                planetClass = self.planetSurface.planetClass
-                terrain = model.planetSim.planetClassById(planetClass)[r.terrain]
-                colour = terrain.colour
-                #colour = (random.random()*255, random.random()*255, random.random()*255)
-                self.regionColours[r.id] = colour
+                self.computeRegionColour(r)
 
             self.extractPolygons()
             print(self.polyCount)
@@ -103,11 +101,19 @@ class SurfaceContext(GUIContext):
             self.object_sprites.add(objectSprite)
             self.all_sprites.add(objectSprite)
 
-        self.selectedObject = None
+
 
 
     
+    def computeRegionColour(self, region):
+        if self.selectedObject == region:
+            colour = (180, 180, 10)
+        else:
+            planetClass = self.planetSurface.planetClass
+            terrain = self.model.planetSim.planetClassById(planetClass)[region.terrain]
+            colour = terrain.colour
 
+        self.regionColours[region.id] = colour
 
     def renderGlobe(self):
         self.surf.fill((50, 50, 50))
@@ -333,20 +339,52 @@ class SurfaceContext(GUIContext):
                 returnCode = QUIT
                 break
             elif event.type == MOUSEBUTTONUP:
-                pos = pygame.mouse.get_pos()
-                (lat, long) = self.xyToLatLong(pos)
-                print ((lat, long))
-
                 if self.selectedObject:
-                    self.selectedObject.selected = False
-                    self.selectedObject.update()
+                    if isinstance(self.selectedObject, SurfaceObjectSprite):
+                        self.selectedObject.selected = False
+                        self.selectedObject.update()
+                    elif isinstance(self.selectedObject, SurfaceRegion):
+                        region = self.selectedObject
+                        self.selectedObject = None
+                        self.computeRegionColour(region)
+                        self.renderGlobe()
+                    else:
+                        print("Should never get here")
+                        assert(False)
                     self.selectedObject = None
+                    
+                pos = pygame.mouse.get_pos()
 
                 clicked_items = [s for s in self.all_sprites if s.rect.collidepoint(pos)] 
                 if len(clicked_items):
                     self.selectedObject = clicked_items[0]
                     self.selectedObject.selected = True
                     self.selectedObject.update()
+                    continue
+
+                
+                (lat, long) = self.xyToLatLong(pos)
+                print ((lat, long))
+                ###TODO: At least 4 coordinate systems going on here:
+                # - X/Y screen coordinates
+                # - Rotated latitude/longitude (frame of meridian)
+                # - Absolute latitude/longitude (merdian at (0,0), and what all model code uses internally)
+                # - x/y/z vector in cartesian coords with origin at center and y axis on (0,0) meridian
+                vLatLot = vector(lat, long)
+                unrotatedLat = self.yRot(vLatLot, -self.meridian[0])
+                unrotatedLong = self.zRot(unrotatedLat, -self.meridian[1])
+
+                (absLat, absLong) = latLong(unrotatedLong)
+                print(absLat, absLong)
+
+                ###TODO: This seems to get right region, if it gets one at all, now, but occasionally misses entirely.
+                # Think we need a shedload more tests on regionForPoint as there are still some points it misses.
+                region = self.planetSurface.regionForPoint(SurfacePoint(absLat, absLong))
+                if region:
+                    print(region.name)
+                    self.selectedObject = region
+                    self.computeRegionColour(region)
+                    self.renderGlobe()
 
             elif event.type == MOUSEWHEEL:
                 if event.y >= 1:

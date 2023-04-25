@@ -296,19 +296,19 @@ class TestPlanetSurfaceRegionTesting(unittest.TestCase):
         self.ft.createObject(None, SurfacePoint(-10, 350))
 
     def testRegionForPoint(self):
-        self.assertEqual(self.ft.regionForPoint(self.ft.pointById(0)).id, 0)
-        self.assertEqual(self.ft.regionForPoint(self.ft.pointById(1)).id, 7)
-        self.assertEqual(self.ft.regionForPoint(self.ft.pointById(2)).id, 1)
-        self.assertEqual(self.ft.regionForPoint(self.ft.pointById(3)).id, 6)
+        self.assertEqual(self.ft.regionForPointId(self.ft.pointById(0)).id, 0)
+        self.assertEqual(self.ft.regionForPointId(self.ft.pointById(1)).id, 7)
+        self.assertEqual(self.ft.regionForPointId(self.ft.pointById(2)).id, 1)
+        self.assertEqual(self.ft.regionForPointId(self.ft.pointById(3)).id, 6)
 
     def testRegionForPointOnAnchor(self):
         self.ft.createObject(None, SurfacePoint(90, 0))
-        self.assertEqual(self.ft.regionForPoint(self.ft.pointById(4)).id, 0)
+        self.assertEqual(self.ft.regionForPointId(self.ft.pointById(4)).id, 0)
 
     @unittest.expectedFailure
     def testRegionForPointOnAnchorFPError(self):
         self.ft.createObject(None, SurfacePoint(-40, 300))
-        self.assertEqual(self.ft.regionForPoint(self.ft.pointById(4)).id, 6)
+        self.assertEqual(self.ft.regionForPointId(self.ft.pointById(4)).id, 6)
 
     @unittest.skip("Skip full testing of regionForPoint as may require rework")
     def testRegionForPointOnBorder(self):

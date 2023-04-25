@@ -34,6 +34,7 @@ def pointFromVector(v):
 def latLong(v):
     lat = atan2(v[2], sqrt(v[0]**2 + v[1]**2))
     long = atan2(v[1], v[0])
+    long = long % (2*pi)
     return (lat*180.0/pi, long*180.0/pi)
 
 

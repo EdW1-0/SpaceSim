@@ -125,7 +125,8 @@ class TestPathIntersections(unittest.TestCase):
         ints = tuple(canonicalPoint(pointFromVector(i)) for i in gcIntersections(path1, path2))
         self.assertAlmostEqual(ints[0].latitude, 0.0)
         self.assertAlmostEqual(ints[0].longitude, 50.0)
-        self.assertEqual(ints[1], SurfacePoint(0.0, 230.0))
+        self.assertAlmostEqual(ints[1].latitude, 0.0)
+        self.assertAlmostEqual(ints[1].longitude, 230.0)
         #path1 = (SurfacePoint(51.5,0.1), SurfacePoint(40.7, 74.0)) # London - New York
         #path2 = (SurfacePoint(46.8, 71.2), SurfacePoint(44.6, 63.5)) # Quebec - Halifax
         #self.assertEqual(self.ps.gcIntersections(path1, path2)[1], SurfacePoint(45.2, 65.4).vector())
