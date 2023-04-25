@@ -272,6 +272,8 @@ class TargetSettingPanel(SideStatusPanel):
             if self.trajectory.state == TrajectoryState.COMPLETE or self.trajectory.state == TrajectoryState.DEFINITION:
                 self.model.orbitSim.cancelTrajectory(self.ship.id)
             else:
+                ###TODO: Probably shouldn't have set target in this case. Once we have the tests to prove this doesn't
+                # break everything, fix this.
                 return
         self.trajectory = self.model.orbitSim.createTrajectory(self.target.id, self.ship.id, self.source.id)
         self.update()
