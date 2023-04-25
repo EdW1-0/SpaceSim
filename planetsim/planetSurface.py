@@ -77,11 +77,11 @@ class PlanetSurface:
 
     def regionForPointId(self, id):
         point = self.pointById(id)
-        return self.regionForPoint
+        return self.regionForPoint(point)
 
     def regionForPoint(self, point):
         for r in self.regions.values():
-            if r.pointInRegion(point):
+            if r.pointInRegion(point.point):
                 return r
 
         return None

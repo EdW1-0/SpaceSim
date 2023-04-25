@@ -61,12 +61,6 @@ class SurfacePoint:
 
     def vector(self):
         return vector(self.latitude, self.longitude)
-        latr = self.latitude / 180 * pi
-        longr = self.longitude / 180 * pi
-        x = cos(latr)*cos(longr)
-        y = cos(latr)*sin(longr)
-        z = sin(latr)
-        return (x, y, z)
 
     def canonical(self):
         return canonicalPoint(self)

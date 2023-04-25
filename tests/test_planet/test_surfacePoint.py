@@ -44,7 +44,7 @@ class TestLatLong(unittest.TestCase):
         self.assertEqual(pointFromVector(SurfacePoint(0,0).vector()), SurfacePoint(0,0))
         self.assertEqual(pointFromVector(SurfacePoint(90,0).vector()), SurfacePoint(90,0))
         self.assertEqual(pointFromVector(SurfacePoint(54,0.1).vector()), SurfacePoint(54,0.1))
-        self.assertEqual(pointFromVector(SurfacePoint(45,-70).vector()), SurfacePoint(45,-70))
+        self.assertEqual(pointFromVector(SurfacePoint(45,-70).vector()), SurfacePoint(45,290))
         
         
         
