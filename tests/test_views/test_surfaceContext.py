@@ -14,6 +14,8 @@ class SurfaceMock:
 class PlanetMock:
     def __init__(self):
         self.surface = SurfaceMock()
+        self.name = "Test Planet"
+        self.gravity = 14
 
 class TestSurfaceContext(unittest.TestCase):
     def testSurfaceContext(self):

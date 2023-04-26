@@ -70,6 +70,9 @@ class PlanetStatusPanel(SideStatusPanel):
                                             [("foo", "bar")],
                                             manager=manager,
                                             container=self.container)
+        
+        self.node = None
+        self.planet = None
      
     def set_node(self, node):
         self.node = node
@@ -78,9 +81,15 @@ class PlanetStatusPanel(SideStatusPanel):
         self.planet = planet
 
     def update(self):
-        self.planet_name_label.set_text(self.node.name)
+        if self.node:
+            self.planet_name_label.set_text(self.node.name)
+            self.station_list.set_item_list([self.model.orbitSim.particleById(id).payload.name for id in self.node.particles])
+            self.station_list.show()
+        else:
+            self.planet_name_label.set_text(self.planet.name)
+            self.station_list.hide()
+
         self.planet_text.set_text("Gravity: {0}m/s/s<br>Mass: madeupnumber".format(self.planet.gravity))
-        self.station_list.set_item_list([self.model.orbitSim.particleById(id).payload.name for id in self.node.particles])
 
     def handle_event(self, event):
         self.upperAction = 0

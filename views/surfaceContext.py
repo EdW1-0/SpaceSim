@@ -1,5 +1,8 @@
 from views.guiContext import GUIContext
 
+from views.timingView import TimingPanel
+from views.sidePanels.sideStatusPanel import PlanetStatusPanel
+
 from planetsim.planetSurface import PlanetSurface
 from planetsim.surfacePoint import SurfacePoint, dot, vector, latLong
 from planetsim.surfaceRegion import SurfaceRegion
@@ -20,6 +23,13 @@ from pygame.locals import (
     MOUSEWHEEL,
     QUIT,
 )
+
+from pygame_gui.elements import UIButton
+from pygame_gui  import (
+    UI_BUTTON_PRESSED,
+    UI_SELECTION_LIST_NEW_SELECTION
+)
+
 
 LOADSURFACEVIEW = pygame.USEREVENT + 3
 
@@ -100,6 +110,16 @@ class SurfaceContext(GUIContext):
             objectSprite = SurfaceObjectSprite(object, center=locationXY)
             self.object_sprites.add(objectSprite)
             self.all_sprites.add(objectSprite)
+
+        summary_rect = pygame.Rect(800, 200, 400, 600)
+        timing_rect = pygame.Rect(800, 0, 400, 200)
+
+        self.planet_panel = PlanetStatusPanel(summary_rect, manager = manager, model = model)
+        self.planet_panel.set_planet(planet)
+        self.planet_panel.surface_button.hide()
+        self.planet_panel.update()
+
+        self.timing_panel = TimingPanel(timing_rect, manager = manager, timingMaster=model.timingMaster)
 
 
 
@@ -365,6 +385,8 @@ class SurfaceContext(GUIContext):
                 
                 (lat, long) = self.xyToLatLong(pos)
                 print ((lat, long))
+                if (lat, long) == (999, 999):
+                    continue
                 ###TODO: At least 4 coordinate systems going on here:
                 # - X/Y screen coordinates
                 # - Rotated latitude/longitude (frame of meridian)
@@ -406,6 +428,12 @@ class SurfaceContext(GUIContext):
                     self.meridianLongitude(-20.0)
                     self.renderGlobe()
 
+            if event.type == UI_BUTTON_PRESSED:
+                if self.timing_panel.handle_event(event):
+                    pass
+
+            self.manager.process_events(event)
+
         for object in self.object_sprites:
             (lat, long) = (object.surfaceObject.point.latitude, object.surfaceObject.point.longitude)
             if self.latLongOccluded(lat, long):
@@ -419,6 +447,7 @@ class SurfaceContext(GUIContext):
                 object.rect.center = screenCoordinate
                 self.all_sprites.add(object)
 
+        self.timing_panel.update()
 
         for entity in self.all_sprites:
             self.surf.blit(entity.surf, entity.rect)
