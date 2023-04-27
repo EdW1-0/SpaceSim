@@ -3,22 +3,27 @@
     "Terrain": [
         {
             "id": "ICECAP",
+            "name": "Polar icecap",
             "colour": [150, 150, 250]
         },
         {
             "id": "LOWLAND",
+            "name": "Martian lowlands",
             "colour": [150, 10, 10]
         },
         {
             "id": "VOLCANIC",
+            "name": "Volcanic plateau",
             "colour": [250, 200, 50]
         },
         {
             "id": "HIGHLAND",
+            "name": "Martian highlands",
             "colour": [210, 100, 20]
         },
         {
             "id": "CRATER",
+            "name": "Impact crater basin",
             "colour": [180, 100, 40]
         }
     ]

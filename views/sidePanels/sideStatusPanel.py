@@ -87,6 +87,7 @@ class PlanetStatusPanel(SideStatusPanel):
             self.station_list.show()
         else:
             self.planet_name_label.set_text(self.planet.name)
+            self.surface_button.hide()
             self.station_list.hide()
 
         self.planet_text.set_text("Gravity: {0}m/s/s<br>Mass: madeupnumber".format(self.planet.gravity))

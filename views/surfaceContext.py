@@ -2,6 +2,7 @@ from views.guiContext import GUIContext
 
 from views.timingView import TimingPanel
 from views.sidePanels.sideStatusPanel import PlanetStatusPanel
+from views.sidePanels.surfaceStatusPanels import RegionStatusPanel
 
 from planetsim.planetSurface import PlanetSurface
 from planetsim.surfacePoint import SurfacePoint, dot, vector, latLong
@@ -119,7 +120,12 @@ class SurfaceContext(GUIContext):
         self.planet_panel.surface_button.hide()
         self.planet_panel.update()
 
+        self.region_panel = RegionStatusPanel(summary_rect, manager = manager, model = model, planet = planet)
+        self.region_panel.hide()
+
         self.timing_panel = TimingPanel(timing_rect, manager = manager, timingMaster=model.timingMaster)
+
+        self.active_panel = self.planet_panel
 
 
 
@@ -385,28 +391,42 @@ class SurfaceContext(GUIContext):
                 
                 (lat, long) = self.xyToLatLong(pos)
                 print ((lat, long))
-                if (lat, long) == (999, 999):
-                    continue
-                ###TODO: At least 4 coordinate systems going on here:
-                # - X/Y screen coordinates
-                # - Rotated latitude/longitude (frame of meridian)
-                # - Absolute latitude/longitude (merdian at (0,0), and what all model code uses internally)
-                # - x/y/z vector in cartesian coords with origin at center and y axis on (0,0) meridian
-                vLatLot = vector(lat, long)
-                unrotatedLat = self.yRot(vLatLot, -self.meridian[0])
-                unrotatedLong = self.zRot(unrotatedLat, -self.meridian[1])
+                if (lat, long) != (999, 999):
+                    ###TODO: At least 4 coordinate systems going on here:
+                    # - X/Y screen coordinates
+                    # - Rotated latitude/longitude (frame of meridian)
+                    # - Absolute latitude/longitude (merdian at (0,0), and what all model code uses internally)
+                    # - x/y/z vector in cartesian coords with origin at center and y axis on (0,0) meridian
+                    vLatLot = vector(lat, long)
+                    unrotatedLat = self.yRot(vLatLot, -self.meridian[0])
+                    unrotatedLong = self.zRot(unrotatedLat, -self.meridian[1])
 
-                (absLat, absLong) = latLong(unrotatedLong)
-                print(absLat, absLong)
+                    (absLat, absLong) = latLong(unrotatedLong)
+                    print(absLat, absLong)
 
-                ###TODO: This seems to get right region, if it gets one at all, now, but occasionally misses entirely.
-                # Think we need a shedload more tests on regionForPoint as there are still some points it misses.
-                region = self.planetSurface.regionForPoint(SurfacePoint(absLat, absLong))
-                if region:
-                    print(region.name)
-                    self.selectedObject = region
-                    self.computeRegionColour(region)
-                    self.renderGlobe()
+                    ###TODO: This seems to get right region, if it gets one at all, now, but occasionally misses entirely.
+                    # Think we need a shedload more tests on regionForPoint as there are still some points it misses.
+                    region = self.planetSurface.regionForPoint(SurfacePoint(absLat, absLong))
+                    if region:
+                        print(region.name)
+                        self.selectedObject = region
+                        self.computeRegionColour(region)
+                        self.renderGlobe()
+
+                        self.active_panel.hide()
+                        self.region_panel.set_region(region)
+                        self.region_panel.update()
+                        self.active_panel = self.region_panel
+                        self.region_panel.show()
+                        continue
+
+                # Clicked on nothing so clear selection and show planet summary.
+                if self.active_panel != self.planet_panel:
+                    self.active_panel.hide()
+                    self.active_panel = self.planet_panel
+                    self.planet_panel.show()
+                    self.planet_panel.update()
+
 
             elif event.type == MOUSEWHEEL:
                 if event.y >= 1:
