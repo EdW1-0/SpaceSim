@@ -64,3 +64,7 @@ class SurfacePoint:
 
     def canonical(self):
         return canonicalPoint(self)
+    
+    def __str__(self):
+        return "({0}, {1})".format(self.latitude, self.longitude)
+

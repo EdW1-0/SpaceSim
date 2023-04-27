@@ -2,7 +2,7 @@ from views.guiContext import GUIContext
 
 from views.timingView import TimingPanel
 from views.sidePanels.sideStatusPanel import PlanetStatusPanel
-from views.sidePanels.surfaceStatusPanels import RegionStatusPanel
+from views.sidePanels.surfaceStatusPanels import RegionStatusPanel, VehicleStatusPanel
 
 from planetsim.planetSurface import PlanetSurface
 from planetsim.surfacePoint import SurfacePoint, dot, vector, latLong
@@ -122,6 +122,9 @@ class SurfaceContext(GUIContext):
 
         self.region_panel = RegionStatusPanel(summary_rect, manager = manager, model = model, planet = planet)
         self.region_panel.hide()
+
+        self.vehicle_panel = VehicleStatusPanel(summary_rect, manager = manager, model = model)
+        self.vehicle_panel.hide()
 
         self.timing_panel = TimingPanel(timing_rect, manager = manager, timingMaster=model.timingMaster)
 
@@ -386,6 +389,11 @@ class SurfaceContext(GUIContext):
                     self.selectedObject = clicked_items[0]
                     self.selectedObject.selected = True
                     self.selectedObject.update()
+                    self.active_panel.hide()
+                    self.vehicle_panel.set_vehicle(clicked_items[0].surfaceObject)
+                    self.vehicle_panel.update()
+                    self.active_panel = self.vehicle_panel
+                    self.vehicle_panel.show()
                     continue
 
                 

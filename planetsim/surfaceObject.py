@@ -15,3 +15,5 @@ class SurfaceObject:
 
     def setDestination(self, destination):
         self.destination = destination
+
+    
