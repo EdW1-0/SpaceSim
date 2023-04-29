@@ -67,7 +67,7 @@
         {
             "point": [20, 350],
             "name": "Rover 1",
-            "fuel": 100,
+            "fuel": 10000,
             "maxV": 1
         }
     ]

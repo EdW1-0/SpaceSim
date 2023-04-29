@@ -367,6 +367,28 @@ class SurfaceContext(GUIContext):
         print (self.meridian)
 
 
+    def handleClickedObject(self, object):
+        self.selectedObject = object
+        self.selectedObject.selected = True
+        self.selectedObject.update()
+        self.active_panel.hide()
+        self.vehicle_panel.set_vehicle(object.surfaceObject)
+        self.vehicle_panel.update()
+        self.active_panel = self.vehicle_panel
+        self.vehicle_panel.show()
+
+    def handleRegionClick(self, region):
+        print(region.name)
+        self.selectedObject = region
+        self.computeRegionColour(region)
+        self.renderGlobe()
+
+        self.active_panel.hide()
+        self.region_panel.set_region(region)
+        self.region_panel.update()
+        self.active_panel = self.region_panel
+        self.region_panel.show()
+
     def run(self):
         returnCode = 0
 
@@ -394,14 +416,7 @@ class SurfaceContext(GUIContext):
 
                 clicked_items = [s for s in self.all_sprites if s.rect.collidepoint(pos)] 
                 if len(clicked_items):
-                    self.selectedObject = clicked_items[0]
-                    self.selectedObject.selected = True
-                    self.selectedObject.update()
-                    self.active_panel.hide()
-                    self.vehicle_panel.set_vehicle(clicked_items[0].surfaceObject)
-                    self.vehicle_panel.update()
-                    self.active_panel = self.vehicle_panel
-                    self.vehicle_panel.show()
+                    self.handleClickedObject(clicked_items[0])
                     self.manager.process_events(event)
                     continue
 
@@ -428,16 +443,8 @@ class SurfaceContext(GUIContext):
                         # Think we need a shedload more tests on regionForPoint as there are still some points it misses.
                         region = self.planetSurface.regionForPoint(SurfacePoint(absLat, absLong))
                         if region:
-                            print(region.name)
-                            self.selectedObject = region
-                            self.computeRegionColour(region)
-                            self.renderGlobe()
+                            self.handleRegionClick(region)
 
-                            self.active_panel.hide()
-                            self.region_panel.set_region(region)
-                            self.region_panel.update()
-                            self.active_panel = self.region_panel
-                            self.region_panel.show()
                         
 
                 # Clicked on nothing so clear selection and show planet summary.

@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",
             "module": "spacesim",
-            "justMyCode": true
+            "justMyCode": false
         },
         {
             "name": "Run all tests",
@@ -18,6 +18,14 @@
             "program": "tests/test_all.py",
             "console": "integratedTerminal",
             "justMyCode": true
+        },
+        {
+            "name": "Generate coverage",
+            "type": "bashdb",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "generateCoverage.sh",
+            "terminalKind": "integrated"
         },
         {
             "name": "Python: Current File",

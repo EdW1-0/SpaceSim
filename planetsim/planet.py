@@ -5,3 +5,7 @@ class Planet:
         self.surface = surface
         self.atmosphere = atmosphere
         self.gravity = gravity
+
+    def tick(self, increment):
+        if self.surface:
+            self.surface.tick(increment)

@@ -34,10 +34,16 @@ class RegionStatusPanel(SideStatusPanel):
         colour = terrain.colour
 
         region_image = pygame.Surface((50, 50))
-        pygame.draw.rect(region_image, terrain.colour,(25,25,25,25))
+        pygame.draw.rect(region_image, colour,(25,25,25,25))
         self.region_image.set_image(region_image)
         
-        self.region_text.set_text("Terrain: {0}<br>Traversibility: not implemented <br>Insolation: not implemented <br>Radiation: not implemented<br>".format(terrain.name))
+
+
+
+        self.region_text.set_text("""Terrain: {0}
+        Traversibility: not implemented
+        Insolation: not implemented
+        Radiation: not implemented""".format(terrain.name))
         
 
 class VehicleStatusPanel(SideStatusPanel):
@@ -90,6 +96,10 @@ class VehicleStatusPanel(SideStatusPanel):
     def update(self):
         self.vehicle_name_label.set_text(self.vehicle.name)
 
+        destination_text = "<None>"
+        if self.vehicle.destination:
+            destination_text = str(self.vehicle.destination)
+
         self.vehicle_text.set_text("""
         Type: not implemented
         Location: {1}
@@ -97,7 +107,8 @@ class VehicleStatusPanel(SideStatusPanel):
         Fuel: {2}
         Top speed: {3}
         Range: {4}
-        """.format(self.vehicle.name, self.vehicle.point, self.vehicle.fuel, self.vehicle.maxV, self.vehicle.fuelPerM))
+        Destination: {5}
+        """.format(self.vehicle.name, self.vehicle.point, self.vehicle.fuel, self.vehicle.maxV, self.vehicle.fuelPerM, destination_text))
 
 class VehicleRoutingPanel(SideStatusPanel):
     def __init__(self, rect, manager=None, model = None):

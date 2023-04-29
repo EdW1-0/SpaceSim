@@ -58,5 +58,6 @@ class PlanetSim:
         return self.planets[id]
     
     def tick(self, increment):
-        pass
+        for planet in self.planets.values():
+            planet.tick(increment)
 
