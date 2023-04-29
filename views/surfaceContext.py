@@ -2,7 +2,7 @@ from views.guiContext import GUIContext
 
 from views.timingView import TimingPanel
 from views.sidePanels.sideStatusPanel import PlanetStatusPanel
-from views.sidePanels.surfaceStatusPanels import RegionStatusPanel, VehicleStatusPanel
+from views.sidePanels.surfaceStatusPanels import RegionStatusPanel, VehicleStatusPanel, VehicleRoutingPanel
 
 from planetsim.planetSurface import PlanetSurface
 from planetsim.surfacePoint import SurfacePoint, dot, vector, latLong
@@ -22,13 +22,15 @@ from pygame.locals import (
     KEYDOWN,
     MOUSEBUTTONUP,
     MOUSEWHEEL,
+    MOUSEMOTION,
     QUIT,
 )
 
 from pygame_gui.elements import UIButton
 from pygame_gui  import (
     UI_BUTTON_PRESSED,
-    UI_SELECTION_LIST_NEW_SELECTION
+    UI_SELECTION_LIST_NEW_SELECTION,
+    UI_BUTTON_ON_HOVERED
 )
 
 
@@ -114,6 +116,7 @@ class SurfaceContext(GUIContext):
 
         summary_rect = pygame.Rect(800, 200, 400, 600)
         timing_rect = pygame.Rect(800, 0, 400, 200)
+        target_rect = pygame.Rect(400, 600, 400, 200)
 
         self.planet_panel = PlanetStatusPanel(summary_rect, manager = manager, model = model)
         self.planet_panel.set_planet(planet)
@@ -125,6 +128,10 @@ class SurfaceContext(GUIContext):
 
         self.vehicle_panel = VehicleStatusPanel(summary_rect, manager = manager, model = model)
         self.vehicle_panel.hide()
+
+        self.target_panel = VehicleRoutingPanel(target_rect, manager=manager, model=model)
+        self.target_panel.hide()
+        self.targetMode = False
 
         self.timing_panel = TimingPanel(timing_rect, manager = manager, timingMaster=model.timingMaster)
 
@@ -364,6 +371,7 @@ class SurfaceContext(GUIContext):
         returnCode = 0
 
         for event in pygame.event.get():
+
             if event.type == QUIT:
                 returnCode = QUIT
                 break
@@ -394,6 +402,7 @@ class SurfaceContext(GUIContext):
                     self.vehicle_panel.update()
                     self.active_panel = self.vehicle_panel
                     self.vehicle_panel.show()
+                    self.manager.process_events(event)
                     continue
 
                 
@@ -412,28 +421,31 @@ class SurfaceContext(GUIContext):
                     (absLat, absLong) = latLong(unrotatedLong)
                     print(absLat, absLong)
 
-                    ###TODO: This seems to get right region, if it gets one at all, now, but occasionally misses entirely.
-                    # Think we need a shedload more tests on regionForPoint as there are still some points it misses.
-                    region = self.planetSurface.regionForPoint(SurfacePoint(absLat, absLong))
-                    if region:
-                        print(region.name)
-                        self.selectedObject = region
-                        self.computeRegionColour(region)
-                        self.renderGlobe()
+                    if (self.targetMode):
+                        self.target_panel.set_target(SurfacePoint(absLat, absLong))
+                    else:
+                        ###TODO: This seems to get right region, if it gets one at all, now, but occasionally misses entirely.
+                        # Think we need a shedload more tests on regionForPoint as there are still some points it misses.
+                        region = self.planetSurface.regionForPoint(SurfacePoint(absLat, absLong))
+                        if region:
+                            print(region.name)
+                            self.selectedObject = region
+                            self.computeRegionColour(region)
+                            self.renderGlobe()
 
-                        self.active_panel.hide()
-                        self.region_panel.set_region(region)
-                        self.region_panel.update()
-                        self.active_panel = self.region_panel
-                        self.region_panel.show()
-                        continue
+                            self.active_panel.hide()
+                            self.region_panel.set_region(region)
+                            self.region_panel.update()
+                            self.active_panel = self.region_panel
+                            self.region_panel.show()
+                        
 
                 # Clicked on nothing so clear selection and show planet summary.
-                if self.active_panel != self.planet_panel:
-                    self.active_panel.hide()
-                    self.active_panel = self.planet_panel
-                    self.planet_panel.show()
-                    self.planet_panel.update()
+                # if self.active_panel != self.planet_panel:
+                #     self.active_panel.hide()
+                #     self.active_panel = self.planet_panel
+                #     self.planet_panel.show()
+                #     self.planet_panel.update()
 
 
             elif event.type == MOUSEWHEEL:
@@ -459,6 +471,21 @@ class SurfaceContext(GUIContext):
             if event.type == UI_BUTTON_PRESSED:
                 if self.timing_panel.handle_event(event):
                     pass
+                elif self.active_panel.handle_event(event):
+                    if isinstance(self.active_panel, VehicleStatusPanel):
+                        if event.ui_element == self.vehicle_panel.target_button:
+                            self.target_panel.set_vehicle(self.vehicle_panel.vehicle)
+                            self.target_panel.update()
+                            self.target_panel.show()
+                            self.targetMode = True
+                elif self.target_panel.handle_event(event):
+                    if event.ui_element == self.target_panel.confirm_button:
+                        self.targetMode = False
+                        self.target_panel.hide()
+                        self.target_panel.vehicle.setDestination(self.target_panel.target)
+
+            if event.type == UI_BUTTON_ON_HOVERED:
+                print (event.ui_element)
 
             self.manager.process_events(event)
 

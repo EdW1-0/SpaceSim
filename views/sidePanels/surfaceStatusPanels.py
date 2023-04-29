@@ -23,6 +23,7 @@ class RegionStatusPanel(SideStatusPanel):
         region_text = "Placeholder stuff"
         self.region_text = UITextBox(region_text, (0, 200, 400, 200), manager=manager, container=self.container)
 
+
     def set_region(self, region):
         self.region = region
 
@@ -43,6 +44,8 @@ class VehicleStatusPanel(SideStatusPanel):
     def __init__(self, rect, manager=None, model = None):
         super(VehicleStatusPanel, self).__init__(rect, manager)
         self.model = model
+        
+
 
         self.vehicle_name_label = UILabel(pygame.Rect(0,0,rect.width, 100), 
                                          text="Vehicle placeholder", 
@@ -56,15 +59,17 @@ class VehicleStatusPanel(SideStatusPanel):
         vehicle_text = "Placeholder stuff"
         self.vehicle_text = UITextBox(vehicle_text, (0, 200, 400, 200), manager=manager, container=self.container)
 
-        self.stopButton = UIButton(pygame.Rect(0, 300, 200, 100), 
+        self.stopButton = UIButton(pygame.Rect(0, 400, 200, 100), 
                                           text="Stop",  
                                           container = self.container, 
                                           manager=manager)
-
-        self.targetButton = UIButton(pygame.Rect(200, 300, 200, 100), 
+        
+        self.target_button = UIButton(pygame.Rect(200, 400, 200, 100), 
                                           text="Set Target",  
                                           container = self.container, 
                                           manager=manager)
+
+        self.upperAction = 0
 
     def set_vehicle(self, vehicle):
         self.vehicle = vehicle
@@ -73,6 +78,14 @@ class VehicleStatusPanel(SideStatusPanel):
         self.upperAction = 0
         if super(VehicleStatusPanel, self).handle_event(event):
             return True
+        elif event.ui_element == self.stopButton:
+            self.upperAction = 1
+            return True
+        elif event.ui_element == self.target_button:
+            self.upperAction = 2
+            return True
+        else:
+            return False
 
     def update(self):
         self.vehicle_name_label.set_text(self.vehicle.name)
@@ -86,3 +99,56 @@ class VehicleStatusPanel(SideStatusPanel):
         Range: {4}
         """.format(self.vehicle.name, self.vehicle.point, self.vehicle.fuel, self.vehicle.maxV, self.vehicle.fuelPerM))
 
+class VehicleRoutingPanel(SideStatusPanel):
+    def __init__(self, rect, manager=None, model = None):
+        super(VehicleRoutingPanel, self).__init__(rect, manager)
+        self.model = model
+        self.vehicle = None
+        self.target = None
+
+        self.source_label = UILabel(pygame.Rect(0,0,200, 100), 
+                                         text="Source placeholder", 
+                                         manager=manager, 
+                                         container=self.container)
+        self.target_label = UILabel(pygame.Rect(200,0,200, 100), 
+                                         text="Target placeholder", 
+                                         manager=manager, 
+                                         container=self.container)
+        self.route_text = UITextBox("Route text", 
+                                    pygame.Rect(0, 100, 200, 100), 
+                                    manager=manager, 
+                                    container=self.container)
+        self.confirm_button = UIButton(pygame.Rect(200, 100, 200, 100), 
+                                       text = "Confirm", 
+                                       manager = manager, 
+                                       container = self.container)
+
+    def set_vehicle(self, vehicle):
+        self.vehicle = vehicle
+
+    def set_target(self, target):
+        self.target = target
+        self.update()
+
+    def update(self):
+        if self.vehicle:
+            self.source_label.set_text(str(self.vehicle.point))
+        else:
+            self.source_label.set_text("")
+        
+        if self.target:
+            self.target_label.set_text(str(self.target))
+        else:
+            self.target_label.set_text("")
+
+    def handle_event(self, event):
+        self.upperAction = 0
+        if super(VehicleRoutingPanel, self).handle_event(event):
+            return True
+        elif event.ui_element == self.confirm_button:
+            self.vehicle.setDestination(self.target)
+            self.hide()
+            self.upperAction = 1
+            return True
+        else:
+            return False
