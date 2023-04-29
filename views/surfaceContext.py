@@ -423,7 +423,7 @@ class SurfaceContext(GUIContext):
                 
                 (lat, long) = self.xyToLatLong(pos)
                 print ((lat, long))
-                if (lat, long) != (999, 999):
+                if (lat, long) != (999, 999) and (lat, long) != (-999, -999):
                     ###TODO: At least 4 coordinate systems going on here:
                     # - X/Y screen coordinates
                     # - Rotated latitude/longitude (frame of meridian)
@@ -485,6 +485,8 @@ class SurfaceContext(GUIContext):
                             self.target_panel.update()
                             self.target_panel.show()
                             self.targetMode = True
+                        elif event.ui_element == self.vehicle_panel.stopButton:
+                            self.vehicle_panel.vehicle.setDestination(None)
                 elif self.target_panel.handle_event(event):
                     if event.ui_element == self.target_panel.confirm_button:
                         self.targetMode = False
@@ -510,11 +512,15 @@ class SurfaceContext(GUIContext):
                 self.all_sprites.add(object)
 
         self.timing_panel.update()
+        if self.active_panel:
+            self.active_panel.update()
 
-        for entity in self.all_sprites:
-            self.surf.blit(entity.surf, entity.rect)
+
 
         self.screen.blit(self.surf, pygame.Rect(0, 0, 1200, 800))
+
+        for entity in self.all_sprites:
+            self.screen.blit(entity.surf, entity.rect)
         
 
         return returnCode

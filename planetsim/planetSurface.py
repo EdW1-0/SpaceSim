@@ -115,7 +115,10 @@ class PlanetSurface:
                     p.fuel = 0
 
                 # Now do the actual move
-                fraction = distance/remainingDistance
+                if distance:
+                    fraction = distance/remainingDistance
+                else:
+                    fraction = 0.0
                 waypoint = path.intermediatePointTrig(fraction).canonical()
                 p.point = waypoint
                     
