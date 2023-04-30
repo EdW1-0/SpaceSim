@@ -62,6 +62,9 @@ class VehicleStatusPanel(SideStatusPanel):
         pygame.draw.circle(vehicle_image, (200,200,10),(25,25),25.0)
         self.vehicle_image = UIImage(pygame.Rect(50, 100, 50, 50), vehicle_image, manager=manager, container=self.container)
 
+        route_text = """Placeholder"""
+        self.route_text = UITextBox(route_text, (100, 100, 300, 100), manager=manager, container = self.container)
+
         vehicle_text = "Placeholder stuff"
         self.vehicle_text = UITextBox(vehicle_text, (0, 200, 400, 200), manager=manager, container=self.container)
 
@@ -100,15 +103,17 @@ class VehicleStatusPanel(SideStatusPanel):
         if self.vehicle.destination:
             destination_text = str(self.vehicle.destination)
 
+        self.route_text.set_text("""
+        Location: {0}
+        Destination: {1}""".format(self.vehicle.point, destination_text))
+
         self.vehicle_text.set_text("""
         Type: not implemented
-        Location: {1}
         Crew: not implemented
-        Fuel: {2}
-        Top speed: {3}
-        Range: {4}
-        Destination: {5}
-        """.format(self.vehicle.name, self.vehicle.point, self.vehicle.fuel, self.vehicle.maxV, self.vehicle.fuelPerM, destination_text))
+        Fuel: {0}
+        Top speed: {1}
+        Range: {2}
+        """.format(self.vehicle.fuel, self.vehicle.maxV, self.vehicle.fuelPerM))
 
 class VehicleRoutingPanel(SideStatusPanel):
     def __init__(self, rect, manager=None, model = None):
