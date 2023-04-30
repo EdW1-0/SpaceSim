@@ -19,3 +19,4 @@ images/two.png
 images/zero.png
 pygame_tutorial.py
 .coverage
+coverage.lcov
