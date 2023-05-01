@@ -98,20 +98,30 @@ class TestPlanetSurfaceObjectLifecycle(unittest.TestCase):
         self.ft.destroyObject(0)
         self.assertEqual(len(self.ft.points), 0)
 
+    def testSurfaceVehicleCreation(self):
+        self.ft.createVehicle(None, SurfacePoint(20, 20), fuel = 1000, maxV = 5, fuelPerM = 10)
+        self.assertEqual(len(self.ft.points), 1)
+
+    def testSurfaceVehicleDestruction(self):
+        self.ft.createVehicle(None, SurfacePoint(20, 20), fuel = 1000, maxV = 5, fuelPerM = 10)
+        self.assertEqual(len(self.ft.points), 1)
+        self.ft.destroyObject(0)
+        self.assertEqual(len(self.ft.points), 0)
+
 
 class TestPlanetSurfaceObjectMovement(unittest.TestCase):
     def setUp(self):
         self.ft = PlanetSurface("test_json/test_surfaces/full_tiling.json")
-        self.ft.createObject(None, SurfacePoint(20,20))
+        self.ft.createVehicle(None, SurfacePoint(20,20))
         self.pt = self.ft.pointById(0)
         
 
 
-    def testSurfaceObjectNilMovement(self):
+    def testSurfaceVehicleNilMovement(self):
         self.pt.setDestination(SurfacePoint(80, 100))
         self.assertEqual(self.ft._distanceForTime(0, 100), 0)
 
-    def testSurfaceObjectFiniteMovement(self):
+    def testSurfaceVehicleFiniteMovement(self):
         self.pt.maxV = 20
         self.assertEqual(self.ft._distanceForTime(0, 100), 2000)
 
@@ -125,9 +135,9 @@ class TestPlanetSurfaceObjectTick(unittest.TestCase):
     def setUp(self):
         self.r = 100000000000
         self.ft = PlanetSurface("test_json/test_surfaces/full_tiling.json", radius = self.r)
-        self.ft.createObject(None, SurfacePoint(20, 20))
-        self.ft.createObject(None, SurfacePoint(0, -10))
-        self.ft.createObject(None, SurfacePoint(0, 0))
+        self.ft.createVehicle(None, SurfacePoint(20, 20))
+        self.ft.createVehicle(None, SurfacePoint(0, -10))
+        self.ft.createVehicle(None, SurfacePoint(0, 0))
         self.ft.pointById(2).setDestination(SurfacePoint(90, 0))
         self.ft.pointById(2).maxV = 1
         self.ft.pointById(2).fuel = 1000000000000000000
@@ -178,12 +188,9 @@ class TestPlanetSurfaceFuelConsumption(unittest.TestCase):
     def setUp(self):
         self.r = 3.6*500/math.pi
         self.ft = PlanetSurface("test_json/test_surfaces/full_tiling.json", radius = self.r)
-        self.ft.createObject(None, SurfacePoint(0, 0))
+        self.ft.createVehicle(None, SurfacePoint(0, 0), fuel = 100, maxV = 1, fuelPerM = 10.0)
         self.p1 = self.ft.pointById(0)
         self.p1.setDestination(SurfacePoint(-45, -45))
-        self.p1.fuelPerM = 10.0
-        self.p1.maxV = 1
-        self.p1.fuel = 100
 
     def testFuelConsumption(self):
         self.ft.tick(3)
@@ -234,15 +241,13 @@ class TestPlanetSurfacePointArrival(unittest.TestCase):
         self.ft = PlanetSurface("test_json/test_surfaces/full_tiling.json", radius = self.r)
         self.ft.createObject(terminal, SurfacePoint(10, 20))
         self.ft.createObject(waypoint, SurfacePoint(-20, 345))
-        self.ft.createObject(None, SurfacePoint(0, 0))
+        self.ft.createVehicle(None, SurfacePoint(0, 0), maxV = 1, fuelPerM = 0)
         self.p = self.ft.pointById(2)
-        self.p.maxV = 1
-        self.p.fuelPerM = 0
         self.waypoint = waypoint
         self.terminal = terminal
 
     def testPlanetSurfaceArrivalAtWaypoint(self):
-        self.ft.createObject(None, SurfacePoint(-5, 355))
+        self.ft.createVehicle(None, SurfacePoint(-5, 355))
         self.ft.pointById(2).setDestination(SurfacePoint(-20, 345))
         self.ft.tick(1000)
         self.assertIsNotNone(self.ft.pointById(2))

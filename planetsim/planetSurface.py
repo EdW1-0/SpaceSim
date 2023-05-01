@@ -4,6 +4,7 @@ from planetsim.surfaceRegion import SurfaceRegion
 from planetsim.surfacePath import SurfacePath
 from planetsim.surfacePoint import SurfacePoint
 from planetsim.surfaceObject import SurfaceObject
+from planetsim.surfaceVehicle import SurfaceVehicle
 
 EARTH_RADIUS = 6371000
 
@@ -71,6 +72,11 @@ class PlanetSurface:
         id = next(self.pointIdGenerator)
         self.points[id] = SurfaceObject(id, content, position)
         return id
+    
+    def createVehicle(self, content, position, fuel = 0, maxV = 0, fuelPerM = 0):
+        id = next(self.pointIdGenerator)
+        self.points[id] = SurfaceVehicle(id, content, position, fuel=fuel, maxV=maxV, fuelPerM=fuelPerM)
+        return id
 
     def destroyObject(self, id):
         del self.points[id]
@@ -96,7 +102,7 @@ class PlanetSurface:
     def tick(self, increment):
         purgeIds = set()
         for p in self.points.values():
-            if p.destination:
+            if isinstance(p, SurfaceVehicle) and p.destination:
                 # First work out how far we can travel in this time
                 maxDistance = self._distanceForTime(p.id, increment)
                 path = SurfacePath(p.point, p.destination)

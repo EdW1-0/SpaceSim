@@ -2,18 +2,25 @@ from dataclasses import dataclass
 
 from planetsim.surfacePoint import SurfacePoint
 
+# Inheritance hierarchy:
+# - SurfaceObject: 
+#   - Location, id, name
+#
+# - Landmark
+#   - class
+#
+# - Colony 
+#   - colony id, crew? Vehicles? Ships? Resources?
+#
+# - Vehicle
+#   - Fuel, maxV, range, destination, crew, cargo, equipment?
+
 @dataclass
 class SurfaceObject:
     id: int
     content: object
     point: SurfacePoint = None
     name: str = "Default object"
-    fuel: int = 0
-    maxV: int = 0
-    destination: SurfacePoint = None
-    fuelPerM: float = 1.0
 
-    def setDestination(self, destination):
-        self.destination = destination
 
     

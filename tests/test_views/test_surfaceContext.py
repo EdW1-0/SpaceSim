@@ -5,6 +5,7 @@ import unittest
 from tests.test_views.test_guiContext import ScreenMock, ModelMock
 
 import pygame
+import pygame_gui
 
 class SurfaceMock:
     def __init__(self):
@@ -17,13 +18,24 @@ class PlanetMock:
         self.name = "Test Planet"
         self.gravity = 14
 
+class ModelMock:
+    pass
+
 class TestSurfaceContext(unittest.TestCase):
+    def setUp(self):
+        self.mm = ModelMock()
+        tm = ModelMock()
+        self.mm.timingMaster = tm
+        pygame.init()
+        self.manager = pygame_gui.UIManager((1200, 800))
+        screen = pygame.display.set_mode((1200, 800))
+
     def testSurfaceContext(self):
         self.assertTrue(SurfaceContext)
-        self.assertTrue(SurfaceContext(None, None, None, PlanetMock()))
+        self.assertTrue(SurfaceContext(None, self.mm, self.manager, PlanetMock()))
 
     def testSurfaceContextCoordinateConversion(self):
-        sc = SurfaceContext(None, None, None, PlanetMock())
+        sc = SurfaceContext(None, self.mm, self.manager, PlanetMock())
         self.assertEqual((500,400), sc.latLongToXY(sc.xyToLatLong((500,400))))
         p1 = (400, 300)
         p2 = sc.latLongToXY(sc.xyToLatLong((400,300)))
