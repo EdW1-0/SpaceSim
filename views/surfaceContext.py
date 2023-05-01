@@ -10,6 +10,7 @@ from planetsim.surfacePoint import SurfacePoint, dot, vector, latLong
 from planetsim.surfaceRegion import SurfaceRegion
 from planetsim.surfacePath import SurfacePath
 from planetsim.surfaceVehicle import SurfaceVehicle
+from planetsim.surfaceBase import SurfaceBase
 
 import pygame
 import math, random
@@ -63,6 +64,8 @@ class SurfaceObjectSprite(pygame.sprite.Sprite):
         self.surf.set_colorkey((0, 0, 0))
         if self.selected:
             colour = (230, 230, 5)
+        elif isinstance(self.surfaceObject, SurfaceBase):
+            colour = (250, 200, 200)
         elif isinstance(self.surfaceObject, SurfaceVehicle):
             colour = (5, 5, 250)
         else: 
@@ -70,6 +73,8 @@ class SurfaceObjectSprite(pygame.sprite.Sprite):
 
         if isinstance(self.surfaceObject, SurfaceVehicle):
             pygame.draw.polygon(self.surf, colour, [(0,22), (11, 0), (22, 22)])
+        elif isinstance(self.surfaceObject, SurfaceBase):
+            pygame.draw.rect(self.surf, colour, (0, 0, 22, 22))
         else:
             pygame.draw.circle(self.surf, colour, (11, 11), 10.0)
         self.rect = self.surf.get_rect(center = self.center)

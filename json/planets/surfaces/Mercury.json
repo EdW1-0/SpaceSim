@@ -62,7 +62,12 @@
     "Objects": [
         {
             "point": [10, 10],
-            "name": "Viking Base"
+            "name": "Viking Base",
+            "colonyId": "VBA"
+        },
+        {
+            "point": [-20, 300],
+            "name": "Olympus Mons"
         },
         {
             "point": [20, 350],

@@ -5,6 +5,7 @@ from planetsim.surfacePath import SurfacePath
 from planetsim.surfacePoint import SurfacePoint
 from planetsim.surfaceObject import SurfaceObject
 from planetsim.surfaceVehicle import SurfaceVehicle
+from planetsim.surfaceBase import SurfaceBase
 
 EARTH_RADIUS = 6371000
 
@@ -44,7 +45,9 @@ class PlanetSurface:
             for object in jsonObjects:
                 pointArray = object["point"]
                 point = SurfacePoint(pointArray[0], pointArray[1])
-                if "fuel" in object:
+                if "colonyId" in object:
+                    self.createBase(None, point, name = object["name"], colonyId = object["colonyId"])
+                elif "fuel" in object:
                     self.createVehicle(None, point, name = object["name"], fuel = object["fuel"], maxV = object["maxV"], fuelPerM = object["fuelPerM"])
                 else:
                     self.createObject(None, point, name = object["name"])
@@ -72,6 +75,11 @@ class PlanetSurface:
     def createVehicle(self, content, position, name="", fuel = 0, maxV = 0, fuelPerM = 0):
         id = next(self.pointIdGenerator)
         self.points[id] = SurfaceVehicle(id, content, position, name = name, fuel=fuel, maxV=maxV, fuelPerM=fuelPerM)
+        return id
+
+    def createBase(self, context, position, name="", colonyId = None):
+        id = next(self.pointIdGenerator)
+        self.points[id] = SurfaceBase(id, context, position, name = name, colonyId = colonyId)
         return id
 
     def destroyObject(self, id):
