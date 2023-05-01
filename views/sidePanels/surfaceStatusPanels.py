@@ -2,6 +2,8 @@ import pygame
 
 from views.sidePanels.sideStatusPanel import SideStatusPanel
 
+from planetsim.surfaceVehicle import SurfaceVehicle
+
 from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox, UISelectionList
 from pygame_gui.core import UIContainer
 
@@ -99,21 +101,35 @@ class VehicleStatusPanel(SideStatusPanel):
     def update(self):
         self.vehicle_name_label.set_text(self.vehicle.name)
 
+        if isinstance(self.vehicle, SurfaceVehicle):
+            self.target_button.show()
+            self.stopButton.show()
+        else:
+            self.target_button.hide()
+            self.stopButton.hide()
+
         destination_text = "<None>"
-        if self.vehicle.destination:
+        if isinstance(self.vehicle, SurfaceVehicle) and self.vehicle.destination:
             destination_text = str(self.vehicle.destination)
 
-        self.route_text.set_text("""
-        Location: {0}
-        Destination: {1}""".format(self.vehicle.point, destination_text))
+    
+            self.route_text.set_text("""
+            Location: {0}
+            Destination: {1}""".format(self.vehicle.point, destination_text))
 
-        self.vehicle_text.set_text("""
-        Type: not implemented
-        Crew: not implemented
-        Fuel: {0}
-        Top speed: {1}
-        Range: {2}
-        """.format(self.vehicle.fuel, self.vehicle.maxV, self.vehicle.fuelPerM))
+            self.vehicle_text.set_text("""
+            Type: not implemented
+            Crew: not implemented
+            Fuel: {0}
+            Top speed: {1}
+            Range: {2}
+            """.format(self.vehicle.fuel, self.vehicle.maxV, self.vehicle.fuelPerM))
+        else:
+            self.route_text.set_text("""
+            Location: {0}""".format(self.vehicle.point))
+            self.vehicle_text.set_text("""
+            Type: not implemented
+            Crew: not implemented""")            
 
 class VehicleRoutingPanel(SideStatusPanel):
     def __init__(self, rect, manager=None, model = None):

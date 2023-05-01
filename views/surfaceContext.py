@@ -9,6 +9,7 @@ from planetsim.planetSurface import PlanetSurface
 from planetsim.surfacePoint import SurfacePoint, dot, vector, latLong
 from planetsim.surfaceRegion import SurfaceRegion
 from planetsim.surfacePath import SurfacePath
+from planetsim.surfaceVehicle import SurfaceVehicle
 
 import pygame
 import math, random
@@ -53,9 +54,6 @@ class SurfaceObjectSprite(pygame.sprite.Sprite):
         self.surfaceObject = surfaceObject
         self.selected = selected
         self.update()
-        self.surf = pygame.surface.Surface((22, 22))
-        self.surf.set_colorkey((0, 0, 0))
-        pygame.draw.circle(self.surf, (5, 250, 5), (11, 11), 10.0)
     
     def latLong(self):
         return (self.surfaceObject.point.latitude, self.surfaceObject.point.longitude)
@@ -65,9 +63,15 @@ class SurfaceObjectSprite(pygame.sprite.Sprite):
         self.surf.set_colorkey((0, 0, 0))
         if self.selected:
             colour = (230, 230, 5)
-        else:
+        elif isinstance(self.surfaceObject, SurfaceVehicle):
+            colour = (5, 5, 250)
+        else: 
             colour = (5, 250, 5)
-        pygame.draw.circle(self.surf, colour, (11, 11), 10.0)
+
+        if isinstance(self.surfaceObject, SurfaceVehicle):
+            pygame.draw.polygon(self.surf, colour, [(0,22), (11, 0), (22, 22)])
+        else:
+            pygame.draw.circle(self.surf, colour, (11, 11), 10.0)
         self.rect = self.surf.get_rect(center = self.center)
         
 
@@ -553,8 +557,11 @@ class SurfaceContext(GUIContext):
                 self.all_sprites.add(object)
 
         for destination_sprite in self.destination_sprites:
-            if self.selectedObject and isinstance(self.selectedObject, SurfaceObjectSprite) and self.selectedObject.surfaceObject.destination:    
-                destination_sprite.surfaceObject = self.selectedObject.surfaceObject
+            if self.selectedObject and isinstance(self.selectedObject, SurfaceObjectSprite):
+                so = self.selectedObject.surfaceObject
+                if not (isinstance(so, SurfaceVehicle) and so.destination):
+                    continue    
+                destination_sprite.surfaceObject = so
                 (lat, long) = destination_sprite.latLong()
                 if self.latLongOccluded(lat, long):
                     self.all_sprites.remove(destination_sprite)

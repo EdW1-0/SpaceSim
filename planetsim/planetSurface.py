@@ -44,15 +44,11 @@ class PlanetSurface:
             for object in jsonObjects:
                 pointArray = object["point"]
                 point = SurfacePoint(pointArray[0], pointArray[1])
-
-                id = self.createObject(None, point)
-                ###TODO: Placeholder code, eventually we will create a lower level vehicle/base/landmark object and add this as content
-                vehicle = self.pointById(id)
-                vehicle.name = object["name"]
                 if "fuel" in object:
-                    vehicle.fuel = object["fuel"]
-                if "maxV" in object:
-                    vehicle.maxV = object["maxV"]
+                    self.createVehicle(None, point, name = object["name"], fuel = object["fuel"], maxV = object["maxV"], fuelPerM = object["fuelPerM"])
+                else:
+                    self.createObject(None, point, name = object["name"])
+
 
         jsonFile.close()
 
@@ -68,14 +64,14 @@ class PlanetSurface:
     def _angleForDistance(self, distance):
         return distance / self.radius
 
-    def createObject(self, content, position):
+    def createObject(self, content, position, name=""):
         id = next(self.pointIdGenerator)
-        self.points[id] = SurfaceObject(id, content, position)
+        self.points[id] = SurfaceObject(id, content, position, name = name)
         return id
     
-    def createVehicle(self, content, position, fuel = 0, maxV = 0, fuelPerM = 0):
+    def createVehicle(self, content, position, name="", fuel = 0, maxV = 0, fuelPerM = 0):
         id = next(self.pointIdGenerator)
-        self.points[id] = SurfaceVehicle(id, content, position, fuel=fuel, maxV=maxV, fuelPerM=fuelPerM)
+        self.points[id] = SurfaceVehicle(id, content, position, name = name, fuel=fuel, maxV=maxV, fuelPerM=fuelPerM)
         return id
 
     def destroyObject(self, id):
