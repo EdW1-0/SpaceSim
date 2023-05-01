@@ -70,6 +70,22 @@ class SurfaceObjectSprite(pygame.sprite.Sprite):
         self.rect = self.surf.get_rect(center = self.center)
         
 
+class SurfaceDestinationSprite(pygame.sprite.Sprite):
+    def __init__(self, center=(0,0)):
+        super(SurfaceDestinationSprite, self).__init__()
+        self.center = center
+        self.surf = pygame.surface.Surface((22, 22))
+        self.surf.set_colorkey((0, 0, 0))
+        colour = (230, 5, 5)
+        pygame.draw.line(self.surf, colour, (0,0), (22, 22))
+        pygame.draw.line(self.surf, colour, (0, 22), (22, 0))
+        self.surfaceObject = None
+        self.rect = self.surf.get_rect(center = self.center)
+            
+    def latLong(self):
+        return (self.surfaceObject.destination.latitude, self.surfaceObject.destination.longitude)
+    
+
 class SurfaceContext(GUIContext):
     def __init__(self, screen, model, manager, planet, meridian = (0, 0), radius = 300.0):
         super(SurfaceContext, self).__init__(screen, model, manager)
@@ -102,17 +118,19 @@ class SurfaceContext(GUIContext):
 
         self.renderGlobe()
 
-        all_sprites = pygame.sprite.Group()
-        object_sprites = pygame.sprite.Group()
-        self.all_sprites = all_sprites
-        self.object_sprites = object_sprites
-
+        self.all_sprites = pygame.sprite.Group()
+        self.object_sprites = pygame.sprite.Group()
+        self.destination_sprites = pygame.sprite.Group()
+        
         for object in self.planetSurface.points.values():
             location = object.point
             locationXY = self.latLongToXY((location.latitude, location.longitude))
             objectSprite = SurfaceObjectSprite(object, center=locationXY)
             self.object_sprites.add(objectSprite)
             self.all_sprites.add(objectSprite)
+
+        destination_sprite = SurfaceDestinationSprite()
+        self.destination_sprites.add(destination_sprite)
 
         summary_rect = pygame.Rect(800, 200, 400, 600)
         timing_rect = pygame.Rect(800, 0, 400, 200)
@@ -398,6 +416,21 @@ class SurfaceContext(GUIContext):
                 returnCode = QUIT
                 break
             elif event.type == MOUSEBUTTONUP:
+                pos = pygame.mouse.get_pos()
+                if self.timing_panel.rect.collidepoint(pos):
+                    self.manager.process_events(event)
+                    continue
+                if self.active_panel.rect.collidepoint(pos):
+                    self.manager.process_events(event)
+                    continue
+                if self.target_panel.rect.collidepoint(pos):
+                    self.manager.process_events(event)
+                    continue
+
+
+                
+
+
                 if self.selectedObject:
                     if isinstance(self.selectedObject, SurfaceObjectSprite):
                         self.selectedObject.selected = False
@@ -412,7 +445,6 @@ class SurfaceContext(GUIContext):
                         assert(False)
                     self.selectedObject = None
                     
-                pos = pygame.mouse.get_pos()
 
                 clicked_items = [s for s in self.all_sprites if s.rect.collidepoint(pos)] 
                 if len(clicked_items):
@@ -489,9 +521,10 @@ class SurfaceContext(GUIContext):
                             self.vehicle_panel.vehicle.setDestination(None)
                 elif self.target_panel.handle_event(event):
                     if event.ui_element == self.target_panel.confirm_button:
-                        self.targetMode = False
                         self.target_panel.hide()
                         self.target_panel.vehicle.setDestination(self.target_panel.target)
+                    self.targetMode = False
+                    self.target_panel.clear_state()
 
             if event.type == UI_BUTTON_ON_HOVERED:
                 print (event.ui_element)
@@ -510,6 +543,23 @@ class SurfaceContext(GUIContext):
                 screenCoordinate = self.latLongToXY(rotatedCoordinate)
                 object.rect.center = screenCoordinate
                 self.all_sprites.add(object)
+
+        for destination_sprite in self.destination_sprites:
+            if self.selectedObject and isinstance(self.selectedObject, SurfaceObjectSprite) and self.selectedObject.surfaceObject.destination:    
+                destination_sprite.surfaceObject = self.selectedObject.surfaceObject
+                (lat, long) = destination_sprite.latLong()
+                if self.latLongOccluded(lat, long):
+                    self.all_sprites.remove(destination_sprite)
+                else:
+                    coordinate = vector(lat, long)
+                    rotatedLong = self.zRot(coordinate, self.meridian[1])
+                    rotatedLat = self.yRot(rotatedLong, self.meridian[0])
+                    rotatedCoordinate = latLong(rotatedLat)                
+                    screenCoordinate = self.latLongToXY(rotatedCoordinate)
+                    destination_sprite.rect.center = screenCoordinate
+                    self.all_sprites.add(destination_sprite)
+            else:
+                self.all_sprites.remove(destination_sprite)
 
         self.timing_panel.update()
         if self.active_panel:

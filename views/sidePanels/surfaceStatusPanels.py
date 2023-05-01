@@ -146,6 +146,10 @@ class VehicleRoutingPanel(SideStatusPanel):
         self.target = target
         self.update()
 
+    def clear_state(self):
+        self.vehicle = None
+        self.target = None
+
     def update(self):
         if self.vehicle:
             self.source_label.set_text(str(self.vehicle.point))
