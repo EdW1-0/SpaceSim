@@ -1,4 +1,5 @@
 from views.guiContext import GUIContext
+from views.menuContext import LOADORBITVIEW
 
 from views.timingView import TimingPanel
 from views.sidePanels.sideStatusPanel import PlanetStatusPanel
@@ -131,6 +132,10 @@ class SurfaceContext(GUIContext):
 
         destination_sprite = SurfaceDestinationSprite()
         self.destination_sprites.add(destination_sprite)
+
+        self.settings_button =UIButton(relative_rect=pygame.Rect((0, 0), (100, 50)),
+                                             text='Settings',
+                                             manager=manager)
 
         summary_rect = pygame.Rect(800, 200, 400, 600)
         timing_rect = pygame.Rect(800, 0, 400, 200)
@@ -508,7 +513,10 @@ class SurfaceContext(GUIContext):
                     self.renderGlobe()
 
             if event.type == UI_BUTTON_PRESSED:
-                if self.timing_panel.handle_event(event):
+                if event.ui_element == self.settings_button:
+                    returnCode = LOADORBITVIEW
+                    break
+                elif self.timing_panel.handle_event(event):
                     pass
                 elif self.active_panel.handle_event(event):
                     if isinstance(self.active_panel, VehicleStatusPanel):
