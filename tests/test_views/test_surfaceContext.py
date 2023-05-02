@@ -1,8 +1,10 @@
-from views.surfaceContext import SurfaceContext
+from views.surfaceContext import SurfaceContext, SurfaceObjectSprite, SurfaceDestinationSprite
 from views.guiContext import GUIContext
 
 import unittest
 from tests.test_views.test_guiContext import ScreenMock, ModelMock
+
+from planetsim.surfacePoint import SurfacePoint
 
 import pygame
 import pygame_gui
@@ -20,6 +22,42 @@ class PlanetMock:
 
 class ModelMock:
     pass
+
+class TestSurfaceObjectSprite(unittest.TestCase):
+    def testSurfaceObjectSprite(self):
+        self.assertTrue(SurfaceObjectSprite)
+
+    def testSurfaceObjectSpriteConstructor(self):
+        so = ModelMock()
+        sp = ModelMock()
+        so.point = sp
+        self.assertTrue(SurfaceObjectSprite(so))
+        self.assertTrue(SurfaceObjectSprite(so, (20, 20)))
+        self.assertTrue(SurfaceObjectSprite(so, center=(1,1), selected=True))
+
+    def testSurfaceObjectSpriteLatLong(self):
+        so = ModelMock()
+        sp = SurfacePoint(30, 40)
+        so.point = sp
+        sprite = SurfaceObjectSprite(so)
+        self.assertEqual(sprite.latLong(), (30, 40))
+
+class TestSurfaceDestinationSprite(unittest.TestCase):
+    def testSurfaceDestinationSprite(self):
+        self.assertTrue(SurfaceDestinationSprite)
+
+    def testSurfaceDestinationSpriteConstructor(self):
+        self.assertTrue(SurfaceDestinationSprite())
+        self.assertTrue(SurfaceDestinationSprite(center = (7,7)))
+
+    def testSurfaceDestinationSpriteLatLong(self):
+        so = ModelMock()
+        sp = SurfacePoint(5, 10)
+        so.destination = sp
+        sds = SurfaceDestinationSprite()
+        sds.surfaceObject = so
+        self.assertEqual(sds.latLong(), (5, 10))
+
 
 class TestSurfaceContext(unittest.TestCase):
     def setUp(self):
