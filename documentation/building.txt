@@ -1,0 +1,41 @@
+Have a building class object
+Encodes templates of a type of building.
+
+Has:
+- name
+- id 
+- construction information:
+- material inputs
+- location requirements
+- labour inputs
+- energy inputs
+- time cost 
+- money cost
+- space cost
+- operation information:
+- maintenance overhead
+- minimum crewing
+- pressurised
+- rad sensitivity
+- minimum power load
+- Shielding level
+
+Then various subclasses for different functions:
+- Production building:
+- Reactions implemented 
+- Capacity
+- Habitation building:
+- Capacity
+- Quality
+- Storage building:
+- Class 
+- Capacity
+- Connective building:
+- corridor
+- airlock
+- Special buildings:
+- Vehicle bay 
+- Rocket assembly 
+- Launch pad
+- comms array 
+- Research buildings 

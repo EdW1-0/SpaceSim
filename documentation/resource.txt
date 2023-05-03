@@ -1,0 +1,34 @@
+Did this before with ResourceSim.
+I think workable.
+
+Basically we have:
+- Resource class 
+- Each instance has:
+- name
+- id
+- properties:
+- countable
+- base values
+- mass 
+- volatile
+- propellant
+- edible
+- structural
+- shielding
+- vacuum tolerant
+- etc
+
+Then we have 
+- Reaction class
+- Encodes a reaction to convert between Resources 
+- Has inputs
+- Has outputs
+- Rate 
+- Efficiency
+- Cost (energy?)
+
+Do we make some resources special? (energy? money? research?)
+Do we do reaction class for endpoints? (e.g extract ore from ground?)
+Buildings then implement reactions 
+May make sense to make an inheritance tree for resources if some classes have special behaviour (e.g. propellants need to know
+specific impulse, but nothing else does. Construction materials need to know strength etc)

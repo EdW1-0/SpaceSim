@@ -1,0 +1,13 @@
+Has a number of things:
+- A crew
+- A location/locale
+- Resource stockpiles
+- Buildings of various types
+- Vehicles 
+- Ships 
+- Work orders
+
+How do we encode all these?
+Likely a set of dicts as before:
+- Buildings 
+- Stockpiles (current/max)
