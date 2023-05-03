@@ -16,6 +16,7 @@ class TestPlanetSurface(unittest.TestCase):
         self.assertTrue(hasattr(PlanetSurface(), "regions"))
         self.assertTrue(hasattr(PlanetSurface(), "points"))
         self.assertTrue(hasattr(PlanetSurface(), "radius"))
+        self.assertTrue(hasattr(PlanetSurface(), "planetClass"))
         self.assertTrue(isinstance(PlanetSurface().regions, dict))
         self.assertTrue(isinstance(PlanetSurface().points, dict))
 
