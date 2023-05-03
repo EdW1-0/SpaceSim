@@ -39,6 +39,7 @@ from pygame_gui  import (
 
 LOADSURFACEVIEW = pygame.USEREVENT + 3
 
+SELECTED_REGION_COLOUR = (180, 180, 10)
 
 center = (500, 400)
 
@@ -175,7 +176,7 @@ class SurfaceContext(GUIContext):
     
     def computeRegionColour(self, region):
         if self.selectedObject == region:
-            colour = (180, 180, 10)
+            colour = SELECTED_REGION_COLOUR
         else:
             planetClass = self.planetSurface.planetClass
             terrain = self.model.planetSim.planetClassById(planetClass)[region.terrain]

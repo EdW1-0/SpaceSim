@@ -1,10 +1,11 @@
-from views.surfaceContext import SurfaceContext, SurfaceObjectSprite, SurfaceDestinationSprite
+from views.surfaceContext import SurfaceContext, SurfaceObjectSprite, SurfaceDestinationSprite, SELECTED_REGION_COLOUR
 from views.guiContext import GUIContext
 
 import unittest
 from tests.test_views.test_guiContext import ScreenMock, ModelMock
 
 from planetsim.surfacePoint import SurfacePoint
+from planetsim.planetSim import PlanetSim
 
 import pygame
 import pygame_gui
@@ -84,4 +85,29 @@ class TestSurfaceContext(unittest.TestCase):
         p2 = sc.xyToLatLong(sc.latLongToXY((30, 30)))
         self.assertAlmostEqual(p1[0], p2[0])
         self.assertAlmostEqual(p1[1], p2[1])
+
+class TestSurfaceContextGraphics(unittest.TestCase):
+    def setUp(self):
+        self.ps = PlanetSim()
+        self.mm = ModelMock()
+        tm = ModelMock()
+        self.mm.timingMaster = tm
+        self.mm.planetSim = self.ps
+        pygame.init()
+        self.manager = pygame_gui.UIManager((1200, 800))
+        screen = pygame.display.set_mode((1200, 800))
+
+
+    def testSurfaceContextComputeRegionColour(self):
+        sc = SurfaceContext(None, self.mm, self.manager, self.ps.planetById("MERCURY"))
+        r = self.ps.planetById("MERCURY").surface.regionById(1)
+        sc.computeRegionColour(r)
+
+        self.assertEqual(sc.regionColours[r.id], [150, 10, 10])
+        sc.selectedObject = r
+        sc.computeRegionColour(r)
+        self.assertEqual(sc.regionColours[r.id], SELECTED_REGION_COLOUR)
+        
+
+
         
