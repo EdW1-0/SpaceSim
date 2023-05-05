@@ -1,0 +1,30 @@
+{
+    "Resources":
+    [
+       {
+        "id": "ENERGY",
+        "name": "Energy",
+        "baseValue": 1.0,
+        "units": "J"
+       },
+       {
+        "id": "H2",
+        "name": "Hydrogen",
+        "baseValue": 10.0,
+        "units": "m^3"
+       },
+       {
+        "id": "O2",
+        "name": "Oxygen",
+        "baseValue": 5.0,
+        "units": "m^3"
+       },
+       {
+        "id": "H2O",
+        "name": "Water",
+        "baseValue": 1.0,
+        "units": "m^3"
+       }
+
+    ]
+}

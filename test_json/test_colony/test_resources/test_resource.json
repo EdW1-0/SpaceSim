@@ -1,0 +1,16 @@
+{
+    "Resources": [
+        {
+            "id": "RAD",
+            "name": "Radioisotopes",
+            "baseValue": 1000.0,
+            "units": "g"
+        },
+        {
+            "id": "HE3",
+            "name": "Helium 3",
+            "baseValue": 10000.0,
+            "units": "m^3"
+        }
+    ]
+}

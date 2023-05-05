@@ -1,0 +1,17 @@
+{
+    "Reactions":
+    [
+        {
+            "id": "ELECTROLYSIS",
+            "name": "Electrolysis",
+            "inputs": {
+                "H2": 2,
+                "O2": 1,
+                "Energy": 100.0
+            },
+            "outputs": {
+                "H2O": 2
+            }
+        }
+    ]
+}
