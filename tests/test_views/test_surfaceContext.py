@@ -107,7 +107,13 @@ class TestSurfaceContextGraphics(unittest.TestCase):
         sc.selectedObject = r
         sc.computeRegionColour(r)
         self.assertEqual(sc.regionColours[r.id], SELECTED_REGION_COLOUR)
-        
+
+    def testSurfaceContextExtractPolygons(self):
+        sc = SurfaceContext(None, self.mm, self.manager, self.ps.planetById("MERCURY"))
+        pc = sc.polyCount
+        sc.extractPolygons()
+        pc2 = sc.polyCount
+        self.assertEqual(pc2 - pc, 8)
 
 
         
