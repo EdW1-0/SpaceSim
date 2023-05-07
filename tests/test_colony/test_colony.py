@@ -7,7 +7,15 @@ class TestColony(unittest.TestCase):
         self.assertTrue(Colony)
 
     def testColonyConstructor(self):
-        self.assertTrue(Colony())
+        self.assertTrue(Colony(0, "Discovery Base"))
 
     def testColonyAttributes(self):
-        self.assertTrue(hasattr(Colony(), "buildings"))
+        c = Colony(0, "Default")
+        self.assertTrue(hasattr(c, "id"))
+        self.assertTrue(hasattr(c, "name"))
+        self.assertTrue(hasattr(c, "buildings"))
+        self.assertTrue(isinstance(c.buildings, dict))
+        self.assertTrue(hasattr(c, "ships"))
+        self.assertTrue(isinstance(c.ships, dict))
+        self.assertTrue(hasattr(c, "vehicles"))
+        self.assertTrue(isinstance(c.vehicles, dict))

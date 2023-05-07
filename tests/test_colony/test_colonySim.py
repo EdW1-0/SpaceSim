@@ -44,6 +44,13 @@ class TestColonySim(unittest.TestCase):
         self.assertEqual(csb._buildingClasses["HAB"].constructionTime, 30)
         self.assertEqual(csb._buildingClasses["SOL"].constructionCost, 200.0)
 
+    def testColonySimCreateColony(self):
+        cs = ColonySim()
+        self.assertEqual(len(cs._colonies.values()), 0)
+        self.assertEqual(cs.createColony("Hadley's Hope"), 0)
+        self.assertEqual(len(cs._colonies.values()), 1)
+        self.assertEqual(cs.createColony("Freedom's Progress"), 1)
+
 
 
 
