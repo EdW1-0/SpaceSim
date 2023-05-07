@@ -31,4 +31,20 @@ class TestColonySim(unittest.TestCase):
 
         csr = ColonySim(resourcePath="test_json/test_colony/test_resources")
         self.assertEqual(len(csr._resources.values()), 2)
+        self.assertEqual(csr._resources["RAD"].units, "g")
+        self.assertEqual(csr._resources["HE3"].baseValue, 10000.0)
+
+        csrc = ColonySim(reactionPath="test_json/test_colony/test_reactions")
+        self.assertEqual(len(csrc._reactions.values()), 2)
+        self.assertEqual(csrc._reactions["ELECTROLYSIS"].inputs["H2O"], 2)
+        self.assertEqual(csrc._reactions["SABATIER"].outputs["CH4"], 1)
+
+        csb =  ColonySim(buildingPath="test_json/test_colony/test_buildingClasses")
+        self.assertEqual(len(csb._buildingClasses.values()), 2)
+        self.assertEqual(csb._buildingClasses["HAB"].constructionTime, 30)
+        self.assertEqual(csb._buildingClasses["SOL"].constructionCost, 200.0)
+
+
+
+
         

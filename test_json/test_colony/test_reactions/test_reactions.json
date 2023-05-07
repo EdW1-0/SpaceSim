@@ -1,0 +1,34 @@
+{
+    "Reactions": [
+        {
+            "id": "ELECTROLYSIS",
+            "name": "Water Electrolysis",
+            "inputs":
+            {
+                "H2O": 2,
+                "E": 100.0
+            },
+            "outputs":
+            {
+                "H2": 2,
+                "O2": 1
+            }
+        },
+        {
+            "id": "SABATIER",
+            "name": "Sabatier Reaction",
+            "inputs":
+            {
+                "CO2": 1,
+                "H2O": 2,
+                "E": 50.0
+            },
+            "outputs":
+            {
+                "CH4": 1,
+                "O2": 2
+            }
+        }
+
+    ]
+}

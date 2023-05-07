@@ -1,0 +1,16 @@
+{
+    "Buildings": [
+        {
+            "id": "HAB",
+            "name": "Habitation Module",
+            "constructionCost": 1000,
+            "constructionTime": 30
+        },
+        {
+            "id": "SOL",
+            "name": "Solar Array",
+            "constructionCost": 200,
+            "constructionTime": 10
+        }
+    ]
+}
