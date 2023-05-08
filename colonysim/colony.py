@@ -24,3 +24,14 @@ class Colony:
         id = next(self.buildingIdGenerator)
         self.buildings[id] = Building(id, buildingClass)
         return id
+    
+    def constructBuilding(self, id):
+        building = self.buildingById(id)
+        return building.construct()
+    
+    def buildingById(self, id):
+        if not isinstance(id, int):
+            raise TypeError
+        elif id < 0:
+            raise ValueError
+        return self.buildings[id]

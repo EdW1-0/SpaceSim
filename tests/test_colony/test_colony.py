@@ -2,7 +2,7 @@ import unittest
 
 from colonysim.colony import Colony
 from colonysim.buildingClass import BuildingClass
-from colonysim.building import Building
+from colonysim.building import Building, BuildingStatus
 
 class TestColony(unittest.TestCase):
     def testColony(self):
@@ -22,10 +22,19 @@ class TestColony(unittest.TestCase):
         self.assertTrue(hasattr(c, "vehicles"))
         self.assertTrue(isinstance(c.vehicles, dict))
 
+class TestColonyBuildingConstruction(unittest.TestCase):
+    def setUp(self):
+        self.bc = BuildingClass("MOCK", "Mock Building")
+
     def testColonyAddBuilding(self):
-        bc = BuildingClass("MOCK", "Mock Building")
         c = Colony(0, "Default")
-        self.assertEqual(c.addBuilding(bc), 0)
+        self.assertEqual(c.addBuilding(self.bc), 0)
         self.assertEqual(len(c.buildings), 1)
-        self.assertEqual(c.addBuilding(bc), 1)
+        self.assertEqual(c.addBuilding(self.bc), 1)
         self.assertEqual(len(c.buildings), 2)
+
+    def testColonyConstructBuilding(self):
+        c = Colony(0, "Default")
+        id = c.addBuilding(self.bc)
+        c.constructBuilding(id)
+        self.assertEqual(c.buildingById(id).status, BuildingStatus.IDLE)
