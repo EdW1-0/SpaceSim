@@ -1,6 +1,8 @@
 import unittest
 
 from colonysim.colony import Colony
+from colonysim.buildingClass import BuildingClass
+from colonysim.building import Building
 
 class TestColony(unittest.TestCase):
     def testColony(self):
@@ -19,3 +21,11 @@ class TestColony(unittest.TestCase):
         self.assertTrue(isinstance(c.ships, dict))
         self.assertTrue(hasattr(c, "vehicles"))
         self.assertTrue(isinstance(c.vehicles, dict))
+
+    def testColonyAddBuilding(self):
+        bc = BuildingClass("MOCK", "Mock Building")
+        c = Colony(0, "Default")
+        self.assertEqual(c.addBuilding(bc), 0)
+        self.assertEqual(len(c.buildings), 1)
+        self.assertEqual(c.addBuilding(bc), 1)
+        self.assertEqual(len(c.buildings), 2)

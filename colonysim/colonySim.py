@@ -12,7 +12,7 @@ class ColonySim:
         self._resources = {}
         self._reactions = {}
 
-        self.idGenerator = self.newParticleId()
+        self.idGenerator = self.newBuildingId()
         self._colonies = {}
 
         self._resources = self.loadEntityFile(resourcePath, "Resources", Resource)
@@ -34,7 +34,8 @@ class ColonySim:
                 entityFile.close()
         return entityDict
     
-    def newParticleId(self):
+    ###TODO: This has been copy/pasted a few times now, should really go in its own utility library with a few other commonly used patterns
+    def newBuildingId(self):
         nodeIdCounter = 0
         while True:
             yield nodeIdCounter
