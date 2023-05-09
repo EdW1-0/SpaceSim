@@ -1,6 +1,7 @@
 import unittest
 
 from colonysim.colonySim import ColonySim
+from colonysim.buildingClass import ProductionBuildingClass
 
 class TestColonySim(unittest.TestCase):
     def testColonySim(self):
@@ -28,6 +29,7 @@ class TestColonySim(unittest.TestCase):
         self.assertTrue(len(cs._resources.values()) > 0)
         self.assertTrue(len(cs._reactions.values()) > 0)
         self.assertTrue(len(cs._buildingClasses.values()) > 0)
+        self.assertTrue(isinstance(cs._buildingClasses["REACTOR"], ProductionBuildingClass))
 
         csr = ColonySim(resourcePath="test_json/test_colony/test_resources")
         self.assertEqual(len(csr._resources.values()), 2)

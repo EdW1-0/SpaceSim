@@ -29,3 +29,9 @@ class Building:
         if self.status != BuildingStatus.ACTIVE:
             raise BuildingStatusError
         self.status = BuildingStatus.IDLE
+
+class ProductionBuilding(Building):
+    def __init__(self, *args, **kwargs):
+        super(ProductionBuilding, self).__init__(*args, **kwargs)
+
+

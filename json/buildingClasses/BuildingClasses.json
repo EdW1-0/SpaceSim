@@ -11,6 +11,16 @@
             "name": "Solar Array",
             "constructionCost": "200",
             "constructionTime": "10"
+        },
+        {
+            "id": "REACTOR",
+            "name": "Chemical Reactor",
+            "constructionCost": "2000",
+            "constructionTime": "200",
+            "reactions": {
+                "SABATIER": 2.0,
+                "ELECTROLYSIS": 1.0
+            }
         }
     ]
 }

@@ -1,7 +1,7 @@
 import unittest
 
-from colonysim.building import Building, BuildingStatus, BuildingStatusError
-from colonysim.buildingClass import BuildingClass
+from colonysim.building import Building, BuildingStatus, BuildingStatusError, ProductionBuilding
+from colonysim.buildingClass import BuildingClass, ProductionBuildingClass
 
 class TestBuilding(unittest.TestCase):
     def setUp(self):
@@ -46,6 +46,17 @@ class TestBuilding(unittest.TestCase):
         self.assertEqual(b.status, BuildingStatus.IDLE)
         with self.assertRaises(BuildingStatusError):
             b.stop()
+
+class TestProductionBuilding(unittest.TestCase):
+    def setUp(self):
+        self.pbc = ProductionBuildingClass("MOCK", "Mock", reactions={"SABATIER": 2.0})
+
+    def testProductionBuilding(self):
+        self.assertTrue(ProductionBuilding)
+
+    def testProductionBuildingConstructor(self):
+        self.assertTrue(ProductionBuilding(3, self.pbc))
+
 
 
 
