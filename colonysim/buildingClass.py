@@ -9,3 +9,8 @@ class ProductionBuildingClass(BuildingClass):
     def __init__(self, *args, reactions = {}, **kwargs):
         super(ProductionBuildingClass, self).__init__(*args, **kwargs)
         self.reactions = reactions
+
+class StorageBuildingClass(BuildingClass):
+    def __init__(self, *args, stores = {}, **kwargs):
+        super(StorageBuildingClass, self).__init__(*args, **kwargs)
+        self.stores = stores

@@ -3,23 +3,35 @@
         {
             "id": "HAB",
             "name": "Habitation Module",
-            "constructionCost": "1000",
-            "constructionTime": "30"
+            "constructionCost": 1000,
+            "constructionTime": 30
         },
         {
             "id": "SOL",
             "name": "Solar Array",
-            "constructionCost": "200",
-            "constructionTime": "10"
+            "constructionCost": 200,
+            "constructionTime": 10
         },
         {
             "id": "REACTOR",
             "name": "Chemical Reactor",
-            "constructionCost": "2000",
-            "constructionTime": "200",
+            "constructionCost": 2000,
+            "constructionTime": 200,
             "reactions": {
                 "SABATIER": 2.0,
                 "ELECTROLYSIS": 1.0
+            }
+        },
+        {
+            "id": "TANK",
+            "name": "Gas Tank",
+            "constructionCost": 500,
+            "constructionTime": 50,
+            "stores": {
+                "CH4": 16000,
+                "CO2": 48000,
+                "O2": 32000,
+                "H2": 2000
             }
         }
     ]

@@ -3,7 +3,7 @@ import json
 
 from colonysim.resource import Resource
 from colonysim.reaction import Reaction
-from colonysim.buildingClass import BuildingClass, ProductionBuildingClass
+from colonysim.buildingClass import BuildingClass, ProductionBuildingClass, StorageBuildingClass
 from colonysim.colony import Colony
 
 class ColonySim:
@@ -19,7 +19,13 @@ class ColonySim:
 
         self._reactions = self.loadEntityFile(reactionPath, "Reactions", Reaction)
 
-        self._buildingClasses = self.loadEntityFile(buildingPath, "Buildings", BuildingClass, {"reactions": ProductionBuildingClass})
+        self._buildingClasses = self.loadEntityFile(buildingPath, 
+                                                    "Buildings", 
+                                                    BuildingClass, 
+                                                    {
+                                                        "reactions": ProductionBuildingClass,
+                                                        "stores": StorageBuildingClass
+                                                        })
 
     def extractEntityJson(self, path, id):
         entityFile = open(path, "r")
