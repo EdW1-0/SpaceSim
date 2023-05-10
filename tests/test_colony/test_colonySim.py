@@ -53,7 +53,13 @@ class TestColonySim(unittest.TestCase):
         self.assertEqual(len(cs._colonies.values()), 1)
         self.assertEqual(cs.createColony("Freedom's Progress"), 1)
 
+class TestColonySimObjectLookup(unittest.TestCase):
+    def setUp(self):
+        self.cs = ColonySim()
 
+    def testColonySimReactionById(self):
+        self.assertTrue(self.cs.reactionById("SABATIER"))
+        self.assertEqual(self.cs.reactionById("SABATIER").inputs, {"CO2": 1, "H2O": 2})
 
 
         

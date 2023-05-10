@@ -2,6 +2,7 @@ import unittest
 
 from colonysim.building import Building, BuildingStatus, BuildingStatusError, ProductionBuilding, StorageBuilding
 from colonysim.buildingClass import BuildingClass, ProductionBuildingClass, StorageBuildingClass
+from colonysim.colonySim import ColonySim
 
 class TestBuilding(unittest.TestCase):
     def setUp(self):
@@ -47,15 +48,61 @@ class TestBuilding(unittest.TestCase):
         with self.assertRaises(BuildingStatusError):
             b.stop()
 
+
 class TestProductionBuilding(unittest.TestCase):
     def setUp(self):
-        self.pbc = ProductionBuildingClass("MOCK", "Mock", reactions={"SABATIER": 2.0})
+        self.pbc = ProductionBuildingClass("MOCK", "Mock", reactions={"SABATIER": 2.0, "ELECTROLYSIS": 3.0})
+        self.cs = ColonySim()
 
     def testProductionBuilding(self):
         self.assertTrue(ProductionBuilding)
 
     def testProductionBuildingConstructor(self):
-        self.assertTrue(ProductionBuilding(3, self.pbc))
+        self.assertTrue(ProductionBuilding(3, self.pbc, self.cs))
+
+    def testProductionBuildingAttributes(self):
+        pb = ProductionBuilding(6, self.pbc, self.cs)
+        self.assertTrue(hasattr(pb, "reaction"))
+        self.assertTrue(hasattr(pb, "rate"))
+
+    def testProductionBuildingSetReaction(self):
+        pb = ProductionBuilding(2, self.pbc, self.cs)
+        self.assertEqual(pb.reaction, "SABATIER")
+        pb.setReaction("ELECTROLYSIS")
+        self.assertEqual(pb.reaction, "ELECTROLYSIS")
+        with self.assertRaises(KeyError):
+            pb.setReaction("HABER")
+
+    def testProductionBuildingReact(self):
+        pb = ProductionBuilding(4, self.pbc, self.cs)
+        pb.setReaction("SABATIER")
+        self.assertEqual(pb.react({"CO2": 20, "H2O": 20}), {"CO2": 18.0, "H2O": 16.0, "CH4": 2.0, "O2": 4.0})
+    
+    def testProductionBuildingReactAddProducts(self):
+        pb = ProductionBuilding(7, self.pbc, self.cs)
+        pb.setReaction("ELECTROLYSIS")
+        self.assertEqual(pb.react({"H2O": 20, "O2": 6, "ENERGY": 1000}), {"H2O": 14.0, "H2": 6.0, "O2": 9.0, "ENERGY": 700.0})
+    
+    def testProductionBuildingReactPassInert(self):
+        pb = ProductionBuilding(8, self.pbc, self.cs)
+        pb.setReaction("SABATIER")
+        self.assertEqual(pb.react({"CO2": 20, "H2O": 20, "Xe": 5}), {"CO2": 18.0, "H2O": 16.0, "CH4": 2.0, "O2": 4.0, "Xe": 5})
+
+    def testProductionBuildingReactFraction(self):
+        pb = ProductionBuilding(9, self.pbc, self.cs)
+        pb.setReaction("SABATIER")
+        self.assertEqual(pb.react({"CO2": 20, "H2O": 1}), {"CO2": 19.5, "H2O": 0, "CH4": 0.5, "O2": 1.0})
+        self.assertEqual(pb.react({"CO2": 1, "H2O": 1}), {"CO2": 0.5, "H2O": 0.0, "CH4": 0.5, "O2": 1.0})
+        self.assertEqual(pb.react({"CO2": 0.0, "H2O": 300}), {"CO2": 0.0, "H2O": 300.0, "CH4": 0.0, "O2": 0.0})
+
+    def testProductionBuildingReactBadInput(self):
+        pb = ProductionBuilding(9, self.pbc, self.cs)
+        pb.setReaction("SABATIER")
+        with self.assertRaises(KeyError):
+            pb.react({"CO2": 1.0})
+        with self.assertRaises(TypeError):
+            pb.react("CO2")
+
 
 class TestStorageBuilding(unittest.TestCase):
     def setUp(self):

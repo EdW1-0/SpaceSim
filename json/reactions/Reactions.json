@@ -4,13 +4,25 @@
         {
             "id": "ELECTROLYSIS",
             "name": "Electrolysis",
-            "inputs": {
+            "outputs": {
                 "H2": 2,
-                "O2": 1,
-                "E": 100.0
+                "O2": 1
+            },
+            "inputs": {
+                "H2O": 2,
+                "ENERGY": 100 
+            }
+        },
+        {
+            "id": "SABATIER",
+            "name": "Sabatier Reaction",
+            "inputs": {
+                "CO2": 1,
+                "H2O": 2
             },
             "outputs": {
-                "H2O": 2
+                "CH4": 1,
+                "O2": 2
             }
         }
     ]

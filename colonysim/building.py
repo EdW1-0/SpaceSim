@@ -31,8 +31,59 @@ class Building:
         self.status = BuildingStatus.IDLE
 
 class ProductionBuilding(Building):
-    def __init__(self, *args, **kwargs):
-        super(ProductionBuilding, self).__init__(*args, **kwargs)
+    def __init__(self, id, buildingClass, colonySim):
+        super(ProductionBuilding, self).__init__(id, buildingClass)
+        self.reaction = next(iter(buildingClass.reactions))
+        self.rate = self.buildingClass.reactions[self.reaction]
+        self.colonySim = colonySim
+
+    def setReaction(self, id):
+        self.reaction = id
+        self.rate = self.buildingClass.reactions[self.reaction]
+
+    def react(self, reactants):
+        # Algorithm for this:
+        # Sanity checking on reactants type etc.
+        # Check reactants has each of required inputs.
+        # Then formula is - each of reactants in proportions from reaction * efficiency of building
+        # If all inputs have enough, then this is the reaction that happens.
+        # If one or more is short, find ratio of available input to max input
+        # Find smallest ratio
+        # Multiply all reactants by this ratio
+        # Compute output dict - subtract inputs from starting reactants and add outputs.
+        # Algorithm should ignore any unused reactants and pass them through unchanged
+        # Algorithm should not care if outputs are not in reactant dict, but should add them to output dict
+        if not isinstance(reactants, dict):
+            raise TypeError
+
+        reaction = self.colonySim.reactionById(self.reaction)
+        for input in reaction.inputs:
+            if input not in reactants:
+                raise KeyError
+            
+        inputs = reaction.inputs.copy()
+        outputs = reaction.outputs.copy()
+        endstate = reactants.copy()
+        minFraction = 1.0
+        for i in inputs:
+            inputs[i] *= self.rate
+            if inputs[i] > endstate[i]:
+                minFraction = min(minFraction, endstate[i]/inputs[i])
+
+        for i in inputs:
+            endstate[i] -= inputs[i] * minFraction
+
+        for o in outputs:
+            outputs[o] *= self.rate * minFraction
+            if o in endstate:
+                endstate[o] += outputs[o]
+            else:
+                endstate[o] = outputs[o]
+
+        return endstate
+
+
+
 
 class StorageBuilding(Building):
     def __init__(self, id, buildingClass):
