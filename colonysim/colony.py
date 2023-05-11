@@ -29,6 +29,14 @@ class Colony:
         building = self.buildingById(id)
         return building.construct()
     
+    def activateBuilding(self, id):
+        building = self.buildingById(id)
+        return building.start()
+    
+    def idleBuilding(self, id):
+        building = self.buildingById(id)
+        return building.stop()
+    
     def buildingById(self, id):
         if not isinstance(id, int):
             raise TypeError

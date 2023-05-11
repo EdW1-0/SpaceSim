@@ -38,3 +38,19 @@ class TestColonyBuildingConstruction(unittest.TestCase):
         id = c.addBuilding(self.bc)
         c.constructBuilding(id)
         self.assertEqual(c.buildingById(id).status, BuildingStatus.IDLE)
+
+    def testColonyStartBuilding(self):
+        c = Colony(0, "Default")
+        id = c.addBuilding(self.bc)
+        c.constructBuilding(id)
+        c.activateBuilding(id)
+        self.assertEqual(c.buildingById(id).status, BuildingStatus.ACTIVE)
+
+    def testColonyStopBuilding(self):
+        c = Colony(0, "Default")
+        id = c.addBuilding(self.bc)
+        c.constructBuilding(id)
+        c.activateBuilding(id)
+        self.assertEqual(c.buildingById(id).status, BuildingStatus.ACTIVE)
+        c.idleBuilding(id)
+        self.assertEqual(c.buildingById(id).status, BuildingStatus.IDLE)
