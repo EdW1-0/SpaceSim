@@ -24,6 +24,7 @@ class TestProductionOrder(unittest.TestCase):
         self.assertTrue(hasattr(po, "id"))
         self.assertTrue(hasattr(po, "reaction"))
         self.assertTrue(hasattr(po, "amount"))
+        self.assertTrue(hasattr(po, "remaining"))
         self.assertTrue(hasattr(po, "status"))
 
     def testProductionOrderStatus(self):

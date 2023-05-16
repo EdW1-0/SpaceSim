@@ -16,6 +16,7 @@ class ProductionOrder:
             raise TypeError
         if amount < 0:
             raise ValueError
+        self.remaining = self.amount
         self.reaction = reaction
         self.status = OrderStatus.PENDING
 

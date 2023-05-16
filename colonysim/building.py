@@ -41,7 +41,7 @@ class ProductionBuilding(Building):
         self.reaction = id
         self.rate = self.buildingClass.reactions[self.reaction]
 
-    def react(self, reactants):
+    def react(self, reactants, quota = None):
         # Algorithm for this:
         # Sanity checking on reactants type etc.
         # Check reactants has each of required inputs.
@@ -61,12 +61,15 @@ class ProductionBuilding(Building):
             if input not in reactants:
                 raise KeyError
             
+        if quota is None:
+            quota = 99999999
+            
         inputs = reaction.inputs.copy()
         outputs = reaction.outputs.copy()
         endstate = reactants.copy()
         minFraction = 1.0
         for i in inputs:
-            inputs[i] *= self.rate
+            inputs[i] *= min(self.rate, quota)
             if inputs[i] > endstate[i]:
                 minFraction = min(minFraction, endstate[i]/inputs[i])
 
@@ -74,7 +77,7 @@ class ProductionBuilding(Building):
             endstate[i] -= inputs[i] * minFraction
 
         for o in outputs:
-            outputs[o] *= self.rate * minFraction
+            outputs[o] *= min(quota, self.rate) * minFraction
             if o in endstate:
                 endstate[o] += outputs[o]
             else:

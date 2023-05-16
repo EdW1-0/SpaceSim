@@ -103,6 +103,14 @@ class TestProductionBuilding(unittest.TestCase):
         with self.assertRaises(TypeError):
             pb.react("CO2")
 
+    def testProductionBuildingReactQuota(self):
+        pb = ProductionBuilding(10, self.pbc, self.cs)
+        pb.setReaction("ELECTROLYSIS")
+        self.assertEqual(pb.react({"ENERGY": 1000, "H2O": 20}), {"O2": 3.0, "H2": 6.0, "H2O": 14.0, "ENERGY": 700.0})
+        self.assertEqual(pb.react({"ENERGY": 1000, "H2O": 20}, quota = 9000), {"O2": 3.0, "H2": 6.0, "H2O": 14.0, "ENERGY": 700.0})
+        self.assertEqual(pb.react({"ENERGY": 1000, "H2O": 20}, quota = 1), {"O2": 1.0, "H2": 2.0, "H2O": 18.0, "ENERGY": 900.0})
+        
+
 
 class TestStorageBuilding(unittest.TestCase):
     def setUp(self):
