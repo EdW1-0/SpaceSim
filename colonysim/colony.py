@@ -93,47 +93,56 @@ class Colony:
     def tick(self, increment):
         while increment:
             increment -= 1
-            for po in self.productionOrders.values():
-                if not po.status == OrderStatus.RUNNING:
-                    continue
-
-                inputs = po.reaction.inputs.copy()
-                workingDict = {}
-                for i in inputs:
-                    # May not be the full amount, depending on what we have in stores. That's OK, work with what we have. mrd
-                    workingDict[i] = self.getResources(i, inputs[i]*po.amount)
-
-                for pb in self.productionBuildings():
-                    if pb.status == BuildingStatus.ACTIVE and pb.reaction == po.reaction.id:
-                        # Run reaction, and measure how much actually got done.
-                        prior = next(iter(workingDict.values()))
-                        workingDict = pb.react(workingDict, po.remaining)
-                        post = next(iter(workingDict.values()))
-                        # Should be 1.0 if enough resources for reaction
-                        # Should just pass this as return val from react
-                        ratio = (prior - post)/next(iter(inputs.values()))
-                        po.remaining -= ratio
-                    if po.remaining <= 0:
-                        break
-
-                for r in workingDict:
-                    # Not all products can necessarily be stored so record how much is wasted.
-                    wastage = self.storeResources(r, workingDict[r])
+            self.tickProduction()
+            self.tickConstruction()
 
 
+    # Algorithm for this:
+    # Get input reagants and amounts
+    # Request them from stores - needs own method
+    # Do we bother with fractionals or just bust if not enough?
+    # Then look for available production buildings - may abstract into own method
+    # On each pb,
+    #   Call react with product set
+    #   Decrement remaining
+    # Once remaining = 0 or no more pbs, 
+    # return product set to stockpile - needs own method
+    def tickProduction(self):
+        for po in self.productionOrders.values():
+            if not po.status == OrderStatus.RUNNING:
+                continue
 
+            inputs = po.reaction.inputs.copy()
+            workingDict = {}
+            for i in inputs:
+                # May not be the full amount, depending on what we have in stores. That's OK, work with what we have. mrd
+                workingDict[i] = self.getResources(i, inputs[i]*po.amount)
 
+            for pb in self.productionBuildings():
+                if pb.status == BuildingStatus.ACTIVE and pb.reaction == po.reaction.id:
+                    # Run reaction, and measure how much actually got done.
+                    prior = next(iter(workingDict.values()))
+                    workingDict = pb.react(workingDict, po.remaining)
+                    post = next(iter(workingDict.values()))
+                    # Should be 1.0 if enough resources for reaction
+                    # Should just pass this as return val from react
+                    ratio = (prior - post)/next(iter(inputs.values()))
+                    po.remaining -= ratio
+                if po.remaining <= 0:
+                    break
 
-            # Algorithm for this:
-            # Get input reagants and amounts
-            # Request them from stores - needs own method
-            # Do we bother with fractionals or just bust if not enough?
-            # Then look for available production buildings - may abstract into own method
-            # On each pb,
-            #   Call react with product set
-            #   Decrement remaining
-            # Once remaining = 0 or no more pbs, 
-            # return product set to stockpile - needs own method
+            for r in workingDict:
+                # Not all products can necessarily be stored so record how much is wasted.
+                wastage = self.storeResources(r, workingDict[r])
+
+    def tickConstruction(self):
+        for building in self.buildings.values():
+            if building.status == BuildingStatus.CONSTRUCTION:
+                if building.constructionProgress == building.buildingClass.constructionTime:
+                    self.constructBuilding(building.id)
+                else:
+                    building.constructionProgress += 1
+                
 
     
     def buildingById(self, id):

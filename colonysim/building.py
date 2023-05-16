@@ -14,6 +14,7 @@ class Building:
         self.buildingClass = buildingClass
         self.status = BuildingStatus.CONSTRUCTION
         self.condition = 100.0
+        self.constructionProgress = 0
 
     def construct(self):
         if self.status != BuildingStatus.CONSTRUCTION:

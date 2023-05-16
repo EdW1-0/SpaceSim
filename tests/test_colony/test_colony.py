@@ -215,6 +215,36 @@ class TestColonyTick(unittest.TestCase):
         self.assertEqual(self.c.getResources("H2", 50), 20.0)
         self.assertEqual(self.c.getResources("H2O", 10000), 480.0)
 
+class TestColonyTickConstruction(unittest.TestCase):
+    def setUp(self):
+        self.bc = BuildingClass("MOCK", "Mock Building", constructionTime=20)
+        self.pbc = ProductionBuildingClass("MOCKP", "Production", reactions={"ELECTROLYSIS": 1.0})
+        self.sbc = StorageBuildingClass("MOCKS", "Storage", stores={"H2O": 100})
+        self.cs = ColonySim()
+
+    def testColonyTickConstruction(self):
+        self.c = Colony(0, "Test")
+        self.c.addBuilding(self.pbc, self.cs)
+        self.c.addBuilding(self.sbc)
+        self.c.addBuilding(self.bc)
+        for i in range(3):
+            self.assertEqual(self.c.buildingById(i).constructionProgress, 0)
+        self.c.tick(1)
+        for i in range(3):
+            self.assertEqual(self.c.buildingById(i).constructionProgress, 1)
+
+        self.c.tick(3)
+        for i in range(3):
+            self.assertEqual(self.c.buildingById(i).constructionProgress, 4)
+            self.assertEqual(self.c.buildingById(i).status, BuildingStatus.CONSTRUCTION)
+
+        self.c.tick(10)
+        for i in range(2):
+            self.assertEqual(self.c.buildingById(i).constructionProgress, 10)
+            self.assertEqual(self.c.buildingById(i).status, BuildingStatus.IDLE)
+        self.assertEqual(self.c.buildingById(2).constructionProgress, 14)
+        self.assertEqual(self.c.buildingById(2).status, BuildingStatus.CONSTRUCTION)
+
 
 
           
