@@ -131,6 +131,18 @@ class StorageBuilding(Building):
         self.amount -= supply
 
         return supply
+    
+class ExtractionBuilding(Building):
+    def __init__(self, id, buildingClass):
+        super(ExtractionBuilding, self).__init__(id, buildingClass)
+
+    def rate(self):
+        return next(iter(self.buildingClass.extracts.values()))
+    
+    def extract(self, amount=None):
+        if amount is None:
+            amount = self.rate()
+        return min(amount, self.rate())
 
         
 

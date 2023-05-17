@@ -14,3 +14,8 @@ class StorageBuildingClass(BuildingClass):
     def __init__(self, *args, stores = {}, **kwargs):
         super(StorageBuildingClass, self).__init__(*args, **kwargs)
         self.stores = stores
+
+class ExtractionBuildingClass(BuildingClass):
+    def __init__(self, *args, extracts = {}, **kwargs):
+        super(ExtractionBuildingClass, self).__init__(*args, **kwargs)
+        self.extracts = extracts

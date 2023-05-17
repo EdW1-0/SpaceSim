@@ -10,7 +10,10 @@
             "id": "SOL",
             "name": "Solar Array",
             "constructionCost": 200,
-            "constructionTime": 10
+            "constructionTime": 10,
+            "extracts": {
+                "ENERGY": 100.0
+            }
         },
         {
             "id": "REACTOR",

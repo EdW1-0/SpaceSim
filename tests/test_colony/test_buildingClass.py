@@ -1,6 +1,6 @@
 import unittest
 
-from colonysim.buildingClass import BuildingClass, StorageBuildingClass
+from colonysim.buildingClass import BuildingClass, StorageBuildingClass, ExtractionBuildingClass
 
 class TestBuildingClass(unittest.TestCase):
     def testBuildingClass(self):
@@ -30,3 +30,15 @@ class TestStorageBuildingClass(unittest.TestCase):
     def testStorageBuildingClassAttributes(self):
         sbc = StorageBuildingClass("TANK", "Gas Tank")
         self.assertTrue(hasattr(sbc, "stores"))
+
+class TestExtractionBuildingClass(unittest.TestCase):
+    def testExtractionBuildingClass(self):
+        self.assertTrue(ExtractionBuildingClass)
+
+    def testExtractionBuildingClassConstructor(self):
+        self.assertTrue(ExtractionBuildingClass("SOLAR", "Solar Array"))
+        self.assertTrue(ExtractionBuildingClass("SOLAR", "Solar Array", extracts={"ENERGY": 100}))
+
+    def testExtractionBuildingClassAttributes(self):
+        ebc = ExtractionBuildingClass("FOO", "Bar")
+        self.assertTrue(hasattr(ebc, "extracts"))

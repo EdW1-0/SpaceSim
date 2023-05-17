@@ -1,7 +1,7 @@
 import unittest
 
-from colonysim.building import Building, BuildingStatus, BuildingStatusError, ProductionBuilding, StorageBuilding
-from colonysim.buildingClass import BuildingClass, ProductionBuildingClass, StorageBuildingClass
+from colonysim.building import Building, BuildingStatus, BuildingStatusError, ProductionBuilding, StorageBuilding, ExtractionBuilding
+from colonysim.buildingClass import BuildingClass, ProductionBuildingClass, StorageBuildingClass, ExtractionBuildingClass
 from colonysim.colonySim import ColonySim
 
 class TestBuilding(unittest.TestCase):
@@ -179,7 +179,23 @@ class TestStorageBuilding(unittest.TestCase):
             sb.remove({"H2": 10, "O2": 10})
 
 
+class TestExtractionBuilding(unittest.TestCase):
+    def setUp(self):
+        self.ebc = ExtractionBuildingClass("MOCK", "Mock", extracts={"ENERGY": 100})
 
+    def testExtractionBuilding(self):
+        self.assertTrue(ExtractionBuilding)
 
-
+    def testExtractionBuildingConstructor(self):
+        self.assertTrue(ExtractionBuilding(0, self.ebc))
         
+    def testExtractionBuildingRate(self):
+        eb = ExtractionBuilding(0, self.ebc)
+        self.assertEqual(eb.rate(), 100)
+
+    def testExtractBuildingExtract(self):
+        eb = ExtractionBuilding(0, self.ebc)
+        self.assertEqual(eb.extract(20), 20)
+        self.assertEqual(eb.extract(200), 100)
+        self.assertEqual(eb.extract(), 100)
+        self.assertEqual(eb.extract(0), 0)

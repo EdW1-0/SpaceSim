@@ -3,7 +3,7 @@ import json
 
 from colonysim.resource import Resource
 from colonysim.reaction import Reaction
-from colonysim.buildingClass import BuildingClass, ProductionBuildingClass, StorageBuildingClass
+from colonysim.buildingClass import BuildingClass, ProductionBuildingClass, StorageBuildingClass, ExtractionBuildingClass
 from colonysim.colony import Colony
 
 class ColonySim:
@@ -24,7 +24,8 @@ class ColonySim:
                                                     BuildingClass, 
                                                     {
                                                         "reactions": ProductionBuildingClass,
-                                                        "stores": StorageBuildingClass
+                                                        "stores": StorageBuildingClass,
+                                                        "extracts": ExtractionBuildingClass
                                                         })
 
     def extractEntityJson(self, path, id):
