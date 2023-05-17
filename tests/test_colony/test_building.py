@@ -25,6 +25,7 @@ class TestBuilding(unittest.TestCase):
         self.assertTrue(hasattr(b, "status"))
         self.assertTrue(hasattr(b, "condition"))
         self.assertTrue(hasattr(b, "constructionProgress"))
+        self.assertTrue(hasattr(b, "demolitionProgress"))
 
     def testBuildingStateMachine(self):
         b = Building(5, self.bc)
@@ -46,6 +47,15 @@ class TestBuilding(unittest.TestCase):
 
         b.stop()
         self.assertEqual(b.status, BuildingStatus.IDLE)
+        with self.assertRaises(BuildingStatusError):
+            b.stop()
+
+        b.demolish()
+        self.assertEqual(b.status, BuildingStatus.DEMOLITION)
+        with self.assertRaises(BuildingStatusError):
+            b.construct()
+        with self.assertRaises(BuildingStatusError):
+            b.start()
         with self.assertRaises(BuildingStatusError):
             b.stop()
 

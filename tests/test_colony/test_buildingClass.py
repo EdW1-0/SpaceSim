@@ -10,6 +10,8 @@ class TestBuildingClass(unittest.TestCase):
         self.assertTrue(BuildingClass("MONUMENT", "Monument"))
         self.assertTrue(BuildingClass("MONUMENT", "Monument", constructionTime = 100))
         self.assertTrue(BuildingClass("MONUMENT", "Monument", constructionTime = 100, constructionCost = {"STEEL", 50}))
+        self.assertTrue(BuildingClass("MONUMENT", "Monument", demolitionTime=20))
+        self.assertTrue(BuildingClass("MONUMENT", "Monument", demolitionTime=20, demolitionCost = {"ENERGY": 20}))
 
     def testBuildingClassAttributes(self):
         bc = BuildingClass("BOX", "Box")
@@ -17,6 +19,8 @@ class TestBuildingClass(unittest.TestCase):
         self.assertTrue(hasattr(bc, "name"))
         self.assertTrue(hasattr(bc, "constructionCost"))
         self.assertTrue(hasattr(bc, "constructionTime"))
+        self.assertTrue(hasattr(bc, "demolitionTime"))
+        self.assertTrue(hasattr(bc, "demolitionCost"))
         self.assertTrue(isinstance(bc.constructionCost, dict))
 
 class TestStorageBuildingClass(unittest.TestCase):

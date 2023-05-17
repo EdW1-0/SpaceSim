@@ -71,6 +71,16 @@ class TestColonyBuildingConstruction(unittest.TestCase):
         c.idleBuilding(id)
         self.assertEqual(c.buildingById(id).status, BuildingStatus.IDLE)
 
+    def testColonyDemolishBuilding(self):
+        c = Colony(0, "Default")
+        id = c.addBuilding(self.bc)
+        c.constructBuilding(id)
+        c.demolishBuilding(id)
+        self.assertEqual(c.buildingById(id).status, BuildingStatus.DEMOLITION)
+        c.removeBuilding(id)
+        with self.assertRaises(KeyError):
+            c.buildingById(id)
+
 class TestColonyProductionManagement(unittest.TestCase):
     def setUp(self):
         self.cs = ColonySim()
@@ -244,6 +254,40 @@ class TestColonyTickConstruction(unittest.TestCase):
             self.assertEqual(self.c.buildingById(i).status, BuildingStatus.IDLE)
         self.assertEqual(self.c.buildingById(2).constructionProgress, 14)
         self.assertEqual(self.c.buildingById(2).status, BuildingStatus.CONSTRUCTION)
+
+class TestColonyTickDemolition(unittest.TestCase):
+    def setUp(self):
+        self.bc = BuildingClass("MOCK", "Mock Building", demolitionTime=20)
+        self.pbc = ProductionBuildingClass("MOCKP", "Production", reactions={"ELECTROLYSIS": 1.0})
+        self.sbc = StorageBuildingClass("MOCKS", "Storage", stores={"H2O": 100})
+        self.cs = ColonySim()
+
+    def testColonyTickConstruction(self):
+        self.c = Colony(0, "Test")
+        self.c.addBuilding(self.pbc, self.cs)
+        self.c.addBuilding(self.sbc)
+        self.c.addBuilding(self.bc)
+        self.c.tick(25)
+        for i in range(3):
+            self.assertEqual(self.c.buildingById(i).status, BuildingStatus.IDLE)
+        self.c.demolishBuilding(0)
+        self.c.demolishBuilding(2)
+        self.assertEqual(self.c.buildingById(0).status, BuildingStatus.DEMOLITION)
+        self.assertEqual(self.c.buildingById(2).status, BuildingStatus.DEMOLITION)
+        self.assertEqual(self.c.buildingById(0).demolitionProgress, 0)
+        self.assertEqual(self.c.buildingById(2).demolitionProgress, 0)
+        self.c.tick(1)
+        self.assertEqual(self.c.buildingById(0).demolitionProgress, 1)
+        self.assertEqual(self.c.buildingById(2).demolitionProgress, 1)
+        self.assertEqual(self.c.buildingById(1).demolitionProgress, 0)
+        self.c.tick(10)
+        self.assertEqual(self.c.buildingById(2).demolitionProgress, 11)
+        with self.assertRaises(KeyError):
+            self.c.buildingById(0)
+        self.c.tick(20)
+        with self.assertRaises(KeyError):
+            self.c.buildingById(2)
+
 
 
 

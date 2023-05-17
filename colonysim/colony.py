@@ -61,6 +61,13 @@ class Colony:
         building = self.buildingById(id)
         return building.stop()
     
+    def demolishBuilding(self, id):
+        building = self.buildingById(id)
+        return building.demolish()
+    
+    def removeBuilding(self, id):
+        del self.buildings[id]
+    
     def startProductionOrder(self, id):
         order = self.productionOrderById(id)
         return order.start()
@@ -95,6 +102,7 @@ class Colony:
             increment -= 1
             self.tickProduction()
             self.tickConstruction()
+            self.tickDemolition()
 
 
     # Algorithm for this:
@@ -142,6 +150,18 @@ class Colony:
                     self.constructBuilding(building.id)
                 else:
                     building.constructionProgress += 1
+
+    def tickDemolition(self):
+        removeIds = []
+        for building in self.buildings.values():
+            if building.status == BuildingStatus.DEMOLITION:
+                if building.demolitionProgress == building.buildingClass.demolitionTime:
+                    removeIds.append(building.id)
+                else:
+                    building.demolitionProgress += 1
+
+        for id in removeIds:
+            self.removeBuilding(id)
                 
 
     

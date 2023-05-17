@@ -4,6 +4,7 @@ class BuildingStatus(enum.Enum):
     CONSTRUCTION = 0
     IDLE = 1
     ACTIVE = 2
+    DEMOLITION = 3
 
 class BuildingStatusError(Exception):
     pass
@@ -15,6 +16,7 @@ class Building:
         self.status = BuildingStatus.CONSTRUCTION
         self.condition = 100.0
         self.constructionProgress = 0
+        self.demolitionProgress = 0
 
     def construct(self):
         if self.status != BuildingStatus.CONSTRUCTION:
@@ -30,6 +32,9 @@ class Building:
         if self.status != BuildingStatus.ACTIVE:
             raise BuildingStatusError
         self.status = BuildingStatus.IDLE
+
+    def demolish(self):
+        self.status = BuildingStatus.DEMOLITION
 
 class ProductionBuilding(Building):
     def __init__(self, id, buildingClass, colonySim):
