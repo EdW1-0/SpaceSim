@@ -141,6 +141,9 @@ class ExtractionBuilding(Building):
     def __init__(self, id, buildingClass):
         super(ExtractionBuilding, self).__init__(id, buildingClass)
 
+    def material(self):
+        return next(iter(self.buildingClass.extracts))
+
     def rate(self):
         return next(iter(self.buildingClass.extracts.values()))
     

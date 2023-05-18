@@ -1,5 +1,5 @@
-from colonysim.building import Building, ProductionBuilding, StorageBuilding, BuildingStatus
-from colonysim.buildingClass import BuildingClass, ProductionBuildingClass, StorageBuildingClass
+from colonysim.building import Building, ProductionBuilding, StorageBuilding, BuildingStatus, ExtractionBuilding
+from colonysim.buildingClass import BuildingClass, ProductionBuildingClass, StorageBuildingClass, ExtractionBuildingClass
 from colonysim.productionOrder import ProductionOrder, OrderStatus
 
 class Colony:
@@ -35,6 +35,8 @@ class Colony:
             self.buildings[id] = ProductionBuilding(id, buildingClass, colonySim)
         elif isinstance(buildingClass, StorageBuildingClass):
             self.buildings[id] = StorageBuilding(id, buildingClass)
+        elif isinstance(buildingClass, ExtractionBuildingClass):
+            self.buildings[id] = ExtractionBuilding(id, buildingClass)
         elif isinstance(buildingClass, BuildingClass):
             self.buildings[id] = Building(id, buildingClass)
         else:
@@ -43,6 +45,9 @@ class Colony:
     
     def productionBuildings(self):
         return [building for building in self.buildings.values() if isinstance(building, ProductionBuilding)]
+    
+    def extractionBuildings(self):
+        return [building for building in self.buildings.values() if isinstance(building, ExtractionBuilding)]
 
     def addProductionOrder(self, reaction, amount):
         id = next(self.productionOrderIdGenerator)
@@ -100,6 +105,7 @@ class Colony:
     def tick(self, increment):
         while increment:
             increment -= 1
+            self.tickExtraction()
             self.tickProduction()
             self.tickConstruction()
             self.tickDemolition()
@@ -142,6 +148,12 @@ class Colony:
             for r in workingDict:
                 # Not all products can necessarily be stored so record how much is wasted.
                 wastage = self.storeResources(r, workingDict[r])
+
+    def tickExtraction(self):
+        for building in self.extractionBuildings():
+            if building.status == BuildingStatus.ACTIVE:
+                production = building.extract()
+                wastage = self.storeResources(building.material(), production)
 
     def tickConstruction(self):
         for building in self.buildings.values():

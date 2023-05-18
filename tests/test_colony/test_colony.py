@@ -1,7 +1,7 @@
 import unittest
 
 from colonysim.colony import Colony
-from colonysim.buildingClass import BuildingClass, ProductionBuildingClass, StorageBuildingClass
+from colonysim.buildingClass import BuildingClass, ProductionBuildingClass, StorageBuildingClass, ExtractionBuildingClass
 from colonysim.building import Building, BuildingStatus, ProductionBuilding, StorageBuilding
 from colonysim.colonySim import ColonySim
 from colonysim.productionOrder import OrderStatus
@@ -225,6 +225,33 @@ class TestColonyTick(unittest.TestCase):
         self.assertEqual(self.c.getResources("H2", 50), 20.0)
         self.assertEqual(self.c.getResources("H2O", 10000), 480.0)
 
+class TestColonyTickExtraction(unittest.TestCase):
+    def setUp(self):
+        self.sbc = StorageBuildingClass("BATTERY", "Battery", stores={"ENERGY": 10000})
+        self.ebc = ExtractionBuildingClass("SOLAR", "Solar Array", extracts={"ENERGY": 100})
+
+    def testColonyTickExtract(self):
+        self.c = Colony(0, "Test")
+        self.c.addBuilding(self.sbc)
+        self.c.addBuilding(self.ebc)
+        self.c.constructBuilding(0)
+        self.c.constructBuilding(1)
+        self.c.buildingById(0).start()
+        self.c.buildingById(1).start()
+        self.assertEqual(self.c.buildingById(0).amount, 0)
+        self.c.tick(1)
+        self.assertEqual(self.c.buildingById(0).amount, 100)
+        self.c.addBuilding(self.ebc)
+        self.c.addBuilding(self.ebc)
+        self.c.constructBuilding(2)
+        self.c.constructBuilding(3)
+        self.c.buildingById(3).start()
+        self.c.tick(1)
+        self.assertEqual(self.c.buildingById(0).amount, 300)
+        self.c.tick(10)
+        self.assertEqual(self.c.buildingById(0).amount, 2300)
+        
+
 class TestColonyTickConstruction(unittest.TestCase):
     def setUp(self):
         self.bc = BuildingClass("MOCK", "Mock Building", constructionTime=20)
@@ -262,7 +289,7 @@ class TestColonyTickDemolition(unittest.TestCase):
         self.sbc = StorageBuildingClass("MOCKS", "Storage", stores={"H2O": 100})
         self.cs = ColonySim()
 
-    def testColonyTickConstruction(self):
+    def testColonyTickDemolition(self):
         self.c = Colony(0, "Test")
         self.c.addBuilding(self.pbc, self.cs)
         self.c.addBuilding(self.sbc)
