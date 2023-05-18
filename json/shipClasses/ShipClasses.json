@@ -1,0 +1,14 @@
+{
+    "Ships": [
+        {
+            "id": "SATURNVI",
+            "name": "Saturn VI",
+            "maxDeltaV": 1000
+        },
+        {
+            "id": "SOLARSAIL",
+            "name": "Solar Sail",
+            "maxDeltaV": 10000
+        }
+    ]
+}

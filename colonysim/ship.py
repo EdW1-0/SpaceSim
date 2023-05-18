@@ -1,6 +1,8 @@
 class Ship:
-    def __init__(self, name, deltaV=0):
+    def __init__(self, id, name, shipClass, deltaV=0):
+        self.id = id
         self.name = name
+        self.shipClass = shipClass
         self.dv = deltaV
 
     def deltaV(self):

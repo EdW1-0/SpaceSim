@@ -25,6 +25,7 @@ class TestOrbitSim(unittest.TestCase):
         self.assertTrue(hasattr(OrbitSim(), "_particles"))
         self.assertTrue(hasattr(OrbitSim(), "_nodes"))
         self.assertTrue(hasattr(OrbitSim(), "_links"))
+        self.assertTrue(hasattr(OrbitSim(), "_shipClasses"))
 
     def testOrbitSimLoad(self):
         self.assertTrue(OrbitSim("test_json/test_orbits/happy_case.json"))
@@ -38,6 +39,7 @@ class TestOrbitSim(unittest.TestCase):
         self.assertEqual(len(OrbitSim("test_json/test_orbits/happy_case.json")._links), 3)
         with self.assertRaises(KeyError):
             OrbitSim("test_json/test_orbits/duplicate.json")
+        self.assertGreater(len(OrbitSim()._shipClasses), 0)
 
     def testOrbitSimParticleLoad(self):
         os = OrbitSim(particlePath = "json/Particles.json")

@@ -6,6 +6,8 @@ from colonysim.reaction import Reaction
 from colonysim.buildingClass import BuildingClass, ProductionBuildingClass, StorageBuildingClass, ExtractionBuildingClass
 from colonysim.colony import Colony
 
+from utility.fileLoad import loadEntityFile
+
 class ColonySim:
     def __init__(self, resourcePath = "json/resources", reactionPath = "json/reactions", buildingPath = "json/buildingClasses"):
         self._buildingClasses = {}
@@ -15,11 +17,11 @@ class ColonySim:
         self.idGenerator = self.newColonyId()
         self._colonies = {}
 
-        self._resources = self.loadEntityFile(resourcePath, "Resources", Resource)
+        self._resources = loadEntityFile(resourcePath, "Resources", Resource)
 
-        self._reactions = self.loadEntityFile(reactionPath, "Reactions", Reaction)
+        self._reactions = loadEntityFile(reactionPath, "Reactions", Reaction)
 
-        self._buildingClasses = self.loadEntityFile(buildingPath, 
+        self._buildingClasses = loadEntityFile(buildingPath, 
                                                     "Buildings", 
                                                     BuildingClass, 
                                                     {
@@ -28,29 +30,7 @@ class ColonySim:
                                                         "extracts": ExtractionBuildingClass
                                                         })
 
-    def extractEntityJson(self, path, id):
-        entityFile = open(path, "r")
-        entityJson = json.load(entityFile)
-        entities = entityJson[id]
-        entityFile.close()
-        return entities
 
-    def loadEntityFile(self, path, id, EntityClass, altClasses = {}):
-        entityDict = {}
-        for subdir, dirs, files in os.walk(path):
-            for file in files:
-                entities = self.extractEntityJson(path + "/" + file, id)
-                for e in entities:
-                    foundAlt = False
-                    for altId in altClasses:
-                        if altId in e:
-                            entityDict.update({e["id"]: altClasses[altId](**e)})
-                            foundAlt = True
-                            break
-                    if not foundAlt:
-                        entityDict.update({e["id"]: EntityClass(**e)})
-        return entityDict
-    
     ###TODO: This has been copy/pasted a few times now, should really go in its own utility library with a few other commonly used patterns
     def newColonyId(self):
         nodeIdCounter = 0

@@ -6,9 +6,12 @@ from orbitsim.particle import Particle, DeltaVError
 from orbitsim.orbitTrajectory import OrbitTrajectory, TrajectoryState
 
 from colonysim.ship import Ship
+from colonysim.shipClass import ShipClass
+
+from utility.fileLoad import loadEntityFile
 
 class OrbitSim:
-    def __init__(self, jsonPath = "json/Orbits.json", particlePath = None):
+    def __init__(self, jsonPath = "json/Orbits.json", particlePath = None, shipClassPath = "json/shipClasses"):
         jsonFile = open(jsonPath, "r")
 
         jsonBlob = json.load(jsonFile)
@@ -45,6 +48,10 @@ class OrbitSim:
                     self.nodeById(destId).links.append(linkIdCount)
                     linkIdCount += 1
 
+        self._shipClasses = loadEntityFile(shipClassPath, "Ships", ShipClass)
+
+        self.shipIdGenerator = self.newShipId()
+        self._ships = {}
 
         # for each orbital
         # if it has links
@@ -63,7 +70,8 @@ class OrbitSim:
             particleArray = particleBlob["Particles"]
 
             for particle in particleArray:
-                ship = Ship(particle["name"], 100)
+                shipId = self.createShip(particle["name"], next(iter(self._shipClasses.values())), 100)
+                ship = self._ships[shipId]
 
                 node = self.nodeById(particle["location"])
                 self.createParticle(node, ship)
@@ -83,6 +91,20 @@ class OrbitSim:
         while True:
             yield nodeIdCounter
             nodeIdCounter += 1
+
+    def newShipId(self):
+        shipIdCounter = 0
+        while True:
+            yield shipIdCounter
+            shipIdCounter += 1
+
+    def createShip(self, name, shipClass, deltaV = 0):
+        id = next(self.shipIdGenerator)
+        while (id in self._ships):
+            id = next(self.shipIdGenerator)
+
+        self._ships[id] = Ship(id, name, shipClass=shipClass, deltaV=deltaV)
+        return id
 
     def createParticle(self, node, payload = None):
         id = next(self.idGenerator)
