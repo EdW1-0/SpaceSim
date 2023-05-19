@@ -3,22 +3,26 @@
         {
             "name": "USS Enterprise",
             "velocity": 100,
-            "location": "EAS"
+            "location": "EAS",
+            "ship": 1
         },
         {
             "name": "USS Constitution",
             "velocity": 100,
-            "location": "EAS"
+            "location": "EAS",
+            "ship": 2
         },
         {
             "name": "USS Ticonderoga",
             "velocity": 10,
-            "location": "EAS"
+            "location": "EAS",
+            "ship": 3
         },
         {
             "name": "ISS Meghalaya",
             "velocity": 10,
-            "location": "MES"
+            "location": "MES",
+            "ship": 0
         }
     ]
 }

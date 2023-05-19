@@ -11,7 +11,7 @@ from colonysim.shipClass import ShipClass
 from utility.fileLoad import loadEntityFile
 
 class OrbitSim:
-    def __init__(self, jsonPath = "json/Orbits.json", particlePath = None, shipClassPath = "json/shipClasses"):
+    def __init__(self, jsonPath = "json/Orbits.json", particlePath = None, shipClassPath = "json/shipClasses", shipPath = "json/ships"):
         jsonFile = open(jsonPath, "r")
 
         jsonBlob = json.load(jsonFile)
@@ -48,10 +48,10 @@ class OrbitSim:
                     self.nodeById(destId).links.append(linkIdCount)
                     linkIdCount += 1
 
-        self._shipClasses = loadEntityFile(shipClassPath, "Ships", ShipClass)
+        self._shipClasses = loadEntityFile(shipClassPath, "ShipClasses", ShipClass)
 
         self.shipIdGenerator = self.newShipId()
-        self._ships = {}
+        self._ships = loadEntityFile(shipPath, "Ships", Ship)
 
         # for each orbital
         # if it has links
@@ -70,7 +70,7 @@ class OrbitSim:
             particleArray = particleBlob["Particles"]
 
             for particle in particleArray:
-                shipId = self.createShip(particle["name"], next(iter(self._shipClasses.values())), 100)
+                shipId = particle["ship"]
                 ship = self._ships[shipId]
 
                 node = self.nodeById(particle["location"])

@@ -1,0 +1,28 @@
+{
+    "Ships": [
+        {
+            "id": 0,
+            "name": "ISS Meghalaya",
+            "shipClass": "SOLARSAIL", 
+            "deltaV": 10000
+        },
+        {
+            "id": 1,
+            "name": "USS Enterprise",
+            "shipClass": "SATURNVI",
+            "deltaV": 200 
+        },
+        {
+            "id": 2,
+            "name": "USS Constitution",
+            "shipClass": "SATURNVI",
+            "deltaV": 200 
+        },
+        {
+            "id": 3,
+            "name": "USS Ticonderoga",
+            "shipClass": "SATURNVI",
+            "deltaV": 200 
+        }
+    ]
+}

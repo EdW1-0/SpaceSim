@@ -28,6 +28,7 @@ class TestParticle(unittest.TestCase):
         self.assertTrue(hasattr(Particle(0), "velocity"))
         self.assertTrue(hasattr(Particle(0), "payload"))
 
+
     def testParticleConstructor(self):
         self.assertEqual(Particle(7).id, 7)
         self.assertEqual(Particle(3).velocity, 0)
