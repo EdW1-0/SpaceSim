@@ -85,6 +85,11 @@ class PlanetSurface:
     def destroyObject(self, id):
         del self.points[id]
 
+    def transferVehicle(self, id):
+        vehicle = self.pointById(id)
+        self.destroyObject(id)
+        return vehicle
+
     def regionForPointId(self, id):
         object = self.pointById(id)
         return self.regionForObject(object)

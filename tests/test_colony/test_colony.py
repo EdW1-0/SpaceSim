@@ -25,6 +25,7 @@ class TestColony(unittest.TestCase):
         self.assertTrue(hasattr(c, "vehicles"))
         self.assertTrue(isinstance(c.vehicles, dict))
         self.assertTrue(hasattr(c, "orbitSim"))
+        self.assertTrue(hasattr(c, "locale"))
 
 class TestColonyBuildingConstruction(unittest.TestCase):
     def setUp(self):
@@ -330,6 +331,16 @@ class testColonyShip(unittest.TestCase):
         self.assertEqual(self.c.ships[4].shipClass, self.sc)
         self.assertEqual(self.c.ships[4].deltaV(), 56)
         
+class testColonyVehicle(unittest.TestCase):
+    def setUp(self):
+        self.gm = GameModel()
+        self.gm.load()
+        self.ps = self.gm.planetSim.planetById("MERCURY").surface
+
+    def testColonyAddVehicle(self):
+        self.c = Colony(0, "TEST", self.gm.orbitSim, self.ps)
+        self.c.addVehicle("Test vehicle", fuel = 100, maxV = 10)
+        self.assertGreater(len(self.c.vehicles), 0)
 
 
 
