@@ -3,9 +3,10 @@ from colonysim.buildingClass import BuildingClass, ProductionBuildingClass, Stor
 from colonysim.productionOrder import ProductionOrder, OrderStatus
 
 class Colony:
-    def __init__(self, id, name, ships = {}, vehicles = {}):
+    def __init__(self, id, name, orbitSim = None, ships = {}, vehicles = {}):
         self.id = id
         self.name = name
+        self.orbitSim = orbitSim
         self.ships = ships
         self.vehicles = vehicles
         self.buildings = {}
@@ -100,6 +101,12 @@ class Colony:
                 if surplus == 0:
                     break
         return surplus
+    
+    def addShip(self, name, shipClass, deltaV = 0):
+        shipId = self.orbitSim.createShip(name, shipClass, deltaV)
+        ship = self.orbitSim.transferShip(shipId)
+        self.ships[shipId] = ship
+
 
     
     def tick(self, increment):

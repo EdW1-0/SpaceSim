@@ -4,6 +4,7 @@ from colonysim.colony import Colony
 from colonysim.buildingClass import BuildingClass, ProductionBuildingClass, StorageBuildingClass, ExtractionBuildingClass
 from colonysim.building import Building, BuildingStatus, ProductionBuilding, StorageBuilding
 from colonysim.colonySim import ColonySim
+from gameModel import GameModel
 from colonysim.productionOrder import OrderStatus
 
 class TestColony(unittest.TestCase):
@@ -23,6 +24,7 @@ class TestColony(unittest.TestCase):
         self.assertTrue(isinstance(c.ships, dict))
         self.assertTrue(hasattr(c, "vehicles"))
         self.assertTrue(isinstance(c.vehicles, dict))
+        self.assertTrue(hasattr(c, "orbitSim"))
 
 class TestColonyBuildingConstruction(unittest.TestCase):
     def setUp(self):
@@ -314,6 +316,20 @@ class TestColonyTickDemolition(unittest.TestCase):
         self.c.tick(20)
         with self.assertRaises(KeyError):
             self.c.buildingById(2)
+
+class testColonyShip(unittest.TestCase):
+    def setUp(self):
+        self.gm = GameModel()
+        self.gm.load()
+        self.sc = self.gm.orbitSim.shipClassById("SATURNVI")
+
+    def testColonyAddShip(self):
+        self.c = Colony(0, "TEST", self.gm.orbitSim)
+        self.c.addShip("Test ship", self.sc, deltaV = 56)
+        self.assertGreater(len(self.c.ships), 0)
+        self.assertEqual(self.c.ships[4].shipClass, self.sc)
+        self.assertEqual(self.c.ships[4].deltaV(), 56)
+        
 
 
 

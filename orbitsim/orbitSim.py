@@ -52,6 +52,11 @@ class OrbitSim:
 
         self.shipIdGenerator = self.newShipId()
         self._ships = loadEntityFile(shipPath, "Ships", Ship)
+        ###TODO: Workaround to fix the fact ship gets the class id but should have a direct reference.
+        # Long term would be better to adapt loadEntityFile to handle this since this is a common pattern
+        # Perhaps pass an optional dict of tags to ref along with source dict (self._shipClasses in this case)
+        for ship in self._ships.values():
+            ship.shipClass = self._shipClasses[ship.shipClass]
 
         # for each orbital
         # if it has links
@@ -105,6 +110,21 @@ class OrbitSim:
 
         self._ships[id] = Ship(id, name, shipClass=shipClass, deltaV=deltaV)
         return id
+    
+    def particleForShip(self, ship):
+        for particle in self._particles.values():
+            if particle.payload == ship:
+                return particle
+            
+        return None
+
+    def transferShip(self, id):
+        ship = self.shipById(id)
+        particle = self.particleForShip(ship)
+        if particle:
+            self.destroyParticle(particle.id)
+        del self._ships[ship.id]
+        return ship
 
     def createParticle(self, node, payload = None):
         id = next(self.idGenerator)
@@ -356,6 +376,21 @@ class OrbitSim:
         elif id < 0:
             raise ValueError
         return self._particles[id]
+
+    def shipClassById(self, id):
+        if not (type(id) == int or isinstance(id, str)):
+            raise TypeError
+        elif isinstance(id, str) and not id.isupper():
+            raise ValueError 
+        return self._shipClasses[id]
+    
+    def shipById(self, id):
+        if not isinstance(id, int):
+            raise TypeError
+        elif id < 0:
+            raise ValueError
+        return self._ships[id]
+
     
     def trajectoryForParticle(self, particleId):
         if not isinstance(particleId, int):

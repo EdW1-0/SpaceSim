@@ -102,6 +102,19 @@ class TestOrbitSimLinks(unittest.TestCase):
         self.assertEqual(self.os.nodeById(1).links, [0, 2])
         self.assertEqual(self.os.nodeById(2).links, [2])
 
+class TestOrbitSimIdLookup(unittest.TestCase):
+    def setUp(self):
+        self.os = OrbitSim(particlePath="json/Particles.json")
+
+    def testOrbitSimParticleById(self):
+        self.assertEqual(self.os.particleById(0).id, 0)
+
+    def testOrbitSimShipClassById(self):
+        self.assertEqual(self.os.shipClassById("SATURNVI").name, "Saturn VI")
+
+    def testOrbitSimShipById(self):
+        self.assertEqual(self.os.shipById(0).name, "ISS Meghalaya")
+
 class TestOrbitSimProperties(unittest.TestCase):
     def setUp(self):
         self.os = OrbitSim("test_json/test_orbits/happy_case.json")
