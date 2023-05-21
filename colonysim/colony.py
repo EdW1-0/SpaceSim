@@ -2,6 +2,7 @@ from colonysim.building import Building, ProductionBuilding, StorageBuilding, Bu
 from colonysim.buildingClass import BuildingClass, ProductionBuildingClass, StorageBuildingClass, ExtractionBuildingClass
 from colonysim.productionOrder import ProductionOrder, OrderStatus
 from planetsim.planetSurface import PlanetSurface
+from planetsim.vehicle import Vehicle
 
 class Colony:
     def __init__(self, id, name, orbitSim = None, locale = None, ships = {}, vehicles = {}):
@@ -109,11 +110,12 @@ class Colony:
         ship = self.orbitSim.transferShip(shipId)
         self.ships[shipId] = ship
 
-    def addVehicle(self, name, fuel = 0, maxV = 0):
+    def addVehicle(self, name, fuel = 0):
         if not self.locale and not isinstance(self.locale, PlanetSurface):
             raise TypeError
-        vehicleId = self.locale.createVehicle(content=None, position=None, name = name, fuel = fuel)
-        vehicle = self.locale.transferVehicle(vehicleId)
+        vehicleId = self.orbitSim.getVehicleId()
+        vc = next(iter(self.locale.vehicleClasses.values()))
+        vehicle = Vehicle(vehicleId, name, vc, fuel)
         self.vehicles[vehicleId] = vehicle
     
     def tick(self, increment):

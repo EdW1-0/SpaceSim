@@ -6,12 +6,16 @@ from planetsim.surfacePoint import SurfacePoint
 from planetsim.surfaceObject import SurfaceObject
 from planetsim.surfaceVehicle import SurfaceVehicle
 from planetsim.surfaceBase import SurfaceBase
+from planetsim.vehicle import Vehicle
+
+from utility.fileLoad import loadEntityFile
 
 EARTH_RADIUS = 6371000
 
 class PlanetSurface:
-    def __init__(self, jsonPath = "json/planets/surfaces/Surface.json", radius = EARTH_RADIUS):
+    def __init__(self, jsonPath = "json/planets/surfaces/Surface.json", vehiclePath = None, radius = EARTH_RADIUS, vehicleClasses = {}, vehicleRegisterCallback = None):
         self.radius = radius
+        self.vehicleClasses = vehicleClasses
         self.regions = {}
         self.points = {}
         self.pointIdGenerator = self.newPointId()
@@ -38,6 +42,15 @@ class PlanetSurface:
             region = SurfaceRegion(r["id"], anchor, borders, name=r.get("name"), terrain=r.get("terrain"))
             self.regions[region.id] = region
 
+        if vehiclePath:
+            self.vehicles = loadEntityFile(vehiclePath, "MERCURY", Vehicle)
+        else:
+            self.vehicles = {}
+        ###TODO: See same thing in orbitSim for ship classes
+        for vehicle in self.vehicles.values():
+            vehicle.vehicleClass = self.vehicleClasses[vehicle.vehicleClass]
+            if vehicleRegisterCallback:
+                vehicleRegisterCallback(vehicle.id)
 
         jsonObjects = jsonNodes.get("Objects")
 
@@ -47,8 +60,8 @@ class PlanetSurface:
                 point = SurfacePoint(pointArray[0], pointArray[1])
                 if "colonyId" in object:
                     self.createBase(None, point, name = object["name"], colonyId = object["colonyId"])
-                elif "fuel" in object:
-                    self.createVehicle(None, point, name = object["name"], fuel = object["fuel"], maxV = object["maxV"], fuelPerM = object["fuelPerM"])
+                elif "vehicle" in object:
+                    self.createVehicle(None, point, name = object["name"], payload = self.vehicles[object["vehicle"]])
                 else:
                     self.createObject(None, point, name = object["name"])
 
@@ -72,9 +85,9 @@ class PlanetSurface:
         self.points[id] = SurfaceObject(id, content, position, name = name)
         return id
     
-    def createVehicle(self, content, position, name="", fuel = 0, maxV = 0, fuelPerM = 0):
+    def createVehicle(self, content, position, name="", payload=None):
         id = next(self.pointIdGenerator)
-        self.points[id] = SurfaceVehicle(id, content, position, name = name, fuel=fuel, maxV=maxV, fuelPerM=fuelPerM)
+        self.points[id] = SurfaceVehicle(id, content, position, payload = payload)
         return id
 
     def createBase(self, context, position, name="", colonyId = None):
@@ -106,7 +119,7 @@ class PlanetSurface:
 
     def _distanceForTime(self, id, time):
         point = self.pointById(id)
-        return time * point.maxV
+        return time * point.maxV()
 
     def tick(self, increment):
         purgeIds = set()
@@ -122,12 +135,12 @@ class PlanetSurface:
                     distance = maxDistance
 
                 # Now see how far fuel load will get us
-                fuelBurn = p.fuelPerM * distance
-                if (fuelBurn <= p.fuel):
-                    p.fuel -= fuelBurn
+                fuelBurn = p.fuelPerM() * distance
+                if (fuelBurn <= p.payload.fuel):
+                    p.payload.fuel -= fuelBurn
                 else:
-                    distance = p.fuel / p.fuelPerM
-                    p.fuel = 0
+                    distance = p.payload.fuel / p.fuelPerM()
+                    p.payload.fuel = 0
 
                 # Now do the actual move
                 if distance:

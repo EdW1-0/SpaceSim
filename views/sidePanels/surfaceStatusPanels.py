@@ -123,7 +123,7 @@ class VehicleStatusPanel(SideStatusPanel):
             Fuel: {0}
             Top speed: {1}
             Range: {2}
-            """.format(self.vehicle.fuel, self.vehicle.maxV, self.vehicle.fuelPerM))
+            """.format(self.vehicle.fuel(), self.vehicle.maxV(), self.vehicle.fuelPerM()))
         else:
             self.route_text.set_text("""
             Location: {0}""".format(self.vehicle.point))

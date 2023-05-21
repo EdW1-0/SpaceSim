@@ -4,9 +4,12 @@ import os
 from planetsim.planet import Planet
 from planetsim.planetSurface import PlanetSurface
 from planetsim.planetTerrain import PlanetTerrain
+from planetsim.vehicleClass import VehicleClass
+
+from utility.fileLoad import loadEntityFile
 
 class PlanetSim:
-    def __init__(self, jsonPath = "json/Planets.json"):
+    def __init__(self, jsonPath = "json/Planets.json", vehicleClassPath = "json/vehicleClasses", vehicleRegisterCallback = None):
         planetsFile = open(jsonPath, "r")
         planetsJson = json.load(planetsFile)
 
@@ -28,17 +31,21 @@ class PlanetSim:
                 terrainTypes = classJson["Terrain"]
                 self.planetClasses[classId] = {terrain["id"]: PlanetTerrain(**terrain) for terrain in terrainTypes}
                 classFile.close()
-
+        if vehicleClassPath:
+            self.vehicleClasses = loadEntityFile(vehicleClassPath, "VehicleClasses", VehicleClass)
+        else:
+            self.vehicleClasses = {}
 
         surfacesFolder = 'json/planets/surfaces/'
 
         for subdir, dirs, files in os.walk(surfacesFolder):
             for file in files:
-                surface = PlanetSurface(surfacesFolder + file, 1000)
+                surface = PlanetSurface(surfacesFolder + file, radius = 1000, vehiclePath = "json/planets/vehicles", vehicleClasses=self.vehicleClasses, vehicleRegisterCallback=vehicleRegisterCallback)
                 for planetId in self.planets.keys():
                     if planetId == surface.id:
                         ###TODO: Bit of a kludge to set this later when it should go in via constructor. Should load all these first, then call constructor
                         self.planets[planetId].surface = surface
+
 
 
 

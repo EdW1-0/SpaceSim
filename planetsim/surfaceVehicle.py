@@ -4,12 +4,21 @@ from planetsim.surfaceObject import SurfaceObject
 
 from planetsim.surfacePoint import SurfacePoint
 
+from planetsim.vehicle import Vehicle
+
 @dataclass
 class SurfaceVehicle(SurfaceObject):
-    fuel: int = 0
-    maxV: int = 0
+    payload: Vehicle = None
     destination: SurfacePoint = None
-    fuelPerM: float = 1.0
 
     def setDestination(self, destination):
         self.destination = destination
+
+    def fuel(self):
+        return self.payload.fuel
+    
+    def maxV(self):
+        return self.payload.maxV()
+    
+    def fuelPerM(self):
+        return self.payload.fuelPerM()

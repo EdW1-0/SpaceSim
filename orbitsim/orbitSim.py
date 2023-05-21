@@ -85,6 +85,10 @@ class OrbitSim:
 
         jsonFile.close()
 
+        # Vehicles aren't stored here, but we register them here so ids are globally unique. 
+        self.vehicleIdGenerator = self.newVehicleId()
+        self._vehicleIds = set()
+
     def validatePlanets(self, planetSim):
         for node in self._nodes.values():
             if node.planet:
@@ -102,6 +106,23 @@ class OrbitSim:
         while True:
             yield shipIdCounter
             shipIdCounter += 1
+
+    def newVehicleId(self):
+        vehicleIdCounter = 0
+        while True:
+            while vehicleIdCounter in self._vehicleIds:
+                vehicleIdCounter += 1
+            yield vehicleIdCounter
+
+    def registerVehicleId(self, id):
+        if id in self._vehicleIds:
+            raise KeyError
+        self._vehicleIds.add(id)
+
+    def getVehicleId(self):
+        id = next(self.vehicleIdGenerator)
+        self._vehicleIds.add(id)
+        return id
 
     def createShip(self, name, shipClass, deltaV = 0):
         id = next(self.shipIdGenerator)

@@ -1,0 +1,10 @@
+{
+    "MERCURY": [
+        {        
+            "id": 0,
+            "name": "Rover 1",
+            "vehicleClass": "ROVER",
+            "fuel": 10000
+        }
+    ]
+}

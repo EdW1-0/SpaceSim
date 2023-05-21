@@ -339,7 +339,7 @@ class testColonyVehicle(unittest.TestCase):
 
     def testColonyAddVehicle(self):
         self.c = Colony(0, "TEST", self.gm.orbitSim, self.ps)
-        self.c.addVehicle("Test vehicle", fuel = 100, maxV = 10)
+        self.c.addVehicle("Test vehicle", fuel = 100)
         self.assertGreater(len(self.c.vehicles), 0)
 
 
