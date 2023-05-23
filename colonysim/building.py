@@ -1,10 +1,10 @@
 import enum
 
-class BuildingStatus(enum.Enum):
-    CONSTRUCTION = 0
-    IDLE = 1
-    ACTIVE = 2
-    DEMOLITION = 3
+class BuildingStatus(str, enum.Enum):
+    CONSTRUCTION = "CONSTRUCTIO"
+    IDLE = "IDLE"
+    ACTIVE = "ACTIVE"
+    DEMOLITION = "DEMOLITION"
 
 class BuildingStatusError(Exception):
     pass

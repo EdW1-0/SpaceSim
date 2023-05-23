@@ -5,17 +5,31 @@ from planetsim.planetSurface import PlanetSurface
 from planetsim.vehicle import Vehicle
 
 class Colony:
-    def __init__(self, id, name, orbitSim = None, locale = None, ships = {}, vehicles = {}):
+    def __init__(self, id, name, orbitSim = None, locale = None, ships = [], vehicles = []):
         self.id = id
         self.name = name
         self.orbitSim = orbitSim
-        self.ships = ships
-        self.vehicles = vehicles
         self.locale = locale
         self.buildings = {}
         self.buildingIdGenerator = self.newBuildingId()
         self.productionOrders = {}
         self.productionOrderIdGenerator = self.newProductionOrderId()
+        self.ships = {}
+        for shipId in ships:
+            ship = orbitSim.transferShip(shipId)
+            self.ships[shipId] = ship
+
+        self.vehicles = {}
+        for vehicleId in vehicles:
+            vehicle = locale.transferVehicle(vehicleId)
+            self.vehicles[vehicleId] = vehicle
+
+        # Things to do here:
+        # - Get ships from orbitSim
+        # - Get vehicles from locale
+        # - Create buildings
+        # - Link colony up on locale
+
 
     def newBuildingId(self):
         buildingIdCounter = 0
@@ -117,6 +131,7 @@ class Colony:
         vc = next(iter(self.locale.vehicleClasses.values()))
         vehicle = Vehicle(vehicleId, name, vc, fuel)
         self.vehicles[vehicleId] = vehicle
+        return vehicleId
     
     def tick(self, increment):
         while increment:

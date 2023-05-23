@@ -5,6 +5,12 @@
             "name": "Rover 1",
             "vehicleClass": "ROVER",
             "fuel": 10000
+        },
+        {
+            "id": 1,
+            "name": "Viking Rover",
+            "vehicleClass": "ROVER",
+            "fuel": 2000
         }
     ]
 }

@@ -23,6 +23,12 @@
             "name": "USS Ticonderoga",
             "shipClass": "SATURNVI",
             "deltaV": 200 
+        },
+        {
+            "id": 4,
+            "name": "MSS Viking",
+            "shipClass": "SATURNVI",
+            "deltaV": 100
         }
     ]
 }

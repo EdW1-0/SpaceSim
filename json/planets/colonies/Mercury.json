@@ -1,0 +1,38 @@
+{
+    "MERCURY": [
+        {
+            "id": 0,
+            "name": "Viking Base",
+            "buildings": [
+                {
+                    "id": 0,
+                    "buildingClass": "HAB",
+                    "status": "ACTIVE"
+                },
+                {
+                    "id": 1,
+                    "buildingClass": "SOL",
+                    "status": "ACTIVE"
+                },
+                {
+                    "id": 2,
+                    "buildingClass": "TANK",
+                    "status": "ACTIVE",
+                    "contents": "H2O",
+                    "amount": 200
+                },
+                {
+                    "id": 3,
+                    "buildingClass": "REACTOR",
+                    "reaction": "ELECTROLYSIS"
+                }
+            ],
+            "ships": [
+                4
+            ],
+            "vehicles": [
+                1
+            ]
+        }
+    ]
+}

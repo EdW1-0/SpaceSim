@@ -99,8 +99,11 @@ class PlanetSurface:
         del self.points[id]
 
     def transferVehicle(self, id):
-        vehicle = self.pointById(id)
-        self.destroyObject(id)
+        vehicle = self.vehicleById(id)
+        for point in self.points.values():
+            if isinstance(point, SurfaceVehicle) and point.payload == vehicle:
+                self.destroyObject(point.id)
+        del self.vehicles[id]
         return vehicle
 
     def regionForPointId(self, id):
@@ -192,6 +195,14 @@ class PlanetSurface:
         elif id < 0:
             raise ValueError
         return self.points[id]
+    
+    def vehicleById(self, id):
+        if not isinstance(id, int):
+            raise TypeError
+        elif id < 0:
+            raise ValueError
+        return self.vehicles[id]
+    
 
 
 

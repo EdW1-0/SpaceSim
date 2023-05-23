@@ -1,5 +1,6 @@
 from techtree.techTree import TechTree
 from orbitsim.orbitSim import OrbitSim
+from colonysim.colonySim import ColonySim
 from planetsim.planetSim import PlanetSim
 from timingMaster import TimingMaster
 
@@ -26,6 +27,8 @@ class GameModel:
         self.techTree = TechTree(jsonRoot + "/Technologies.json")
         self.orbitSim = OrbitSim(jsonRoot + "/Orbits.json", jsonRoot + "/Particles.json")
         self.planetSim = PlanetSim(jsonRoot + "/Planets.json", vehicleClassPath="json/vehicleClasses")
+        self.colonySim = ColonySim(self.orbitSim, self.planetSim, jsonRoot + "/planets/colonies")
+
         
         self.orbitSim.validatePlanets(self.planetSim)
 
