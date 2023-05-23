@@ -24,6 +24,8 @@ class Colony:
             vehicle = locale.transferVehicle(vehicleId)
             self.vehicles[vehicleId] = vehicle
 
+        self.locale.connectColony(id)
+
         # Things to do here:
         # - Get ships from orbitSim
         # - Get vehicles from locale

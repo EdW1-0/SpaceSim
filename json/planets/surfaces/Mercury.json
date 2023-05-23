@@ -63,7 +63,7 @@
         {
             "point": [10, 10],
             "name": "Viking Base",
-            "colonyId": "VBA"
+            "colonyId": 0
         },
         {
             "point": [-20, 300],

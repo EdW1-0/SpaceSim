@@ -98,6 +98,11 @@ class PlanetSurface:
     def destroyObject(self, id):
         del self.points[id]
 
+    def connectColony(self, colony):
+        for point in self.points:
+            if isinstance(point, SurfaceBase) and point.colonyId == colony.id:
+                point.content = colony
+
     def transferVehicle(self, id):
         vehicle = self.vehicleById(id)
         for point in self.points.values():
