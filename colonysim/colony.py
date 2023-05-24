@@ -5,12 +5,15 @@ from planetsim.planetSurface import PlanetSurface
 from planetsim.vehicle import Vehicle
 
 class Colony:
-    def __init__(self, id, name, orbitSim = None, locale = None, ships = [], vehicles = []):
+    def __init__(self, id, name, orbitSim = None, locale = None, ships = [], vehicles = [], buildings = None):
         self.id = id
         self.name = name
         self.orbitSim = orbitSim
         self.locale = locale
-        self.buildings = {}
+        if buildings:
+            self.buildings = buildings
+        else:
+            self.buildings = {}
         self.buildingIdGenerator = self.newBuildingId()
         self.productionOrders = {}
         self.productionOrderIdGenerator = self.newProductionOrderId()
@@ -24,7 +27,8 @@ class Colony:
             vehicle = locale.transferVehicle(vehicleId)
             self.vehicles[vehicleId] = vehicle
 
-        self.locale.connectColony(id)
+        if locale:
+            self.locale.connectColony(id)
 
         # Things to do here:
         # - Get ships from orbitSim
@@ -36,14 +40,16 @@ class Colony:
     def newBuildingId(self):
         buildingIdCounter = 0
         while True:
+            while buildingIdCounter in self.buildings:
+                buildingIdCounter += 1
             yield buildingIdCounter
-            buildingIdCounter += 1
 
     def newProductionOrderId(self):
         productionIdCounter = 0
         while True:
+            while productionIdCounter in self.productionOrders:
+                productionIdCounter += 1
             yield productionIdCounter
-            productionIdCounter += 1
 
 
     # Question over whether this should be given a buildingClass reference directly, or just an id and look it up from colonySim.

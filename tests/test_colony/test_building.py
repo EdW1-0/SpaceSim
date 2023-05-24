@@ -69,7 +69,7 @@ class TestProductionBuilding(unittest.TestCase):
         self.assertTrue(ProductionBuilding)
 
     def testProductionBuildingConstructor(self):
-        self.assertTrue(ProductionBuilding(3, self.pbc, self.cs))
+        self.assertTrue(ProductionBuilding(3, buildingClass=self.pbc, colonySim =self.cs))
 
     def testProductionBuildingAttributes(self):
         pb = ProductionBuilding(6, self.pbc, self.cs)

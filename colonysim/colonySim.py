@@ -4,6 +4,7 @@ import json
 from colonysim.resource import Resource
 from colonysim.reaction import Reaction
 from colonysim.buildingClass import BuildingClass, ProductionBuildingClass, StorageBuildingClass, ExtractionBuildingClass
+from colonysim.building import Building, ProductionBuilding, StorageBuilding, ExtractionBuilding 
 from colonysim.colony import Colony
 
 from utility.fileLoad import loadEntityFile, extractEntityJson
@@ -43,8 +44,41 @@ class ColonySim:
                         surface = planetSim.planetById(planetId).surface
                         ships = c["ships"]
                         vehicles = c["vehicles"]
-                        colony = Colony(id, name, orbitSim = orbitSim, locale = surface, ships = ships, vehicles = vehicles)
+
+                        buildings = {}
+                        for b in c["buildings"]:
+                            bc = self.buildingClassById(b["buildingClass"])
+                            if isinstance(bc, ProductionBuildingClass):
+                                building = ProductionBuilding(b["id"], bc, self)
+                                building.setReaction(b["reaction"])
+                            elif isinstance(bc, StorageBuildingClass):
+                                building = StorageBuilding(b["id"], bc)
+                                building.setContents(b["contents"])
+                                building.amount = b["amount"]
+                            elif isinstance(bc, ExtractionBuildingClass):
+                                building = ExtractionBuilding(b["id"], bc)
+                            else:
+                                building = Building(b["id"], bc)
+                            if "constructionProgress" in b:
+                                building.constructionProgress = b["constructionProgress"]
+                            if "demolitionProgress" in b:
+                                building.demolitionProgress = b["demolitionProgress"]
+                            if "status" in b:
+                                if b["status"] != "CONSTRUCTION":
+                                    building.construct()
+                                if b["status"] == "ACTIVE":
+                                    building.start()
+                                if b["status"] == "DEMOLITION":
+                                    building.demolish()
+                            else:
+                                building.construct()
+
+                            buildings[b["id"]] = building
+
+                        colony = Colony(id, name, orbitSim = orbitSim, locale = surface, ships = ships, vehicles = vehicles, buildings=buildings)
                         self._colonies[id] = colony
+                        
+
 
 
 
@@ -67,6 +101,13 @@ class ColonySim:
         elif isinstance(id, str) and not id.isupper():
             raise ValueError 
         return self._reactions[id]
+    
+    def buildingClassById(self, id):
+        if not (type(id) == int or isinstance(id, str)):
+            raise TypeError
+        elif isinstance(id, str) and not id.isupper():
+            raise ValueError 
+        return self._buildingClasses[id]
 
 
         

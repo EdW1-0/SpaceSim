@@ -43,12 +43,12 @@ class TestColonyBuildingConstruction(unittest.TestCase):
         self.assertTrue(isinstance(c.buildingById(1), Building))
     
     def testColonyAddStorageBuilding(self):
-        c = Colony(0, "Default")
+        c = Colony(1, "Default", buildings = {})
         self.assertEqual(c.addBuilding(self.sbc), 0)
         self.assertTrue(isinstance(c.buildingById(0), StorageBuilding))
 
     def testColonyAddProductionBuilding(self):
-        c = Colony(0, "Default")
+        c = Colony(2, "Default", buildings = {})
         self.assertEqual(c.addBuilding(self.pbc, colonySim = self.cs), 0)
         self.assertTrue(isinstance(c.buildingById(0), ProductionBuilding))
 
@@ -339,8 +339,19 @@ class testColonyVehicle(unittest.TestCase):
 
     def testColonyAddVehicle(self):
         self.c = Colony(0, "TEST", self.gm.orbitSim, self.ps)
-        self.c.addVehicle("Test vehicle", fuel = 100)
+        self.assertFalse(0 in self.gm.orbitSim._vehicleIds)
+        self.assertEqual(self.c.addVehicle("Test vehicle", fuel = 100), 0)
         self.assertGreater(len(self.c.vehicles), 0)
+        self.assertTrue(0 in self.gm.orbitSim._vehicleIds)
+
+    def testColonyDeployVehicle(self):
+        self.skipTest("Committing previous work before finishing this")
+        self.c = Colony(0, "TEST", self.gm.orbitSim, self.ps)
+        id = self.c.addVehicle("Test vehicle", fuel = 100)
+        self.c.deployVehicle(id)
+        self.assertEqual(len(self.c.vehicles), 0)
+        
+
 
 
 
