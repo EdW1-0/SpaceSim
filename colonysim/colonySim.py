@@ -6,6 +6,7 @@ from colonysim.reaction import Reaction
 from colonysim.buildingClass import BuildingClass, ProductionBuildingClass, StorageBuildingClass, ExtractionBuildingClass
 from colonysim.building import Building, ProductionBuilding, StorageBuilding, ExtractionBuilding 
 from colonysim.colony import Colony
+from colonysim.productionOrder import ProductionOrder
 
 from utility.fileLoad import loadEntityFile, extractEntityJson
 
@@ -75,7 +76,21 @@ class ColonySim:
 
                             buildings[b["id"]] = building
 
-                        colony = Colony(id, name, orbitSim = orbitSim, locale = surface, ships = ships, vehicles = vehicles, buildings=buildings)
+                        productionOrders = {}
+                        for po in c["productionOrders"]:
+                            po["reaction"] = self.reactionById(po["reaction"])
+                            status = po["status"]
+                            del po["status"]
+                            production = ProductionOrder(**po)
+                            if status != "PENDING":
+                                production.start()
+                            if status == "PAUSED":
+                                production.pause()
+                            productionOrders[po["id"]] = productionOrders
+                            
+
+
+                        colony = Colony(id, name, orbitSim = orbitSim, locale = surface, ships = ships, vehicles = vehicles, buildings=buildings, productionOrders=productionOrders)
                         self._colonies[id] = colony
                         
 

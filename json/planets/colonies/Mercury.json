@@ -27,6 +27,15 @@
                     "reaction": "ELECTROLYSIS"
                 }
             ],
+            "productionOrders": [
+                {
+                    "id": 0,
+                    "reaction": "ELECTROLYSIS",
+                    "amount": 100,
+                    "remaining": 50,
+                    "status": "PAUSED"
+                }
+            ],
             "ships": [
                 4
             ],

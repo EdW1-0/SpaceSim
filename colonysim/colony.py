@@ -5,7 +5,7 @@ from planetsim.planetSurface import PlanetSurface
 from planetsim.vehicle import Vehicle
 
 class Colony:
-    def __init__(self, id, name, orbitSim = None, locale = None, ships = [], vehicles = [], buildings = None):
+    def __init__(self, id, name, orbitSim = None, locale = None, ships = [], vehicles = [], buildings = None, productionOrders = None):
         self.id = id
         self.name = name
         self.orbitSim = orbitSim
@@ -14,8 +14,11 @@ class Colony:
             self.buildings = buildings
         else:
             self.buildings = {}
+        if productionOrders:
+            self.productionOrders = productionOrders
+        else:
+            self.productionOrders = {}
         self.buildingIdGenerator = self.newBuildingId()
-        self.productionOrders = {}
         self.productionOrderIdGenerator = self.newProductionOrderId()
         self.ships = {}
         for shipId in ships:
