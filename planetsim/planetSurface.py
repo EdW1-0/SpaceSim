@@ -43,7 +43,7 @@ class PlanetSurface:
             self.regions[region.id] = region
 
         if vehiclePath:
-            self.vehicles = loadEntityFile(vehiclePath, "MERCURY", Vehicle)
+            self.vehicles = loadEntityFile(vehiclePath, self.id, Vehicle)
         else:
             self.vehicles = {}
         ###TODO: See same thing in orbitSim for ship classes
@@ -88,7 +88,9 @@ class PlanetSurface:
     def createVehicle(self, content, position, name="", payload=None):
         id = next(self.pointIdGenerator)
         self.points[id] = SurfaceVehicle(id, content, position, payload = payload)
-        return id
+        if payload:
+            self.vehicles[payload.id] = payload
+        return id 
 
     def createBase(self, context, position, name="", colonyId = None):
         id = next(self.pointIdGenerator)
@@ -99,7 +101,7 @@ class PlanetSurface:
         del self.points[id]
 
     def connectColony(self, colony):
-        for point in self.points:
+        for point in self.points.values():
             if isinstance(point, SurfaceBase) and point.colonyId == colony.id:
                 point.content = colony
 

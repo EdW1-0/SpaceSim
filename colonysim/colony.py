@@ -31,7 +31,7 @@ class Colony:
             self.vehicles[vehicleId] = vehicle
 
         if locale:
-            self.locale.connectColony(id)
+            self.locale.connectColony(self)
 
         # Things to do here:
         # - Get ships from orbitSim
@@ -144,6 +144,23 @@ class Colony:
         self.vehicles[vehicleId] = vehicle
         return vehicleId
     
+    def deployVehicle(self, id):
+        vehicle = self.vehicleById(id)
+            
+        if (isinstance(self.locale, PlanetSurface)):
+            position = None
+            for point in self.locale.points.values():
+                if point.content == self:
+                    position = point.point
+            if not position:
+                raise KeyError
+
+            self.locale.createVehicle(None, position, name = vehicle.name, payload=vehicle)
+            del self.vehicles[id]
+        else:
+            raise TypeError
+
+
     def tick(self, increment):
         while increment:
             increment -= 1
@@ -232,3 +249,18 @@ class Colony:
         elif id < 0:
             raise ValueError
         return self.productionOrders[id]
+    
+    def vehicleById(self, id):
+        if not isinstance(id, int):
+            raise TypeError
+        elif id < 0:
+            raise ValueError
+        return self.vehicles[id]
+    
+    def shipById(self, id):
+        if not isinstance(id, int):
+            raise TypeError
+        elif id < 0:
+            raise ValueError
+        return self.ships[id]
+    

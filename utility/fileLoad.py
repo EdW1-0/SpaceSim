@@ -4,7 +4,10 @@ import os
 def extractEntityJson(path, id):
     entityFile = open(path, "r")
     entityJson = json.load(entityFile)
-    entities = entityJson[id]
+    if id in entityJson:
+        entities = entityJson[id]
+    else:
+        entities = []
     entityFile.close()
     return entities
 

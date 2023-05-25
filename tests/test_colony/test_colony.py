@@ -6,6 +6,8 @@ from colonysim.building import Building, BuildingStatus, ProductionBuilding, Sto
 from colonysim.colonySim import ColonySim
 from gameModel import GameModel
 from colonysim.productionOrder import OrderStatus
+from planetsim.surfacePoint import SurfacePoint
+from planetsim.planetSurface import PlanetSurface
 
 class TestColony(unittest.TestCase):
     def testColony(self):
@@ -336,20 +338,24 @@ class testColonyVehicle(unittest.TestCase):
         self.gm = GameModel()
         self.gm.load()
         self.ps = self.gm.planetSim.planetById("MERCURY").surface
+        self.ps.createBase(None, SurfacePoint(30, 30), "Foo", 3)
 
     def testColonyAddVehicle(self):
         self.c = Colony(0, "TEST", self.gm.orbitSim, self.ps)
-        self.assertFalse(0 in self.gm.orbitSim._vehicleIds)
-        self.assertEqual(self.c.addVehicle("Test vehicle", fuel = 100), 0)
+        self.assertFalse(2 in self.gm.orbitSim._vehicleIds)
+        self.assertEqual(self.c.addVehicle("Test vehicle", fuel = 100), 2)
         self.assertGreater(len(self.c.vehicles), 0)
-        self.assertTrue(0 in self.gm.orbitSim._vehicleIds)
+        self.assertTrue(2 in self.gm.orbitSim._vehicleIds)
 
     def testColonyDeployVehicle(self):
-        self.skipTest("Committing previous work before finishing this")
-        self.c = Colony(0, "TEST", self.gm.orbitSim, self.ps)
+        self.c = Colony(3, "TEST", self.gm.orbitSim, self.ps)
+        self.ps.connectColony(self.c)
         id = self.c.addVehicle("Test vehicle", fuel = 100)
+        self.assertEqual(len(self.c.vehicles), 1)
+        self.assertEqual(len(self.ps.vehicles), 1)
         self.c.deployVehicle(id)
         self.assertEqual(len(self.c.vehicles), 0)
+        self.assertEqual(len(self.ps.vehicles), 2)
         
 
 

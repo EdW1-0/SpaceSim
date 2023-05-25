@@ -9,14 +9,17 @@ class OrderStatus(Enum):
 
 
 class ProductionOrder:
-    def __init__(self, id, reaction, amount = 0, remaining = 0):
+    def __init__(self, id, reaction, amount = 0, remaining = None):
         self.id = id
         self.amount = amount
         if not isinstance(reaction, Reaction):
             raise TypeError
         if amount < 0:
             raise ValueError
-        self.remaining = remaining
+        if remaining is None:
+            self.remaining = self.amount
+        else:
+            self.remaining = remaining
         self.reaction = reaction
         self.status = OrderStatus.PENDING
 
