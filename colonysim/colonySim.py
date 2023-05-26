@@ -110,6 +110,13 @@ class ColonySim:
         self._colonies[id] = colony
         return id
     
+    def colonyById(self, id):
+        if not isinstance(id, int):
+            raise TypeError
+        elif id < 0:
+            raise ValueError
+        return self._colonies[id]
+    
     def reactionById(self, id):
         if not (type(id) == int or isinstance(id, str)):
             raise TypeError

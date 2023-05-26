@@ -38,6 +38,7 @@ from pygame_gui  import (
 
 
 LOADSURFACEVIEW = pygame.USEREVENT + 3
+LOADCOLONYVIEW = pygame.USEREVENT + 4
 
 SELECTED_REGION_COLOUR = (180, 180, 10)
 
@@ -541,6 +542,10 @@ class SurfaceContext(GUIContext):
                             self.targetMode = True
                         elif event.ui_element == self.vehicle_panel.stopButton:
                             self.vehicle_panel.vehicle.setDestination(None)
+                        elif event.ui_element == self.vehicle_panel.colony_button:
+                            self.upperContext = {"colony": self.vehicle_panel.vehicle.id}
+                            returnCode = LOADCOLONYVIEW
+                            break
                 elif self.target_panel.handle_event(event):
                     if event.ui_element == self.target_panel.confirm_button:
                         self.target_panel.hide()

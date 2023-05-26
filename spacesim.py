@@ -5,6 +5,7 @@ from gameModel import GameModel
 from views.menuContext import MenuContext
 from views.orbitContext import OrbitContext
 from views.surfaceContext import SurfaceContext
+from views.colonyContext import ColonyContext
 
 # Define constants for the screen width and height
 SCREEN_WIDTH = 1200
@@ -24,7 +25,7 @@ from pygame.locals import (
 
 from views.menuContext import LOADORBITVIEW
 from views.orbitContext import LOADMENUVIEW
-from views.surfaceContext import LOADSURFACEVIEW
+from views.surfaceContext import LOADSURFACEVIEW, LOADCOLONYVIEW
 
 
 
@@ -68,6 +69,14 @@ def main():
             planet = gameModel.planetSim.planetById(planetId)
             manager.clear_and_reset()
             guiContext = SurfaceContext(screen, gameModel, manager, planet)
+        elif outerEvent == LOADCOLONYVIEW:
+            if "colony" not in guiContext.upperContext:
+                print("Invalid state - tried to load colony view with no colony")
+                assert(False)
+            colonyId = guiContext.upperContext["colony"]
+            colony = gameModel.colonySim.colonyById(colonyId)
+            manager.clear_and_reset()
+            guiContext = ColonyContext(screen, gameModel, manager, colony)
 
         
         manager.update(time_delta)

@@ -3,6 +3,7 @@ import pygame
 from views.sidePanels.sideStatusPanel import SideStatusPanel
 
 from planetsim.surfaceVehicle import SurfaceVehicle
+from planetsim.surfaceBase import SurfaceBase
 
 from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox, UISelectionList
 from pygame_gui.core import UIContainer
@@ -79,6 +80,11 @@ class VehicleStatusPanel(SideStatusPanel):
                                           text="Set Target",  
                                           container = self.container, 
                                           manager=manager)
+        
+        self.colony_button = UIButton(pygame.Rect(200, 400, 200, 100), 
+                                          text="Colony View",  
+                                          container = self.container, 
+                                          manager=manager)
 
         self.upperAction = 0
 
@@ -95,6 +101,9 @@ class VehicleStatusPanel(SideStatusPanel):
         elif event.ui_element == self.target_button:
             self.upperAction = 2
             return True
+        elif event.ui_element == self.colony_button:
+            self.upperAction = 3
+            return True
         else:
             return False
 
@@ -108,9 +117,15 @@ class VehicleStatusPanel(SideStatusPanel):
         if isinstance(self.vehicle, SurfaceVehicle):
             self.target_button.show()
             self.stopButton.show()
+            self.colony_button.hide()
+        elif isinstance(self.vehicle, SurfaceBase):
+            self.target_button.hide()
+            self.stopButton.hide()
+            self.colony_button.show()
         else:
             self.target_button.hide()
             self.stopButton.hide()
+            self.colony_button.hide()
 
         destination_text = "<None>"
         if isinstance(self.vehicle, SurfaceVehicle) and self.vehicle.destination:
