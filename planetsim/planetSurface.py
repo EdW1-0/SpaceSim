@@ -1,4 +1,5 @@
 import json
+import math
 
 from planetsim.surfaceRegion import SurfaceRegion
 from planetsim.surfacePath import SurfacePath
@@ -98,6 +99,7 @@ class PlanetSurface:
         return id
 
     def destroyObject(self, id):
+        self.points[id].kill()
         del self.points[id]
 
     def connectColony(self, colony):
@@ -161,12 +163,12 @@ class PlanetSurface:
                 p.point = waypoint
                     
                 # Check if we've arrived and clear destination
-                if p.point == p.destination:
+                if math.isclose(p.point.latitude, p.destination.latitude) and math.isclose(p.point.longitude, p.destination.longitude):
                     p.setDestination(None)
                     for dp in self.objectsAtPoint(p.point):
                         if dp is p:
                             continue
-                        terminal = dp.content.vehicleArrival(p.content)
+                        terminal = dp.content.vehicleArrival(p.payload)
                         if (terminal):
                             purgeIds.add(p.id)
                             break
@@ -187,7 +189,7 @@ class PlanetSurface:
         # Set point to this position.
 
     def objectsAtPoint(self, point):
-        return tuple(p for p in self.points.values() if p.point == point)
+        return tuple(p for p in self.points.values() if (math.isclose(p.point.longitude, point.longitude) and math.isclose(p.point.latitude, point.latitude)))
 
     def regionById(self, id):
         if not isinstance(id, int):

@@ -159,6 +159,10 @@ class Colony:
             del self.vehicles[id]
         else:
             raise TypeError
+        
+    def vehicleArrival(self, vehicle):
+        self.vehicles[vehicle.id] = vehicle
+        return True
 
 
     def tick(self, increment):

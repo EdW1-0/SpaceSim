@@ -99,6 +99,10 @@ class VehicleStatusPanel(SideStatusPanel):
             return False
 
     def update(self):
+        if self.vehicle.killed:
+            self.hide()
+            return
+
         self.vehicle_name_label.set_text(self.vehicle.name)
 
         if isinstance(self.vehicle, SurfaceVehicle):

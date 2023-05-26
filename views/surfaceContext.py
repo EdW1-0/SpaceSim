@@ -401,14 +401,18 @@ class SurfaceContext(GUIContext):
 
 
     def handleClickedObject(self, object):
-        self.selectedObject = object
-        self.selectedObject.selected = True
-        self.selectedObject.update()
-        self.active_panel.hide()
-        self.vehicle_panel.set_vehicle(object.surfaceObject)
-        self.vehicle_panel.update()
-        self.active_panel = self.vehicle_panel
-        self.vehicle_panel.show()
+        if (self.targetMode):
+            pos = object.latLong()
+            self.target_panel.set_target(SurfacePoint(pos[0], pos[1]))
+        else:
+            self.selectedObject = object
+            self.selectedObject.selected = True
+            self.selectedObject.update()
+            self.active_panel.hide()
+            self.vehicle_panel.set_vehicle(object.surfaceObject)
+            self.vehicle_panel.update()
+            self.active_panel = self.vehicle_panel
+            self.vehicle_panel.show()
 
     def handleRegionClick(self, region):
         print(region.name)
@@ -446,7 +450,7 @@ class SurfaceContext(GUIContext):
                 
 
 
-                if self.selectedObject:
+                if self.selectedObject and not self.targetMode:
                     if isinstance(self.selectedObject, SurfaceObjectSprite):
                         self.selectedObject.selected = False
                         self.selectedObject.update()
@@ -591,7 +595,10 @@ class SurfaceContext(GUIContext):
         self.screen.blit(self.surf, pygame.Rect(0, 0, 1200, 800))
 
         for entity in self.all_sprites:
-            self.screen.blit(entity.surf, entity.rect)
+            if entity.surfaceObject.killed:
+                entity.kill()
+            else:
+                self.screen.blit(entity.surf, entity.rect)
         
 
         return returnCode

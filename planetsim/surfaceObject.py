@@ -21,6 +21,9 @@ class SurfaceObject:
     content: object
     point: SurfacePoint = None
     name: str = "Default object"
+    killed: bool = False
 
+    def kill(self):
+        self.killed = True
 
     

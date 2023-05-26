@@ -99,8 +99,10 @@ class TestPlanetSurfaceObjectLifecycle(unittest.TestCase):
     def testSurfaceObjectDestruction(self):
         self.ft.createObject(None, SurfacePoint(20, 20))
         self.assertEqual(len(self.ft.points), 1)
+        pt = self.ft.pointById(0)
         self.ft.destroyObject(0)
         self.assertEqual(len(self.ft.points), 0)
+        self.assertTrue(pt.killed)
 
     def testSurfaceVehicleCreation(self):
         self.ft.createVehicle(None, SurfacePoint(20, 20))

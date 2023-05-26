@@ -8,6 +8,7 @@ from gameModel import GameModel
 from colonysim.productionOrder import OrderStatus
 from planetsim.surfacePoint import SurfacePoint
 from planetsim.planetSurface import PlanetSurface
+from planetsim.vehicle import Vehicle
 
 class TestColony(unittest.TestCase):
     def testColony(self):
@@ -357,7 +358,13 @@ class testColonyVehicle(unittest.TestCase):
         self.assertEqual(len(self.c.vehicles), 0)
         self.assertEqual(len(self.ps.vehicles), 2)
         
-
+    def testColonyVehicleArrival(self):
+        self.c = Colony(4, "TEST", self.gm.orbitSim, self.ps)
+        self.ps.connectColony(self.c)
+        self.assertEqual(len(self.c.vehicles), 0)
+        v = Vehicle(99, "Test Vehicle", next(iter(self.ps.vehicleClasses.values())), 60)
+        self.assertTrue(self.c.vehicleArrival(v))
+        self.assertEqual(len(self.c.vehicles), 1)
 
 
 

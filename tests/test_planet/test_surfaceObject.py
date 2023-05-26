@@ -22,6 +22,12 @@ class TestSurfaceObject(unittest.TestCase):
         cm = ContentMock()
         self.assertEqual(SurfaceObject(3, cm, SurfacePoint(10,10)).content, cm)
         self.assertEqual(SurfaceObject(3, cm, SurfacePoint(10,10)).id, 3)
+
+    def testSurfaceObjectKill(self):
+        so = SurfaceObject(0, ContentMock(), SurfacePoint(10, 10))
+        self.assertFalse(so.killed)
+        so.kill()
+        self.assertTrue(so.killed)
      
 
         
