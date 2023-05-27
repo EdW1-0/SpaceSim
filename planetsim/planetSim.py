@@ -7,6 +7,7 @@ from planetsim.planetTerrain import PlanetTerrain
 from planetsim.vehicleClass import VehicleClass
 
 from utility.fileLoad import loadEntityFile
+from utility.dictLookup import getStringId
 
 class PlanetSim:
     def __init__(self, jsonPath = "json/Planets.json", vehicleClassPath = "json/vehicleClasses", vehicleRegisterCallback = None):
@@ -50,19 +51,10 @@ class PlanetSim:
 
 
     def planetClassById(self, id):
-        if not (type(id) == int or isinstance(id, str)):
-            raise TypeError
-        elif isinstance(id, str) and not id.isupper():
-            raise ValueError
-        return self.planetClasses[id]
-
+        return getStringId(id, self.planetClasses)
 
     def planetById(self, id):
-        if not (type(id) == int or isinstance(id, str)):
-            raise TypeError
-        elif isinstance(id, str) and not id.isupper():
-            raise ValueError
-        return self.planets[id]
+        return getStringId(id, self.planets)
     
     def tick(self, increment):
         for planet in self.planets.values():

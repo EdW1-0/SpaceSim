@@ -5,6 +5,8 @@ from enum import Enum
 
 import techtree.techNode as techNode
 
+from utility.dictLookup import getIntId
+
 class TechEffectClass(Enum):
     BUILDING = 0
     VEHICLE = 1
@@ -56,11 +58,7 @@ class TechTree:
 
 
     def nodeById(self, id):
-        if not isinstance(id, int):
-            raise TypeError
-        elif id < 0:
-            raise ValueError
-        return self.nodes[id]
+        return getIntId(id, self.nodes)
 
     def ancestorsOfId(self, id):
         node = self.nodeById(id)

@@ -9,6 +9,7 @@ from colonysim.colony import Colony
 from colonysim.productionOrder import ProductionOrder
 
 from utility.fileLoad import loadEntityFile, extractEntityJson
+from utility.dictLookup import getIntId, getStringId
 
 class ColonySim:
     def __init__(self, orbitSim = None, planetSim = None, colonyPath = "json/colonies", resourcePath = "json/resources", reactionPath = "json/reactions", buildingPath = "json/buildingClasses"):
@@ -111,25 +112,13 @@ class ColonySim:
         return id
     
     def colonyById(self, id):
-        if not isinstance(id, int):
-            raise TypeError
-        elif id < 0:
-            raise ValueError
-        return self._colonies[id]
+        return getIntId(id, self._colonies)
     
     def reactionById(self, id):
-        if not (type(id) == int or isinstance(id, str)):
-            raise TypeError
-        elif isinstance(id, str) and not id.isupper():
-            raise ValueError 
-        return self._reactions[id]
+        return getStringId(id, self._reactions)
     
     def buildingClassById(self, id):
-        if not (type(id) == int or isinstance(id, str)):
-            raise TypeError
-        elif isinstance(id, str) and not id.isupper():
-            raise ValueError 
-        return self._buildingClasses[id]
+        return getStringId(id, self._buildingClasses)
 
 
         

@@ -9,6 +9,7 @@ from colonysim.ship import Ship
 from colonysim.shipClass import ShipClass
 
 from utility.fileLoad import loadEntityFile
+from utility.dictLookup import getIntId, getStringId
 
 class OrbitSim:
     def __init__(self, jsonPath = "json/Orbits.json", particlePath = None, shipClassPath = "json/shipClasses", shipPath = "json/ships"):
@@ -378,40 +379,19 @@ class OrbitSim:
         
 
     def nodeById(self, id):
-        if not (type(id) == int or isinstance(id, str)):
-            raise TypeError
-        elif isinstance(id, str) and not id.isupper():
-            raise ValueError 
-        return self._nodes[id]
+        return getStringId(id, self._nodes)
 
     def linkById(self, id):
-        if not isinstance(id, int):
-            raise TypeError
-        elif id < 0:
-            raise ValueError
-        return self._links[id]
+        return getIntId(id, self._links)
 
     def particleById(self, id):
-        if not isinstance(id, int):
-            raise TypeError
-        elif id < 0:
-            raise ValueError
-        return self._particles[id]
+        return getIntId(id, self._particles)
 
     def shipClassById(self, id):
-        if not (type(id) == int or isinstance(id, str)):
-            raise TypeError
-        elif isinstance(id, str) and not id.isupper():
-            raise ValueError 
-        return self._shipClasses[id]
+        return getStringId(id, self._shipClasses)
     
     def shipById(self, id):
-        if not isinstance(id, int):
-            raise TypeError
-        elif id < 0:
-            raise ValueError
-        return self._ships[id]
-
+        return getIntId(id, self._ships)
     
     def trajectoryForParticle(self, particleId):
         if not isinstance(particleId, int):

@@ -4,6 +4,8 @@ from colonysim.productionOrder import ProductionOrder, OrderStatus
 from planetsim.planetSurface import PlanetSurface
 from planetsim.vehicle import Vehicle
 
+from utility.dictLookup import getIntId
+
 class Colony:
     def __init__(self, id, name, orbitSim = None, locale = None, ships = [], vehicles = [], buildings = None, productionOrders = None):
         self.id = id
@@ -241,30 +243,14 @@ class Colony:
 
     
     def buildingById(self, id):
-        if not isinstance(id, int):
-            raise TypeError
-        elif id < 0:
-            raise ValueError
-        return self.buildings[id]
+        return getIntId(id, self.buildings)
 
     def productionOrderById(self, id):
-        if not isinstance(id, int):
-            raise TypeError
-        elif id < 0:
-            raise ValueError
-        return self.productionOrders[id]
+        return getIntId(id, self.productionOrders)
     
     def vehicleById(self, id):
-        if not isinstance(id, int):
-            raise TypeError
-        elif id < 0:
-            raise ValueError
-        return self.vehicles[id]
+        return getIntId(id, self.vehicles)
     
     def shipById(self, id):
-        if not isinstance(id, int):
-            raise TypeError
-        elif id < 0:
-            raise ValueError
-        return self.ships[id]
+        return getIntId(id, self.ships)
     

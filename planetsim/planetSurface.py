@@ -10,6 +10,7 @@ from planetsim.surfaceBase import SurfaceBase
 from planetsim.vehicle import Vehicle
 
 from utility.fileLoad import loadEntityFile
+from utility.dictLookup import getIntId
 
 EARTH_RADIUS = 6371000
 
@@ -192,25 +193,13 @@ class PlanetSurface:
         return tuple(p for p in self.points.values() if (math.isclose(p.point.longitude, point.longitude) and math.isclose(p.point.latitude, point.latitude)))
 
     def regionById(self, id):
-        if not isinstance(id, int):
-            raise TypeError
-        elif id < 0:
-            raise ValueError
-        return self.regions[id]
+        return getIntId(id, self.regions)
 
     def pointById(self, id):
-        if not isinstance(id, int):
-            raise TypeError
-        elif id < 0:
-            raise ValueError
-        return self.points[id]
-    
+        return getIntId(id, self.points)
+        
     def vehicleById(self, id):
-        if not isinstance(id, int):
-            raise TypeError
-        elif id < 0:
-            raise ValueError
-        return self.vehicles[id]
+        return getIntId(id, self.vehicles)
     
 
 
