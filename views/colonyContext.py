@@ -73,4 +73,6 @@ class ColonyContext(GUIContext):
 
         self.screen.fill((250, 100, 50))
 
+        self.timing_panel.update()
+
         return returnCode
