@@ -2,7 +2,7 @@ from views.guiContext import GUIContext
 from views.sidePanels.sideStatusPanel import SideStatusPanel
 from views.timingView import TimingPanel
 
-from views.sidePanels.colonyStatusPanels import ColonyTabPanel, ColonyVehiclePanel
+from views.sidePanels.colonyStatusPanels import ColonyTabPanel, ColonyVehiclePanel, ColonyVehicleDetailPanel
 
 from colonysim.colony import Colony
 
@@ -38,13 +38,18 @@ class ColonyContext(GUIContext):
         summary_rect = pygame.Rect(800, 300, 400, 600)
         tab_rect = pygame.Rect(800, 200, 400, 100)
         timing_rect = pygame.Rect(800, 0, 400, 200)
+        detail_rect = pygame.Rect(0, 500, 800, 300)
         
         self.tab_panel = ColonyTabPanel(tab_rect, manager=manager)
         self.timing_panel = TimingPanel(timing_rect, manager = manager, timingMaster=model.timingMaster)
 
         self.vehicle_panel = ColonyVehiclePanel(summary_rect, manager=manager, colony=colony)
+        self.vehicle_panel.hide()
+        self.vehicle_detail_panel = ColonyVehicleDetailPanel(detail_rect, manager=manager)
+        self.vehicle_detail_panel.hide()
 
         self.active_panel = None
+        self.detail_panel = None
 
     def run(self):
         returnCode = 0
@@ -66,6 +71,24 @@ class ColonyContext(GUIContext):
                     pass
                 elif self.active_panel and self.active_panel.handle_event(event):
                     pass
+                elif self.detail_panel and self.detail_panel.handle_event(event):
+                    pass
+            elif event.type == UI_SELECTION_LIST_NEW_SELECTION:
+                if event.ui_element == self.vehicle_panel.vehicle_list:
+                    vehicle = None
+                    for v in self.colony.vehicles.values():
+                        if v.name == event.text:
+                            vehicle=v
+
+                    assert(vehicle)
+                    if self.detail_panel:
+                        self.detail_panel.hide()
+
+                    self.vehicle_detail_panel.setVehicle(vehicle)
+                    self.vehicle_detail_panel.update()
+                    self.detail_panel = self.vehicle_detail_panel
+                    self.detail_panel.show()
+
 
             self.manager.process_events(event)
 

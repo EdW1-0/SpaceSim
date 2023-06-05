@@ -53,3 +53,19 @@ class ColonyVehiclePanel(SideStatusPanel):
     def update(self):
         self.vehicle_list.set_item_list([vehicle.name for vehicle in self.colony.vehicles.values()])
         self.vehicle_list.show()
+
+class ColonyVehicleDetailPanel(SideStatusPanel):
+    def __init__(self, rect, manager = None, vehicle=None):
+        super().__init__(rect, manager)
+        self.vehicle = vehicle
+
+        self.vehicle_name = UILabel(pygame.Rect(200, 50, 200, 50), text = "Default name", manager=manager, container=self.container)
+
+    def setVehicle(self, vehicle):
+        self.vehicle = vehicle
+
+    def update(self):
+        if not self.vehicle:
+            return
+        
+        self.vehicle_name.set_text(self.vehicle.name)
