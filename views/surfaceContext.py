@@ -402,6 +402,29 @@ class SurfaceContext(GUIContext):
 
         print (self.meridian)
 
+    def hitTestSprite(self, pos):
+        clicked_items = [s for s in self.object_sprites if s.rect.collidepoint(pos)] 
+        if len(clicked_items):
+            # Click stack:
+            # when clicking an object, add it to the click stack
+            # If multiple clicked, skip any already in click stack
+            # If some of click stack are not in clicked_items, clear stack
+            # If stack is full, clear stack
+            unclickedItem = None
+            for item in clicked_items:
+                if item in self.clickStack or not isinstance(item, SurfaceObjectSprite):
+                    continue
+                unclickedItem = item
+
+            if not unclickedItem:
+                self.clickStack.clear()
+                unclickedItem = clicked_items[0]
+
+            self.clickStack.add(unclickedItem)                        
+            self.handleClickedObject(unclickedItem)
+            return True
+        else:
+            return False
 
     def handleClickedObject(self, object):
         if (self.targetMode):
@@ -416,6 +439,31 @@ class SurfaceContext(GUIContext):
             self.vehicle_panel.update()
             self.active_panel = self.vehicle_panel
             self.vehicle_panel.show()
+
+    def hitTestRegion(self, pos):
+        (lat, long) = self.xyToLatLong(pos)
+        print ((lat, long))
+        if (lat, long) != (999, 999) and (lat, long) != (-999, -999):
+            ###TODO: At least 4 coordinate systems going on here:
+            # - X/Y screen coordinates
+            # - Rotated latitude/longitude (frame of meridian)
+            # - Absolute latitude/longitude (merdian at (0,0), and what all model code uses internally)
+            # - x/y/z vector in cartesian coords with origin at center and y axis on (0,0) meridian
+            vLatLot = vector(lat, long)
+            unrotatedLat = self.yRot(vLatLot, -self.meridian[0])
+            unrotatedLong = self.zRot(unrotatedLat, -self.meridian[1])
+
+            (absLat, absLong) = latLong(unrotatedLong)
+            print(absLat, absLong)
+
+            if (self.targetMode):
+                self.target_panel.set_target(SurfacePoint(absLat, absLong))
+            else:
+                ###TODO: This seems to get right region, if it gets one at all, now, but occasionally misses entirely.
+                # Think we need a shedload more tests on regionForPoint as there are still some points it misses.
+                region = self.planetSurface.regionForPoint(SurfacePoint(absLat, absLong))
+                if region:
+                    self.handleRegionClick(region)
 
     def handleRegionClick(self, region):
         print(region.name)
@@ -463,56 +511,12 @@ class SurfaceContext(GUIContext):
                         assert(False)
                     self.selectedObject = None
                     
-
-                clicked_items = [s for s in self.object_sprites if s.rect.collidepoint(pos)] 
-                if len(clicked_items):
-                    # Click stack:
-                    # when clicking an object, add it to the click stack
-                    # If multiple clicked, skip any already in click stack
-                    # If some of click stack are not in clicked_items, clear stack
-                    # If stack is full, clear stack
-                    unclickedItem = None
-                    for item in clicked_items:
-                        if item in self.clickStack or not isinstance(item, SurfaceObjectSprite):
-                            continue
-                        unclickedItem = item
-
-                    if not unclickedItem:
-                        self.clickStack.clear()
-                        unclickedItem = clicked_items[0]
-
-                    self.clickStack.add(unclickedItem)                        
-                    self.handleClickedObject(unclickedItem)
+                if self.hitTestSprite(pos):
                     self.manager.process_events(event)
                     continue
 
+                self.hitTestRegion(pos)
                 
-                (lat, long) = self.xyToLatLong(pos)
-                print ((lat, long))
-                if (lat, long) != (999, 999) and (lat, long) != (-999, -999):
-                    ###TODO: At least 4 coordinate systems going on here:
-                    # - X/Y screen coordinates
-                    # - Rotated latitude/longitude (frame of meridian)
-                    # - Absolute latitude/longitude (merdian at (0,0), and what all model code uses internally)
-                    # - x/y/z vector in cartesian coords with origin at center and y axis on (0,0) meridian
-                    vLatLot = vector(lat, long)
-                    unrotatedLat = self.yRot(vLatLot, -self.meridian[0])
-                    unrotatedLong = self.zRot(unrotatedLat, -self.meridian[1])
-
-                    (absLat, absLong) = latLong(unrotatedLong)
-                    print(absLat, absLong)
-
-                    if (self.targetMode):
-                        self.target_panel.set_target(SurfacePoint(absLat, absLong))
-                    else:
-                        ###TODO: This seems to get right region, if it gets one at all, now, but occasionally misses entirely.
-                        # Think we need a shedload more tests on regionForPoint as there are still some points it misses.
-                        region = self.planetSurface.regionForPoint(SurfacePoint(absLat, absLong))
-                        if region:
-                            self.handleRegionClick(region)
-
-                        
-
                 # Clicked on nothing so clear selection and show planet summary.
                 # if self.active_panel != self.planet_panel:
                 #     self.active_panel.hide()
