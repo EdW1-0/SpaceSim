@@ -34,6 +34,9 @@ class ColonyTabPanel(SideStatusPanel):
         elif event.ui_element == self.vehicles_button:
             self.upperEvent = 3
             return True
+        elif event.ui_element == self.ships_button:
+            self.upperEvent = 4
+            return True
         else:
             return False
         
@@ -107,3 +110,20 @@ class ColonyVehicleDetailPanel(SideStatusPanel):
             return True
         else:
             return False
+        
+class ColonyShipPanel(SideStatusPanel):
+    def __init__(self, rect, manager=None, colony=None):
+        super().__init__(rect, manager)
+        self.colony = colony
+
+        ships_text = "Ships"
+        self.ships_text = UILabel(pygame.Rect(0, 50, 400, 50), text=ships_text, manager=manager, container=self.container)
+
+        self.ships_list = UISelectionList(pygame.Rect(0, 100, 400, 500),
+                                            [("foo", "bar")],
+                                            manager=manager,
+                                            container=self.container)
+        
+    def update(self):
+        self.ships_list.set_item_list([ship.name for ship in self.colony.ships.values()])
+        self.ships_list.show()

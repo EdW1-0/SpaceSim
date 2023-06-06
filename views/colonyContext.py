@@ -2,7 +2,7 @@ from views.guiContext import GUIContext
 from views.sidePanels.sideStatusPanel import SideStatusPanel
 from views.timingView import TimingPanel
 
-from views.sidePanels.colonyStatusPanels import ColonyTabPanel, ColonyVehiclePanel, ColonyVehicleDetailPanel
+from views.sidePanels.colonyStatusPanels import ColonyTabPanel, ColonyVehiclePanel, ColonyVehicleDetailPanel, ColonyShipPanel
 
 from views.surfaceContext import LOADSURFACEVIEW
 
@@ -51,6 +51,9 @@ class ColonyContext(GUIContext):
 
         self.vehicle_panel = ColonyVehiclePanel(summary_rect, manager=manager, colony=colony)
         self.vehicle_panel.hide()
+        self.ship_panel = ColonyShipPanel(summary_rect, manager=manager, colony=colony)
+        self.ship_panel.hide()
+
         self.vehicle_detail_panel = ColonyVehicleDetailPanel(detail_rect, manager=manager)
         self.vehicle_detail_panel.hide()
 
@@ -77,6 +80,12 @@ class ColonyContext(GUIContext):
                             self.active_panel.hide()
                         self.active_panel = self.vehicle_panel
                         self.vehicle_panel.update()
+                        self.active_panel.show()
+                    elif self.tab_panel.upperEvent == 4:
+                        if self.active_panel:
+                            self.active_panel.hide()
+                        self.active_panel = self.ship_panel
+                        self.ship_panel.update()
                         self.active_panel.show()
                     pass
                 elif self.active_panel and self.active_panel.handle_event(event):
