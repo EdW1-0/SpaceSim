@@ -14,15 +14,17 @@ class TestColonyContext(unittest.TestCase):
         pygame.init()
         self.manager = pygame_gui.UIManager((1200, 800))
         screen = pygame.display.set_mode((1200, 800))
+        self.mm = ModelMock()
+        self.mm.timingMaster = ModelMock()
 
     def testColonyContext(self):
         self.assertTrue(ColonyContext)
 
     def testColonyContextConstructor(self):
-        self.assertTrue(ColonyContext(ModelMock(), ModelMock(), None, None))
+        self.assertTrue(ColonyContext(ModelMock(), self.mm, None, None))
 
     def testColonyContextInheritance(self):
-        cc = ColonyContext(ModelMock(), ModelMock(), None, None)
+        cc = ColonyContext(ModelMock(), self.mm, None, None)
         self.assertTrue(issubclass(ColonyContext, GUIContext))
         self.assertTrue(isinstance(cc, GUIContext))
          
