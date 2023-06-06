@@ -4,6 +4,8 @@ from views.timingView import TimingPanel
 
 from views.sidePanels.colonyStatusPanels import ColonyTabPanel, ColonyVehiclePanel, ColonyVehicleDetailPanel
 
+from views.surfaceContext import LOADSURFACEVIEW
+
 from colonysim.colony import Colony
 
 import pygame
@@ -39,6 +41,10 @@ class ColonyContext(GUIContext):
         tab_rect = pygame.Rect(800, 200, 400, 100)
         timing_rect = pygame.Rect(800, 0, 400, 200)
         detail_rect = pygame.Rect(0, 500, 800, 300)
+
+        self.settings_button =UIButton(relative_rect=pygame.Rect((0, 0), (100, 50)),
+                                             text='Environ',
+                                             manager=manager)
         
         self.tab_panel = ColonyTabPanel(tab_rect, manager=manager)
         self.timing_panel = TimingPanel(timing_rect, manager = manager, timingMaster=model.timingMaster)
@@ -59,6 +65,10 @@ class ColonyContext(GUIContext):
                 returnCode = QUIT
                 break
             if event.type == UI_BUTTON_PRESSED:
+                if event.ui_element == self.settings_button:
+                    self.upperContext = {"planet": self.colony.locale.id}
+                    returnCode = LOADSURFACEVIEW
+                    break
                 if self.timing_panel.handle_event(event):
                     pass
                 elif self.tab_panel.handle_event(event):
@@ -72,7 +82,11 @@ class ColonyContext(GUIContext):
                 elif self.active_panel and self.active_panel.handle_event(event):
                     pass
                 elif self.detail_panel and self.detail_panel.handle_event(event):
-                    pass
+                    if self.detail_panel == self.vehicle_detail_panel:
+                        self.colony.deployVehicle(self.vehicle_detail_panel.vehicle.id)
+                        self.detail_panel = None
+                        self.active_panel.update()
+
             elif event.type == UI_SELECTION_LIST_NEW_SELECTION:
                 if event.ui_element == self.vehicle_panel.vehicle_list:
                     vehicle = None

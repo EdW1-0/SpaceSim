@@ -61,6 +61,27 @@ class ColonyVehicleDetailPanel(SideStatusPanel):
 
         self.vehicle_name = UILabel(pygame.Rect(200, 50, 200, 50), text = "Default name", manager=manager, container=self.container)
 
+        self.vehicle_characteristics = UITextBox("Characteristics",
+                                                 pygame.Rect(0, 100, 200, 100),
+                                                  manager=manager,
+                                                   container=self.container)
+        self.vehicle_status = UITextBox("Status",
+                                                 pygame.Rect(200, 100, 200, 100),
+                                                  manager=manager,
+                                                   container=self.container)
+        self.vehicle_mission = UITextBox("Mission",
+                                                 pygame.Rect(400, 100, 200, 100),
+                                                  manager=manager,
+                                                   container=self.container)
+        self.target_button = UIButton(pygame.Rect(600, 100, 100, 50), 
+                                      "Set Target",
+                                        manager=manager,
+                                                   container=self.container)
+        self.embark_button = UIButton(pygame.Rect(600, 150, 100, 50), 
+                                      "Embark",
+                                        manager=manager,
+                                                   container=self.container)
+
     def setVehicle(self, vehicle):
         self.vehicle = vehicle
 
@@ -69,3 +90,14 @@ class ColonyVehicleDetailPanel(SideStatusPanel):
             return
         
         self.vehicle_name.set_text(self.vehicle.name)
+
+    def handle_event(self, event):
+        upperAction = 0
+        if super().handle_event(event):
+            return True
+        elif event.ui_element == self.embark_button:
+            upperAction = 1
+            self.hide()
+            return True
+        else:
+            return False
