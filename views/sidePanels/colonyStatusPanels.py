@@ -45,6 +45,8 @@ class ColonyVehiclePanel(SideStatusPanel):
         super().__init__(rect, manager)
         self.colony = colony
 
+        self.vehicle_hash = ""
+
         vehicles_text = "Vehicles"
         self.vehicles_text = UILabel(pygame.Rect(0, 50, 400, 50), text=vehicles_text, manager=manager, container=self.container)
 
@@ -54,8 +56,11 @@ class ColonyVehiclePanel(SideStatusPanel):
                                             container=self.container)
         
     def update(self):
-        self.vehicle_list.set_item_list([vehicle.name for vehicle in self.colony.vehicles.values()])
-        self.vehicle_list.show()
+        newHash = "".join(map(str, [vehicle.id for vehicle in self.colony.vehicles.values()]))
+        if newHash != self.vehicle_hash:
+            self.vehicle_list.set_item_list([vehicle.name for vehicle in self.colony.vehicles.values()])
+            self.vehicle_list.show()
+            self.vehicle_hash = newHash
 
 class ColonyVehicleDetailPanel(SideStatusPanel):
     def __init__(self, rect, manager = None, vehicle=None):
@@ -115,6 +120,7 @@ class ColonyShipPanel(SideStatusPanel):
     def __init__(self, rect, manager=None, colony=None):
         super().__init__(rect, manager)
         self.colony = colony
+        self.ship_hash = ""
 
         ships_text = "Ships"
         self.ships_text = UILabel(pygame.Rect(0, 50, 400, 50), text=ships_text, manager=manager, container=self.container)
@@ -125,8 +131,11 @@ class ColonyShipPanel(SideStatusPanel):
                                             container=self.container)
         
     def update(self):
-        self.ships_list.set_item_list([ship.name for ship in self.colony.ships.values()])
-        self.ships_list.show()
+        newHash = "".join(map(str, [ship.id for ship in self.colony.ships.values()]))
+        if newHash != self.ship_hash:
+            self.ships_list.set_item_list([ship.name for ship in self.colony.ships.values()])
+            self.ships_list.show()
+            self.ship_hash = newHash
 
 ###TODO: Currently ColonyVehicleDetailPanel and ColonyShipDetailPanel are almost identical. Probably should merge into common superclass
 class ColonyShipDetailPanel(SideStatusPanel):
