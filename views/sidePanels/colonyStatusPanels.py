@@ -127,3 +127,46 @@ class ColonyShipPanel(SideStatusPanel):
     def update(self):
         self.ships_list.set_item_list([ship.name for ship in self.colony.ships.values()])
         self.ships_list.show()
+
+###TODO: Currently ColonyVehicleDetailPanel and ColonyShipDetailPanel are almost identical. Probably should merge into common superclass
+class ColonyShipDetailPanel(SideStatusPanel):
+    def __init__(self, rect, manager = None, ship=None):
+        super().__init__(rect, manager)
+        self.ship = ship
+
+        self.ship_name = UILabel(pygame.Rect(200, 50, 200, 50), text = "Default name", manager=manager, container=self.container)
+
+        self.ship_characteristics = UITextBox("Characteristics",
+                                                 pygame.Rect(0, 100, 200, 100),
+                                                  manager=manager,
+                                                   container=self.container)
+        self.ship_status = UITextBox("Status",
+                                                 pygame.Rect(200, 100, 200, 100),
+                                                  manager=manager,
+                                                   container=self.container)
+        self.ship_mission = UITextBox("Mission",
+                                                 pygame.Rect(400, 100, 200, 100),
+                                                  manager=manager,
+                                                   container=self.container)
+        self.target_button = UIButton(pygame.Rect(600, 100, 100, 50), 
+                                      "Set Target",
+                                        manager=manager,
+                                                   container=self.container)
+        self.launch_button = UIButton(pygame.Rect(600, 150, 100, 50), 
+                                      "Launch",
+                                        manager=manager,
+                                                   container=self.container)
+        
+    def setShip(self, ship):
+        self.ship = ship
+
+    def update(self):
+        if not self.ship:
+            return
+        
+        self.ship_name.set_text(self.ship.name)
+
+        self.ship_characteristics.set_text("Class: {0}<br>".format(self.ship.shipClass.name))
+        self.ship_status.set_text("DeltaV: {0}/{1}<br>".format(self.ship.deltaV(), self.ship.shipClass.maxDeltaV))
+        self.ship_mission.set_text("Orders: Not implemented<br>")
+
