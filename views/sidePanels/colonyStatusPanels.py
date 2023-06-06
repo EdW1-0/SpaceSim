@@ -91,6 +91,12 @@ class ColonyVehicleDetailPanel(SideStatusPanel):
         
         self.vehicle_name.set_text(self.vehicle.name)
 
+        self.vehicle_characteristics.set_text("Class: {0}<br>Velocity: {1}<br>Fuel per m: {2}".format(self.vehicle.vehicleClass.name, 
+                                                                                             self.vehicle.maxV(),
+                                                                                             self.vehicle.fuelPerM()))
+        self.vehicle_status.set_text("Fuel: {0}/{1}<br>".format(self.vehicle.fuel, self.vehicle.vehicleClass.maxFuel))
+        self.vehicle_mission.set_text("Orders: Not implemented<br>")
+
     def handle_event(self, event):
         upperAction = 0
         if super().handle_event(event):
