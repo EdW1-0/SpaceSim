@@ -89,7 +89,7 @@ class PlanetSurface:
     
     def createVehicle(self, content, position, name="", payload=None):
         id = next(self.pointIdGenerator)
-        self.points[id] = SurfaceVehicle(id, content, position, payload = payload)
+        self.points[id] = SurfaceVehicle(id, content, position, name = name, payload = payload)
         if payload:
             self.vehicles[payload.id] = payload
         return id 

@@ -171,6 +171,8 @@ class SurfaceContext(GUIContext):
 
         self.active_panel = self.planet_panel
 
+        self.clickStack = set()
+
 
 
 
@@ -447,10 +449,6 @@ class SurfaceContext(GUIContext):
                     self.manager.process_events(event)
                     continue
 
-
-                
-
-
                 if self.selectedObject and not self.targetMode:
                     if isinstance(self.selectedObject, SurfaceObjectSprite):
                         self.selectedObject.selected = False
@@ -466,9 +464,25 @@ class SurfaceContext(GUIContext):
                     self.selectedObject = None
                     
 
-                clicked_items = [s for s in self.all_sprites if s.rect.collidepoint(pos)] 
+                clicked_items = [s for s in self.object_sprites if s.rect.collidepoint(pos)] 
                 if len(clicked_items):
-                    self.handleClickedObject(clicked_items[0])
+                    # Click stack:
+                    # when clicking an object, add it to the click stack
+                    # If multiple clicked, skip any already in click stack
+                    # If some of click stack are not in clicked_items, clear stack
+                    # If stack is full, clear stack
+                    unclickedItem = None
+                    for item in clicked_items:
+                        if item in self.clickStack or not isinstance(item, SurfaceObjectSprite):
+                            continue
+                        unclickedItem = item
+
+                    if not unclickedItem:
+                        self.clickStack.clear()
+                        unclickedItem = clicked_items[0]
+
+                    self.clickStack.add(unclickedItem)                        
+                    self.handleClickedObject(unclickedItem)
                     self.manager.process_events(event)
                     continue
 
