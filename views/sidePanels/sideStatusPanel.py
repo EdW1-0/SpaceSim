@@ -103,19 +103,26 @@ class PlanetStatusPanel(SideStatusPanel):
             return False
 
 class OrbitStatusPanel(SideStatusPanel):
-    def __init__(self, rect, manager=None):
+    def __init__(self, rect, manager=None, model=None):
         super(OrbitStatusPanel, self).__init__(rect, manager)
-
+        self.model = model
         self.orbit_name_label = UILabel(pygame.Rect(0,0,rect.width, 100), 
                                          text="Orbit placeholder", 
                                          manager=manager, 
                                          container=self.container)
+        
+        self.station_list = UISelectionList(pygame.Rect(0, 500, 400, 100),
+                                    [("foo", "bar")],
+                                    manager=manager,
+                                    container=self.container)
 
     def set_node(self, node):
         self.node = node 
 
     def update(self):
         self.orbit_name_label.set_text(self.node.name)
+        self.station_list.set_item_list([self.model.orbitSim.particleById(id).payload.name for id in self.node.particles])
+        self.station_list.show()
 
 class LinkStatusPanel(SideStatusPanel):
     def __init__(self, rect, manager=None):

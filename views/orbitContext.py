@@ -61,7 +61,7 @@ class OrbitContext(GUIContext):
         #self.planet_window.add_element(self.boop_button)
         self.planet_summary.hide()
 
-        self.orbit_summary = OrbitStatusPanel(summary_rect, manager=manager)
+        self.orbit_summary = OrbitStatusPanel(summary_rect, manager=manager, model=self.model)
         self.orbit_summary.hide()
 
         self.link_summary = LinkStatusPanel(summary_rect, manager=manager)
