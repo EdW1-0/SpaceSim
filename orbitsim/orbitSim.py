@@ -12,7 +12,9 @@ from utility.fileLoad import loadEntityFile
 from utility.dictLookup import getIntId, getStringId
 
 class OrbitSim:
-    def __init__(self, jsonPath = "json/Orbits.json", particlePath = None, shipClassPath = "json/shipClasses", shipPath = "json/ships"):
+    def __init__(self, jsonPath = "json/Orbits.json", particlePath = None, shipClassPath = "json/shipClasses", shipPath = "json/ships", landCallback = None):
+        self.landCallback = landCallback
+        
         jsonFile = open(jsonPath, "r")
 
         jsonBlob = json.load(jsonFile)
@@ -190,7 +192,7 @@ class OrbitSim:
             else:
                 raise ValueError
 
-    def createTrajectory(self, targetId, particleId = None, sourceId = None, payload = None, initialState = TrajectoryState.DEFINITION):
+    def createTrajectory(self, targetId, particleId = None, sourceId = None, payload = None, surfaceCoordinates = None, initialState = TrajectoryState.DEFINITION):
         if particleId is not None:
             try:
                 self.trajectoryForParticle(particleId)
@@ -219,7 +221,7 @@ class OrbitSim:
                 minDv = dv
                 minPath = path
 
-        ot = OrbitTrajectory(particleId, minPath, state = initialState)
+        ot = OrbitTrajectory(particleId, minPath, state = initialState, surfaceCoordinates=surfaceCoordinates)
         #Key the trajectory using the particleId. This ensures 1-1 mapping. 
         self._trajectories[particleId] = ot
         return ot
@@ -275,6 +277,9 @@ class OrbitSim:
                     if (location.id == t.trajectory[-1]):
                         t.state = TrajectoryState.COMPLETE
                         timeBudget = 0
+                        if location.planet and t.surfaceCoordinates:
+                            ship = self.particleById(t.particleId).payload
+                            self.landCallback(ship, location.planet, t.surfaceCoordinates)
                         continue
 
                     linkId = t.nextLink(location.id)

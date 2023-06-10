@@ -5,6 +5,9 @@ import json
 from orbitsim.orbitSim import OrbitSim
 from orbitsim.particle import DeltaVError, Particle
 from orbitsim.orbitTrajectory import OrbitTrajectory, TrajectoryState
+from gameModel import GameModel
+from planetsim.surfacePoint import SurfacePoint
+
 
 class PayloadMock:
     def __init__(self, deltaV):
@@ -331,6 +334,28 @@ class TestOrbitSimParticleArrival(unittest.TestCase):
         self.os.tick(self.l0.travelTime + 100)
         self.assertTrue(6 in self.n0.particles)
         self.assertEqual(self.os.particleById(6).velocity, 0)
+
+class TestOrbitSimParticleArrivalSurface(unittest.TestCase):
+    def setUp(self):
+        self.model = GameModel()
+        self.model.load()
+        self.os = self.model.orbitSim
+        self.mercury = self.os.nodeById("MES")
+        self.mo = self.os.nodeById("MEO")
+        self.ship = self.os.particleById(3)
+        planet = self.model.planetSim.planetById(self.mercury.planet)
+        self.surface = planet.surface
+
+    def testOrbitSimSurfaceArrival(self):
+        self.assertEqual(self.os._particleLocation(3).id, "MEO")
+        self.assertEqual(len(self.surface.objectsAtPoint(SurfacePoint(50, 50))), 0)
+        self.os.createTrajectory("MES", 3, surfaceCoordinates= SurfacePoint(50, 50), initialState=TrajectoryState.PENDING)
+        self.os.tick(1000)
+        self.assertEqual(self.os._particleLocation(3).id, "MES")
+
+        self.assertGreater(len(self.surface.objectsAtPoint(SurfacePoint(50, 50))), 0)
+        self.assertEqual(self.surface.objectsAtPoint(SurfacePoint(50, 50))[0].name, "ISS Meghalaya")
+
 
 class TestOrbitSimTrajectoryState(unittest.TestCase):
     def setUp(self):

@@ -7,10 +7,11 @@ class TrajectoryState(Enum):
     COMPLETE = 3
 
 class OrbitTrajectory:
-    def __init__(self, particleId, trajectory, state=TrajectoryState.DEFINITION):
+    def __init__(self, particleId, trajectory, state=TrajectoryState.DEFINITION, surfaceCoordinates=None):
         self.particleId = particleId
         self.trajectory = trajectory
         self.state = state
+        self.surfaceCoordinates = surfaceCoordinates
 
 
     def nextLink(self, nodeId):

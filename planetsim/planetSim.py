@@ -48,7 +48,10 @@ class PlanetSim:
                         self.planets[planetId].surface = surface
 
 
-
+    def landShip(self, ship, planet, surfaceCoordinates):
+        planet = self.planetById(planet)
+        surface = planet.surface
+        surface.createObject(ship, surfaceCoordinates, ship.name)
 
     def planetClassById(self, id):
         return getStringId(id, self.planetClasses)

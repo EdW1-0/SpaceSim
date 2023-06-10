@@ -1,6 +1,7 @@
 import unittest
 
 from orbitsim.orbitTrajectory import OrbitTrajectory
+from planetsim.surfacePoint import SurfacePoint
 
 class TestOrbitTrajectory(unittest.TestCase):
     def testOrbitTrajectory(self):
@@ -12,6 +13,7 @@ class TestOrbitTrajectoryAttributes(unittest.TestCase):
         self.assertTrue(hasattr(OrbitTrajectory(0, []), "particleId"))
         self.assertTrue(hasattr(OrbitTrajectory(0, []), "trajectory"))
         self.assertTrue(hasattr(OrbitTrajectory(0, []), "state"))
+        self.assertTrue(hasattr(OrbitTrajectory(0, [], surfaceCoordinates = SurfacePoint(10, 10)), "surfaceCoordinates"))
         
 class TestOrbitTrajectoryConstructor(unittest.TestCase):
     def testOrbitTrajectoryConstructor(self):
