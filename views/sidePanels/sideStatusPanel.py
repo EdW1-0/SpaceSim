@@ -255,6 +255,11 @@ class TargetSettingPanel(SideStatusPanel):
                                        text = "Confirm", 
                                        manager = manager, 
                                        container = self.container)
+        self.surface_button = UIButton(pygame.Rect(200, 50, 200, 50),
+                                       text = "Surface target",
+                                       manager = manager,
+                                       container = self.container)
+        self.surface_button.hide()
 
     def set_ship(self, ship):
         self.ship = ship
@@ -289,8 +294,17 @@ class TargetSettingPanel(SideStatusPanel):
         
         if self.target:
             self.target_label.set_text(self.target.name)
+            if self.target.planet:
+                planet = self.model.planetSim.planetById(self.target.planet)
+                if planet.surface:
+                    self.surface_button.show()
+                else:
+                    self.surface_button.hide()
+            else:
+                self.surface_button.hide()
         else:
             self.target_label.set_text("")
+            self.surface_button.hide()
 
         if self.trajectory:
             dv = self.model.orbitSim._deltaVCost(self.trajectory.trajectory)
@@ -312,5 +326,8 @@ class TargetSettingPanel(SideStatusPanel):
                 return True
             else: 
                 return True
+        elif event.ui_element == self.surface_button:
+            self.surface_button.hide()
+            return True
         else:
             return False
