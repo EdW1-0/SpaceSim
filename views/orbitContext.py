@@ -302,8 +302,8 @@ class OrbitContext(GUIContext):
         elif self.ship_summary.upperAction == 2:
             self.target_panel.set_ship(self.ship_summary.ship)
             self.target_panel.set_source(self.ship_summary.ship_location())
-            self.target_panel.update()
             self.target_panel.show()
+            self.target_panel.update()
             self.target_mode = True
 
 
