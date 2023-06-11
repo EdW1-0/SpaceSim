@@ -37,6 +37,14 @@ from pygame_gui  import (
 )
 
 
+from enum import Enum 
+
+class SCMode (str, Enum):
+    Standard = "Standard"
+    Target = "Target"
+    Landing = "Landing"
+
+
 LOADSURFACEVIEW = pygame.USEREVENT + 3
 LOADCOLONYVIEW = pygame.USEREVENT + 4
 
@@ -99,7 +107,7 @@ class SurfaceDestinationSprite(pygame.sprite.Sprite):
     
 
 class SurfaceContext(GUIContext):
-    def __init__(self, screen, model, manager, planet, meridian = (0, 0), radius = 300.0):
+    def __init__(self, screen, model, manager, planet, meridian = (0, 0), radius = 300.0, mode = SCMode.Standard):
         super(SurfaceContext, self).__init__(screen, model, manager)
         self.planet = planet
         self.meridian = meridian
@@ -165,7 +173,7 @@ class SurfaceContext(GUIContext):
 
         self.target_panel = VehicleRoutingPanel(target_rect, manager=manager, model=model)
         self.target_panel.hide()
-        self.targetMode = False
+        self.targetMode = mode
 
         self.timing_panel = TimingPanel(timing_rect, manager = manager, timingMaster=model.timingMaster)
 
@@ -427,7 +435,7 @@ class SurfaceContext(GUIContext):
             return False
 
     def handleClickedObject(self, object):
-        if (self.targetMode):
+        if (self.targetMode == SCMode.Target):
             pos = object.latLong()
             self.target_panel.set_target(SurfacePoint(pos[0], pos[1]))
         else:
@@ -456,7 +464,7 @@ class SurfaceContext(GUIContext):
             (absLat, absLong) = latLong(unrotatedLong)
             print(absLat, absLong)
 
-            if (self.targetMode):
+            if (self.targetMode == SCMode.Target):
                 self.target_panel.set_target(SurfacePoint(absLat, absLong))
             else:
                 ###TODO: This seems to get right region, if it gets one at all, now, but occasionally misses entirely.
@@ -497,7 +505,7 @@ class SurfaceContext(GUIContext):
                     self.manager.process_events(event)
                     continue
 
-                if self.selectedObject and not self.targetMode:
+                if self.selectedObject and self.targetMode == SCMode.Standard:
                     if isinstance(self.selectedObject, SurfaceObjectSprite):
                         self.selectedObject.selected = False
                         self.selectedObject.update()
@@ -557,7 +565,7 @@ class SurfaceContext(GUIContext):
                             self.target_panel.set_vehicle(self.vehicle_panel.vehicle)
                             self.target_panel.update()
                             self.target_panel.show()
-                            self.targetMode = True
+                            self.targetMode = SCMode.Target
                         elif event.ui_element == self.vehicle_panel.stopButton:
                             self.vehicle_panel.vehicle.setDestination(None)
                         elif event.ui_element == self.vehicle_panel.colony_button:
@@ -568,7 +576,7 @@ class SurfaceContext(GUIContext):
                     if event.ui_element == self.target_panel.confirm_button:
                         self.target_panel.hide()
                         self.target_panel.vehicle.setDestination(self.target_panel.target)
-                    self.targetMode = False
+                    self.targetMode = SCMode.Standard
                     self.target_panel.clear_state()
 
             if event.type == UI_BUTTON_ON_HOVERED:

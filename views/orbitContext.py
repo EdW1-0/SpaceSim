@@ -9,7 +9,8 @@ from views.sidePanels.sideStatusPanel import OrbitStatusPanel, LinkStatusPanel, 
 from orbitsim.orbitNode import LeafClass, OrbitNode
 from orbitsim.orbitLink import OrbitLink
 
-from views.surfaceContext import LOADSURFACEVIEW
+
+from views.surfaceContext import LOADSURFACEVIEW, SCMode
 
 
 from pygame.locals import (
@@ -368,6 +369,10 @@ class OrbitContext(GUIContext):
                     if event.ui_element == self.target_panel.hide_button or self.target_panel.upperAction == 1:
                         self.target_mode = False
                         self.target_panel.clear_state()
+                    elif self.target_panel.upperAction == 2:
+                        self.upperContext = {"planet": self.target_panel.target.planet, "mode": SCMode.Landing}
+                        returnCode = LOADSURFACEVIEW
+                        break
                 else:
                     assert("Unknown UI element {0}".format(event.ui_element))
             elif event.type == UI_SELECTION_LIST_NEW_SELECTION:

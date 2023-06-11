@@ -25,7 +25,7 @@ from pygame.locals import (
 
 from views.menuContext import LOADORBITVIEW
 from views.orbitContext import LOADMENUVIEW
-from views.surfaceContext import LOADSURFACEVIEW, LOADCOLONYVIEW
+from views.surfaceContext import LOADSURFACEVIEW, LOADCOLONYVIEW, SCMode
 
 
 
@@ -55,20 +55,30 @@ def main():
         
         if outerEvent == QUIT:
             running = False
+        
         elif outerEvent == LOADORBITVIEW:
             manager.clear_and_reset()
             guiContext = OrbitContext(screen, gameModel, manager)
+        
         elif outerEvent == LOADMENUVIEW:
             manager.clear_and_reset()
             guiContext = MenuContext(screen, gameModel, manager)
+        
         elif outerEvent == LOADSURFACEVIEW:
             if "planet" not in guiContext.upperContext:
                 print("Invalid state - tried to load planet surface with no planet")
                 assert(False)
             planetId = guiContext.upperContext["planet"]
             planet = gameModel.planetSim.planetById(planetId)
+
+            if "mode" in guiContext.upperContext:
+                mode = guiContext.upperContext["mode"]
+            else:
+                mode = SCMode.Standard
+            
             manager.clear_and_reset()
-            guiContext = SurfaceContext(screen, gameModel, manager, planet)
+            guiContext = SurfaceContext(screen, gameModel, manager, planet, mode=mode)
+        
         elif outerEvent == LOADCOLONYVIEW:
             if "colony" not in guiContext.upperContext:
                 print("Invalid state - tried to load colony view with no colony")

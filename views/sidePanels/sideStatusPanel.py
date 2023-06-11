@@ -327,7 +327,7 @@ class TargetSettingPanel(SideStatusPanel):
             else: 
                 return True
         elif event.ui_element == self.surface_button:
-            self.surface_button.hide()
+            self.upperAction = 2
             return True
         else:
             return False
