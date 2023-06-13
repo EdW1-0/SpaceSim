@@ -62,7 +62,7 @@ class OrbitContext(GUIContext):
 
         summary_rect = pygame.Rect(800, 200, 400, 600)
         timing_rect = pygame.Rect(800, 0, 400, 200)
-        target_rect = pygame.Rect(400, 600, 400, 200)
+        target_rect = pygame.Rect(400, 500, 400, 300)
         
         self.planet_summary = PlanetStatusPanel(summary_rect, manager=manager, model = self.model)
         #self.planet_window.add_element(self.boop_button)
@@ -91,6 +91,7 @@ class OrbitContext(GUIContext):
             self.ship_summary.show()
             self.active_summary = self.ship_summary
             self.target_panel.set_ship(landingContext["ship"])
+            self.target_panel.set_source(self.ship_summary.ship_location())
             self.target_panel.set_target(landingContext["target"])
             if "surfaceCoordinates" in landingContext:
                 self.target_panel.set_coordinates(landingContext["surfaceCoordinates"])

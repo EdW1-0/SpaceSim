@@ -6,6 +6,9 @@ from pygame_gui.core import UIContainer
 from orbitsim.orbitTrajectory import TrajectoryState
 from orbitsim.orbitNode import OrbitNode
 
+from planetsim.surfacePoint import SurfacePoint
+from planetsim.surfaceBase import SurfaceBase
+
 
 
 
@@ -257,14 +260,14 @@ class TargetSettingPanel(SideStatusPanel):
                                          manager=manager, 
                                          container=self.container)
         self.route_text = UITextBox("Route text", 
-                                    pygame.Rect(0, 100, 200, 100), 
+                                    pygame.Rect(0, 100, 200, 200), 
                                     manager=manager, 
                                     container=self.container)
-        self.confirm_button = UIButton(pygame.Rect(200, 100, 200, 100), 
+        self.confirm_button = UIButton(pygame.Rect(200, 200, 200, 100), 
                                        text = "Confirm", 
                                        manager = manager, 
                                        container = self.container)
-        self.surface_button = UIButton(pygame.Rect(200, 50, 200, 50),
+        self.surface_button = UIButton(pygame.Rect(200, 100, 200, 100),
                                        text = "Surface target",
                                        manager = manager,
                                        container = self.container)
@@ -297,6 +300,7 @@ class TargetSettingPanel(SideStatusPanel):
     def set_coordinates(self, coordinates):
         assert(self.trajectory)
         self.trajectory.surfaceCoordinates = coordinates
+        self.update()
 
     def clear_state(self):
         self.ship = None
@@ -329,9 +333,12 @@ class TargetSettingPanel(SideStatusPanel):
             dv = self.model.orbitSim._deltaVCost(self.trajectory.trajectory)
             time = self.model.orbitSim._totalTime(self.trajectory.trajectory)
             distance = self.model.orbitSim._totalDistance(self.trajectory.trajectory)
-            if self.trajectory.surfaceCoordinates:
+            if self.trajectory.surfaceCoordinates and isinstance(self.trajectory.surfaceCoordinates, SurfacePoint):
                 coords = (self.trajectory.surfaceCoordinates.latitude, self.trajectory.surfaceCoordinates.longitude)
                 self.route_text.set_text("Delta V: {0}m/s<br>Total time: {1}<br>Total distance: {2}<br>Coords: {3}".format(dv, time, distance, coords))
+            elif self.trajectory.surfaceCoordinates and isinstance(self.trajectory.surfaceCoordinates, SurfaceBase):
+                baseName = self.trajectory.surfaceCoordinates.name
+                self.route_text.set_text("Delta V: {0}m/s<br>Total time: {1}<br>Total distance: {2}<br>Rendezvous: {3}".format(dv, time, distance, baseName))
             else:
                 self.route_text.set_text("Delta V: {0}m/s<br>Total time: {1}<br>Total distance: {2}".format(dv, time, distance))
         else:
