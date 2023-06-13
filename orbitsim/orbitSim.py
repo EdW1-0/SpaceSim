@@ -279,7 +279,8 @@ class OrbitSim:
                         timeBudget = 0
                         if location.planet and t.surfaceCoordinates:
                             ship = self.particleById(t.particleId).payload
-                            self.landCallback(ship, location.planet, t.surfaceCoordinates)
+                            if self.landCallback(ship, location.planet, t.surfaceCoordinates):
+                                self.destroyParticle(t.particleId)
                         continue
 
                     linkId = t.nextLink(location.id)

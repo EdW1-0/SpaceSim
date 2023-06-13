@@ -192,7 +192,10 @@ class VehicleRoutingPanel(SideStatusPanel):
             self.source_label.set_text("")
         
         if self.target:
-            self.target_label.set_text(str(self.target))
+            if isinstance(self.target, SurfaceBase):
+                self.target_label.set_text(self.target.name)
+            else:
+                self.target_label.set_text(str(self.target))
         else:
             self.target_label.set_text("")
 

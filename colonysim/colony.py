@@ -165,6 +165,10 @@ class Colony:
     def vehicleArrival(self, vehicle):
         self.vehicles[vehicle.id] = vehicle
         return True
+    
+    def shipArrival(self, ship):
+        self.ships[ship.id] = ship
+        return True
 
 
     def tick(self, increment):

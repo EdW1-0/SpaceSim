@@ -188,7 +188,11 @@ class ShipStatusPanel(SideStatusPanel):
         self.ship = ship
 
     def ship_location(self):
-        return self.model.orbitSim._particleLocation(self.ship.id)
+        try:
+            location = self.model.orbitSim._particleLocation(self.ship.id)
+        except KeyError:
+            location = None
+        return location
     
     def ship_trajectory(self):
         trajectory = None
@@ -201,11 +205,16 @@ class ShipStatusPanel(SideStatusPanel):
 
     def update(self):
         if not self.ship:
+            self.hide()
             return
         
         self.ship_name_label.set_text(self.ship.payload.name)
 
         location = self.ship_location()
+        if not location:
+            self.hide()
+            return
+
 
         if isinstance(location, OrbitNode):
             locationText = location.name 

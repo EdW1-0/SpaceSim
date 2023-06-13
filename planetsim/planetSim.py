@@ -5,6 +5,8 @@ from planetsim.planet import Planet
 from planetsim.planetSurface import PlanetSurface
 from planetsim.planetTerrain import PlanetTerrain
 from planetsim.vehicleClass import VehicleClass
+from planetsim.surfacePoint import SurfacePoint
+from planetsim.surfaceBase import SurfaceBase
 
 from utility.fileLoad import loadEntityFile
 from utility.dictLookup import getStringId
@@ -51,7 +53,14 @@ class PlanetSim:
     def landShip(self, ship, planet, surfaceCoordinates):
         planet = self.planetById(planet)
         surface = planet.surface
-        surface.createObject(ship, surfaceCoordinates, ship.name)
+        if isinstance(surfaceCoordinates, SurfacePoint):
+            surface.createObject(ship, surfaceCoordinates, ship.name)
+            return False
+        elif isinstance(surfaceCoordinates, SurfaceBase):
+            return surfaceCoordinates.content.shipArrival(ship)
+        else:
+            print("unrecognised surface coordinates type: ", surfaceCoordinates)
+            assert(False)
 
     def planetClassById(self, id):
         return getStringId(id, self.planetClasses)

@@ -440,7 +440,11 @@ class SurfaceContext(GUIContext):
 
     def handleClickedObject(self, object):
         if self.targetMode == SCMode.Landing:
-            return False
+            if isinstance(object.surfaceObject, SurfaceBase):
+                self.target_panel.set_target(object.surfaceObject)
+                return True
+            else:
+                return False
         if self.targetMode == SCMode.Target:
             pos = object.latLong()
             self.target_panel.set_target(SurfacePoint(pos[0], pos[1]))
