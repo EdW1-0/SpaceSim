@@ -201,7 +201,8 @@ class VehicleRoutingPanel(SideStatusPanel):
         if super(VehicleRoutingPanel, self).handle_event(event):
             return True
         elif event.ui_element == self.confirm_button:
-            self.vehicle.setDestination(self.target)
+            if self.vehicle:
+                self.vehicle.setDestination(self.target)
             self.hide()
             self.upperAction = 1
             return True

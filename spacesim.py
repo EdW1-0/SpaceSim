@@ -24,7 +24,7 @@ from pygame.locals import (
 )
 
 from views.menuContext import LOADORBITVIEW
-from views.orbitContext import LOADMENUVIEW
+from views.orbitContext import LOADMENUVIEW, OCMode
 from views.surfaceContext import LOADSURFACEVIEW, LOADCOLONYVIEW, SCMode
 
 
@@ -58,7 +58,15 @@ def main():
         
         elif outerEvent == LOADORBITVIEW:
             manager.clear_and_reset()
-            guiContext = OrbitContext(screen, gameModel, manager)
+            if isinstance(guiContext, SurfaceContext) and hasattr(guiContext, "upperContext"):
+                landingContext = {
+                    "ship": guiContext.upperContext["ship"],
+                    "target": guiContext.upperContext["node"],
+                    "surfaceCoordinates": guiContext.upperContext["surfaceCoordinates"]
+                }
+                guiContext = OrbitContext(screen, gameModel, manager, mode = OCMode.Target, landingContext = landingContext)
+            else:
+                guiContext = OrbitContext(screen, gameModel, manager)
         
         elif outerEvent == LOADMENUVIEW:
             manager.clear_and_reset()
@@ -76,8 +84,14 @@ def main():
             else:
                 mode = SCMode.Standard
             
+            if "ship" in guiContext.upperContext:
+                landingContext = {"ship": guiContext.upperContext["ship"],
+                                  "node": guiContext.upperContext["node"]}
+            else:
+                landingContext = {}
+
             manager.clear_and_reset()
-            guiContext = SurfaceContext(screen, gameModel, manager, planet, mode=mode)
+            guiContext = SurfaceContext(screen, gameModel, manager, planet, mode=mode, landingContext = landingContext)
         
         elif outerEvent == LOADCOLONYVIEW:
             if "colony" not in guiContext.upperContext:

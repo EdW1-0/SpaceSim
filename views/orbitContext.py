@@ -32,10 +32,16 @@ from pygame_gui  import (
     UI_SELECTION_LIST_NEW_SELECTION
 )
 
+from enum import Enum
+
+class OCMode (str, Enum):
+    Standard = "Standard"
+    Target = "Target"
+
 LOADMENUVIEW = pygame.USEREVENT + 2
 
 class OrbitContext(GUIContext):
-    def __init__(self, screen, model, manager, boundsRect = pygame.Rect(-100, -100, 1400, 2000)):
+    def __init__(self, screen, model, manager, boundsRect = pygame.Rect(-100, -100, 1400, 2000), mode = OCMode.Standard, landingContext = None):
         super(OrbitContext, self).__init__(screen, model, manager)
         self.all_sprites = pygame.sprite.Group()
         self.node_sprites = pygame.sprite.Group()
@@ -78,7 +84,18 @@ class OrbitContext(GUIContext):
 
         self.timing_panel = TimingPanel(timing_rect, manager=manager, timingMaster=self.model.timingMaster)
 
-        self.target_mode = False
+        self.target_mode = mode
+
+        if self.target_mode == OCMode.Target:
+            self.ship_summary.set_ship(landingContext["ship"])
+            self.ship_summary.show()
+            self.active_summary = self.ship_summary
+            self.target_panel.set_ship(landingContext["ship"])
+            self.target_panel.set_target(landingContext["target"])
+            if "surfaceCoordinates" in landingContext:
+                self.target_panel.set_coordinates(landingContext["surfaceCoordinates"])
+            self.target_panel.show()
+
 
     def computeLayout(self):
         self.all_sprites.empty()
@@ -255,7 +272,7 @@ class OrbitContext(GUIContext):
             particleView.rect.center = center
 
     def resolveNodeClick(self, c):
-        if self.target_mode:
+        if self.target_mode == OCMode.Target:
             if isinstance(c, OrbitNodeView):
                 if c.node != self.target_panel.source:
                     self.target_panel.set_target(c.node)
@@ -305,7 +322,7 @@ class OrbitContext(GUIContext):
             self.target_panel.set_source(self.ship_summary.ship_location())
             self.target_panel.show()
             self.target_panel.update()
-            self.target_mode = True
+            self.target_mode = OCMode.Target
 
 
     
@@ -367,10 +384,13 @@ class OrbitContext(GUIContext):
                     pass
                 elif self.target_panel.handle_event(event):
                     if event.ui_element == self.target_panel.hide_button or self.target_panel.upperAction == 1:
-                        self.target_mode = False
+                        self.target_mode = OCMode.Standard
                         self.target_panel.clear_state()
                     elif self.target_panel.upperAction == 2:
-                        self.upperContext = {"planet": self.target_panel.target.planet, "mode": SCMode.Landing}
+                        self.upperContext = {"planet": self.target_panel.target.planet, 
+                                             "mode": SCMode.Landing, 
+                                             "ship": self.target_panel.ship,
+                                             "node": self.target_panel.target}
                         returnCode = LOADSURFACEVIEW
                         break
                 else:

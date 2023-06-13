@@ -276,8 +276,18 @@ class TargetSettingPanel(SideStatusPanel):
                 ###TODO: Probably shouldn't have set target in this case. Once we have the tests to prove this doesn't
                 # break everything, fix this.
                 return
-        self.trajectory = self.model.orbitSim.createTrajectory(self.target.id, self.ship.id, self.source.id)
+        
+        try:
+            self.model.orbitSim.trajectoryForParticle(self.ship.id)
+        except KeyError:
+            self.trajectory = self.model.orbitSim.createTrajectory(self.target.id, self.ship.id, self.source.id)
+        else:
+            self.trajectory = self.model.orbitSim.trajectoryForParticle(self.ship.id)
         self.update()
+
+    def set_coordinates(self, coordinates):
+        assert(self.trajectory)
+        self.trajectory.surfaceCoordinates = coordinates
 
     def clear_state(self):
         self.ship = None
@@ -310,7 +320,11 @@ class TargetSettingPanel(SideStatusPanel):
             dv = self.model.orbitSim._deltaVCost(self.trajectory.trajectory)
             time = self.model.orbitSim._totalTime(self.trajectory.trajectory)
             distance = self.model.orbitSim._totalDistance(self.trajectory.trajectory)
-            self.route_text.set_text("Delta V: {0}m/s<br>Total time: {1}<br>Total distance: {2}".format(dv, time, distance))
+            if self.trajectory.surfaceCoordinates:
+                coords = (self.trajectory.surfaceCoordinates.latitude, self.trajectory.surfaceCoordinates.longitude)
+                self.route_text.set_text("Delta V: {0}m/s<br>Total time: {1}<br>Total distance: {2}<br>Coords: {3}".format(dv, time, distance, coords))
+            else:
+                self.route_text.set_text("Delta V: {0}m/s<br>Total time: {1}<br>Total distance: {2}".format(dv, time, distance))
         else:
             self.route_text.set_text("")
 

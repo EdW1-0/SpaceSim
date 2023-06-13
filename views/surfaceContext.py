@@ -107,11 +107,14 @@ class SurfaceDestinationSprite(pygame.sprite.Sprite):
     
 
 class SurfaceContext(GUIContext):
-    def __init__(self, screen, model, manager, planet, meridian = (0, 0), radius = 300.0, mode = SCMode.Standard):
+    def __init__(self, screen, model, manager, planet, meridian = (0, 0), radius = 300.0, mode = SCMode.Standard, landingContext = None):
         super(SurfaceContext, self).__init__(screen, model, manager)
         self.planet = planet
         self.meridian = meridian
         self.radius = radius
+        self.targetMode = mode
+        self.landingContext = landingContext
+
         #self.planet = PlanetSurface("test_json/test_surfaces/single_region_square.json", radius = 1000)
         #self.planet = PlanetSurface("test_json/test_surfaces/four_squares.json", radius = 1000)
         self.polyCount = 0
@@ -172,8 +175,10 @@ class SurfaceContext(GUIContext):
         self.vehicle_panel.hide()
 
         self.target_panel = VehicleRoutingPanel(target_rect, manager=manager, model=model)
-        self.target_panel.hide()
-        self.targetMode = mode
+        if self.targetMode == SCMode.Landing:
+            self.target_panel.show()
+        else:
+            self.target_panel.hide()
 
         self.timing_panel = TimingPanel(timing_rect, manager = manager, timingMaster=model.timingMaster)
 
@@ -429,15 +434,17 @@ class SurfaceContext(GUIContext):
                 unclickedItem = clicked_items[0]
 
             self.clickStack.add(unclickedItem)                        
-            self.handleClickedObject(unclickedItem)
-            return True
+            return self.handleClickedObject(unclickedItem)
         else:
             return False
 
     def handleClickedObject(self, object):
-        if (self.targetMode == SCMode.Target):
+        if self.targetMode == SCMode.Landing:
+            return False
+        if self.targetMode == SCMode.Target:
             pos = object.latLong()
             self.target_panel.set_target(SurfacePoint(pos[0], pos[1]))
+            return True
         else:
             self.selectedObject = object
             self.selectedObject.selected = True
@@ -447,6 +454,7 @@ class SurfaceContext(GUIContext):
             self.vehicle_panel.update()
             self.active_panel = self.vehicle_panel
             self.vehicle_panel.show()
+            return True
 
     def hitTestRegion(self, pos):
         (lat, long) = self.xyToLatLong(pos)
@@ -464,7 +472,7 @@ class SurfaceContext(GUIContext):
             (absLat, absLong) = latLong(unrotatedLong)
             print(absLat, absLong)
 
-            if (self.targetMode == SCMode.Target):
+            if (self.targetMode == SCMode.Target or self.targetMode == SCMode.Landing):
                 self.target_panel.set_target(SurfacePoint(absLat, absLong))
             else:
                 ###TODO: This seems to get right region, if it gets one at all, now, but occasionally misses entirely.
@@ -574,8 +582,17 @@ class SurfaceContext(GUIContext):
                             break
                 elif self.target_panel.handle_event(event):
                     if event.ui_element == self.target_panel.confirm_button:
-                        self.target_panel.hide()
-                        self.target_panel.vehicle.setDestination(self.target_panel.target)
+                        if self.targetMode == SCMode.Target:
+                            self.target_panel.hide()
+                            self.target_panel.vehicle.setDestination(self.target_panel.target)
+                        elif self.targetMode == SCMode.Landing:
+                            self.landingContext["surfaceCoordinates"] = self.target_panel.target
+                            self.upperContext = self.landingContext
+                            returnCode = LOADORBITVIEW
+                            break
+                        else:
+                            print("Should never get here!")
+                            assert(False)
                     self.targetMode = SCMode.Standard
                     self.target_panel.clear_state()
 
