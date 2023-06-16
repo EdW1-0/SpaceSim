@@ -65,6 +65,12 @@ def main():
                     "surfaceCoordinates": guiContext.upperContext["surfaceCoordinates"]
                 }
                 guiContext = OrbitContext(screen, gameModel, manager, mode = OCMode.Target, landingContext = landingContext)
+            elif isinstance(guiContext, ColonyContext):
+                landingContext = {
+                    "ship": guiContext.upperContext["ship"],
+                    "colony": guiContext.upperContext["colony"]
+                }
+                guiContext = OrbitContext(screen, gameModel, manager, mode = OCMode.LaunchPlan, landingContext =landingContext)
             else:
                 guiContext = OrbitContext(screen, gameModel, manager)
         

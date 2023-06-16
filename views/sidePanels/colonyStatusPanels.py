@@ -179,3 +179,13 @@ class ColonyShipDetailPanel(SideStatusPanel):
         self.ship_status.set_text("DeltaV: {0}/{1}<br>".format(self.ship.deltaV(), self.ship.shipClass.maxDeltaV))
         self.ship_mission.set_text("Orders: Not implemented<br>")
 
+    def handle_event(self, event):
+        self.upperAction = 0
+        if super(ColonyShipDetailPanel, self).handle_event(event):
+            return True
+        elif event.ui_element == self.target_button:
+            self.upperAction = 1
+            return True
+        else:
+            return False
+

@@ -10,7 +10,7 @@ from orbitsim.orbitNode import LeafClass, OrbitNode
 from orbitsim.orbitLink import OrbitLink
 
 
-from views.surfaceContext import LOADSURFACEVIEW, SCMode
+from views.surfaceContext import LOADSURFACEVIEW, SCMode, LOADCOLONYVIEW
 
 
 from pygame.locals import (
@@ -37,6 +37,7 @@ from enum import Enum
 class OCMode (str, Enum):
     Standard = "Standard"
     Target = "Target"
+    LaunchPlan = "LaunchPlan"
 
 LOADMENUVIEW = pygame.USEREVENT + 2
 
@@ -96,6 +97,30 @@ class OrbitContext(GUIContext):
             if "surfaceCoordinates" in landingContext:
                 self.target_panel.set_coordinates(landingContext["surfaceCoordinates"])
             self.target_panel.show()
+        elif self.target_mode == OCMode.LaunchPlan:
+            # Get source - this will be colony or planet ship is on. 
+            # In fact the node this is associated with.
+            # Can get this from colony locale - surface.
+            # Go through planetsim to look up relevant planet
+            # Then go through orbitsim to look up relevant node. 
+            colony = model.colonySim.colonyById(landingContext["colony"])
+
+            locale = colony.locale
+            planet = None
+            for p in model.planetSim.planets.values():
+                if p.surface == locale:
+                    planet = p
+            node = None
+            for n in model.orbitSim._nodes.values():
+                if n.planet == planet.id:
+                    node = n
+
+            self.target_panel.set_source(node)
+            self.target_panel.set_ship(landingContext["ship"])
+            self.target_panel.update()
+            self.target_panel.show()
+            self.landingContext = landingContext
+
 
 
     def computeLayout(self):
@@ -270,10 +295,15 @@ class OrbitContext(GUIContext):
                 if pv.particle == particle:
                     particleView = pv
                     break
+            ###TODO: This is a kludge due to not having handled particle creation/destruction properly at the GUI level, which we ought to do.
+            if not particleView:
+                self.computeLayout()
+                return
+
             particleView.rect.center = center
 
     def resolveNodeClick(self, c):
-        if self.target_mode == OCMode.Target:
+        if self.target_mode == OCMode.Target or self.target_mode == OCMode.LaunchPlan:
             if isinstance(c, OrbitNodeView):
                 if c.node != self.target_panel.source:
                     self.target_panel.set_target(c.node)
@@ -385,8 +415,15 @@ class OrbitContext(GUIContext):
                     pass
                 elif self.target_panel.handle_event(event):
                     if event.ui_element == self.target_panel.hide_button or self.target_panel.upperAction == 1:
-                        self.target_mode = OCMode.Standard
-                        self.target_panel.clear_state()
+                        if self.target_mode == OCMode.Target:
+                            self.target_mode = OCMode.Standard
+                            self.target_panel.clear_state()
+                        elif self.target_mode == OCMode.LaunchPlan:
+                            self.upperContext = {"colony": self.landingContext["colony"], 
+                                                 "ship": self.landingContext["ship"],
+                                                 "trajectory": self.target_panel.trajectory}
+                            returnCode = LOADCOLONYVIEW
+                            break
                     elif self.target_panel.upperAction == 2:
                         self.upperContext = {"planet": self.target_panel.target.planet, 
                                              "mode": SCMode.Landing, 

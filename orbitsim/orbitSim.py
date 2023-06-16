@@ -223,7 +223,8 @@ class OrbitSim:
 
         ot = OrbitTrajectory(particleId, minPath, state = initialState, surfaceCoordinates=surfaceCoordinates)
         #Key the trajectory using the particleId. This ensures 1-1 mapping. 
-        self._trajectories[particleId] = ot
+        if particleId:
+            self._trajectories[particleId] = ot
         return ot
 
     def cancelTrajectory(self, id):

@@ -4,7 +4,7 @@ from views.timingView import TimingPanel
 
 from views.sidePanels.colonyStatusPanels import ColonyTabPanel, ColonyVehiclePanel, ColonyVehicleDetailPanel, ColonyShipPanel, ColonyShipDetailPanel
 
-from views.surfaceContext import LOADSURFACEVIEW
+from views.surfaceContext import LOADSURFACEVIEW, LOADORBITVIEW
 
 from colonysim.colony import Colony
 
@@ -97,6 +97,11 @@ class ColonyContext(GUIContext):
                         self.colony.deployVehicle(self.vehicle_detail_panel.vehicle.id)
                         self.detail_panel = None
                         self.active_panel.update()
+                    elif self.detail_panel == self.ship_detail_panel:
+                        if event.ui_element == self.ship_detail_panel.target_button:
+                            self.upperContext = {"ship": self.ship_detail_panel.ship, "colony": self.colony.id}
+                            returnCode = LOADORBITVIEW
+                            break
 
             elif event.type == UI_SELECTION_LIST_NEW_SELECTION:
                 if event.ui_element == self.vehicle_panel.vehicle_list:

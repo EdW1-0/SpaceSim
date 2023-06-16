@@ -5,10 +5,12 @@ from pygame_gui.core import UIContainer
 
 from orbitsim.orbitTrajectory import TrajectoryState
 from orbitsim.orbitNode import OrbitNode
+from orbitsim.particle import Particle
 
 from planetsim.surfacePoint import SurfacePoint
 from planetsim.surfaceBase import SurfaceBase
 
+from colonysim.ship import Ship
 
 
 
@@ -289,12 +291,16 @@ class TargetSettingPanel(SideStatusPanel):
                 # break everything, fix this.
                 return
         
-        try:
-            self.model.orbitSim.trajectoryForParticle(self.ship.id)
-        except KeyError:
-            self.trajectory = self.model.orbitSim.createTrajectory(self.target.id, self.ship.id, self.source.id)
-        else:
-            self.trajectory = self.model.orbitSim.trajectoryForParticle(self.ship.id)
+        if self.ship and isinstance(self.ship, Particle):
+            try:
+                self.model.orbitSim.trajectoryForParticle(self.ship.id)
+            except KeyError:
+                self.trajectory = self.model.orbitSim.createTrajectory(self.target.id, self.ship.id, self.source.id)
+            else:
+                self.trajectory = self.model.orbitSim.trajectoryForParticle(self.ship.id)
+        elif self.ship and isinstance(self.ship, Ship):
+            self.trajectory = self.model.orbitSim.createTrajectory(self.target.id, sourceId = self.source.id, payload = self.ship)
+            
         self.update()
 
     def set_coordinates(self, coordinates):
@@ -350,7 +356,8 @@ class TargetSettingPanel(SideStatusPanel):
             return True
         elif event.ui_element == self.confirm_button:
             if self.trajectory and self.trajectory.state == TrajectoryState.DEFINITION:
-                self.trajectory.state = TrajectoryState.PENDING
+                if self.trajectory.particleId:
+                    self.trajectory.state = TrajectoryState.PENDING
                 self.hide()
                 self.upperAction = 1
                 return True
