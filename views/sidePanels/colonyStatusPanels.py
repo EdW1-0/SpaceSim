@@ -139,9 +139,10 @@ class ColonyShipPanel(SideStatusPanel):
 
 ###TODO: Currently ColonyVehicleDetailPanel and ColonyShipDetailPanel are almost identical. Probably should merge into common superclass
 class ColonyShipDetailPanel(SideStatusPanel):
-    def __init__(self, rect, manager = None, ship=None):
+    def __init__(self, rect, manager = None, orbitSim = None, ship=None):
         super().__init__(rect, manager)
         self.ship = ship
+        self.orbitSim = orbitSim
 
         self.ship_name = UILabel(pygame.Rect(200, 50, 200, 50), text = "Default name", manager=manager, container=self.container)
 
@@ -165,9 +166,10 @@ class ColonyShipDetailPanel(SideStatusPanel):
                                       "Launch",
                                         manager=manager,
                                                    container=self.container)
+        self.launch_button.hide()
         
     def setShip(self, ship):
-        self.ship = ship
+        self.ship = ship 
 
     def update(self):
         if not self.ship:
@@ -177,7 +179,25 @@ class ColonyShipDetailPanel(SideStatusPanel):
 
         self.ship_characteristics.set_text("Class: {0}<br>".format(self.ship.shipClass.name))
         self.ship_status.set_text("DeltaV: {0}/{1}<br>".format(self.ship.deltaV(), self.ship.shipClass.maxDeltaV))
-        self.ship_mission.set_text("Orders: Not implemented<br>")
+
+        particle = None
+        for p in self.orbitSim._particles.values():
+            if p.payload == self.ship:
+                particle = p
+
+        traj = False
+        if particle:
+            try:
+                trajectory = self.orbitSim.trajectoryForParticle(particle.id)
+                self.ship_mission.set_text("Has a trajectory")
+                self.launch_button.show()
+                traj = True
+            except KeyError:
+                pass
+
+        if not traj:               
+            self.ship_mission.set_text("Orders: Not implemented<br>")
+            self.launch_button.hide()
 
     def handle_event(self, event):
         self.upperAction = 0

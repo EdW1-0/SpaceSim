@@ -106,7 +106,14 @@ def main():
             colonyId = guiContext.upperContext["colony"]
             colony = gameModel.colonySim.colonyById(colonyId)
             manager.clear_and_reset()
-            guiContext = ColonyContext(screen, gameModel, manager, colony)
+            if "ship" and "trajectory" in guiContext.upperContext:
+                launchContext = {
+                    "ship": guiContext.upperContext["ship"],
+                    "trajectory": guiContext.upperContext["trajectory"]
+                }
+            else:
+                launchContext = None
+            guiContext = ColonyContext(screen, gameModel, manager, colony, launchContext = launchContext)
 
         
         manager.update(time_delta)

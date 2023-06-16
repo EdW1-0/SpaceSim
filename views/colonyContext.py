@@ -30,7 +30,7 @@ from pygame.locals import (
 
 
 class ColonyContext(GUIContext):
-    def __init__(self, screen, model, manager, colony):
+    def __init__(self, screen, model, manager, colony, launchContext = None):
         super().__init__(screen, model, manager)
         self.colony = colony
 
@@ -56,11 +56,17 @@ class ColonyContext(GUIContext):
 
         self.vehicle_detail_panel = ColonyVehicleDetailPanel(detail_rect, manager=manager)
         self.vehicle_detail_panel.hide()
-        self.ship_detail_panel = ColonyShipDetailPanel(detail_rect, manager=manager)
+        self.ship_detail_panel = ColonyShipDetailPanel(detail_rect, manager=manager, orbitSim = self.model.orbitSim)
         self.ship_detail_panel.hide()
 
         self.active_panel = None
         self.detail_panel = None
+
+        if launchContext:
+            self.ship_detail_panel.setShip(launchContext["ship"])
+            self.ship_detail_panel.update()
+            self.detail_panel = self.ship_detail_panel
+            self.detail_panel.show()
 
     def run(self):
         returnCode = 0
