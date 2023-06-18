@@ -8,6 +8,7 @@ from views.sidePanels.sideStatusPanel import OrbitStatusPanel, LinkStatusPanel, 
 
 from orbitsim.orbitNode import LeafClass, OrbitNode
 from orbitsim.orbitLink import OrbitLink
+from orbitsim.orbitTrajectory import TrajectoryState
 
 
 from views.surfaceContext import LOADSURFACEVIEW, SCMode, LOADCOLONYVIEW
@@ -417,6 +418,7 @@ class OrbitContext(GUIContext):
                     if event.ui_element == self.target_panel.hide_button or self.target_panel.upperAction == 1:
                         if self.target_mode == OCMode.Target:
                             self.target_mode = OCMode.Standard
+                            self.target_panel.trajectory.state = TrajectoryState.PENDING
                             self.target_panel.clear_state()
                         elif self.target_mode == OCMode.LaunchPlan:
                             self.upperContext = {"colony": self.landingContext["colony"], 

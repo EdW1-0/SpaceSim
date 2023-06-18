@@ -8,6 +8,8 @@ from views.surfaceContext import LOADSURFACEVIEW, LOADORBITVIEW
 
 from colonysim.colony import Colony
 
+from orbitsim.orbitTrajectory import TrajectoryState
+
 import pygame
 from pygame_gui.elements import UILabel, UIButton
 from pygame_gui  import (
@@ -108,6 +110,10 @@ class ColonyContext(GUIContext):
                             self.upperContext = {"ship": self.ship_detail_panel.ship, "colony": self.colony.id}
                             returnCode = LOADORBITVIEW
                             break
+                        elif event.ui_element == self.ship_detail_panel.launch_button:
+                            self.ship_detail_panel.trajectory().state = TrajectoryState.PENDING
+
+
 
             elif event.type == UI_SELECTION_LIST_NEW_SELECTION:
                 if event.ui_element == self.vehicle_panel.vehicle_list:

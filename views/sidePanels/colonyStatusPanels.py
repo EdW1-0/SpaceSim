@@ -4,6 +4,8 @@ from views.sidePanels.sideStatusPanel import SideStatusPanel
 
 from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox, UISelectionList
 
+from orbitsim.orbitTrajectory import TrajectoryState
+
 class ColonyTabPanel(SideStatusPanel):
     def __init__(self, rect, manager=None):
         super().__init__(rect, manager)
@@ -126,7 +128,7 @@ class ColonyShipPanel(SideStatusPanel):
         self.ships_text = UILabel(pygame.Rect(0, 50, 400, 50), text=ships_text, manager=manager, container=self.container)
 
         self.ships_list = UISelectionList(pygame.Rect(0, 100, 400, 500),
-                                            [("foo", "bar")],
+                                            [],
                                             manager=manager,
                                             container=self.container)
         
@@ -180,12 +182,23 @@ class ColonyShipDetailPanel(SideStatusPanel):
         self.ship_characteristics.set_text("Class: {0}<br>".format(self.ship.shipClass.name))
         self.ship_status.set_text("DeltaV: {0}/{1}<br>".format(self.ship.deltaV(), self.ship.shipClass.maxDeltaV))
 
+
+
+        if not self.trajectory():               
+            self.ship_mission.set_text("Orders: Not implemented<br>")
+            self.launch_button.hide()
+
+    def trajectory(self):
+        if not self.ship:
+            return None
+
         particle = None
         for p in self.orbitSim._particles.values():
             if p.payload == self.ship:
                 particle = p
 
         traj = False
+        trajectory = None
         if particle:
             try:
                 trajectory = self.orbitSim.trajectoryForParticle(particle.id)
@@ -194,10 +207,8 @@ class ColonyShipDetailPanel(SideStatusPanel):
                 traj = True
             except KeyError:
                 pass
-
-        if not traj:               
-            self.ship_mission.set_text("Orders: Not implemented<br>")
-            self.launch_button.hide()
+        
+        return trajectory
 
     def handle_event(self, event):
         self.upperAction = 0
@@ -205,6 +216,9 @@ class ColonyShipDetailPanel(SideStatusPanel):
             return True
         elif event.ui_element == self.target_button:
             self.upperAction = 1
+            return True
+        elif event.ui_element == self.launch_button:
+            self.upperAction = 2
             return True
         else:
             return False

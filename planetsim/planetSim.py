@@ -55,6 +55,7 @@ class PlanetSim:
         surface = planet.surface
         if isinstance(surfaceCoordinates, SurfacePoint):
             surface.createObject(ship, surfaceCoordinates, ship.name)
+            ship.locale = surface
             return False
         elif isinstance(surfaceCoordinates, SurfaceBase):
             return surfaceCoordinates.content.shipArrival(ship)

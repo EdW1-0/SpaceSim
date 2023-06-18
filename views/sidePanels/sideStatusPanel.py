@@ -356,8 +356,6 @@ class TargetSettingPanel(SideStatusPanel):
             return True
         elif event.ui_element == self.confirm_button:
             if self.trajectory and self.trajectory.state == TrajectoryState.DEFINITION:
-                if self.trajectory.particleId:
-                    self.trajectory.state = TrajectoryState.PENDING
                 self.hide()
                 self.upperAction = 1
                 return True

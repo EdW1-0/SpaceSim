@@ -111,6 +111,13 @@ class ColonySim:
         self._colonies[id] = colony
         return id
     
+    def colonyForShipId(self, shipId):
+        for colony in self._colonies.values():
+            if shipId in colony.ships:
+                return colony
+            
+        return None
+
     def colonyById(self, id):
         return getIntId(id, self._colonies)
     
@@ -119,6 +126,7 @@ class ColonySim:
     
     def buildingClassById(self, id):
         return getStringId(id, self._buildingClasses)
+    
 
 
         

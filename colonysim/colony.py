@@ -26,6 +26,7 @@ class Colony:
         for shipId in ships:
             ship = orbitSim.transferShip(shipId)
             self.ships[shipId] = ship
+            ship.locale = self
 
         self.vehicles = {}
         for vehicleId in vehicles:
@@ -133,9 +134,10 @@ class Colony:
         return surplus
     
     def addShip(self, name, shipClass, deltaV = 0):
-        shipId = self.orbitSim.createShip(name, shipClass, deltaV)
+        shipId = self.orbitSim.createShip(name, shipClass, deltaV = deltaV)
         ship = self.orbitSim.transferShip(shipId)
         self.ships[shipId] = ship
+        ship.locale = self
 
     def addVehicle(self, name, fuel = 0):
         if not self.locale and not isinstance(self.locale, PlanetSurface):
@@ -166,8 +168,12 @@ class Colony:
         self.vehicles[vehicle.id] = vehicle
         return True
     
+    def launchShip(self, ship):
+        del self.ships[ship.id]
+    
     def shipArrival(self, ship):
         self.ships[ship.id] = ship
+        ship.locale = self
         return True
 
 

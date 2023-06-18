@@ -7,6 +7,7 @@ from orbitsim.orbitTrajectory import OrbitTrajectory, TrajectoryState
 
 from colonysim.ship import Ship
 from colonysim.shipClass import ShipClass
+from colonysim.colony import Colony
 
 from utility.fileLoad import loadEntityFile
 from utility.dictLookup import getIntId, getStringId
@@ -180,6 +181,7 @@ class OrbitSim:
                 particle.velocity = -1
             else:
                 raise ValueError
+            particle.payload.locale = target
 
             location.particles.remove(id)
 
@@ -191,6 +193,7 @@ class OrbitSim:
                 del location.particles[id]
             else:
                 raise ValueError
+            particle.payload.locale = target
 
     def createTrajectory(self, targetId, particleId = None, sourceId = None, payload = None, surfaceCoordinates = None, initialState = TrajectoryState.DEFINITION):
         if particleId is not None:
@@ -252,7 +255,7 @@ class OrbitSim:
 
     def _pruneTrajectories(self):
         def isTerminal(t):
-            return (t.state == TrajectoryState.COMPLETE or t.state == TrajectoryState.DEFINITION)
+            return (t.state == TrajectoryState.COMPLETE)
             # location = self._particleLocation(t.particleId)
             # if (isinstance(location, OrbitNode)) and (location.id == t.trajectory[-1]):
             #     return True
@@ -266,6 +269,10 @@ class OrbitSim:
     def tick(self, increment):
         for t in self._trajectories.values():
             if t.state == TrajectoryState.PENDING:
+                particle = self.particleById(t.particleId)
+                if isinstance(particle.payload.locale, Colony):
+                    particle.payload.locale.launchShip(particle.payload)
+                    self._ships[particle.payload.id] = particle.payload
                 t.state = TrajectoryState.ACTIVE
 
             if t.state != TrajectoryState.ACTIVE:
