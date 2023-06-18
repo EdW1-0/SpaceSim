@@ -155,6 +155,10 @@ class ColonyContext(GUIContext):
         if self.active_panel:
             self.active_panel.update()
 
+        if self.detail_panel is self.ship_detail_panel:
+            if self.detail_panel.ship and self.detail_panel.ship.id not in self.colony.ships:
+                self.ship_detail_panel.setShip(None)
+
         if self.detail_panel:
             self.detail_panel.update()
 

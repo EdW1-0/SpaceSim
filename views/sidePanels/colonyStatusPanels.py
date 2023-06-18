@@ -175,6 +175,7 @@ class ColonyShipDetailPanel(SideStatusPanel):
 
     def update(self):
         if not self.ship:
+            self.hide()
             return
         
         self.ship_name.set_text(self.ship.name)
