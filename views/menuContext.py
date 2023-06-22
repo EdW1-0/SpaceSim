@@ -47,12 +47,12 @@ class MenuItem(pygame.sprite.Sprite):
 class MenuContext(GUIContext):
     def __init__(self, screen, model, manager):
         super(MenuContext, self).__init__(screen, model, manager)
-        loadItem = MenuItem((200, 100), text="Load Game", handler=self.loadHandler)
-        quitItem = MenuItem((200, 200), text="Quit Game", handler=self.quitHandler)
+        self.loadItem = MenuItem((200, 100), text="Load Game", handler=self.loadHandler)
+        self.quitItem = MenuItem((200, 200), text="Quit Game", handler=self.quitHandler)
 
         all_sprites = pygame.sprite.Group()
-        all_sprites.add(loadItem)
-        all_sprites.add(quitItem)
+        all_sprites.add(self.loadItem)
+        all_sprites.add(self.quitItem)
         self.all_sprites = all_sprites
 
     def run(self):

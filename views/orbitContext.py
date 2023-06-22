@@ -104,13 +104,20 @@ class OrbitContext(GUIContext):
             # Can get this from colony locale - surface.
             # Go through planetsim to look up relevant planet
             # Then go through orbitsim to look up relevant node. 
-            colony = model.colonySim.colonyById(landingContext["colony"])
+            if "colony" in landingContext:
+                colony = model.colonySim.colonyById(landingContext["colony"])
 
-            locale = colony.locale
-            planet = None
-            for p in model.planetSim.planets.values():
-                if p.surface == locale:
-                    planet = p
+                locale = colony.locale
+                planet = None
+                for p in model.planetSim.planets.values():
+                    if p.surface == locale:
+                        planet = p
+            elif "planet" in landingContext:
+                planet = model.planetSim.planetById(landingContext["planet"]) 
+            else:
+                print("Insufficient information to find planet:", landingContext)
+                assert(False)
+
             node = None
             for n in model.orbitSim._nodes.values():
                 if n.planet == planet.id:
@@ -421,9 +428,17 @@ class OrbitContext(GUIContext):
                             self.target_panel.trajectory.state = TrajectoryState.PENDING
                             self.target_panel.clear_state()
                         elif self.target_mode == OCMode.LaunchPlan:
-                            self.upperContext = {"colony": self.landingContext["colony"], 
-                                                 "ship": self.landingContext["ship"],
-                                                 "trajectory": self.target_panel.trajectory}
+                            if "colony" in self.landingContext:
+                                self.upperContext = {"colony": self.landingContext["colony"], 
+                                                     "ship": self.landingContext["ship"],
+                                                     "trajectory": self.target_panel.trajectory}
+                            elif "planet" in self.landingContext:
+                                self.upperContext = {
+                                    "planet": self.landingContext["planet"], 
+                                    "ship": self.landingContext["ship"],
+                                    "trajectory": self.target_panel.trajectory,
+                                    "mode": SCMode.Target
+                                }
                             returnCode = LOADCOLONYVIEW
                             break
                     elif self.target_panel.upperAction == 2:

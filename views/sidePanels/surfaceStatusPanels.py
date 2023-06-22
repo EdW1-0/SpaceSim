@@ -5,6 +5,8 @@ from views.sidePanels.sideStatusPanel import SideStatusPanel
 from planetsim.surfaceVehicle import SurfaceVehicle
 from planetsim.surfaceBase import SurfaceBase
 
+from colonysim.ship import Ship
+
 from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox, UISelectionList
 from pygame_gui.core import UIContainer
 
@@ -122,6 +124,10 @@ class VehicleStatusPanel(SideStatusPanel):
             self.target_button.hide()
             self.stopButton.hide()
             self.colony_button.show()
+        elif isinstance(self.vehicle.content, Ship):
+            self.target_button.show()
+            self.stopButton.hide()
+            self.colony_button.hide()
         else:
             self.target_button.hide()
             self.stopButton.hide()
@@ -204,10 +210,14 @@ class VehicleRoutingPanel(SideStatusPanel):
         if super(VehicleRoutingPanel, self).handle_event(event):
             return True
         elif event.ui_element == self.confirm_button:
-            if self.vehicle:
+            if self.vehicle and isinstance(self.vehicle, SurfaceVehicle):
                 self.vehicle.setDestination(self.target)
-            self.hide()
-            self.upperAction = 1
-            return True
+                self.hide()
+                self.upperAction = 1
+                return True
+            else:
+                self.upperAction = 2
+                return True
         else:
             return False
+
