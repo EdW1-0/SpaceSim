@@ -144,8 +144,8 @@ class TestOrbitSimParticleCreation(unittest.TestCase):
     def setUp(self):
         self.os = OrbitSim("test_json/test_orbits/happy_case.json")
         self.n0 = self.os.nodeById(0)
-        self.os.createParticle(self.n0)
-        self.os.createParticle(self.n0)
+        self.os.createParticle(self.n0, PayloadMock(100))
+        self.os.createParticle(self.n0, PayloadMock(100))
 
     def testOrbitSimParticleCreationLength(self):
         self.assertEqual(len(self.n0.particles), 2)
@@ -167,7 +167,7 @@ class TestOrbitSimParticleCreation(unittest.TestCase):
     def testOrbitSimParticleCreationReturnValue(self):
         n1 = self.os.nodeById(1)
         for i in range(5):
-            self.assertEqual(self.os.createParticle(n1), i+2)
+            self.assertEqual(self.os.createParticle(n1, PayloadMock(100)), i+2)
 
 
 class TestOrbitSimParticleDestruction(unittest.TestCase):
@@ -176,7 +176,7 @@ class TestOrbitSimParticleDestruction(unittest.TestCase):
         self.n0 = self.os.nodeById(0)
         self.l0 = self.os.linkById(0)
         for i in range(10):
-            self.os.createParticle(self.n0)
+            self.os.createParticle(self.n0, PayloadMock(100))
 
     def testOrbitSimParticleDestructionNode(self):
         self.os.destroyParticle(2)
@@ -191,7 +191,7 @@ class TestOrbitSimParticleDestruction(unittest.TestCase):
             self.os._particleLocation(3)
         self.assertFalse(3 in self.n0.particles)
 
-        self.os.createParticle(self.n0)
+        self.os.createParticle(self.n0, PayloadMock(100))
         self.assertEqual(len(self.os._particles), 9)
         try:
             self.os.particleById(10)
@@ -206,7 +206,7 @@ class TestOrbitSimParticleTransit(unittest.TestCase):
         self.n0 = self.os.nodeById(0)
         self.l0 = self.os.linkById(0)
         for i in range(10):
-            self.os.createParticle(self.n0)
+            self.os.createParticle(self.n0, PayloadMock(100))
 
     def testOrbitSimParticleTransitToLink(self):
         self.os.transitParticle(0, self.l0.id)
@@ -257,7 +257,7 @@ class TestOrbitSimParticleTravel(unittest.TestCase):
         self.n0 = self.os.nodeById(0)
         self.l0 = self.os.linkById(0)
         for i in range(10):
-            self.os.createParticle(self.n0)
+            self.os.createParticle(self.n0, PayloadMock(100))
 
     def testOrbitSimParticleTravelUp(self):
         self.os.transitParticle(0,0)
@@ -278,7 +278,7 @@ class TestOrbitSimTick(unittest.TestCase):
         self.n0 = self.os.nodeById(0)
         self.l0 = self.os.linkById(0)
         for i in range(10):
-            self.os.createParticle(self.n0)
+            self.os.createParticle(self.n0, PayloadMock(100))
 
         
     def testOrbitSimTickUpMotion(self):
@@ -317,7 +317,7 @@ class TestOrbitSimParticleArrival(unittest.TestCase):
         self.n0 = self.os.nodeById(0)
         self.l0 = self.os.linkById(0)
         for i in range(10):
-            self.os.createParticle(self.n0)
+            self.os.createParticle(self.n0, PayloadMock(100))
 
     def testOrbitSimTopArrival(self):
         self.os.createTrajectory(1, particleId = 2, initialState = TrajectoryState.ACTIVE)
@@ -361,6 +361,7 @@ class TestOrbitSimTrajectoryState(unittest.TestCase):
     def setUp(self):
         self.os = OrbitSim("test_json/test_orbits/happy_case.json")
         pl = PayloadMock(deltaV = 100000.0)
+        pl.locale = None
         self.os.createParticle(self.os.nodeById(0), payload = pl)
 
     def testOrbitSimTrajectoryDefinition(self):
@@ -464,17 +465,17 @@ class TestOrbitSimTrajectory(unittest.TestCase):
         self.assertEqual(self.os.createTrajectory(targetId = 1, particleId = 0).trajectory, [0,0,1])
 
     def testOrbitSimTrajectoryNoncontiguous(self):
-        self.assertEqual(self.ucos.createTrajectory(targetId = 2, sourceId = 0).trajectory, [0,0,1,1,2])
-        self.assertEqual(self.ucos.createTrajectory(targetId = 4, sourceId = 3).trajectory, [3,2,4])
+        self.assertEqual(self.ucos.createTrajectory(targetId = 2, sourceId = 0, payload = PayloadMock(100)).trajectory, [0,0,1,1,2])
+        self.assertEqual(self.ucos.createTrajectory(targetId = 4, sourceId = 3, payload = PayloadMock(100)).trajectory, [3,2,4])
         with self.assertRaises(ValueError):
-            self.ucos.createTrajectory(targetId = 3, sourceId = 0)
+            self.ucos.createTrajectory(targetId = 3, sourceId = 0, payload = PayloadMock(100))
 
     def testOrbitSimTrajectoryDeltaV(self):
-        self.assertEqual(self.los.createTrajectory(targetId = 3, sourceId = 0).trajectory, [0,1,3])
+        self.assertEqual(self.los.createTrajectory(targetId = 3, sourceId = 0, payload = PayloadMock(100)).trajectory, [0,1,3])
 
     def testOrbitSimTrajectoryRetrieval(self):
-        self.os.createTrajectory(targetId = 1, sourceId = 0)
-        self.os.createTrajectory(targetId = 2, sourceId = 0)
+        self.os.createTrajectory(targetId = 1, sourceId = 0, payload = PayloadMock(100))
+        self.os.createTrajectory(targetId = 2, sourceId = 0, payload = PayloadMock(100))
         self.assertEqual(self.os.trajectoryForParticle(10).trajectory, [0,0,1])
         self.assertEqual(self.os.trajectoryForParticle(11).trajectory, [0,0,1,2,2])
 

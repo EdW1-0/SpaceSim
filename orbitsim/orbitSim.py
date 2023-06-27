@@ -158,6 +158,8 @@ class OrbitSim:
         while(id in self._particles):
             id = next(self.idGenerator)
 
+        if not hasattr(payload, "locale") or not payload.locale:
+            payload.locale = node
         self._particles[id] = Particle(id, payload = payload)
         if(isinstance(node, OrbitNode)):
             node.particles.add(id)
@@ -228,7 +230,7 @@ class OrbitSim:
 
         ot = OrbitTrajectory(particleId, minPath, state = initialState, surfaceCoordinates=surfaceCoordinates)
         #Key the trajectory using the particleId. This ensures 1-1 mapping. 
-        if particleId:
+        if particleId is not None:
             self._trajectories[particleId] = ot
         return ot
 
