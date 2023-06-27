@@ -2,6 +2,7 @@ from views.menuContext import MenuContext
 from views.guiContext import GUIContext
 
 import unittest
+from unittest.mock import MagicMock
 from tests.test_views.test_guiContext import ScreenMock, ModelMock
 
 import pygame
@@ -10,8 +11,8 @@ class TestMenuContext(unittest.TestCase):
     def setUp(self):
         pygame.init()
         self.sm = ScreenMock()
-        self.sm.fill = unittest.mock.MagicMock()
-        self.sm.blit = unittest.mock.MagicMock()
+        self.sm.fill = MagicMock()
+        self.sm.blit = MagicMock()
     
     def testMenuContext(self):
         self.assertTrue(MenuContext)

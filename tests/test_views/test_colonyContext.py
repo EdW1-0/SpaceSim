@@ -7,7 +7,7 @@ import pygame
 import pygame_gui
 
 class ModelMock:
-    pass
+    orbitSim = None
 
 class TestColonyContext(unittest.TestCase):
     def setUp(self):

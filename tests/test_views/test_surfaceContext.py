@@ -7,6 +7,8 @@ from tests.test_views.test_guiContext import ScreenMock, ModelMock
 from planetsim.surfacePoint import SurfacePoint
 from planetsim.planetSim import PlanetSim
 
+from gameModel import GameModel
+
 import pygame
 import pygame_gui
 
@@ -68,13 +70,15 @@ class TestSurfaceContext(unittest.TestCase):
         pygame.init()
         self.manager = pygame_gui.UIManager((1200, 800))
         screen = pygame.display.set_mode((1200, 800))
+        self.model = GameModel()
+        self.model.load()
 
     def testSurfaceContext(self):
         self.assertTrue(SurfaceContext)
-        self.assertTrue(SurfaceContext(None, self.mm, self.manager, PlanetMock()))
+        self.assertTrue(SurfaceContext(None, self.model, self.manager, self.model.planetSim.planetById("MERCURY")))
 
     def testSurfaceContextCoordinateConversion(self):
-        sc = SurfaceContext(None, self.mm, self.manager, PlanetMock())
+        sc = SurfaceContext(None, self.model, self.manager, self.model.planetSim.planetById("MERCURY"))
         self.assertEqual((500,400), sc.latLongToXY(sc.xyToLatLong((500,400))))
         p1 = (400, 300)
         p2 = sc.latLongToXY(sc.xyToLatLong((400,300)))
@@ -88,19 +92,16 @@ class TestSurfaceContext(unittest.TestCase):
 
 class TestSurfaceContextGraphics(unittest.TestCase):
     def setUp(self):
-        self.ps = PlanetSim()
-        self.mm = ModelMock()
-        tm = ModelMock()
-        self.mm.timingMaster = tm
-        self.mm.planetSim = self.ps
         pygame.init()
         self.manager = pygame_gui.UIManager((1200, 800))
         screen = pygame.display.set_mode((1200, 800))
+        self.model = GameModel()
+        self.model.load()
 
 
     def testSurfaceContextComputeRegionColour(self):
-        sc = SurfaceContext(None, self.mm, self.manager, self.ps.planetById("MERCURY"))
-        r = self.ps.planetById("MERCURY").surface.regionById(1)
+        sc = SurfaceContext(None, self.model, self.manager, self.model.planetSim.planetById("MERCURY"))
+        r = self.model.planetSim.planetById("MERCURY").surface.regionById(1)
         sc.computeRegionColour(r)
 
         self.assertEqual(sc.regionColours[r.id], [150, 10, 10])
@@ -109,7 +110,7 @@ class TestSurfaceContextGraphics(unittest.TestCase):
         self.assertEqual(sc.regionColours[r.id], SELECTED_REGION_COLOUR)
 
     def testSurfaceContextExtractPolygons(self):
-        sc = SurfaceContext(None, self.mm, self.manager, self.ps.planetById("MERCURY"))
+        sc = SurfaceContext(None, self.model, self.manager, self.model.planetSim.planetById("MERCURY"))
         pc = sc.polyCount
         sc.extractPolygons()
         pc2 = sc.polyCount

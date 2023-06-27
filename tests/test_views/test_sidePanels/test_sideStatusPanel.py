@@ -4,6 +4,8 @@ import unittest
 from tests.test_views.test_guiContext import ScreenMock, ModelMock
 from orbitsim.orbitSim import OrbitSim, TrajectoryState
 
+from gameModel import GameModel
+
 import pygame
 import pygame_gui
 
@@ -69,6 +71,8 @@ class TestOrbitStatusPanel(unittest.TestCase):
         pygame.init()
         self.manager = pygame_gui.UIManager((1200, 800))
         screen = pygame.display.set_mode((1200, 800))
+        self.model = GameModel()
+        self.model.load()
 
     def testOrbitStatusPanel(self):
         self.assertTrue(OrbitStatusPanel)
@@ -78,12 +82,10 @@ class TestOrbitStatusPanel(unittest.TestCase):
         self.assertTrue(OrbitStatusPanel(pygame.Rect(800, 200, 400, 600), manager=self.manager))
 
     def testOrbitStatusPanelUpdate(self):
-        mn = ModelMock()
-        mn.name = "Test Orbit"
-        osp = OrbitStatusPanel(pygame.Rect(800, 200, 400, 600), manager=self.manager)
-        osp.set_node(mn)
+        osp = OrbitStatusPanel(pygame.Rect(800, 200, 400, 600), manager=self.manager, model=self.model)
+        osp.set_node(self.model.orbitSim.nodeById("MEO"))
         osp.update()
-        self.assertEqual(osp.orbit_name_label.text, "Test Orbit")
+        self.assertEqual(osp.orbit_name_label.text, "Mercury orbit")
 
 class TestLinkStatusPanel(unittest.TestCase):
     def setUp(self):
@@ -157,6 +159,8 @@ class TestTargetSettingPanel(unittest.TestCase):
         self.manager = pygame_gui.UIManager((1200, 800))
         screen = pygame.display.set_mode((1200, 800))
         self.orbitSim = OrbitSim(particlePath = "json/Particles.json")
+        self.model = GameModel()
+        self.model.load()
 
     def testTargetSettingPanel(self):
         self.assertTrue(TargetSettingPanel)
@@ -165,29 +169,19 @@ class TestTargetSettingPanel(unittest.TestCase):
         self.assertTrue(TargetSettingPanel(pygame.Rect(800, 200, 400, 600), manager=self.manager))
 
     def testTargetSettingPanelUpdate(self):
-        model = ModelMock()
-        model.orbitSim = self.orbitSim
-        tsp = TargetSettingPanel(pygame.Rect(800, 200, 400, 600), manager=self.manager, model=model)
+        tsp = TargetSettingPanel(pygame.Rect(800, 200, 400, 600), manager=self.manager, model=self.model)
         
         tsp.update()
         self.assertEqual(tsp.source_label.text, "")
         self.assertEqual(tsp.target_label.text, "")
         self.assertEqual(tsp.route_text.html_text, "")
         
-        ms = ModelMock()
-        ms.id = 0
-        mso = ModelMock()
-        mso.id = "EAS"
-        mso.name = "Source"
-        mto = ModelMock()
-        mto.id = "MOS"
-        mto.name = "Target"
-        tsp.set_ship(ms)
-        tsp.set_source(mso)
-        tsp.set_target(mto)
+        tsp.set_ship(self.model.orbitSim.particleById(0))
+        tsp.set_source(self.model.orbitSim.nodeById("EAS"))
+        tsp.set_target(self.model.orbitSim.nodeById("MOS"))
         self.assertTrue(tsp.trajectory)
-        self.assertEqual(tsp.source_label.text, "Source")
-        self.assertEqual(tsp.target_label.text, "Target")
+        self.assertEqual(tsp.source_label.text, "Earth")
+        self.assertEqual(tsp.target_label.text, "Moon")
         self.assertEqual(tsp.route_text.html_text, "Delta V: 23m/s<br>Total time: 23<br>Total distance: 23")
         
         tsp.clear_state()
@@ -198,7 +192,7 @@ class TestTargetSettingPanel(unittest.TestCase):
     def testTargetSettingPanelEventHandling(self):
         model = ModelMock()
         model.orbitSim = self.orbitSim
-        tsp = TargetSettingPanel(pygame.Rect(800, 200, 400, 600), manager=self.manager, model=model)
+        tsp = TargetSettingPanel(pygame.Rect(800, 200, 400, 600), manager=self.manager, model=self.model)
 
         event = ModelMock()
         event.ui_element = None
@@ -216,11 +210,11 @@ class TestTargetSettingPanel(unittest.TestCase):
         mto = ModelMock()
         mto.id = "MOS"
         mto.name = "Target"
-        tsp.set_ship(ms)
-        tsp.set_source(mso)
-        tsp.set_target(mto)
+        tsp.set_ship(self.model.orbitSim.particleById(0))
+        tsp.set_source(self.model.orbitSim.nodeById("EAS"))
+        tsp.set_target(self.model.orbitSim.nodeById("MOS"))
 
         self.assertTrue(tsp.handle_event(event))
-        self.assertEqual(tsp.trajectory.state, TrajectoryState.PENDING)
+        self.assertEqual(tsp.trajectory.state, TrajectoryState.DEFINITION)
         self.assertEqual(tsp.upperAction, 1)
         self.assertEqual(tsp.container.visible, 0)
