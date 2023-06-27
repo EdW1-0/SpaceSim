@@ -103,6 +103,10 @@ class PlanetSurface:
         self.points[id].kill()
         del self.points[id]
 
+    def launchShip(self, ship):
+        object = self.objectForContent(ship)
+        self.destroyObject(object.id)
+
     def connectColony(self, colony):
         for point in self.points.values():
             if isinstance(point, SurfaceBase) and point.colonyId == colony.id:
@@ -191,6 +195,12 @@ class PlanetSurface:
 
     def objectsAtPoint(self, point):
         return tuple(p for p in self.points.values() if (math.isclose(p.point.longitude, point.longitude) and math.isclose(p.point.latitude, point.latitude)))
+
+    def objectForContent(self, content):
+        for o in self.points.values():
+            if o.content == content:
+                return o
+        return None
 
     def regionById(self, id):
         return getIntId(id, self.regions)

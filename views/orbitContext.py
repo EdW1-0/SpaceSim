@@ -432,6 +432,7 @@ class OrbitContext(GUIContext):
                                 self.upperContext = {"colony": self.landingContext["colony"], 
                                                      "ship": self.landingContext["ship"],
                                                      "trajectory": self.target_panel.trajectory}
+                                returnCode = LOADCOLONYVIEW
                             elif "planet" in self.landingContext:
                                 self.upperContext = {
                                     "planet": self.landingContext["planet"], 
@@ -439,7 +440,7 @@ class OrbitContext(GUIContext):
                                     "trajectory": self.target_panel.trajectory,
                                     "mode": SCMode.Target
                                 }
-                            returnCode = LOADCOLONYVIEW
+                                returnCode = LOADSURFACEVIEW
                             break
                     elif self.target_panel.upperAction == 2:
                         self.upperContext = {"planet": self.target_panel.target.planet, 

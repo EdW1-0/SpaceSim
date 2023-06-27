@@ -4,6 +4,7 @@ from views.menuContext import LOADORBITVIEW
 from views.timingView import TimingPanel
 from views.sidePanels.sideStatusPanel import PlanetStatusPanel
 from views.sidePanels.surfaceStatusPanels import RegionStatusPanel, VehicleStatusPanel, VehicleRoutingPanel
+from views.sidePanels.colonyStatusPanels import ColonyShipDetailPanel
 
 from planetsim.planetSurface import PlanetSurface
 from planetsim.surfacePoint import SurfacePoint, dot, vector, latLong
@@ -11,6 +12,8 @@ from planetsim.surfaceRegion import SurfaceRegion
 from planetsim.surfacePath import SurfacePath
 from planetsim.surfaceVehicle import SurfaceVehicle
 from planetsim.surfaceBase import SurfaceBase
+
+from orbitsim.orbitTrajectory import TrajectoryState
 
 import pygame
 import math, random
@@ -162,6 +165,7 @@ class SurfaceContext(GUIContext):
         summary_rect = pygame.Rect(800, 200, 400, 600)
         timing_rect = pygame.Rect(800, 0, 400, 200)
         target_rect = pygame.Rect(400, 600, 400, 200)
+        ship_rect = pygame.Rect(0, 500, 800, 300)
 
         self.planet_panel = PlanetStatusPanel(summary_rect, manager = manager, model = model)
         self.planet_panel.set_planet(planet)
@@ -177,15 +181,17 @@ class SurfaceContext(GUIContext):
         self.target_panel = VehicleRoutingPanel(target_rect, manager=manager, model=model)
         if self.targetMode == SCMode.Landing:
             self.target_panel.show()
-        elif self.targetMode == SCMode.Target:
-            landedShip = None
-            for s in self.self.planetSurface.points.values():
-                if s.content == landingContext["ship"]:
-                    landedShip = s
-            assert(landedShip)
-            self.target_panel.set_vehicle(landedShip)
         else:
             self.target_panel.hide()
+
+        self.ship_panel = ColonyShipDetailPanel(ship_rect, manager=manager, orbitSim=model.orbitSim)
+        self.ship_panel.target_button.hide()
+        if self.targetMode == SCMode.Target:
+            self.ship_panel.setShip(landingContext["ship"])
+            self.ship_panel.update()
+            self.ship_panel.show()
+        else:
+            self.ship_panel.hide()
 
         self.timing_panel = TimingPanel(timing_rect, manager = manager, timingMaster=model.timingMaster)
 
@@ -619,6 +625,10 @@ class SurfaceContext(GUIContext):
                             assert(False)
                     self.targetMode = SCMode.Standard
                     self.target_panel.clear_state()
+                elif self.ship_panel.handle_event(event):
+                    if event.ui_element == self.ship_panel.launch_button:
+                        self.ship_panel.trajectory().state = TrajectoryState.PENDING
+
 
             if event.type == UI_BUTTON_ON_HOVERED:
                 print (event.ui_element)
@@ -662,6 +672,10 @@ class SurfaceContext(GUIContext):
         if self.active_panel:
             self.active_panel.update()
 
+        if self.ship_panel.container.visible:
+            if self.ship_panel.ship and not self.planetSurface.objectForContent(self.ship_panel.ship):
+                self.ship_panel.setShip(None)
+            self.ship_panel.update()
 
 
         self.screen.blit(self.surf, pygame.Rect(0, 0, 1200, 800))

@@ -299,8 +299,16 @@ class TargetSettingPanel(SideStatusPanel):
             else:
                 self.trajectory = self.model.orbitSim.trajectoryForParticle(self.ship.id)
         elif self.ship and isinstance(self.ship, Ship):
-            self.trajectory = self.model.orbitSim.createTrajectory(self.target.id, sourceId = self.source.id, payload = self.ship)
-            
+            particle = self.model.orbitSim.particleForShip(self.ship)
+            if particle:
+                self.trajectory = self.model.orbitSim.createTrajectory(self.target.id, 
+                                                                        sourceId = self.source.id,
+                                                                        particleId = particle.id,
+                                                                        payload = self.ship)
+            else:
+                self.trajectory = self.model.orbitSim.createTrajectory(self.target.id,
+                                                                       sourceId = self.source.id,
+                                                                       payload = self.ship)
         self.update()
 
     def set_coordinates(self, coordinates):

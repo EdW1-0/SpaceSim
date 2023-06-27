@@ -9,6 +9,8 @@ from colonysim.ship import Ship
 from colonysim.shipClass import ShipClass
 from colonysim.colony import Colony
 
+from planetsim.planetSurface import PlanetSurface
+
 from utility.fileLoad import loadEntityFile
 from utility.dictLookup import getIntId, getStringId
 
@@ -273,6 +275,8 @@ class OrbitSim:
                 if isinstance(particle.payload.locale, Colony):
                     particle.payload.locale.launchShip(particle.payload)
                     self._ships[particle.payload.id] = particle.payload
+                elif isinstance(particle.payload.locale, PlanetSurface):
+                    particle.payload.locale.launchShip(particle.payload)
                 t.state = TrajectoryState.ACTIVE
 
             if t.state != TrajectoryState.ACTIVE:

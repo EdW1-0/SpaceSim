@@ -63,6 +63,9 @@ class PlanetSim:
             print("unrecognised surface coordinates type: ", surfaceCoordinates)
             assert(False)
 
+
+        
+
     def planetClassById(self, id):
         return getStringId(id, self.planetClasses)
 

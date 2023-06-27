@@ -24,9 +24,51 @@ import spacesim
 
 from views.menuContext import MenuContext
 from views.orbitContext import OrbitContext, OrbitNodeView, OrbitLinkView, OCMode
-from views.surfaceContext import SurfaceContext, SCMode
+from views.surfaceContext import SurfaceContext, SCMode, SurfaceObjectSprite
 from views.colonyContext import ColonyContext
 from planetsim.surfaceBase import SurfaceBase
+from planetsim.surfaceObject import SurfaceObject
+from colonysim.ship import Ship
+
+class SystemTestMacros:
+    def goToColony(self, terminator, guiContext, model):
+        if self.runCount >= terminator:
+            return True
+        if isinstance(guiContext, MenuContext):
+            pos = guiContext.loadItem.rect.center
+            pygame.mouse.set_pos(pos)
+            pygame.event.post(Event(MOUSEBUTTONUP))
+        elif isinstance(guiContext, OrbitContext):
+            mercury = None
+            for s in guiContext.all_sprites:
+                if not isinstance(s, OrbitNodeView):
+                    continue
+                if s.node.id == "MES":
+                    mercury = s
+
+            if self.runCount == 1:
+                guiContext.resolveNodeClick(mercury)
+            elif self.runCount == 2:
+                event = Event(UI_BUTTON_PRESSED, ui_element = guiContext.planet_summary.surface_button)
+                pygame.event.post(event)
+
+        elif isinstance(guiContext, SurfaceContext):
+            base = None
+            for s in guiContext.all_sprites:
+                if isinstance(s.surfaceObject, SurfaceBase):
+                    base = s 
+            
+            if self.runCount == 3:
+                self.assertTrue(guiContext.handleClickedObject(base))
+                self.assertEqual(guiContext.active_panel, guiContext.vehicle_panel)
+            elif self.runCount == 4:
+                event = pygame.event.Event(UI_BUTTON_PRESSED, ui_element = guiContext.vehicle_panel.colony_button)
+                pygame.event.post(event)
+                return True
+            
+        return False
+
+
 
 class SystemTestShipLandingLogic(unittest.TestCase):
     def testShipLandingLogicRunner(self):
@@ -96,6 +138,80 @@ class SystemTestShipLandingLogic(unittest.TestCase):
 
         if self.runCount == 60:
             self.assertTrue(self.testPassed)
+            pygame.event.post(Event(QUIT))
+        self.runCount += 1
+        return
+    
+class SystemTestSurfaceLaunch(SystemTestShipLandingLogic, SystemTestMacros):
+    def testSurfaceLaunch(self):
+        self.runCount = 0
+        self.lowerTestPassed = False
+        spacesim.main(testingCallback= self.surfaceLaunchCallback)
+
+    def surfaceLaunchCallback(self, model, guiContext):
+        if self.runCount < 52:
+            self.shipLandingLogicCallback(model, guiContext)
+            return
+        else:
+            if isinstance(guiContext, OrbitContext):
+                mercury = None
+                for s in guiContext.all_sprites:
+                    if not isinstance(s, OrbitNodeView):
+                        continue
+                    if s.node.id == "MES":
+                        mercury = s
+
+                if self.runCount == 52:
+                    self.assertTrue(isinstance(guiContext, OrbitContext))
+                    guiContext.resolveNodeClick(mercury)
+                elif self.runCount == 53:
+                    pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element=guiContext.planet_summary.surface_button))
+                elif self.runCount == 56:
+                    self.assertEqual(guiContext.target_mode, OCMode.LaunchPlan)
+                    mercuryOrbit = None
+                    for s in guiContext.all_sprites:
+                        if not isinstance(s, OrbitNodeView):
+                            continue
+                        if s.node.id == "MEO":
+                            mercuryOrbit = s
+                    guiContext.resolveNodeClick(mercuryOrbit)
+                elif self.runCount == 57:
+                    pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element =guiContext.target_panel.confirm_button))
+
+            elif isinstance(guiContext, SurfaceContext):
+                if self.runCount == 54:
+                    ship = None
+                    for s in guiContext.all_sprites:
+                        if isinstance(s, SurfaceObjectSprite):
+                            if isinstance(s.surfaceObject.content, Ship):
+                                ship = s
+                    guiContext.handleClickedObject(ship)
+                elif self.runCount == 55:
+                    pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.vehicle_panel.target_button))
+                elif self.runCount == 58:
+                    self.assertTrue(guiContext.ship_panel.container.visible)
+                    pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.ship_panel.launch_button))
+                elif self.runCount == 59:
+                    pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.timing_panel.start_button))
+                elif self.runCount == 70:
+                    pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.timing_panel.stop_button))
+                elif self.runCount == 71:
+                    self.assertGreater(len(model.orbitSim.nodeById("MEO").particles), 0)
+                    particleId = model.orbitSim.nodeById("MEO").particles.pop()
+                    particle = model.orbitSim.particleById(particleId)
+                    
+                    self.assertEqual(particle.payload.name, "ISS Meghalaya")
+                    surfaceObj = model.planetSim.planetById("MERCURY").surface.objectForContent(particle.payload)
+                    self.assertIsNone(surfaceObj)
+
+                    self.lowerTestPassed = True
+
+                
+
+
+
+        if self.runCount == 80:
+            self.assertTrue(self.lowerTestPassed)
             pygame.event.post(Event(QUIT))
         self.runCount += 1
         return

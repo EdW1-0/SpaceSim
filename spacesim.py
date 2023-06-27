@@ -95,7 +95,7 @@ def main(testingCallback = None):
 
 
             if isinstance(guiContext, OrbitContext):
-                # 
+                # Drop down to set target for landing
                 if "mode" in guiContext.upperContext and guiContext.upperContext["mode"] == SCMode.Landing:
                     landingContext = {
                         "ship": guiContext.upperContext["ship"],
@@ -108,32 +108,21 @@ def main(testingCallback = None):
                                                 planet, 
                                                 mode=SCMode.Landing, 
                                                 landingContext = landingContext)
+                # Return from setting launch target for confirmation
+                elif "mode" in guiContext.upperContext and guiContext.upperContext["mode"] == SCMode.Target:
+                    landingContext = {
+                        "ship": guiContext.upperContext["ship"],
+                        "planet": guiContext.upperContext["planet"],
+                        "trajectory": guiContext.upperContext["trajectory"]
+                    }
+                    guiContext = SurfaceContext(screen, gameModel, manager, planet, mode = SCMode.Target, landingContext = landingContext)
+                # Direct access from OrbitContext
                 else:
                     guiContext = SurfaceContext(screen, gameModel, manager, planet)
 
+            # Direct access from ColonyContext
             elif isinstance(guiContext, ColonyContext):
                 guiContext = SurfaceContext(screen, gameModel, manager, planet)
-
-                # if "ship" in guiContext.upperContext:
-                # else:
-                #     if "mode" in guiContext.upperContext:
-                #         mode = guiContext.upperContext["mode"]
-                #     else:
-                #         mode = SCMode.Standard
-                    
-                #     if "ship" in guiContext.upperContext and "node" in guiContext.upperContext:
-                #         landingContext = {"ship": guiContext.upperContext["ship"],
-                #                         "node": guiContext.upperContext["node"]}
-                #     elif "ship" in guiContext.upperContext and "trajectory" in guiContext.upperContext:
-                #         landingContext = {
-                #             "ship": guiContext.upperContext["ship"],
-                #             "trajectory": guiContext.upperContext["trajectory"]
-                #         }
-                #     else:
-                #         # Direct access
-                #         landingContext = {}
-
-                #     guiContext = SurfaceContext(screen, gameModel, manager, planet, mode=mode, landingContext = landingContext)
         
         elif outerEvent == LOADCOLONYVIEW:
             if "colony" not in guiContext.upperContext:
@@ -142,11 +131,13 @@ def main(testingCallback = None):
             colonyId = guiContext.upperContext["colony"]
             colony = gameModel.colonySim.colonyById(colonyId)
             manager.clear_and_reset()
+            # Return to ColonyContext after setting launch target
             if "ship" and "trajectory" in guiContext.upperContext:
                 launchContext = {
                     "ship": guiContext.upperContext["ship"],
                     "trajectory": guiContext.upperContext["trajectory"]
                 }
+            # Direct access from SurfaceContext
             else:
                 launchContext = None
             guiContext = ColonyContext(screen, gameModel, manager, colony, launchContext = launchContext)
