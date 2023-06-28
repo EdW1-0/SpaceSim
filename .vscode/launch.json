@@ -15,7 +15,7 @@
             "name": "Run all tests",
             "type": "python",
             "request": "launch",
-            "program": "tests/test_all.py",
+            "module": "unittest",
             "console": "integratedTerminal",
             "justMyCode": true
         },

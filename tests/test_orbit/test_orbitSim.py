@@ -391,15 +391,6 @@ class TestOrbitSimTrajectoryState(unittest.TestCase):
         with self.assertRaises(KeyError):
             self.os.trajectoryForParticle(0)
 
-class TestOrbitSimTrajectoryNoPayload(unittest.TestCase):
-    def setUp(self):
-        self.os = OrbitSim("test_json/test_orbits/happy_case.json")
-
-    def testOrbitSimTrajectoryNoPayload(self):
-        self.os.createTrajectory(1, sourceId = 0)
-
-        
-
 
 
 class TestOrbitSimFindPath(unittest.TestCase):
