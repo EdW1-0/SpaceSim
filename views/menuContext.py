@@ -14,7 +14,7 @@ from pygame.locals import (
     QUIT,
 )
 
-LOADORBITVIEW = pygame.USEREVENT + 1
+from views.guiContext import GUICode
 
 class MenuItem(pygame.sprite.Sprite):
     def __init__(self, center=(0, 0), text="Default", handler=None):
@@ -69,7 +69,7 @@ class MenuContext(GUIContext):
                 for c in clicked_items:
                     handlerCode = c.handler()
                     if handlerCode == 1:
-                        returnCode = LOADORBITVIEW
+                        returnCode = GUICode.LOADORBITVIEW
 
         self.screen.fill((135, 206, 250))
 

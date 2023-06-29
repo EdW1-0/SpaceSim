@@ -1,10 +1,8 @@
-from views.guiContext import GUIContext
+from views.guiContext import GUIContext, GUICode
 from views.sidePanels.sideStatusPanel import SideStatusPanel
 from views.timingView import TimingPanel
 
 from views.sidePanels.colonyStatusPanels import ColonyTabPanel, ColonyVehiclePanel, ColonyVehicleDetailPanel, ColonyShipPanel, ColonyShipDetailPanel
-
-from views.surfaceContext import LOADSURFACEVIEW, LOADORBITVIEW
 
 from colonysim.colony import Colony
 
@@ -80,7 +78,7 @@ class ColonyContext(GUIContext):
             if event.type == UI_BUTTON_PRESSED:
                 if event.ui_element == self.settings_button:
                     self.upperContext = {"planet": self.colony.locale.id}
-                    returnCode = LOADSURFACEVIEW
+                    returnCode = GUICode.LOADSURFACEVIEW
                     break
                 if self.timing_panel.handle_event(event):
                     pass
@@ -108,7 +106,7 @@ class ColonyContext(GUIContext):
                     elif self.detail_panel == self.ship_detail_panel:
                         if event.ui_element == self.ship_detail_panel.target_button:
                             self.upperContext = {"ship": self.ship_detail_panel.ship, "colony": self.colony.id}
-                            returnCode = LOADORBITVIEW
+                            returnCode = GUICode.LOADORBITVIEW
                             break
                         elif event.ui_element == self.ship_detail_panel.launch_button:
                             self.ship_detail_panel.trajectory().state = TrajectoryState.PENDING

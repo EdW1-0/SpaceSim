@@ -23,12 +23,10 @@ from pygame.locals import (
     QUIT,
 )
 
-from views.menuContext import LOADORBITVIEW
-from views.orbitContext import LOADMENUVIEW, OCMode
-from views.surfaceContext import LOADSURFACEVIEW, LOADCOLONYVIEW, SCMode
+from views.orbitContext import OCMode
+from views.surfaceContext import SCMode
 
-
-
+from views.guiContext import GUICode
 
 
 def main(testingCallback = None):
@@ -56,7 +54,7 @@ def main(testingCallback = None):
         if outerEvent == QUIT:
             running = False
         
-        elif outerEvent == LOADORBITVIEW:
+        elif outerEvent == GUICode.LOADORBITVIEW:
             manager.clear_and_reset()
             if isinstance(guiContext, SurfaceContext) and hasattr(guiContext, "upperContext") and "node" in guiContext.upperContext:
                 # Return from surface after setting surface target for ship
@@ -81,11 +79,11 @@ def main(testingCallback = None):
                 # Direct access
                 guiContext = OrbitContext(screen, gameModel, manager)
         
-        elif outerEvent == LOADMENUVIEW:
+        elif outerEvent == GUICode.LOADMENUVIEW:
             manager.clear_and_reset()
             guiContext = MenuContext(screen, gameModel, manager)
         
-        elif outerEvent == LOADSURFACEVIEW:
+        elif outerEvent == GUICode.LOADSURFACEVIEW:
             if "planet" not in guiContext.upperContext:
                 print("Invalid state - tried to load planet surface with no planet")
                 assert(False)
@@ -124,7 +122,7 @@ def main(testingCallback = None):
             elif isinstance(guiContext, ColonyContext):
                 guiContext = SurfaceContext(screen, gameModel, manager, planet)
         
-        elif outerEvent == LOADCOLONYVIEW:
+        elif outerEvent == GUICode.LOADCOLONYVIEW:
             if "colony" not in guiContext.upperContext:
                 print("Invalid state - tried to load colony view with no colony")
                 assert(False)

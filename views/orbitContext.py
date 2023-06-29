@@ -1,7 +1,7 @@
 import pygame
 
 
-from views.guiContext import GUIContext
+from views.guiContext import GUIContext, GUICode
 from views.timingView import TimingPanel
 from views.orbitViews.orbitViews import OrbitNodeView, OrbitNodeViewLabel, OrbitLinkView, OrbitLinkViewLabel, ParticleView
 from views.sidePanels.sideStatusPanel import OrbitStatusPanel, LinkStatusPanel, PlanetStatusPanel, TargetSettingPanel, ShipStatusPanel
@@ -11,7 +11,7 @@ from orbitsim.orbitLink import OrbitLink
 from orbitsim.orbitTrajectory import TrajectoryState
 
 
-from views.surfaceContext import LOADSURFACEVIEW, SCMode, LOADCOLONYVIEW
+from views.surfaceContext import SCMode
 
 
 from pygame.locals import (
@@ -39,8 +39,6 @@ class OCMode (str, Enum):
     Standard = "Standard"
     Target = "Target"
     LaunchPlan = "LaunchPlan"
-
-LOADMENUVIEW = pygame.USEREVENT + 2
 
 class OrbitContext(GUIContext):
     def __init__(self, screen, model, manager, boundsRect = pygame.Rect(-100, -100, 1400, 2000), mode = OCMode.Standard, landingContext = None):
@@ -409,7 +407,7 @@ class OrbitContext(GUIContext):
 
             if event.type == UI_BUTTON_PRESSED:
                 if event.ui_element == self.hello_button:
-                    returnCode = LOADMENUVIEW
+                    returnCode = GUICode.LOADMENUVIEW
                     break
                 elif self.active_summary and self.active_summary.handle_event(event):
                     if isinstance(self.active_summary, ShipStatusPanel):
@@ -417,7 +415,7 @@ class OrbitContext(GUIContext):
                     elif isinstance(self.active_summary, PlanetStatusPanel):
                         if self.planet_summary.upperAction == 1:
                             self.upperContext = {"planet": self.planet_summary.planet.id}
-                            returnCode = LOADSURFACEVIEW
+                            returnCode = GUICode.LOADSURFACEVIEW
                             break
                 elif self.timing_panel.handle_event(event):
                     pass
@@ -432,7 +430,7 @@ class OrbitContext(GUIContext):
                                 self.upperContext = {"colony": self.landingContext["colony"], 
                                                      "ship": self.landingContext["ship"],
                                                      "trajectory": self.target_panel.trajectory}
-                                returnCode = LOADCOLONYVIEW
+                                returnCode = GUICode.LOADCOLONYVIEW
                             elif "planet" in self.landingContext:
                                 self.upperContext = {
                                     "planet": self.landingContext["planet"], 
@@ -440,14 +438,14 @@ class OrbitContext(GUIContext):
                                     "trajectory": self.target_panel.trajectory,
                                     "mode": SCMode.Target
                                 }
-                                returnCode = LOADSURFACEVIEW
+                                returnCode = GUICode.LOADSURFACEVIEW
                             break
                     elif self.target_panel.upperAction == 2:
                         self.upperContext = {"planet": self.target_panel.target.planet, 
                                              "mode": SCMode.Landing, 
                                              "ship": self.target_panel.ship,
                                              "node": self.target_panel.target}
-                        returnCode = LOADSURFACEVIEW
+                        returnCode = GUICode.LOADSURFACEVIEW
                         break
                 else:
                     assert("Unknown UI element {0}".format(event.ui_element))

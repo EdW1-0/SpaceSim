@@ -1,5 +1,4 @@
-from views.guiContext import GUIContext
-from views.menuContext import LOADORBITVIEW
+from views.guiContext import GUIContext, GUICode
 
 from views.timingView import TimingPanel
 from views.sidePanels.sideStatusPanel import PlanetStatusPanel
@@ -48,8 +47,6 @@ class SCMode (str, Enum):
     Landing = "Landing"
 
 
-LOADSURFACEVIEW = pygame.USEREVENT + 3
-LOADCOLONYVIEW = pygame.USEREVENT + 4
 
 SELECTED_REGION_COLOUR = (180, 180, 10)
 
@@ -580,7 +577,7 @@ class SurfaceContext(GUIContext):
 
             if event.type == UI_BUTTON_PRESSED:
                 if event.ui_element == self.settings_button:
-                    returnCode = LOADORBITVIEW
+                    returnCode = GUICode.LOADORBITVIEW
                     break
                 elif self.timing_panel.handle_event(event):
                     pass
@@ -597,7 +594,7 @@ class SurfaceContext(GUIContext):
                                     self.upperContext = {"ship": self.landingContext["ship"]}
                                 else:
                                     self.upperContext = {"ship": self.vehicle_panel.vehicle.content, "planet": self.planet.id}
-                                returnCode = LOADORBITVIEW
+                                returnCode = GUICode.LOADORBITVIEW
                                 break
 
                                     
@@ -608,7 +605,7 @@ class SurfaceContext(GUIContext):
                             self.vehicle_panel.vehicle.setDestination(None)
                         elif event.ui_element == self.vehicle_panel.colony_button:
                             self.upperContext = {"colony": self.vehicle_panel.vehicle.id}
-                            returnCode = LOADCOLONYVIEW
+                            returnCode = GUICode.LOADCOLONYVIEW
                             break
                 elif self.target_panel.handle_event(event):
                     if event.ui_element == self.target_panel.confirm_button:
@@ -618,7 +615,7 @@ class SurfaceContext(GUIContext):
                         elif self.targetMode == SCMode.Landing:
                             self.landingContext["surfaceCoordinates"] = self.target_panel.target
                             self.upperContext = self.landingContext
-                            returnCode = LOADORBITVIEW
+                            returnCode = GUICode.LOADORBITVIEW
                             break
                         else:
                             print("Should never get here!")
