@@ -430,7 +430,7 @@ class OrbitContext(GUIContext):
                                 self.upperContext = {"colony": self.landingContext["colony"], 
                                                      "ship": self.landingContext["ship"],
                                                      "trajectory": self.target_panel.trajectory}
-                                returnCode = GUICode.LOADCOLONYVIEW
+                                returnCode = GUICode.LOADCOLONYVIEW_LAUNCH_RETURN
                             elif "planet" in self.landingContext:
                                 self.upperContext = {
                                     "planet": self.landingContext["planet"], 
@@ -438,14 +438,14 @@ class OrbitContext(GUIContext):
                                     "trajectory": self.target_panel.trajectory,
                                     "mode": SCMode.Target
                                 }
-                                returnCode = GUICode.LOADSURFACEVIEW
+                                returnCode = GUICode.LOADSURFACEVIEW_LAUNCH_RETURN
                             break
                     elif self.target_panel.upperAction == 2:
                         self.upperContext = {"planet": self.target_panel.target.planet, 
                                              "mode": SCMode.Landing, 
                                              "ship": self.target_panel.ship,
                                              "node": self.target_panel.target}
-                        returnCode = GUICode.LOADSURFACEVIEW
+                        returnCode = GUICode.LOADSURFACEVIEW_LANDING_PLAN
                         break
                 else:
                     assert("Unknown UI element {0}".format(event.ui_element))

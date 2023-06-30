@@ -590,11 +590,12 @@ class SurfaceContext(GUIContext):
                                 self.target_panel.show()
                                 self.targetMode = SCMode.Target
                             elif self.vehicle_panel.upperAction == 2:
+                                # Not convinced this is needed
                                 if self.targetMode == SCMode.Landing:
                                     self.upperContext = {"ship": self.landingContext["ship"]}
                                 else:
                                     self.upperContext = {"ship": self.vehicle_panel.vehicle.content, "planet": self.planet.id}
-                                returnCode = GUICode.LOADORBITVIEW
+                                returnCode = GUICode.LOADORBITVIEW_LAUNCH_PLAN
                                 break
 
                                     
@@ -615,7 +616,7 @@ class SurfaceContext(GUIContext):
                         elif self.targetMode == SCMode.Landing:
                             self.landingContext["surfaceCoordinates"] = self.target_panel.target
                             self.upperContext = self.landingContext
-                            returnCode = GUICode.LOADORBITVIEW
+                            returnCode = GUICode.LOADORBITVIEW_TARGET_RETURN
                             break
                         else:
                             print("Should never get here!")

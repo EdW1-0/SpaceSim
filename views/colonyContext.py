@@ -106,7 +106,7 @@ class ColonyContext(GUIContext):
                     elif self.detail_panel == self.ship_detail_panel:
                         if event.ui_element == self.ship_detail_panel.target_button:
                             self.upperContext = {"ship": self.ship_detail_panel.ship, "colony": self.colony.id}
-                            returnCode = GUICode.LOADORBITVIEW
+                            returnCode = GUICode.LOADORBITVIEW_LAUNCH_PLAN
                             break
                         elif event.ui_element == self.ship_detail_panel.launch_button:
                             self.ship_detail_panel.trajectory().state = TrajectoryState.PENDING

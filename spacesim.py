@@ -54,9 +54,9 @@ def main(testingCallback = None):
         if outerEvent == QUIT:
             running = False
         
-        elif outerEvent == GUICode.LOADORBITVIEW:
+        elif isinstance(outerEvent, GUICode):
             manager.clear_and_reset()
-            if isinstance(guiContext, SurfaceContext) and hasattr(guiContext, "upperContext") and "node" in guiContext.upperContext:
+            if outerEvent == GUICode.LOADORBITVIEW_TARGET_RETURN:
                 # Return from surface after setting surface target for ship
                 landingContext = {
                     "ship": guiContext.upperContext["ship"],
@@ -64,82 +64,65 @@ def main(testingCallback = None):
                     "surfaceCoordinates": guiContext.upperContext["surfaceCoordinates"]
                 }
                 guiContext = OrbitContext(screen, gameModel, manager, mode = OCMode.Target, landingContext = landingContext)
-            elif isinstance(guiContext, ColonyContext):
+            elif outerEvent == GUICode.LOADORBITVIEW_LAUNCH_PLAN and isinstance(guiContext, ColonyContext):
                 # Launch planning from colony
                 landingContext = {
                     "ship": guiContext.upperContext["ship"],
                     "colony": guiContext.upperContext["colony"]
                 }
                 guiContext = OrbitContext(screen, gameModel, manager, mode = OCMode.LaunchPlan, landingContext =landingContext)
-            elif isinstance(guiContext, SurfaceContext) and hasattr(guiContext, "upperContext"):
+            elif outerEvent == GUICode.LOADORBITVIEW_LAUNCH_PLAN and isinstance(guiContext, SurfaceContext):
                 # Launch planning from surface
                 landingContext = guiContext.upperContext
                 guiContext = OrbitContext(screen, gameModel, manager, mode = OCMode.LaunchPlan, landingContext =landingContext)
-            else:
+            elif outerEvent == GUICode.LOADORBITVIEW:
                 # Direct access
                 guiContext = OrbitContext(screen, gameModel, manager)
         
-        elif outerEvent == GUICode.LOADMENUVIEW:
-            manager.clear_and_reset()
-            guiContext = MenuContext(screen, gameModel, manager)
+            elif outerEvent == GUICode.LOADMENUVIEW:
+                guiContext = MenuContext(screen, gameModel, manager)
         
-        elif outerEvent == GUICode.LOADSURFACEVIEW:
-            if "planet" not in guiContext.upperContext:
-                print("Invalid state - tried to load planet surface with no planet")
-                assert(False)
-            planetId = guiContext.upperContext["planet"]
-            planet = gameModel.planetSim.planetById(planetId)
-            manager.clear_and_reset()
-
-
-            if isinstance(guiContext, OrbitContext):
+            elif outerEvent == GUICode.LOADSURFACEVIEW:
+                planet = gameModel.planetSim.planetById(guiContext.upperContext["planet"])
+                guiContext = SurfaceContext(screen, gameModel, manager, planet)
+            elif outerEvent == GUICode.LOADSURFACEVIEW_LANDING_PLAN:
                 # Drop down to set target for landing
-                if "mode" in guiContext.upperContext and guiContext.upperContext["mode"] == SCMode.Landing:
-                    landingContext = {
-                        "ship": guiContext.upperContext["ship"],
-                        "planet": guiContext.upperContext["planet"],
-                        "node": guiContext.upperContext["node"]
-                    }
-                    guiContext = SurfaceContext(screen, 
-                                                gameModel, 
-                                                manager, 
-                                                planet, 
-                                                mode=SCMode.Landing, 
-                                                landingContext = landingContext)
+                landingContext = {
+                    "ship": guiContext.upperContext["ship"],
+                    "planet": guiContext.upperContext["planet"],
+                    "node": guiContext.upperContext["node"]
+                }
+                planet = gameModel.planetSim.planetById(guiContext.upperContext["planet"])
+                guiContext = SurfaceContext(screen, 
+                                            gameModel, 
+                                            manager, 
+                                            planet, 
+                                            mode=SCMode.Landing, 
+                                            landingContext = landingContext)
                 # Return from setting launch target for confirmation
-                elif "mode" in guiContext.upperContext and guiContext.upperContext["mode"] == SCMode.Target:
+            elif outerEvent == GUICode.LOADSURFACEVIEW_LAUNCH_RETURN:
+                    gameModel.planetSim.planetById(guiContext.upperContext["planet"])
                     landingContext = {
                         "ship": guiContext.upperContext["ship"],
                         "planet": guiContext.upperContext["planet"],
                         "trajectory": guiContext.upperContext["trajectory"]
                     }
                     guiContext = SurfaceContext(screen, gameModel, manager, planet, mode = SCMode.Target, landingContext = landingContext)
-                # Direct access from OrbitContext
-                else:
-                    guiContext = SurfaceContext(screen, gameModel, manager, planet)
-
-            # Direct access from ColonyContext
-            elif isinstance(guiContext, ColonyContext):
-                guiContext = SurfaceContext(screen, gameModel, manager, planet)
         
-        elif outerEvent == GUICode.LOADCOLONYVIEW:
-            if "colony" not in guiContext.upperContext:
-                print("Invalid state - tried to load colony view with no colony")
-                assert(False)
-            colonyId = guiContext.upperContext["colony"]
-            colony = gameModel.colonySim.colonyById(colonyId)
-            manager.clear_and_reset()
-            # Return to ColonyContext after setting launch target
-            if "ship" and "trajectory" in guiContext.upperContext:
+            elif outerEvent == GUICode.LOADCOLONYVIEW:
+                if "colony" not in guiContext.upperContext:
+                    print("Invalid state - tried to load colony view with no colony")
+                    assert(False)
+                colony = gameModel.colonySim.colonyById(guiContext.upperContext["colony"])
+                guiContext = ColonyContext(screen, gameModel, manager, colony)
+            elif outerEvent == GUICode.LOADCOLONYVIEW_LAUNCH_RETURN:
+                # Return to ColonyContext after setting launch target
                 launchContext = {
                     "ship": guiContext.upperContext["ship"],
                     "trajectory": guiContext.upperContext["trajectory"]
                 }
-            # Direct access from SurfaceContext
-            else:
-                launchContext = None
-            guiContext = ColonyContext(screen, gameModel, manager, colony, launchContext = launchContext)
-
+                colony = gameModel.colonySim.colonyById(guiContext.upperContext["colony"])
+                guiContext = ColonyContext(screen, gameModel, manager, colony, launchContext = launchContext)
         
         manager.update(time_delta)
         manager.draw_ui(screen)
