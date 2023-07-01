@@ -584,24 +584,17 @@ class SurfaceContext(GUIContext):
                 elif self.active_panel.handle_event(event):
                     if isinstance(self.active_panel, VehicleStatusPanel):
                         if event.ui_element == self.vehicle_panel.target_button:
-                            if self.vehicle_panel.upperAction == 1:
+                            if self.targetMode == SCMode.Standard:
                                 self.target_panel.set_vehicle(self.vehicle_panel.vehicle)
                                 self.target_panel.update()
                                 self.target_panel.show()
                                 self.targetMode = SCMode.Target
-                            elif self.vehicle_panel.upperAction == 2:
-                                # Not convinced this is needed
-                                if self.targetMode == SCMode.Landing:
-                                    self.upperContext = {"ship": self.landingContext["ship"]}
-                                else:
-                                    self.upperContext = {"ship": self.vehicle_panel.vehicle.content, "planet": self.planet.id}
+                            elif self.targetMode == SCMode.Target:
+                                pass
+                            elif self.targetMode == SCMode.Landing:
+                                self.upperContext = {"ship": self.vehicle_panel.vehicle.content, "planet": self.planet.id}
                                 returnCode = GUICode.LOADORBITVIEW_LAUNCH_PLAN
                                 break
-
-                                    
-                            else:
-                                print("Unknown upperAction: ", self.vehicle_panel.upperAction)
-                                assert(False)
                         elif event.ui_element == self.vehicle_panel.stopButton:
                             self.vehicle_panel.vehicle.setDestination(None)
                         elif event.ui_element == self.vehicle_panel.colony_button:
