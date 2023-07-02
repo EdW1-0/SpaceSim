@@ -64,6 +64,9 @@ def main(testingCallback = None):
                     "surfaceCoordinates": guiContext.upperContext["surfaceCoordinates"]
                 }
                 guiContext = OrbitContext(screen, gameModel, manager, mode = OCMode.Target, landingContext = landingContext)
+            elif outerEvent == GUICode.LOADORBITVIEW_LAUNCH_LAND_RETURN:
+                landingContext = guiContext.upperContext
+                guiContext = OrbitContext(screen, gameModel, manager, mode = OCMode.LaunchPlan, landingContext = landingContext)
             elif outerEvent == GUICode.LOADORBITVIEW_LAUNCH_PLAN and isinstance(guiContext, ColonyContext):
                 # Launch planning from colony
                 landingContext = {
@@ -90,8 +93,12 @@ def main(testingCallback = None):
                 landingContext = {
                     "ship": guiContext.upperContext["ship"],
                     "planet": guiContext.upperContext["planet"],
-                    "node": guiContext.upperContext["node"]
+                    "node": guiContext.upperContext["node"],
+                    "trajectory": guiContext.upperContext["trajectory"]
                 }
+                if "colony" in guiContext.upperContext:
+                    landingContext["colony"] = guiContext.upperContext["colony"]
+
                 planet = gameModel.planetSim.planetById(guiContext.upperContext["planet"])
                 guiContext = SurfaceContext(screen, 
                                             gameModel, 
