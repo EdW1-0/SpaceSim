@@ -86,6 +86,8 @@ class OrbitContext(GUIContext):
 
         self.target_mode = mode
 
+        self.landingContext = landingContext
+
         if self.target_mode == OCMode.Target:
             self.ship_summary.set_ship(landingContext["ship"])
             self.ship_summary.show()
@@ -123,9 +125,15 @@ class OrbitContext(GUIContext):
 
             self.target_panel.set_source(node)
             self.target_panel.set_ship(landingContext["ship"])
+            ###TODO: This is a hack. Trajectory should really be managed by particle and looked up by view, not created. 
+            if "trajectory" in landingContext:
+                self.target_panel.trajectory = landingContext["trajectory"]
+            if "target" in landingContext:
+                self.target_panel.set_target(landingContext["target"])
+            if "surfaceCoordinates" in landingContext:
+                self.target_panel.set_coordinates(landingContext["surfaceCoordinates"])
             self.target_panel.update()
             self.target_panel.show()
-            self.landingContext = landingContext
 
 
 
@@ -222,7 +230,7 @@ class OrbitContext(GUIContext):
                     if ov.link == location:
                         view = ov
                         break
-                center = ov.center
+                center = ov.rect.center
             particleView = ParticleView(particle, center)
             self.particle_sprites.add(particleView)
             self.all_sprites.add(particleView)
@@ -445,6 +453,10 @@ class OrbitContext(GUIContext):
                                              "mode": SCMode.Landing, 
                                              "ship": self.target_panel.ship,
                                              "node": self.target_panel.target}
+                        if self.landingContext and "colony" in self.landingContext:
+                            self.upperContext["colony"] = self.landingContext["colony"]
+                        if self.target_panel.trajectory:
+                            self.upperContext["trajectory"] = self.target_panel.trajectory
                         returnCode = GUICode.LOADSURFACEVIEW_LANDING_PLAN
                         break
                 else:

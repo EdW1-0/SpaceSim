@@ -10,9 +10,12 @@ from planetsim.surfacePoint import SurfacePoint, dot, vector, latLong
 from planetsim.surfaceRegion import SurfaceRegion
 from planetsim.surfacePath import SurfacePath
 from planetsim.surfaceVehicle import SurfaceVehicle
+from planetsim.vehicle import Vehicle
 from planetsim.surfaceBase import SurfaceBase
 
 from orbitsim.orbitTrajectory import TrajectoryState
+
+from colonysim.ship import Ship
 
 import pygame
 import math, random
@@ -585,10 +588,15 @@ class SurfaceContext(GUIContext):
                     if isinstance(self.active_panel, VehicleStatusPanel):
                         if event.ui_element == self.vehicle_panel.target_button:
                             if self.targetMode == SCMode.Standard:
-                                self.target_panel.set_vehicle(self.vehicle_panel.vehicle)
-                                self.target_panel.update()
-                                self.target_panel.show()
-                                self.targetMode = SCMode.Target
+                                if isinstance(self.vehicle_panel.vehicle.content, Vehicle):
+                                    self.target_panel.set_vehicle(self.vehicle_panel.vehicle)
+                                    self.target_panel.update()
+                                    self.target_panel.show()
+                                    self.targetMode = SCMode.Target
+                                elif isinstance(self.vehicle_panel.vehicle.content, Ship):
+                                    self.upperContext = {"ship": self.vehicle_panel.vehicle.content, "planet": self.planet.id}
+                                    returnCode = GUICode.LOADORBITVIEW_LAUNCH_PLAN
+                                    break
                             elif self.targetMode == SCMode.Target:
                                 pass
                             elif self.targetMode == SCMode.Landing:
@@ -609,7 +617,11 @@ class SurfaceContext(GUIContext):
                         elif self.targetMode == SCMode.Landing:
                             self.landingContext["surfaceCoordinates"] = self.target_panel.target
                             self.upperContext = self.landingContext
-                            returnCode = GUICode.LOADORBITVIEW_TARGET_RETURN
+                            if "colony" in self.upperContext:
+                                ###TODO: This handles colony to surface but not surface to surface
+                                returnCode = GUICode.LOADORBITVIEW_LAUNCH_LAND_RETURN
+                            else:
+                                returnCode = GUICode.LOADORBITVIEW_TARGET_RETURN
                             break
                         else:
                             print("Should never get here!")
