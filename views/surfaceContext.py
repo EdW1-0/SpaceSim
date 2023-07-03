@@ -617,7 +617,7 @@ class SurfaceContext(GUIContext):
                         elif self.targetMode == SCMode.Landing:
                             self.landingContext["surfaceCoordinates"] = self.target_panel.target
                             self.upperContext = self.landingContext
-                            if "colony" in self.upperContext:
+                            if "colony" in self.upperContext or "planet" in self.upperContext:
                                 ###TODO: This handles colony to surface but not surface to surface
                                 returnCode = GUICode.LOADORBITVIEW_LAUNCH_LAND_RETURN
                             else:

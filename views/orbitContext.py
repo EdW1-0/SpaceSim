@@ -112,6 +112,8 @@ class OrbitContext(GUIContext):
                 for p in model.planetSim.planets.values():
                     if p.surface == locale:
                         planet = p
+            elif "sourcePlanet" in landingContext:
+                planet = model.planetSim.planetById(landingContext["sourcePlanet"])
             elif "planet" in landingContext:
                 planet = model.planetSim.planetById(landingContext["planet"]) 
             else:
@@ -446,15 +448,19 @@ class OrbitContext(GUIContext):
                                     "trajectory": self.target_panel.trajectory,
                                     "mode": SCMode.Target
                                 }
+                                if "targetPlanet" in self.landingContext:
+                                    self.upperContext["targetPlanet"] = self.landingContext["targetPlanet"]
                                 returnCode = GUICode.LOADSURFACEVIEW_LAUNCH_RETURN
                             break
                     elif self.target_panel.upperAction == 2:
-                        self.upperContext = {"planet": self.target_panel.target.planet, 
+                        self.upperContext = {"targetPlanet": self.target_panel.target.planet, 
                                              "mode": SCMode.Landing, 
                                              "ship": self.target_panel.ship,
                                              "node": self.target_panel.target}
                         if self.landingContext and "colony" in self.landingContext:
                             self.upperContext["colony"] = self.landingContext["colony"]
+                        elif self.landingContext and "planet" in self.landingContext:
+                            self.upperContext["planet"] = self.landingContext["planet"]
                         if self.target_panel.trajectory:
                             self.upperContext["trajectory"] = self.target_panel.trajectory
                         returnCode = GUICode.LOADSURFACEVIEW_LANDING_PLAN

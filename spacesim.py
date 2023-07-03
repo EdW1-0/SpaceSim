@@ -92,14 +92,16 @@ def main(testingCallback = None):
                 # Drop down to set target for landing
                 landingContext = {
                     "ship": guiContext.upperContext["ship"],
-                    "planet": guiContext.upperContext["planet"],
+                    "targetPlanet": guiContext.upperContext["targetPlanet"],
                     "node": guiContext.upperContext["node"],
                     "trajectory": guiContext.upperContext["trajectory"]
                 }
                 if "colony" in guiContext.upperContext:
                     landingContext["colony"] = guiContext.upperContext["colony"]
+                elif "planet" in guiContext.upperContext:
+                    landingContext["planet"] = guiContext.upperContext["planet"]
 
-                planet = gameModel.planetSim.planetById(guiContext.upperContext["planet"])
+                planet = gameModel.planetSim.planetById(guiContext.upperContext["targetPlanet"])
                 guiContext = SurfaceContext(screen, 
                                             gameModel, 
                                             manager, 
@@ -108,12 +110,14 @@ def main(testingCallback = None):
                                             landingContext = landingContext)
                 # Return from setting launch target for confirmation
             elif outerEvent == GUICode.LOADSURFACEVIEW_LAUNCH_RETURN:
-                    gameModel.planetSim.planetById(guiContext.upperContext["planet"])
+                    planet = gameModel.planetSim.planetById(guiContext.upperContext["planet"])
                     landingContext = {
                         "ship": guiContext.upperContext["ship"],
                         "planet": guiContext.upperContext["planet"],
                         "trajectory": guiContext.upperContext["trajectory"]
                     }
+                    if "targetPlanet" in guiContext.upperContext:
+                        landingContext["targetPlanet"] = guiContext.upperContext["targetPlanet"]
                     guiContext = SurfaceContext(screen, gameModel, manager, planet, mode = SCMode.Target, landingContext = landingContext)
         
             elif outerEvent == GUICode.LOADCOLONYVIEW:
