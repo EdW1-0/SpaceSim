@@ -13,7 +13,7 @@ from pygame.locals import (
     QUIT,
 )
 
-from pygame.event import Event
+from pygame.event import Event, post
 
 from pygame_gui  import (
     UI_BUTTON_PRESSED,
@@ -37,7 +37,7 @@ class SystemTestMacros:
         if isinstance(guiContext, MenuContext):
             pos = guiContext.loadItem.rect.center
             pygame.mouse.set_pos(pos)
-            pygame.event.post(Event(MOUSEBUTTONUP))
+            post(Event(MOUSEBUTTONUP))
         elif isinstance(guiContext, OrbitContext):
             mercury = None
             for s in guiContext.all_sprites:
@@ -50,7 +50,7 @@ class SystemTestMacros:
                 guiContext.resolveNodeClick(mercury)
             elif self.runCount == 2:
                 event = Event(UI_BUTTON_PRESSED, ui_element = guiContext.planet_summary.surface_button)
-                pygame.event.post(event)
+                post(event)
 
         elif isinstance(guiContext, SurfaceContext):
             base = None
@@ -63,7 +63,7 @@ class SystemTestMacros:
                 self.assertEqual(guiContext.active_panel, guiContext.vehicle_panel)
             elif self.runCount == 4:
                 event = pygame.event.Event(UI_BUTTON_PRESSED, ui_element = guiContext.vehicle_panel.colony_button)
-                pygame.event.post(event)
+                post(event)
                 return True
             
         return False
@@ -80,7 +80,7 @@ class SystemTestShipLandingLogic(unittest.TestCase):
         if isinstance(guiContext, MenuContext):
             pos = guiContext.loadItem.rect.center
             pygame.mouse.set_pos(pos)
-            pygame.event.post(Event(MOUSEBUTTONUP))
+            post(Event(MOUSEBUTTONUP))
             self.assertEqual(self.runCount, 0)
         elif isinstance(guiContext, OrbitContext):
             self.assertGreaterEqual(self.runCount, 1)
@@ -102,23 +102,23 @@ class SystemTestShipLandingLogic(unittest.TestCase):
                 event = Event(UI_SELECTION_LIST_NEW_SELECTION)
                 event.ui_element = guiContext.orbit_summary.station_list 
                 event.text= "ISS Meghalaya"
-                pygame.event.post(event)
+                post(event)
             elif self.runCount == 3:
                 self.assertEqual(guiContext.active_summary, guiContext.ship_summary)
-                pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.ship_summary.targetButton))
+                post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.ship_summary.targetButton))
             elif self.runCount == 4:
                 self.assertTrue(guiContext.target_panel.container.visible)
                 guiContext.resolveNodeClick(mercury)
             elif self.runCount == 5:
-                pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.target_panel.surface_button))
+                post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.target_panel.surface_button))
             elif self.runCount == 8:
                 self.assertTrue(guiContext.target_panel.trajectory)
                 self.assertEqual(guiContext.target_panel.target.id, "MES")
-                pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.target_panel.confirm_button))
+                post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.target_panel.confirm_button))
             elif self.runCount == 9:
-                pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.timing_panel.start_button))
+                post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.timing_panel.start_button))
             elif self.runCount == 50:
-                pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.timing_panel.stop_button))
+                post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.timing_panel.stop_button))
             elif self.runCount == 51:
                 surface = model.planetSim.planetById("MERCURY").surface
                 self.assertEqual(surface.points[3].name, "ISS Meghalaya")
@@ -131,14 +131,14 @@ class SystemTestShipLandingLogic(unittest.TestCase):
                 guiContext.hitTestRegion((400, 400))
             elif self.runCount == 7:
                 self.assertTrue(guiContext.target_panel.target)
-                pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.target_panel.confirm_button))
+                post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.target_panel.confirm_button))
 
 
 
 
         if self.runCount == 60:
             self.assertTrue(self.testPassed)
-            pygame.event.post(Event(QUIT))
+            post(Event(QUIT))
         self.runCount += 1
         return
     
@@ -165,7 +165,7 @@ class SystemTestSurfaceLaunch(SystemTestShipLandingLogic, SystemTestMacros):
                     self.assertTrue(isinstance(guiContext, OrbitContext))
                     guiContext.resolveNodeClick(mercury)
                 elif self.runCount == 53:
-                    pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element=guiContext.planet_summary.surface_button))
+                    post(Event(UI_BUTTON_PRESSED, ui_element=guiContext.planet_summary.surface_button))
                 elif self.runCount == 56:
                     self.assertEqual(guiContext.target_mode, OCMode.LaunchPlan)
                     mercuryOrbit = None
@@ -176,7 +176,7 @@ class SystemTestSurfaceLaunch(SystemTestShipLandingLogic, SystemTestMacros):
                             mercuryOrbit = s
                     guiContext.resolveNodeClick(mercuryOrbit)
                 elif self.runCount == 57:
-                    pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element =guiContext.target_panel.confirm_button))
+                    post(Event(UI_BUTTON_PRESSED, ui_element =guiContext.target_panel.confirm_button))
 
             elif isinstance(guiContext, SurfaceContext):
                 if self.runCount == 54:
@@ -187,14 +187,14 @@ class SystemTestSurfaceLaunch(SystemTestShipLandingLogic, SystemTestMacros):
                                 ship = s
                     guiContext.handleClickedObject(ship)
                 elif self.runCount == 55:
-                    pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.vehicle_panel.target_button))
+                    post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.vehicle_panel.target_button))
                 elif self.runCount == 58:
                     self.assertTrue(guiContext.ship_panel.container.visible)
-                    pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.ship_panel.launch_button))
+                    post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.ship_panel.launch_button))
                 elif self.runCount == 59:
-                    pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.timing_panel.start_button))
+                    post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.timing_panel.start_button))
                 elif self.runCount == 70:
-                    pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.timing_panel.stop_button))
+                    post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.timing_panel.stop_button))
                 elif self.runCount == 71:
                     self.assertGreater(len(model.orbitSim.nodeById("MEO").particles), 0)
                     particleId = model.orbitSim.nodeById("MEO").particles.pop()
@@ -212,7 +212,7 @@ class SystemTestSurfaceLaunch(SystemTestShipLandingLogic, SystemTestMacros):
 
         if self.runCount == 80:
             self.assertTrue(self.lowerTestPassed)
-            pygame.event.post(Event(QUIT))
+            post(Event(QUIT))
         self.runCount += 1
         return
     
@@ -226,7 +226,7 @@ class SystemTestColonyShipLaunch(unittest.TestCase):
         if isinstance(guiContext, MenuContext):
             pos = guiContext.loadItem.rect.center
             pygame.mouse.set_pos(pos)
-            pygame.event.post(Event(MOUSEBUTTONUP))
+            post(Event(MOUSEBUTTONUP))
             self.assertEqual(self.runCount, 0)
 
         elif isinstance(guiContext, OrbitContext):
@@ -243,7 +243,7 @@ class SystemTestColonyShipLaunch(unittest.TestCase):
             elif self.runCount == 2:
                 self.assertEqual(guiContext.active_summary, guiContext.planet_summary)
                 event = Event(UI_BUTTON_PRESSED, ui_element = guiContext.planet_summary.surface_button)
-                pygame.event.post(event)
+                post(event)
 
             elif self.runCount == 8:
                 self.assertEqual(guiContext.target_mode, OCMode.LaunchPlan)
@@ -257,7 +257,7 @@ class SystemTestColonyShipLaunch(unittest.TestCase):
 
             elif self.runCount == 9:
                 self.assertTrue(guiContext.target_panel.container.visible)
-                pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.target_panel.confirm_button))
+                post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.target_panel.confirm_button))
 
 
         elif isinstance(guiContext, SurfaceContext):
@@ -271,28 +271,28 @@ class SystemTestColonyShipLaunch(unittest.TestCase):
                 self.assertEqual(guiContext.active_panel, guiContext.vehicle_panel)
             elif self.runCount == 4:
                 event = pygame.event.Event(UI_BUTTON_PRESSED, ui_element = guiContext.vehicle_panel.colony_button)
-                pygame.event.post(event)
+                post(event)
 
         elif isinstance(guiContext, ColonyContext):
             if self.runCount == 5:
-                pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.tab_panel.ships_button))
+                post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.tab_panel.ships_button))
             elif self.runCount == 6:
                 self.assertEqual(guiContext.active_panel, guiContext.ship_panel)
                 event = Event(UI_SELECTION_LIST_NEW_SELECTION)
                 event.ui_element = guiContext.ship_panel.ships_list 
                 event.text= "MSS Viking"
-                pygame.event.post(event)
+                post(event)
             elif self.runCount == 7:
                 self.assertEqual(guiContext.detail_panel, guiContext.ship_detail_panel)
-                pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.ship_detail_panel.target_button))
+                post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.ship_detail_panel.target_button))
 
             elif self.runCount == 10:
                 self.assertEqual(guiContext.detail_panel, guiContext.ship_detail_panel)
-                pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.ship_detail_panel.launch_button))
+                post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.ship_detail_panel.launch_button))
             elif self.runCount == 11:
-                pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.timing_panel.start_button))
+                post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.timing_panel.start_button))
             elif self.runCount == 50:
-                pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.timing_panel.stop_button))
+                post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.timing_panel.stop_button))
             elif self.runCount == 51:
                 mercuryTransfer = model.orbitSim.nodeById("MET")
                 self.assertGreater(len(mercuryTransfer.particles), 0)
@@ -308,11 +308,11 @@ class SystemTestColonyShipLaunch(unittest.TestCase):
 
         if self.runCount == 60:
             self.assertTrue(self.testPassed)
-            pygame.event.post(Event(QUIT))
+            post(Event(QUIT))
         self.runCount += 1
         return
     
-class SystemTestColonyLaunchLand(SystemTestColonyShipLaunch):
+class SystemTestColonySurfaceLaunchLand(SystemTestColonyShipLaunch):
     def testColonyLaunchLand(self):
         self.runCount = 0
         self.outerTestPassed = False
@@ -336,25 +336,25 @@ class SystemTestColonyLaunchLand(SystemTestColonyShipLaunch):
         if self.runCount == 9:
             self.assertTrue(isinstance(guiContext, OrbitContext))
             self.assertEqual(guiContext.target_mode, OCMode.LaunchPlan)
-            pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.target_panel.surface_button))
+            post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.target_panel.surface_button))
         elif self.runCount == 10:
             self.assertTrue(isinstance(guiContext, SurfaceContext))
             self.assertEqual(guiContext.targetMode, SCMode.Landing)
             guiContext.hitTestRegion((400, 400))
         elif self.runCount == 11:
             self.assertTrue(guiContext.target_panel.target)
-            pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.target_panel.confirm_button))
+            post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.target_panel.confirm_button))
         elif self.runCount == 12:
             self.assertTrue(isinstance(guiContext, OrbitContext))
             self.assertEqual(guiContext.target_mode, OCMode.LaunchPlan)
-            pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.target_panel.confirm_button))
+            post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.target_panel.confirm_button))
         elif self.runCount == 13:
             self.assertTrue(isinstance(guiContext, ColonyContext))
-            pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.ship_detail_panel.launch_button))
+            post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.ship_detail_panel.launch_button))
         elif self.runCount == 14:
-            pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.timing_panel.start_button))
+            post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.timing_panel.start_button))
         elif self.runCount == 99:
-            pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.timing_panel.stop_button))
+            post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.timing_panel.stop_button))
         elif self.runCount == 100:
             surface = model.planetSim.planetById("MOON").surface
             self.assertGreater(len(surface.points), 0)
@@ -364,9 +364,93 @@ class SystemTestColonyLaunchLand(SystemTestColonyShipLaunch):
 
         if self.runCount == 120:
             self.assertTrue(self.testPassed)
-            pygame.event.post(Event(QUIT))
+            post(Event(QUIT))
         self.runCount += 1
         return
+    
+class SystemTestSurfaceSurfaceLaunchLand(SystemTestShipLandingLogic):
+    def testSurfaceSurfaceLaunchLand(self):
+        self.runCount = 0
+        self.outerTestPassed = False
+        spacesim.main(testingCallback=self.surfaceLaunchLandCallback)
+
+    def surfaceLaunchLandCallback(self, model, guiContext):
+        if self.runCount < 52:
+            self.shipLandingLogicCallback(model, guiContext)
+            return
+        else:
+            if self.runCount == 52:
+                mercury = None
+                for s in guiContext.all_sprites:
+                    if not isinstance(s, OrbitNodeView):
+                        continue
+                    if s.node.id == "MES":
+                        mercury = s
+
+                self.assertTrue(isinstance(guiContext, OrbitContext))
+                guiContext.resolveNodeClick(mercury)
+            elif self.runCount == 53:
+                self.assertTrue(isinstance(guiContext, OrbitContext))
+                post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.planet_summary.surface_button))
+            elif self.runCount == 54:
+                self.assertTrue(isinstance(guiContext, SurfaceContext))
+                ship = None
+                for s in guiContext.all_sprites:
+                    if isinstance(s, SurfaceObjectSprite):
+                        if isinstance(s.surfaceObject.content, Ship):
+                            ship = s
+                self.assertIsNotNone(ship)
+                guiContext.handleClickedObject(ship)
+            elif self.runCount == 55:
+                self.assertTrue(isinstance(guiContext, SurfaceContext))
+                post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.vehicle_panel.target_button))
+            elif self.runCount == 56:
+                self.assertTrue(isinstance(guiContext, OrbitContext))
+                moon = None
+                for s in guiContext.all_sprites:
+                    if not isinstance(s, OrbitNodeView):
+                        continue
+                    if s.node.id == "MOS":
+                        moon = s
+                guiContext.resolveNodeClick(moon)
+            elif self.runCount == 57:
+                self.assertTrue(isinstance(guiContext, OrbitContext))
+                post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.target_panel.surface_button))
+            elif self.runCount == 58:
+                self.assertTrue(isinstance(guiContext, SurfaceContext))
+                self.assertEqual(guiContext.targetMode, SCMode.Landing)
+                guiContext.hitTestRegion((400, 400))
+            elif self.runCount == 59:
+                self.assertTrue(isinstance(guiContext, SurfaceContext))
+                post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.target_panel.confirm_button))
+            elif self.runCount == 60:
+                self.assertTrue(guiContext, OrbitContext)
+                post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.target_panel.confirm_button))
+            elif self.runCount == 61:
+                self.assertTrue(guiContext, SurfaceContext)
+                post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.ship_panel.launch_button))
+            elif self.runCount == 62:
+                post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.timing_panel.start_button))
+            elif self.runCount == 199:
+                post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.timing_panel.stop_button))
+            elif self.runCount == 200:
+                surface = model.planetSim.planetById("MOON").surface
+                self.assertGreater(len(surface.points), 0)
+                self.assertEqual(surface.points[0].name, "ISS Meghalaya")
+                self.outerTestPassed = True                     
+
+
+        if self.runCount == 210:
+            self.assertTrue(self.outerTestPassed)
+            post(Event(QUIT))
+        self.runCount += 1
+        return
+
+class SystemTestSurfaceColonyLaunchLand(unittest.TestCase):
+    pass
+
+class SystemTestColonyColonyLaunchLand(unittest.TestCase):
+    pass
 
 class SystemTestContextStack(unittest.TestCase):
     def testContextStack(self):
@@ -378,7 +462,7 @@ class SystemTestContextStack(unittest.TestCase):
         if isinstance(guiContext, MenuContext):
             pos = guiContext.loadItem.rect.center
             pygame.mouse.set_pos(pos)
-            pygame.event.post(Event(MOUSEBUTTONUP))
+            post(Event(MOUSEBUTTONUP))
             self.assertEqual(self.runCount, 0)
 
         elif isinstance(guiContext, OrbitContext):
@@ -395,7 +479,7 @@ class SystemTestContextStack(unittest.TestCase):
             elif self.runCount == 2:
                 self.assertEqual(guiContext.active_summary, guiContext.planet_summary)
                 event = Event(UI_BUTTON_PRESSED, ui_element = guiContext.planet_summary.surface_button)
-                pygame.event.post(event)
+                post(event)
             elif self.runCount == 7:
                 self.testPassed = True
 
@@ -410,17 +494,17 @@ class SystemTestContextStack(unittest.TestCase):
                 self.assertEqual(guiContext.active_panel, guiContext.vehicle_panel)
             elif self.runCount == 4:
                 event = pygame.event.Event(UI_BUTTON_PRESSED, ui_element = guiContext.vehicle_panel.colony_button)
-                pygame.event.post(event)
+                post(event)
             elif self.runCount == 6:
-                pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.settings_button))
+                post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.settings_button))
 
         elif isinstance(guiContext, ColonyContext):
             self.assertGreater(self.runCount, 4)
-            pygame.event.post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.settings_button))
+            post(Event(UI_BUTTON_PRESSED, ui_element = guiContext.settings_button))
 
         
         if self.runCount == 30:
             self.assertTrue(self.testPassed)
-            pygame.event.post(Event(QUIT))
+            post(Event(QUIT))
         self.runCount += 1
         return
