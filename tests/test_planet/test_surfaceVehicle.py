@@ -31,3 +31,4 @@ class TestSurfaceVehicle(unittest.TestCase):
         so = SurfaceVehicle(0, ContentMock(), SurfacePoint(10,10))
         so.setDestination(SurfacePoint(50,50))
         self.assertEqual(so.destination, SurfacePoint(50, 50))
+

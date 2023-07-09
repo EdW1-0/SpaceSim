@@ -94,9 +94,9 @@ class PlanetSurface:
             self.vehicles[payload.id] = payload
         return id 
 
-    def createBase(self, context, position, name="", colonyId = None):
+    def createBase(self, content, position, name="", colonyId = None):
         id = next(self.pointIdGenerator)
-        self.points[id] = SurfaceBase(id, context, position, name = name, colonyId = colonyId)
+        self.points[id] = SurfaceBase(id, content, position, name = name, colonyId = colonyId)
         return id
 
     def destroyObject(self, id):
@@ -107,10 +107,20 @@ class PlanetSurface:
         object = self.objectForContent(ship)
         self.destroyObject(object.id)
 
+    # Only used during initialisation. Gives SurfaceBase objects a direct link to their colony object.
+    # Probably could be avoided by just storing the id and letting clients look up the colony themself.
     def connectColony(self, colony):
         for point in self.points.values():
             if isinstance(point, SurfaceBase) and point.colonyId == colony.id:
                 point.content = colony
+
+    # Runtime action to build a colony as part of gameplay. 
+    def buildColony(self, objectId, buildColonyCallback):
+        object = self.pointById(objectId)
+        location = object.point
+        colony = buildColonyCallback(name = "Placeholder colony", locale = self)
+        self.createBase(content=colony, position = location, name = "Placeholder colony", colonyId=colony.id)
+
 
     def transferVehicle(self, id):
         vehicle = self.vehicleById(id)

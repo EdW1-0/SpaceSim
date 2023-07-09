@@ -22,3 +22,6 @@ class SurfaceVehicle(SurfaceObject):
     
     def fuelPerM(self):
         return self.payload.fuelPerM()
+    
+
+    

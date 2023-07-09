@@ -87,6 +87,12 @@ class VehicleStatusPanel(SideStatusPanel):
                                           text="Colony View",  
                                           container = self.container, 
                                           manager=manager)
+        
+        self.build_button = UIButton(pygame.Rect(0, 500, 200, 100), 
+                                          text="Build Colony",  
+                                          container = self.container, 
+                                          manager=manager)
+        
 
         self.upperAction = 0
 
@@ -106,6 +112,9 @@ class VehicleStatusPanel(SideStatusPanel):
         elif event.ui_element == self.colony_button:
             self.upperAction = 3
             return True
+        elif event.ui_element == self.build_button:
+            self.upperAction = 4
+            return True
         else:
             return False
 
@@ -120,18 +129,22 @@ class VehicleStatusPanel(SideStatusPanel):
             self.target_button.show()
             self.stopButton.show()
             self.colony_button.hide()
+            self.build_button.show()
         elif isinstance(self.vehicle, SurfaceBase):
             self.target_button.hide()
             self.stopButton.hide()
             self.colony_button.show()
+            self.build_button.hide()
         elif isinstance(self.vehicle.content, Ship):
             self.target_button.show()
             self.stopButton.hide()
             self.colony_button.hide()
+            self.build_button.show()
         else:
             self.target_button.hide()
             self.stopButton.hide()
             self.colony_button.hide()
+            self.build_button.hide()
 
         destination_text = "<None>"
         if isinstance(self.vehicle, SurfaceVehicle) and self.vehicle.destination:

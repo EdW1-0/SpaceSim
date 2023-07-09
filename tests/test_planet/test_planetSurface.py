@@ -8,6 +8,7 @@ from planetsim.surfacePath import SurfacePath
 from planetsim.surfacePoint import SurfacePoint, almostEqual
 from planetsim.vehicle import Vehicle
 from planetsim.vehicleClass import VehicleClass
+from planetsim.surfaceVehicle import SurfaceVehicle
 from planetsim.planetSim import PlanetSim
 
 class TestPlanetSurface(unittest.TestCase):
@@ -331,4 +332,26 @@ class TestPlanetSurfaceRegionTesting(unittest.TestCase):
     def testRegionForPointNotFullTiled(self):
         self.assertTrue(False)
         
+class ColonyMock:
+    def __init__(self, *args, **kwargs):
+        self.id = 0
+
+class TestPlanetSurfaceBuildColony(unittest.TestCase):
+    def setUp(self):
+        self.r = 3.6*500/math.pi
+        self.ft = PlanetSurface("test_json/test_surfaces/full_tiling.json", radius = self.r)
+        self.vehicle = Vehicle(0, VehicleClass("TEST", "Test", 100, 100, 1), 100)
+        self.v = self.ft.createVehicle(content=None, position = SurfacePoint(10, 10), name = "TestVehice", payload = self.vehicle)
+
         
+
+    def mockColonySimCallback(self, name, locale):
+        self.calledCallback = True
+        return ColonyMock()
+
+        
+    def testPlanetSurfaceBuildColony(self):
+        self.calledCallback = False
+
+        self.ft.buildColony(self.v, self.mockColonySimCallback)
+        self.assertTrue(self.calledCallback)

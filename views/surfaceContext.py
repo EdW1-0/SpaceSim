@@ -606,9 +606,15 @@ class SurfaceContext(GUIContext):
                         elif event.ui_element == self.vehicle_panel.stopButton:
                             self.vehicle_panel.vehicle.setDestination(None)
                         elif event.ui_element == self.vehicle_panel.colony_button:
-                            self.upperContext = {"colony": self.vehicle_panel.vehicle.id}
+                            self.upperContext = {"colony": self.vehicle_panel.vehicle.colonyId}
                             returnCode = GUICode.LOADCOLONYVIEW
                             break
+                        elif event.ui_element == self.vehicle_panel.build_button:
+                            if self.targetMode == SCMode.Standard:
+                                self.planetSurface.buildColony(self.vehicle_panel.vehicle.id, self.model.colonySim.createColony)
+                                # Create a colony object 
+                                # Create a surfaceBase object
+                                # Move the current vehicle or ship to the colony
                 elif self.target_panel.handle_event(event):
                     if event.ui_element == self.target_panel.confirm_button:
                         if self.targetMode == SCMode.Target:
@@ -618,7 +624,6 @@ class SurfaceContext(GUIContext):
                             self.landingContext["surfaceCoordinates"] = self.target_panel.target
                             self.upperContext = self.landingContext
                             if "colony" in self.upperContext or "planet" in self.upperContext:
-                                ###TODO: This handles colony to surface but not surface to surface
                                 returnCode = GUICode.LOADORBITVIEW_LAUNCH_LAND_RETURN
                             else:
                                 returnCode = GUICode.LOADORBITVIEW_TARGET_RETURN

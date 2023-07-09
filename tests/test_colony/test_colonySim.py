@@ -3,6 +3,10 @@ import unittest
 from colonysim.colonySim import ColonySim
 from colonysim.buildingClass import ProductionBuildingClass
 
+class MockLocale:
+    def connectColony(self, colony):
+        pass
+
 class TestColonySim(unittest.TestCase):
     def testColonySim(self):
         self.assertTrue(ColonySim)
@@ -48,10 +52,11 @@ class TestColonySim(unittest.TestCase):
 
     def testColonySimCreateColony(self):
         cs = ColonySim()
+        locale = MockLocale()
         self.assertEqual(len(cs._colonies.values()), 0)
-        self.assertEqual(cs.createColony("Hadley's Hope"), 0)
+        self.assertEqual(cs.createColony("Hadley's Hope", locale = locale).id, 0)
         self.assertEqual(len(cs._colonies.values()), 1)
-        self.assertEqual(cs.createColony("Freedom's Progress"), 1)
+        self.assertEqual(cs.createColony("Freedom's Progress", locale = locale).id, 1)
 
 class TestColonySimObjectLookup(unittest.TestCase):
     def setUp(self):

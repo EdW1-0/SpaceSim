@@ -13,6 +13,7 @@ from utility.dictLookup import getIntId, getStringId
 
 class ColonySim:
     def __init__(self, orbitSim = None, planetSim = None, colonyPath = "json/colonies", resourcePath = "json/resources", reactionPath = "json/reactions", buildingPath = "json/buildingClasses"):
+        self.orbitSim = orbitSim
         self._buildingClasses = {}
         self._resources = {}
         self._reactions = {}
@@ -105,11 +106,13 @@ class ColonySim:
             yield nodeIdCounter
             nodeIdCounter += 1
     
-    def createColony(self, name="Default Colony"):
+    def createColony(self, name="Default Colony", locale = None):
         id = next(self.idGenerator)
-        colony = Colony(id, name)
+        while id in self._colonies:
+            id = next(self.idGenerator)
+        colony = Colony(id, name, orbitSim=self.orbitSim, locale = locale)
         self._colonies[id] = colony
-        return id
+        return colony
     
     def colonyForShipId(self, shipId):
         for colony in self._colonies.values():
