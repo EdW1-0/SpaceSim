@@ -7,18 +7,18 @@ class TestPlanetSim(unittest.TestCase):
         self.assertTrue(PlanetSim)
 
     def testPlanetSimAttributes(self):
-        self.assertTrue(hasattr(PlanetSim("json/Planets.json"), "planets"))
+        self.assertTrue(hasattr(PlanetSim(None, "json/Planets.json"), "planets"))
 
     def testPlanetSimConstructor(self):
         with self.assertRaises(FileNotFoundError):
-            PlanetSim("")
-        self.assertTrue(PlanetSim(jsonPath = "json/Planets.json"))
-        self.assertNotEqual(len(PlanetSim(jsonPath = "json/Planets.json").planets), 0)
+            PlanetSim(None, "")
+        self.assertTrue(PlanetSim(None, jsonPath = "json/Planets.json"))
+        self.assertNotEqual(len(PlanetSim(None, jsonPath = "json/Planets.json").planets), 0)
 
 class TestPlanetSimInteraction(unittest.TestCase):
 
     def setUp(self):
-        self.planetSim = PlanetSim("json/Planets.json")
+        self.planetSim = PlanetSim(None, "json/Planets.json")
         
 
     def test_planetSimAccessBadNode(self):

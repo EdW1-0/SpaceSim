@@ -14,15 +14,15 @@ from planetsim.planetSim import PlanetSim
 class TestPlanetSurface(unittest.TestCase):
     def testPlanetSurfaceModule(self):
         self.assertTrue(PlanetSurface)
-        self.assertTrue(PlanetSurface())
+        self.assertTrue(PlanetSurface(None))
 
     def testPlanetSurfaceAttributes(self):
-        self.assertTrue(hasattr(PlanetSurface(), "regions"))
-        self.assertTrue(hasattr(PlanetSurface(), "points"))
-        self.assertTrue(hasattr(PlanetSurface(), "radius"))
-        self.assertTrue(hasattr(PlanetSurface(), "planetClass"))
-        self.assertTrue(isinstance(PlanetSurface().regions, dict))
-        self.assertTrue(isinstance(PlanetSurface().points, dict))
+        self.assertTrue(hasattr(PlanetSurface(None), "regions"))
+        self.assertTrue(hasattr(PlanetSurface(None), "points"))
+        self.assertTrue(hasattr(PlanetSurface(None), "radius"))
+        self.assertTrue(hasattr(PlanetSurface(None), "planetClass"))
+        self.assertTrue(isinstance(PlanetSurface(None).regions, dict))
+        self.assertTrue(isinstance(PlanetSurface(None).points, dict))
 
 
     def testPlanetSurfaceConstructor(self):
@@ -32,9 +32,9 @@ class TestPlanetSurface(unittest.TestCase):
         
 class TestPlanetSurfaceLoading(unittest.TestCase):
     def setUp(self):
-        self.ps = PlanetSurface("test_json/test_surfaces/single_region.json")
-        self.twor = PlanetSurface("test_json/test_surfaces/2_hemispheres.json")
-        self.fulltile = PlanetSurface("test_json/test_surfaces/full_tiling.json")
+        self.ps = PlanetSurface(None, "test_json/test_surfaces/single_region.json")
+        self.twor = PlanetSurface(None, "test_json/test_surfaces/2_hemispheres.json")
+        self.fulltile = PlanetSurface(None, "test_json/test_surfaces/full_tiling.json")
 
     def testPlanetSurfaceRegionLoading(self):
         self.assertEqual(len(self.ps.regions), 1)
@@ -73,9 +73,9 @@ class TestGreatCircleGeodetics(unittest.TestCase):
 
 class TestPlanetSurfaceIdLookup(unittest.TestCase):
     def setUp(self):
-        self.ps = PlanetSurface("test_json/test_surfaces/single_region.json")
-        self.twor = PlanetSurface("test_json/test_surfaces/2_hemispheres.json")
-        self.ft = PlanetSurface("test_json/test_surfaces/full_tiling.json")
+        self.ps = PlanetSurface(None, "test_json/test_surfaces/single_region.json")
+        self.twor = PlanetSurface(None, "test_json/test_surfaces/2_hemispheres.json")
+        self.ft = PlanetSurface(None, "test_json/test_surfaces/full_tiling.json")
 
     def testRegionIdLookup(self):
         self.assertEqual(self.ft.regionById(3).id, 3)
@@ -303,7 +303,7 @@ class TestPlanetSurfaceObjectAtPoint(unittest.TestCase):
 class TestPlanetSurfaceRegionTesting(unittest.TestCase):
     def setUp(self):
         self.r = 3.6*500/math.pi
-        self.ft = PlanetSurface("test_json/test_surfaces/full_tiling.json", radius = self.r)
+        self.ft = PlanetSurface(None, "test_json/test_surfaces/full_tiling.json", radius = self.r)
         self.ft.createObject(None, SurfacePoint(88, 0))
         self.ft.createObject(None, SurfacePoint(-88, 0))
         self.ft.createObject(None, SurfacePoint(10, 10))
