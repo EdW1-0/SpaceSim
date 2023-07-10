@@ -336,6 +336,9 @@ class ColonyMock:
     def __init__(self, *args, **kwargs):
         self.id = 0
 
+    def vehicleArrival(self, vehicle):
+        return True
+
 class TestPlanetSurfaceBuildColony(unittest.TestCase):
     def setUp(self):
         self.r = 3.6*500/math.pi

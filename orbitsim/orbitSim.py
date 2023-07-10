@@ -292,9 +292,7 @@ class OrbitSim:
                         t.state = TrajectoryState.COMPLETE
                         timeBudget = 0
                         if location.planet and t.surfaceCoordinates:
-                            ship = self.particleById(t.particleId).payload
-                            if self.landCallback(ship, location.planet, t.surfaceCoordinates):
-                                self.destroyParticle(t.particleId)
+                            self.particleArrival(t.particleId, location, t.surfaceCoordinates)
                         continue
 
                     linkId = t.nextLink(location.id)
@@ -365,6 +363,13 @@ class OrbitSim:
         # For each unchecked link, append link id, call self on endpoint
         # Collate array of subarrays
         # Return arrays
+
+    def particleArrival(self, particleId, location, surfaceCoordinates = None):
+        particle = self.particleById(particleId)
+        ship = particle.payload
+        if self.landCallback(ship, location.planet, surfaceCoordinates):
+            self.destroyParticle(particleId)
+
 
     def _deltaVCost(self, path):
         dv = 0
