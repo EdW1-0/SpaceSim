@@ -16,7 +16,8 @@ from utility.dictLookup import getIntId
 EARTH_RADIUS = 6371000
 
 class PlanetSurface:
-    def __init__(self, jsonPath = "json/planets/surfaces/Surface.json", vehiclePath = None, radius = EARTH_RADIUS, vehicleClasses = {}, vehicleRegisterCallback = None):
+    def __init__(self, orbitSim, jsonPath = "json/planets/surfaces/Surface.json", vehiclePath = None, radius = EARTH_RADIUS, vehicleClasses = {}, vehicleRegisterCallback = None):
+        self.orbitSim = orbitSim
         self.radius = radius
         self.vehicleClasses = vehicleClasses
         self.regions = {}
@@ -125,7 +126,14 @@ class PlanetSurface:
             colony.vehicleArrival(object.payload)
             self.destroyObject(objectId)
         elif isinstance(object, SurfaceObject):
-            pass
+            particle = None
+            for p in self.orbitSim._particles.values():
+                if p.payload == object.content:
+                    particle = p
+            assert(particle)
+            self.orbitSim.particleArrival(particle.id, self.id, self.pointById(baseId))
+            self.destroyObject(objectId)
+            
 
 
     def transferVehicle(self, id):

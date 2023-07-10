@@ -292,7 +292,7 @@ class OrbitSim:
                         t.state = TrajectoryState.COMPLETE
                         timeBudget = 0
                         if location.planet and t.surfaceCoordinates:
-                            self.particleArrival(t.particleId, location, t.surfaceCoordinates)
+                            self.particleArrival(t.particleId, location.planet, t.surfaceCoordinates)
                         continue
 
                     linkId = t.nextLink(location.id)
@@ -364,10 +364,10 @@ class OrbitSim:
         # Collate array of subarrays
         # Return arrays
 
-    def particleArrival(self, particleId, location, surfaceCoordinates = None):
+    def particleArrival(self, particleId, planet, surfaceCoordinates = None):
         particle = self.particleById(particleId)
         ship = particle.payload
-        if self.landCallback(ship, location.planet, surfaceCoordinates):
+        if self.landCallback(ship, planet, surfaceCoordinates):
             self.destroyParticle(particleId)
 
 

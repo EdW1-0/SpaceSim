@@ -12,7 +12,7 @@ from utility.fileLoad import loadEntityFile
 from utility.dictLookup import getStringId
 
 class PlanetSim:
-    def __init__(self, jsonPath = "json/Planets.json", vehicleClassPath = "json/vehicleClasses", vehicleRegisterCallback = None):
+    def __init__(self, orbitSim, jsonPath = "json/Planets.json", vehicleClassPath = "json/vehicleClasses", vehicleRegisterCallback = None):
         planetsFile = open(jsonPath, "r")
         planetsJson = json.load(planetsFile)
 
@@ -43,7 +43,7 @@ class PlanetSim:
 
         for subdir, dirs, files in os.walk(surfacesFolder):
             for file in files:
-                surface = PlanetSurface(surfacesFolder + file, radius = 1000, vehiclePath = "json/planets/vehicles", vehicleClasses=self.vehicleClasses, vehicleRegisterCallback=vehicleRegisterCallback)
+                surface = PlanetSurface(orbitSim, surfacesFolder + file, radius = 1000, vehiclePath = "json/planets/vehicles", vehicleClasses=self.vehicleClasses, vehicleRegisterCallback=vehicleRegisterCallback)
                 for planetId in self.planets.keys():
                     if planetId == surface.id:
                         ###TODO: Bit of a kludge to set this later when it should go in via constructor. Should load all these first, then call constructor
