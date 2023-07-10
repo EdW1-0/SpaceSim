@@ -8,6 +8,7 @@ from planetsim.surfaceObject import SurfaceObject
 from planetsim.surfaceVehicle import SurfaceVehicle
 from planetsim.surfaceBase import SurfaceBase
 from planetsim.vehicle import Vehicle
+from colonysim.ship import Ship
 
 from utility.fileLoad import loadEntityFile
 from utility.dictLookup import getIntId
@@ -119,7 +120,12 @@ class PlanetSurface:
         object = self.pointById(objectId)
         location = object.point
         colony = buildColonyCallback(name = "Placeholder colony", locale = self)
-        self.createBase(content=colony, position = location, name = "Placeholder colony", colonyId=colony.id)
+        baseId = self.createBase(content=colony, position = location, name = "Placeholder colony", colonyId=colony.id)
+        if isinstance(object, SurfaceVehicle):
+            colony.vehicleArrival(object.payload)
+            self.destroyObject(objectId)
+        elif isinstance(object, SurfaceObject):
+            pass
 
 
     def transferVehicle(self, id):
