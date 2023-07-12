@@ -147,13 +147,10 @@ class SurfaceContext(GUIContext):
         self.all_sprites = pygame.sprite.Group()
         self.object_sprites = pygame.sprite.Group()
         self.destination_sprites = pygame.sprite.Group()
+        self.sprite_index = set()
         
         for object in self.planetSurface.points.values():
-            location = object.point
-            locationXY = self.latLongToXY((location.latitude, location.longitude))
-            objectSprite = SurfaceObjectSprite(object, center=locationXY)
-            self.object_sprites.add(objectSprite)
-            self.all_sprites.add(objectSprite)
+            self.addObjectSprite(object)
 
         destination_sprite = SurfaceDestinationSprite()
         self.destination_sprites.add(destination_sprite)
@@ -428,6 +425,14 @@ class SurfaceContext(GUIContext):
 
         print (self.meridian)
 
+    def addObjectSprite(self, object):
+        location = object.point
+        locationXY = self.latLongToXY((location.latitude, location.longitude))
+        objectSprite = SurfaceObjectSprite(object, center=locationXY)
+        self.object_sprites.add(objectSprite)
+        self.all_sprites.add(objectSprite)
+        self.sprite_index.add(object.id)        
+
     def hitTestSprite(self, pos):
         clicked_items = [s for s in self.object_sprites if s.rect.collidepoint(pos)] 
         if len(clicked_items):
@@ -688,11 +693,18 @@ class SurfaceContext(GUIContext):
 
         self.screen.blit(self.surf, pygame.Rect(0, 0, 1200, 800))
 
+        for object in self.planetSurface.points.values():
+            if object.id not in self.sprite_index:
+                self.addObjectSprite(object)
+
+
         for entity in self.all_sprites:
             if entity.surfaceObject.killed:
+                self.sprite_index.remove(entity.surfaceObject.id)
                 entity.kill()
             else:
                 self.screen.blit(entity.surf, entity.rect)
         
 
         return returnCode
+    
