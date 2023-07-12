@@ -1,7 +1,7 @@
 import enum
 
 class BuildingStatus(str, enum.Enum):
-    CONSTRUCTION = "CONSTRUCTIO"
+    CONSTRUCTION = "CONSTRUCTION"
     IDLE = "IDLE"
     ACTIVE = "ACTIVE"
     DEMOLITION = "DEMOLITION"

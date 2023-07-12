@@ -3,11 +3,11 @@ from enum import Enum
 from planetsim.surfacePoint import SurfacePoint
 from planetsim.surfaceBase import SurfaceBase
 
-class TrajectoryState(Enum):
-    DEFINITION = 0
-    PENDING = 1
-    ACTIVE = 2
-    COMPLETE = 3
+class TrajectoryState(str, Enum):
+    DEFINITION = "Definition",
+    PENDING = "Pending",
+    ACTIVE = "Active",
+    COMPLETE = "Complete"
 
 class OrbitTrajectory:
     def __init__(self, particleId, trajectory, state=TrajectoryState.DEFINITION, surfaceCoordinates=None):
@@ -18,13 +18,15 @@ class OrbitTrajectory:
 
     def strRep(self, orbitSim):
         trajectoryText = ""
+        trajectoryText += self.state + "<br>"
+
         for node in self.allNodes():
             orbitNode = orbitSim.nodeById(node)
             trajectoryText += (orbitNode.name + "<br>")
 
         if self.surfaceCoordinates:
             if isinstance(self.surfaceCoordinates, SurfacePoint):
-                trajectoryText += str(self.surfaceCoordinates.latitude, self.surfaceCoordinates.longitude)
+                trajectoryText += str((self.surfaceCoordinates.latitude, self.surfaceCoordinates.longitude))
             elif isinstance(self.surfaceCoordinates, SurfaceBase):
                 trajectoryText += self.surfaceCoordinates.name
 
