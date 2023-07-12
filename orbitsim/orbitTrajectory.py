@@ -1,5 +1,8 @@
 from enum import Enum
 
+from planetsim.surfacePoint import SurfacePoint
+from planetsim.surfaceBase import SurfaceBase
+
 class TrajectoryState(Enum):
     DEFINITION = 0
     PENDING = 1
@@ -13,6 +16,19 @@ class OrbitTrajectory:
         self.state = state
         self.surfaceCoordinates = surfaceCoordinates
 
+    def strRep(self, orbitSim):
+        trajectoryText = ""
+        for node in self.allNodes():
+            orbitNode = orbitSim.nodeById(node)
+            trajectoryText += (orbitNode.name + "<br>")
+
+        if self.surfaceCoordinates:
+            if isinstance(self.surfaceCoordinates, SurfacePoint):
+                trajectoryText += str(self.surfaceCoordinates.latitude, self.surfaceCoordinates.longitude)
+            elif isinstance(self.surfaceCoordinates, SurfaceBase):
+                trajectoryText += self.surfaceCoordinates.name
+
+        return trajectoryText
 
     def nextLink(self, nodeId):
         nodes = [self.trajectory[2*i] for i in range(int(len(self.trajectory)/2)+1)]

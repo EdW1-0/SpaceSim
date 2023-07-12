@@ -184,10 +184,14 @@ class ColonyShipDetailPanel(SideStatusPanel):
         self.ship_status.set_text("DeltaV: {0}/{1}<br>".format(self.ship.deltaV(), self.ship.shipClass.maxDeltaV))
 
 
-
-        if not self.trajectory():               
+        trajectory = self.trajectory()
+        if trajectory:
+            self.ship_mission.set_text(trajectory.strRep(self.orbitSim))
+            self.launch_button.show()
+        else:               
             self.ship_mission.set_text("Orders: Not implemented<br>")
             self.launch_button.hide()
+        
 
     def trajectory(self):
         if not self.ship:
@@ -203,8 +207,6 @@ class ColonyShipDetailPanel(SideStatusPanel):
         if particle:
             try:
                 trajectory = self.orbitSim.trajectoryForParticle(particle.id)
-                self.ship_mission.set_text("Has a trajectory")
-                self.launch_button.show()
                 traj = True
             except KeyError:
                 pass

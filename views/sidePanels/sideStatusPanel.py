@@ -234,13 +234,7 @@ class ShipStatusPanel(SideStatusPanel):
         
         trajectory = self.ship_trajectory()
         if trajectory:
-            trajectoryText = ""
-            for node in trajectory.allNodes():
-                orbitNode = self.model.orbitSim.nodeById(node)
-                trajectoryText += (orbitNode.name + "<br>")
-
-            self.trajectory_text.set_text(trajectoryText)
-        
+            self.trajectory_text.set_text(trajectory.strRep(self.model.orbitSim))
         else:
             self.trajectory_text.set_text("No trajectory")
 
