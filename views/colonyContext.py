@@ -53,6 +53,8 @@ class ColonyContext(GUIContext):
         self.vehicle_panel.hide()
         self.ship_panel = ColonyItemPanel(summary_rect, manager=manager, colony=colony, title="Ships", sourceList=self.colony.ships)
         self.ship_panel.hide()
+        self.building_panel = ColonyItemPanel(summary_rect, manager=manager, colony=colony, title="Buildings", sourceList=self.colony.buildings)
+        self.building_panel.hide()
 
         self.vehicle_detail_panel = ColonyVehicleDetailPanel(detail_rect, manager=manager)
         self.vehicle_detail_panel.hide()
@@ -83,18 +85,18 @@ class ColonyContext(GUIContext):
                 if self.timing_panel.handle_event(event):
                     pass
                 elif self.tab_panel.handle_event(event):
-                    if self.tab_panel.upperEvent == 3:
-                        if self.active_panel:
-                            self.active_panel.hide()
+                    if self.active_panel:
+                        self.active_panel.hide()
+
+                    if self.tab_panel.upperEvent == 1:
+                        self.active_panel = self.building_panel
+                    elif self.tab_panel.upperEvent == 3:
                         self.active_panel = self.vehicle_panel
-                        self.vehicle_panel.update()
-                        self.active_panel.show()
                     elif self.tab_panel.upperEvent == 4:
-                        if self.active_panel:
-                            self.active_panel.hide()
                         self.active_panel = self.ship_panel
-                        self.ship_panel.update()
-                        self.active_panel.show()
+
+                    self.active_panel.update()
+                    self.active_panel.show()
                     pass
                 elif self.active_panel and self.active_panel.handle_event(event):
                     pass

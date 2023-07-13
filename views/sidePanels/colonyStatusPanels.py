@@ -5,12 +5,13 @@ from views.sidePanels.sideStatusPanel import SideStatusPanel
 from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox, UISelectionList
 
 from orbitsim.orbitTrajectory import TrajectoryState
+from colonysim.building import Building
 
 class ColonyTabPanel(SideStatusPanel):
     def __init__(self, rect, manager=None):
         super().__init__(rect, manager)
-        self.target_button = UIButton(pygame.Rect(0, 0, 100, 100), 
-                                          text="Construction",  
+        self.buildings_button = UIButton(pygame.Rect(0, 0, 100, 100), 
+                                          text="Buildings",  
                                           container = self.container, 
                                           manager=manager)
         
@@ -32,6 +33,9 @@ class ColonyTabPanel(SideStatusPanel):
     def handle_event(self, event):
         self.upperEvent = 0
         if super().handle_event(event):
+            return True
+        elif event.ui_element == self.buildings_button:
+            self.upperEvent = 1
             return True
         elif event.ui_element == self.vehicles_button:
             self.upperEvent = 3
@@ -202,6 +206,9 @@ class ColonyItemPanel(SideStatusPanel):
     def update(self):
         newHash = "".join(map(str, [item.id for item in self.sourceList.values()]))
         if newHash != self.item_hash:
-            self.item_list.set_item_list([item.name for item in self.sourceList.values()])
+            if isinstance(next(iter(self.sourceList.values())), Building):
+                self.item_list.set_item_list([item.buildingClass.name for item in self.sourceList.values()])
+            else:
+                self.item_list.set_item_list([item.name for item in self.sourceList.values()])
             self.item_list.show()
             self.item_hash = newHash
