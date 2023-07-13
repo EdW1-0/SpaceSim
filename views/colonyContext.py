@@ -2,7 +2,7 @@ from views.guiContext import GUIContext, GUICode
 from views.sidePanels.sideStatusPanel import SideStatusPanel
 from views.timingView import TimingPanel
 
-from views.sidePanels.colonyStatusPanels import ColonyTabPanel, ColonyVehiclePanel, ColonyVehicleDetailPanel, ColonyShipPanel, ColonyShipDetailPanel
+from views.sidePanels.colonyStatusPanels import ColonyTabPanel, ColonyVehicleDetailPanel, ColonyShipDetailPanel, ColonyItemPanel
 
 from colonysim.colony import Colony
 
@@ -49,9 +49,9 @@ class ColonyContext(GUIContext):
         self.tab_panel = ColonyTabPanel(tab_rect, manager=manager)
         self.timing_panel = TimingPanel(timing_rect, manager = manager, timingMaster=model.timingMaster)
 
-        self.vehicle_panel = ColonyVehiclePanel(summary_rect, manager=manager, colony=colony)
+        self.vehicle_panel = ColonyItemPanel(summary_rect, manager=manager, colony=colony, title="Vehicles", sourceList=self.colony.vehicles)
         self.vehicle_panel.hide()
-        self.ship_panel = ColonyShipPanel(summary_rect, manager=manager, colony=colony)
+        self.ship_panel = ColonyItemPanel(summary_rect, manager=manager, colony=colony, title="Ships", sourceList=self.colony.ships)
         self.ship_panel.hide()
 
         self.vehicle_detail_panel = ColonyVehicleDetailPanel(detail_rect, manager=manager)
@@ -114,7 +114,7 @@ class ColonyContext(GUIContext):
 
 
             elif event.type == UI_SELECTION_LIST_NEW_SELECTION:
-                if event.ui_element == self.vehicle_panel.vehicle_list:
+                if event.ui_element == self.vehicle_panel.item_list:
                     vehicle = None
                     for v in self.colony.vehicles.values():
                         if v.name == event.text:
@@ -128,7 +128,7 @@ class ColonyContext(GUIContext):
                     self.vehicle_detail_panel.update()
                     self.detail_panel = self.vehicle_detail_panel
                     self.detail_panel.show()
-                elif event.ui_element == self.ship_panel.ships_list:
+                elif event.ui_element == self.ship_panel.item_list:
                     ship = None
                     for s in self.colony.ships.values():
                         if s.name == event.text:

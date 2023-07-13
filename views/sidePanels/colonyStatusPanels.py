@@ -42,27 +42,6 @@ class ColonyTabPanel(SideStatusPanel):
         else:
             return False
         
-class ColonyVehiclePanel(SideStatusPanel):
-    def __init__(self, rect, manager=None, colony=None):
-        super().__init__(rect, manager)
-        self.colony = colony
-
-        self.vehicle_hash = ""
-
-        vehicles_text = "Vehicles"
-        self.vehicles_text = UILabel(pygame.Rect(0, 50, 400, 50), text=vehicles_text, manager=manager, container=self.container)
-
-        self.vehicle_list = UISelectionList(pygame.Rect(0, 100, 400, 500),
-                                            [("foo", "bar")],
-                                            manager=manager,
-                                            container=self.container)
-        
-    def update(self):
-        newHash = "".join(map(str, [vehicle.id for vehicle in self.colony.vehicles.values()]))
-        if newHash != self.vehicle_hash:
-            self.vehicle_list.set_item_list([vehicle.name for vehicle in self.colony.vehicles.values()])
-            self.vehicle_list.show()
-            self.vehicle_hash = newHash
 
 class ColonyVehicleDetailPanel(SideStatusPanel):
     def __init__(self, rect, manager = None, vehicle=None):
@@ -118,26 +97,6 @@ class ColonyVehicleDetailPanel(SideStatusPanel):
         else:
             return False
         
-class ColonyShipPanel(SideStatusPanel):
-    def __init__(self, rect, manager=None, colony=None):
-        super().__init__(rect, manager)
-        self.colony = colony
-        self.ship_hash = ""
-
-        ships_text = "Ships"
-        self.ships_text = UILabel(pygame.Rect(0, 50, 400, 50), text=ships_text, manager=manager, container=self.container)
-
-        self.ships_list = UISelectionList(pygame.Rect(0, 100, 400, 500),
-                                            [],
-                                            manager=manager,
-                                            container=self.container)
-        
-    def update(self):
-        newHash = "".join(map(str, [ship.id for ship in self.colony.ships.values()]))
-        if newHash != self.ship_hash:
-            self.ships_list.set_item_list([ship.name for ship in self.colony.ships.values()])
-            self.ships_list.show()
-            self.ship_hash = newHash
 
 ###TODO: Currently ColonyVehicleDetailPanel and ColonyShipDetailPanel are almost identical. Probably should merge into common superclass
 class ColonyShipDetailPanel(SideStatusPanel):
@@ -226,3 +185,23 @@ class ColonyShipDetailPanel(SideStatusPanel):
         else:
             return False
 
+
+class ColonyItemPanel(SideStatusPanel):
+    def __init__(self, rect, manager=None, colony=None, title = "Default title", sourceList = None):
+        super().__init__(rect, manager)
+        self.colony = colony
+        self.sourceList = sourceList
+        self.item_hash = ""
+
+        self.title_text = UILabel(pygame.Rect(0, 50, 400, 50), text=title, manager=manager, container=self.container)
+
+        self.item_list = UISelectionList(pygame.Rect(0, 100, 400, 500),
+                                            [],
+                                            manager=manager,
+                                            container=self.container)
+    def update(self):
+        newHash = "".join(map(str, [item.id for item in self.sourceList.values()]))
+        if newHash != self.item_hash:
+            self.item_list.set_item_list([item.name for item in self.sourceList.values()])
+            self.item_list.show()
+            self.item_hash = newHash
