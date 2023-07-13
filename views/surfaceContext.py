@@ -593,7 +593,7 @@ class SurfaceContext(GUIContext):
                     if isinstance(self.active_panel, VehicleStatusPanel):
                         if event.ui_element == self.vehicle_panel.target_button:
                             if self.targetMode == SCMode.Standard:
-                                if isinstance(self.vehicle_panel.vehicle.content, Vehicle):
+                                if isinstance(self.vehicle_panel.vehicle, SurfaceVehicle):
                                     self.target_panel.set_vehicle(self.vehicle_panel.vehicle)
                                     self.target_panel.update()
                                     self.target_panel.show()
