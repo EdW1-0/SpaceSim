@@ -279,7 +279,7 @@ class SystemTestColonyShipLaunch(unittest.TestCase):
             elif self.runCount == 6:
                 self.assertEqual(guiContext.active_panel, guiContext.ship_panel)
                 event = Event(UI_SELECTION_LIST_NEW_SELECTION)
-                event.ui_element = guiContext.ship_panel.ships_list 
+                event.ui_element = guiContext.ship_panel.item_list  
                 event.text= "MSS Viking"
                 post(event)
             elif self.runCount == 7:

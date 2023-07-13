@@ -17,14 +17,18 @@ class TestColonyContext(unittest.TestCase):
         self.mm = ModelMock()
         self.mm.timingMaster = ModelMock()
 
+        self.cm = ModelMock()
+        self.cm.vehicles = {}
+        self.cm.ships = {}
+
     def testColonyContext(self):
         self.assertTrue(ColonyContext)
 
     def testColonyContextConstructor(self):
-        self.assertTrue(ColonyContext(ModelMock(), self.mm, None, None))
+        self.assertTrue(ColonyContext(ModelMock(), self.mm, self.manager, self.cm))
 
     def testColonyContextInheritance(self):
-        cc = ColonyContext(ModelMock(), self.mm, None, None)
+        cc = ColonyContext(ModelMock(), self.mm, self.manager, self.cm)
         self.assertTrue(issubclass(ColonyContext, GUIContext))
         self.assertTrue(isinstance(cc, GUIContext))
          
