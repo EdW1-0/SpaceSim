@@ -2,7 +2,7 @@ from views.guiContext import GUIContext, GUICode
 from views.sidePanels.sideStatusPanel import SideStatusPanel
 from views.timingView import TimingPanel
 
-from views.sidePanels.colonyStatusPanels import ColonyTabPanel, ColonyVehicleDetailPanel, ColonyShipDetailPanel, ColonyItemPanel
+from views.sidePanels.colonyStatusPanels import ColonyTabPanel, ColonyVehicleDetailPanel, ColonyShipDetailPanel, ColonyItemPanel, ColonyBuildingDetailPanel
 
 from colonysim.colony import Colony
 
@@ -55,11 +55,15 @@ class ColonyContext(GUIContext):
         self.ship_panel.hide()
         self.building_panel = ColonyItemPanel(summary_rect, manager=manager, colony=colony, title="Buildings", sourceList=self.colony.buildings)
         self.building_panel.hide()
+        self.production_panel = ColonyItemPanel(summary_rect, manager=manager, colony=colony, title="Production", sourceList=self.colony.productionOrders)
+        self.production_panel.hide()
 
         self.vehicle_detail_panel = ColonyVehicleDetailPanel(detail_rect, manager=manager)
         self.vehicle_detail_panel.hide()
         self.ship_detail_panel = ColonyShipDetailPanel(detail_rect, manager=manager, orbitSim = self.model.orbitSim)
         self.ship_detail_panel.hide()
+        self.building_detail_panel = ColonyBuildingDetailPanel(detail_rect, manager=manager, colony=self.colony)
+        self.building_detail_panel.hide()
 
         self.active_panel = None
         self.detail_panel = None
@@ -90,6 +94,8 @@ class ColonyContext(GUIContext):
 
                     if self.tab_panel.upperEvent == 1:
                         self.active_panel = self.building_panel
+                    elif self.tab_panel.upperEvent == 2:
+                        self.active_panel = self.production_panel
                     elif self.tab_panel.upperEvent == 3:
                         self.active_panel = self.vehicle_panel
                     elif self.tab_panel.upperEvent == 4:
@@ -143,6 +149,18 @@ class ColonyContext(GUIContext):
                     self.ship_detail_panel.update()
                     self.detail_panel = self.ship_detail_panel
                     self.detail_panel.show()
+                elif event.ui_element == self.building_panel.item_list:
+                    building = None
+                    for b in self.colony.buildings.values():
+                        if b.id == int(event.text.split()[-1]):
+                            building = b
+                    assert(b)
+                    if self.detail_panel:
+                        self.detail_panel.hide()
+                    self.building_detail_panel.setBuilding(building)
+                    self.building_detail_panel.update()
+                    self.detail_panel = self.building_detail_panel
+                    self.detail_panel.show() 
 
 
             self.manager.process_events(event)

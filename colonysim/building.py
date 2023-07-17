@@ -36,6 +36,18 @@ class Building:
     def demolish(self):
         self.status = BuildingStatus.DEMOLITION
 
+    def idle(self):
+        return self.status == BuildingStatus.IDLE
+    
+    def constructing(self):
+        return self.status == BuildingStatus.CONSTRUCTION
+    
+    def running(self):
+        return self.status == BuildingStatus.ACTIVE
+    
+    def demolishing(self):
+        return self.status == BuildingStatus.DEMOLITION
+
 class ProductionBuilding(Building):
     def __init__(self, id, buildingClass, colonySim):
         super(ProductionBuilding, self).__init__(id, buildingClass)
