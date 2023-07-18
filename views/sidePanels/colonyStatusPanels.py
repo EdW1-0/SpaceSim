@@ -202,6 +202,9 @@ class ColonyBuildingDetailPanel(SideStatusPanel):
         self.building_name = UILabel(pygame.Rect(200, 50, 200, 50), text = "Default building", manager=manager, container=self.container)
         self.status_text = UITextBox("Placeholder", pygame.Rect(0, 100, 100, 100), manager = manager, container = self.container)
 
+        self.condition_text = UITextBox("Condition",pygame.Rect(100, 100, 100, 100), manager = manager, container = self.container)
+
+        self.class_specific_text = UITextBox("Specific", pygame.Rect(500, 100, 100, 100), manager = manager, container=self.container)
         self.toggle_button = UIButton(pygame.Rect(600, 100, 100, 50), 
                                       "Toggle",
                                         manager=manager,
@@ -241,6 +244,9 @@ class ColonyBuildingDetailPanel(SideStatusPanel):
         else:
             status = "{0}".format(str(self.building.status))
         self.status_text.set_text(status)
+
+        self.condition_text.set_text("Condition: " + str(self.building.condition) + "%")
+        self.class_specific_text.set_text(self.building.summaryString())
 
 
 class ColonyItemPanel(SideStatusPanel):

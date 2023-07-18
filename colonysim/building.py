@@ -1,6 +1,6 @@
 import enum
 
-class BuildingStatus(str, enum.Enum):
+class BuildingStatus(enum.StrEnum):
     CONSTRUCTION = "CONSTRUCTION"
     IDLE = "IDLE"
     ACTIVE = "ACTIVE"
@@ -47,6 +47,9 @@ class Building:
     
     def demolishing(self):
         return self.status == BuildingStatus.DEMOLITION
+    
+    def summaryString(self):
+        return str(self.buildingClass.name)
 
 class ProductionBuilding(Building):
     def __init__(self, id, buildingClass, colonySim):
