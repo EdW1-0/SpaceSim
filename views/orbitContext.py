@@ -324,6 +324,8 @@ class OrbitContext(GUIContext):
                 if c.node != self.target_panel.source:
                     self.target_panel.set_target(c.node)
                     self.target_panel.update()
+        elif isinstance(c, OrbitLinkViewLabel) or isinstance(c, OrbitNodeViewLabel):
+            return
         else:
             if isinstance(c, OrbitNodeView):
                 print(c.node.name)
