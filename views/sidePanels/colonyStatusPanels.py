@@ -11,23 +11,28 @@ from colonysim.productionOrder import ProductionOrder
 class ColonyTabPanel(SideStatusPanel):
     def __init__(self, rect, manager=None):
         super().__init__(rect, manager)
-        self.buildings_button = UIButton(pygame.Rect(0, 0, 100, 100), 
+        self.buildings_button = UIButton(pygame.Rect(0, 0, 100, 50), 
                                           text="Buildings",  
                                           container = self.container, 
                                           manager=manager)
         
-        self.production_button = UIButton(pygame.Rect(100, 0, 100, 100), 
+        self.production_button = UIButton(pygame.Rect(100, 0, 100, 50), 
                                           text="Production",  
                                           container = self.container, 
                                           manager=manager)
         
-        self.vehicles_button = UIButton(pygame.Rect(200, 0, 100, 100), 
+        self.vehicles_button = UIButton(pygame.Rect(200, 0, 100, 50), 
                                           text="Vehicles",  
                                           container = self.container, 
                                           manager=manager)
 
-        self.ships_button = UIButton(pygame.Rect(300, 0, 100, 100), 
+        self.ships_button = UIButton(pygame.Rect(300, 0, 100, 50), 
                                           text="Ships",  
+                                          container = self.container, 
+                                          manager=manager)
+        
+        self.construction_button = UIButton(pygame.Rect(0, 50, 100, 50), 
+                                          text="Construction",  
                                           container = self.container, 
                                           manager=manager)
         
@@ -46,6 +51,9 @@ class ColonyTabPanel(SideStatusPanel):
             return True
         elif event.ui_element == self.ships_button:
             self.upperEvent = 4
+            return True
+        elif event.ui_element == self.construction_button:
+            self.upperEvent = 5
             return True
         else:
             return False
@@ -248,6 +256,43 @@ class ColonyBuildingDetailPanel(SideStatusPanel):
         self.condition_text.set_text("Condition: " + str(self.building.condition) + "%")
         self.class_specific_text.set_text(self.building.summaryString())
 
+class ColonyConstructionDetailPanel(SideStatusPanel):
+    def __init__(self, rect, manager = None, colony = None, buildingClass = None):
+        super().__init__(rect, manager)
+        self.colony = colony
+        self.buildingClass = buildingClass
+        self.buildingClass_name = UILabel(pygame.Rect(200, 50, 200, 50), text = "Default building", manager=manager, container=self.container)
+        
+        self.construction_text = UITextBox("Placeholder", pygame.Rect(0, 100, 100, 100), manager = manager, container = self.container)
+        
+        self.function_text = UITextBox("Condition",pygame.Rect(100, 100, 100, 100), manager = manager, container = self.container)
+        
+        self.construct_button = UIButton(pygame.Rect(600, 100, 100, 50), 
+                                      "Construct",
+                                        manager=manager,
+                                                   container=self.container)
+    
+    def setBuildingClass(self, buildingClass):
+        self.buildingClass = buildingClass
+
+    def handle_event(self, event):
+        if super(ColonyConstructionDetailPanel, self).handle_event(event):
+            return True
+        elif event.ui_element == self.construct_button:
+            if self.buildingClass:
+                self.colony.addBuilding(self.buildingClass)
+            return True
+        else:
+            return False
+        
+    def update(self):
+        if not self.buildingClass:
+            self.hide()
+            return
+        
+        self.buildingClass_name.set_text(self.buildingClass.name)
+        self.construction_text.set_text("Time: {0}<br>Cost: {1}".format(self.buildingClass.constructionTime, self.buildingClass.constructionCost))
+        self.function_text.set_text("Stuff here")
 
 class ColonyItemPanel(SideStatusPanel):
     def __init__(self, rect, manager=None, colony=None, title = "Default title", sourceList = None):

@@ -120,6 +120,9 @@ class ColonySim:
                 return colony
             
         return None
+    
+    def buildingClassesForColony(self, colonyId):
+        return self._buildingClasses
 
     def colonyById(self, id):
         return getIntId(id, self._colonies)
