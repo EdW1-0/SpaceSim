@@ -83,6 +83,21 @@ class ColonyContext(GUIContext):
             self.detail_panel = self.ship_detail_panel
             self.detail_panel.show()
 
+    def populateDetailPanel(self, key, sourceArray, panel, setter, comparator):
+        vehicle = None
+        for v in sourceArray:
+            if comparator(v, key):
+                vehicle=v
+
+        assert(vehicle)
+        if self.detail_panel:
+            self.detail_panel.hide()
+
+        setter(vehicle)
+        panel.update()
+        self.detail_panel = panel
+        self.detail_panel.show()
+
     def run(self):
         returnCode = 0
 
@@ -134,58 +149,29 @@ class ColonyContext(GUIContext):
 
             elif event.type == UI_SELECTION_LIST_NEW_SELECTION:
                 if event.ui_element == self.vehicle_panel.item_list:
-                    vehicle = None
-                    for v in self.colony.vehicles.values():
-                        if v.name == event.text:
-                            vehicle=v
-
-                    assert(vehicle)
-                    if self.detail_panel:
-                        self.detail_panel.hide()
-
-                    self.vehicle_detail_panel.setVehicle(vehicle)
-                    self.vehicle_detail_panel.update()
-                    self.detail_panel = self.vehicle_detail_panel
-                    self.detail_panel.show()
+                    self.populateDetailPanel(event.text, 
+                                             self.colony.vehicles.values(), 
+                                             self.vehicle_detail_panel, 
+                                             self.vehicle_detail_panel.setVehicle,
+                                             lambda item, key: item.name == key)
                 elif event.ui_element == self.ship_panel.item_list:
-                    ship = None
-                    for s in self.colony.ships.values():
-                        if s.name == event.text:
-                            ship = s
-                    assert(ship)
-                    if self.detail_panel:
-                        self.detail_panel.hide()
-
-                    self.ship_detail_panel.setShip(ship)
-                    self.ship_detail_panel.update()
-                    self.detail_panel = self.ship_detail_panel
-                    self.detail_panel.show()
+                    self.populateDetailPanel(event.text, 
+                                             self.colony.ships.values(),
+                                             self.ship_detail_panel,
+                                             self.ship_detail_panel.setShip,
+                                             lambda item, key: item.name == key)
                 elif event.ui_element == self.building_panel.item_list:
-                    building = None
-                    for b in self.colony.buildings.values():
-                        if b.id == int(event.text.split()[-1]):
-                            building = b
-                    assert(building)
-                    if self.detail_panel:
-                        self.detail_panel.hide()
-                    self.building_detail_panel.setBuilding(building)
-                    self.building_detail_panel.update()
-                    self.detail_panel = self.building_detail_panel
-                    self.detail_panel.show() 
+                    self.populateDetailPanel(int(event.text.split()[-1]),
+                                             self.colony.buildings.values(), 
+                                             self.building_detail_panel,
+                                             self.building_detail_panel.setBuilding,
+                                             lambda item, key: item.id == key)
                 elif event.ui_element == self.construction_panel.item_list:
-                    buildingClass = None
-                    for bc in self.model.colonySim.buildingClassesForColony(self.colony.id).values():
-                        if bc.name == event.text:
-                            buildingClass = bc
-                    assert(buildingClass)
-                    if self.detail_panel:
-                        self.detail_panel.hide()
-                    self.construction_detail_panel.setBuildingClass(buildingClass)
-                    self.construction_detail_panel.update()
-                    self.detail_panel = self.construction_detail_panel
-                    self.detail_panel.show()
-
-
+                    self.populateDetailPanel(event.text, 
+                                             self.model.colonySim.buildingClassesForColony(self.colony.id).values(),
+                                             self.construction_detail_panel,
+                                             self.construction_detail_panel.setBuildingClass,
+                                             lambda item, key: item.name == key)
 
             self.manager.process_events(event)
 
