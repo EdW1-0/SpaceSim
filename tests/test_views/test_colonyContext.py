@@ -6,8 +6,18 @@ from views.guiContext import GUIContext
 import pygame
 import pygame_gui
 
+
+class ColonySimMock:
+    def buildingClassesForColony(self, c):
+        return None
+    
+
 class ModelMock:
+    id = None
     orbitSim = None
+    buildings = None
+    productionOrders = None
+    colonySim = ColonySimMock()
 
 class TestColonyContext(unittest.TestCase):
     def setUp(self):
