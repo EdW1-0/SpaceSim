@@ -7,7 +7,9 @@ from views.sidePanels.colonyStatusPanels import (ColonyTabPanel,
                                                  ColonyShipDetailPanel, 
                                                  ColonyItemPanel, 
                                                  ColonyBuildingDetailPanel,
-                                                 ColonyConstructionDetailPanel)
+                                                 ColonyConstructionDetailPanel,
+                                                 ColonyProductionPanel,
+                                                 ColonyResourcePanel)
 
 from colonysim.colony import Colony
 
@@ -73,6 +75,8 @@ class ColonyContext(GUIContext):
         self.building_detail_panel.hide()
         self.construction_detail_panel = ColonyConstructionDetailPanel(detail_rect, manager=manager, colony=self.colony)
         self.construction_detail_panel.hide()
+        self.resource_panel = ColonyResourcePanel(detail_rect, manager=manager, colony=self.colony)
+        self.resource_panel.hide()
 
         self.active_panel = None
         self.detail_panel = None

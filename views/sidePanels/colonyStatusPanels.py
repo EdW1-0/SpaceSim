@@ -313,8 +313,17 @@ class ColonyItemPanel(SideStatusPanel):
             if isinstance(next(iter(self.sourceList.values())), Building):
                 self.item_list.set_item_list([(item.buildingClass.name + " " + str(item.id)) for item in self.sourceList.values()])
             elif isinstance(next(iter(self.sourceList.values())), ProductionOrder):
-                self.item_hash.set_item_list([item.reaction.name + " " + str(item.amount) for item in self.sourceList.values()])
+                self.item_list.set_item_list([item.reaction.name + " " + str(item.amount) for item in self.sourceList.values()])
             else:
                 self.item_list.set_item_list([item.name for item in self.sourceList.values()])
             self.item_list.show()
             self.item_hash = newHash
+
+class ColonyResourcePanel(SideStatusPanel):
+    def __init__(self, rect, manager=None, colony=None):
+        super().__init__(rect, manager)
+        self.colony = colony
+
+class ColonyProductionPanel(ColonyItemPanel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)

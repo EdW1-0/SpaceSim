@@ -88,7 +88,7 @@ class ColonySim:
                                 production.start()
                             if status == "PAUSED":
                                 production.pause()
-                            productionOrders[po["id"]] = productionOrders
+                            productionOrders[po["id"]] = production
                             
 
 
