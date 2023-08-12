@@ -2,7 +2,7 @@ import pygame
 
 from views.sidePanels.sideStatusPanel import SideStatusPanel
 
-from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox, UISelectionList
+from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox, UISelectionList, UIHorizontalSlider
 
 from orbitsim.orbitTrajectory import TrajectoryState
 from colonysim.building import Building, BuildingStatus
@@ -300,6 +300,7 @@ class ColonyItemPanel(SideStatusPanel):
         self.colony = colony
         self.sourceList = sourceList
         self.item_hash = ""
+        self.manager = manager
 
         self.title_text = UILabel(pygame.Rect(0, 50, 400, 50), text=title, manager=manager, container=self.container)
 
@@ -319,10 +320,35 @@ class ColonyItemPanel(SideStatusPanel):
             self.item_list.show()
             self.item_hash = newHash
 
-class ColonyResourcePanel(SideStatusPanel):
-    def __init__(self, rect, manager=None, colony=None):
-        super().__init__(rect, manager)
-        self.colony = colony
+class ColonyProductionDetailPanel(ColonyItemPanel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.queue_button = UIButton(pygame.Rect(500, 200, 200, 50), 
+                                      "Queue Order",
+                                        manager=self.manager,
+                                                   container=self.container)
+        self.amount_slider = UIHorizontalSlider(pygame.Rect(500, 100, 200, 50), 
+                                                0, 
+                                                (0, 100), 
+                                                manager=self.manager, 
+                                                container=self.container)
+        self.amount_text = UILabel(pygame.Rect(500, 250, 200, 50), text = "-1", manager=self.manager, container=self.container)
+
+        self.reaction_text = UILabel(pygame.Rect(500, 50, 200, 50), text = "Should be overwritten", manager=self.manager, container=self.container)
+
+    def update(self):
+        super().update()
+        amount = self.amount_slider.get_current_value()
+        self.amount_text.set_text(str(amount))
+
+        selection = self.item_list.get_single_selection()
+        if (selection):
+            self.reaction_text.set_text(selection)
+        else:
+            self.reaction_text.set_text("No selection")
+        
+ 
 
 class ColonyProductionPanel(ColonyItemPanel):
     def __init__(self, *args, **kwargs):

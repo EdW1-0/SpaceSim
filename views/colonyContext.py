@@ -9,7 +9,7 @@ from views.sidePanels.colonyStatusPanels import (ColonyTabPanel,
                                                  ColonyBuildingDetailPanel,
                                                  ColonyConstructionDetailPanel,
                                                  ColonyProductionPanel,
-                                                 ColonyResourcePanel)
+                                                 ColonyProductionDetailPanel)
 
 from colonysim.colony import Colony
 
@@ -75,8 +75,12 @@ class ColonyContext(GUIContext):
         self.building_detail_panel.hide()
         self.construction_detail_panel = ColonyConstructionDetailPanel(detail_rect, manager=manager, colony=self.colony)
         self.construction_detail_panel.hide()
-        self.resource_panel = ColonyResourcePanel(detail_rect, manager=manager, colony=self.colony)
-        self.resource_panel.hide()
+        self.production_detail_panel = ColonyProductionDetailPanel(detail_rect, 
+                                                          manager=manager, 
+                                                          colony=self.colony, 
+                                                          title="Available Production", 
+                                                          sourceList = self.model.colonySim._reactions)
+        self.production_detail_panel.hide()
 
         self.active_panel = None
         self.detail_panel = None
@@ -119,11 +123,16 @@ class ColonyContext(GUIContext):
                 elif self.tab_panel.handle_event(event):
                     if self.active_panel:
                         self.active_panel.hide()
+                    if self.detail_panel:
+                        self.detail_panel.hide()
 
                     if self.tab_panel.upperEvent == 1:
                         self.active_panel = self.building_panel
                     elif self.tab_panel.upperEvent == 2:
                         self.active_panel = self.production_panel
+                        self.detail_panel = self.production_detail_panel
+                        self.detail_panel.update()
+                        self.detail_panel.show()
                     elif self.tab_panel.upperEvent == 3:
                         self.active_panel = self.vehicle_panel
                     elif self.tab_panel.upperEvent == 4:
