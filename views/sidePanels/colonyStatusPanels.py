@@ -323,6 +323,7 @@ class ColonyItemPanel(SideStatusPanel):
 class ColonyProductionDetailPanel(ColonyItemPanel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.reaction = None
 
         self.queue_button = UIButton(pygame.Rect(500, 200, 200, 50), 
                                       "Queue Order",
@@ -337,16 +338,29 @@ class ColonyProductionDetailPanel(ColonyItemPanel):
 
         self.reaction_text = UILabel(pygame.Rect(500, 50, 200, 50), text = "Should be overwritten", manager=self.manager, container=self.container)
 
+    def setReaction(self, reaction):
+        self.reaction = reaction
+
     def update(self):
         super().update()
         amount = self.amount_slider.get_current_value()
         self.amount_text.set_text(str(amount))
 
-        selection = self.item_list.get_single_selection()
-        if (selection):
-            self.reaction_text.set_text(selection)
+        if self.reaction:
+            self.reaction_text.set_text(self.reaction.name)
         else:
             self.reaction_text.set_text("No selection")
+
+
+    def handle_event(self, event):
+        if super(ColonyProductionDetailPanel, self).handle_event(event):
+            return True
+        elif event.ui_element == self.queue_button:
+            if self.reaction:
+                self.colony.addProductionOrder(self.reaction, self.amount_slider.get_current_value())
+            return True
+        else:
+            return False
         
  
 

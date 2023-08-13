@@ -185,6 +185,13 @@ class ColonyContext(GUIContext):
                                              self.construction_detail_panel,
                                              self.construction_detail_panel.setBuildingClass,
                                              lambda item, key: item.name == key)
+                elif event.ui_element == self.production_detail_panel.item_list:
+                    reaction = None
+                    for r in self.model.colonySim._reactions.values():
+                        if r.name == event.text:
+                            reaction = r
+                    assert(reaction)
+                    self.production_detail_panel.setReaction(reaction)
 
             self.manager.process_events(event)
 
