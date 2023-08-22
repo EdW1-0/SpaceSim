@@ -4,6 +4,7 @@ from views.sidePanels.sideStatusPanel import SideStatusPanel
 
 from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox, UISelectionList, UIHorizontalSlider
 
+from views.widgets.selectionListId import SelectionListId
 from orbitsim.orbitTrajectory import TrajectoryState
 from colonysim.building import Building, BuildingStatus
 from colonysim.productionOrder import ProductionOrder
@@ -295,16 +296,20 @@ class ColonyConstructionDetailPanel(SideStatusPanel):
         self.function_text.set_text("Stuff here")
 
 class ColonyItemPanel(SideStatusPanel):
-    def __init__(self, rect, manager=None, colony=None, title = "Default title", sourceList = None):
+    def __init__(self, rect, manager=None, colony=None, title = "Default title", sourceList = None, itemRect=None):
         super().__init__(rect, manager)
         self.colony = colony
         self.sourceList = sourceList
         self.item_hash = ""
         self.manager = manager
+        if not itemRect:
+            self.itemRect = pygame.Rect(0, 100, 400, 500)
+        else:
+            self.itemRect = itemRect
 
         self.title_text = UILabel(pygame.Rect(0, 50, 400, 50), text=title, manager=manager, container=self.container)
 
-        self.item_list = UISelectionList(pygame.Rect(0, 100, 400, 500),
+        self.item_list = SelectionListId(self.itemRect,
                                             [],
                                             manager=manager,
                                             container=self.container)
@@ -314,7 +319,7 @@ class ColonyItemPanel(SideStatusPanel):
             if isinstance(next(iter(self.sourceList.values())), Building):
                 self.item_list.set_item_list([(item.buildingClass.name + " " + str(item.id)) for item in self.sourceList.values()])
             elif isinstance(next(iter(self.sourceList.values())), ProductionOrder):
-                self.item_list.set_item_list([item.reaction.name + " " + str(item.amount) for item in self.sourceList.values()])
+                self.item_list.set_item_list([(item.reaction.name + " " + str(item.amount), str(item.id)) for item in self.sourceList.values()])
             else:
                 self.item_list.set_item_list([item.name for item in self.sourceList.values()])
             self.item_list.show()
@@ -366,4 +371,36 @@ class ColonyProductionDetailPanel(ColonyItemPanel):
 
 class ColonyProductionPanel(ColonyItemPanel):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs, itemRect=pygame.Rect(0, 100, 400, 200))
+        self.productionOrder = None
+        self.status_text = UILabel(pygame.Rect(0, 400, 100, 50), text = "Status placeholder", manager=self.manager, container=self.container)
+
+        self.name_text = UILabel(pygame.Rect(50, 350, 200, 50), text = "name placeholder", manager=self.manager, container=self.container)
+        self.progress_text = UILabel(pygame.Rect(100, 400, 100, 50), text = "progress placeholder", manager=self.manager, container=self.container)
+
+        self.pause_button = UIButton(pygame.Rect(50, 450, 100, 50), 
+                                      "Pause",
+                                        manager=self.manager,
+                                                   container=self.container)
+        self.pause_button = UIButton(pygame.Rect(150, 450, 100, 50), 
+                                      "Resume",
+                                        manager=self.manager,
+                                                   container=self.container)
+        self.pause_button = UIButton(pygame.Rect(250, 450, 100, 50), 
+                                      "Cancel",
+                                        manager=self.manager,
+                                                   container=self.container)
+
+
+    def setProductionOrder(self, po):
+        self.productionOrder = po
+
+    def update(self):
+        super().update()
+        if self.productionOrder:
+            self.status_text.set_text(self.productionOrder.status.name)
+            self.name_text.set_text(self.productionOrder.reaction.name)
+            self.progress_text.set_text("{0}/{1}".format(self.productionOrder.remaining, self.productionOrder.amount))
+        else:
+            self.name_text.set_text("No order selected")
+            self.status_text.set_text("")

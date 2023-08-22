@@ -62,7 +62,7 @@ class ColonyContext(GUIContext):
         self.ship_panel.hide()
         self.building_panel = ColonyItemPanel(summary_rect, manager=manager, colony=colony, title="Buildings", sourceList=self.colony.buildings)
         self.building_panel.hide()
-        self.production_panel = ColonyItemPanel(summary_rect, manager=manager, colony=colony, title="Production", sourceList=self.colony.productionOrders)
+        self.production_panel = ColonyProductionPanel(summary_rect, manager=manager, colony=colony, title="Production", sourceList=self.colony.productionOrders)
         self.production_panel.hide()
         self.construction_panel = ColonyItemPanel(summary_rect, manager=manager, colony=colony, title="Construction", sourceList=self.model.colonySim.buildingClassesForColony(colony.id))
         self.construction_panel.hide()
@@ -185,6 +185,15 @@ class ColonyContext(GUIContext):
                                              self.construction_detail_panel,
                                              self.construction_detail_panel.setBuildingClass,
                                              lambda item, key: item.name == key)
+                elif event.ui_element == self.production_panel.item_list:
+                    po = None
+                    (text, id) = self.production_panel.item_list.get_single_selection()
+                    for order in self.colony.productionOrders.values():
+                        if order.id == int(id):
+                            po = order
+                    assert(po)
+                    self.production_panel.setProductionOrder(po)
+                    self.production_panel.update()
                 elif event.ui_element == self.production_detail_panel.item_list:
                     reaction = None
                     for r in self.model.colonySim._reactions.values():
