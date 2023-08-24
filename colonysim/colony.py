@@ -113,6 +113,9 @@ class Colony:
         order = self.productionOrderById(id)
         return order.pause()
     
+    def cancelProductionOrder(self, id):
+        del self.productionOrders[id]
+    
     # Try to get the full amount requested by removing it from each of our stores, but if can't fully satisfy, send all that we do have.
     def getResources(self, resource, quantity):
         requisitioned = 0

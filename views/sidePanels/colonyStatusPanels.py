@@ -7,7 +7,7 @@ from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox, UISelecti
 from views.widgets.selectionListId import SelectionListId
 from orbitsim.orbitTrajectory import TrajectoryState
 from colonysim.building import Building, BuildingStatus
-from colonysim.productionOrder import ProductionOrder
+from colonysim.productionOrder import ProductionOrder, OrderStatus
 
 class ColonyTabPanel(SideStatusPanel):
     def __init__(self, rect, manager=None):
@@ -316,7 +316,9 @@ class ColonyItemPanel(SideStatusPanel):
     def update(self):
         newHash = "".join(map(str, [item.id for item in self.sourceList.values()]))
         if newHash != self.item_hash:
-            if isinstance(next(iter(self.sourceList.values())), Building):
+            if len(self.sourceList) == 0:
+                self.item_list.set_item_list([])
+            elif isinstance(next(iter(self.sourceList.values())), Building):
                 self.item_list.set_item_list([(item.buildingClass.name + " " + str(item.id)) for item in self.sourceList.values()])
             elif isinstance(next(iter(self.sourceList.values())), ProductionOrder):
                 self.item_list.set_item_list([(item.reaction.name + " " + str(item.amount), str(item.id)) for item in self.sourceList.values()])
@@ -382,11 +384,11 @@ class ColonyProductionPanel(ColonyItemPanel):
                                       "Pause",
                                         manager=self.manager,
                                                    container=self.container)
-        self.pause_button = UIButton(pygame.Rect(150, 450, 100, 50), 
+        self.resume_button = UIButton(pygame.Rect(150, 450, 100, 50), 
                                       "Resume",
                                         manager=self.manager,
                                                    container=self.container)
-        self.pause_button = UIButton(pygame.Rect(250, 450, 100, 50), 
+        self.cancel_button = UIButton(pygame.Rect(250, 450, 100, 50), 
                                       "Cancel",
                                         manager=self.manager,
                                                    container=self.container)
@@ -395,12 +397,35 @@ class ColonyProductionPanel(ColonyItemPanel):
     def setProductionOrder(self, po):
         self.productionOrder = po
 
+    def handle_event(self, event):
+        if super(ColonyProductionPanel, self).handle_event(event):
+            return True
+        elif event.ui_element == self.resume_button:
+            self.colony.startProductionOrder(self.productionOrder.id)
+            return True
+        elif event.ui_element == self.pause_button:
+            self.colony.pauseProductionOrder(self.productionOrder.id)
+            return True
+        elif event.ui_element == self.cancel_button:
+            self.colony.cancelProductionOrder(self.productionOrder.id)
+            self.setProductionOrder(None)
+            return True
+        else:
+            return False
+
     def update(self):
         super().update()
         if self.productionOrder:
             self.status_text.set_text(self.productionOrder.status.name)
             self.name_text.set_text(self.productionOrder.reaction.name)
             self.progress_text.set_text("{0}/{1}".format(self.productionOrder.remaining, self.productionOrder.amount))
+            self.pause_button.show()
+            self.resume_button.show()
+            self.cancel_button.show()
+
         else:
             self.name_text.set_text("No order selected")
             self.status_text.set_text("")
+            self.pause_button.hide()
+            self.resume_button.hide()
+            self.cancel_button.hide()
