@@ -114,6 +114,11 @@ class ColonySim:
         self._colonies[id] = colony
         return colony
     
+    def tick(self, increment):
+        for colony in self._colonies.values():
+            colony.tick(increment)
+
+    
     def colonyForShipId(self, shipId):
         for colony in self._colonies.values():
             if shipId in colony.ships:

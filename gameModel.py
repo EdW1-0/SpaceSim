@@ -53,4 +53,5 @@ class GameModel:
             self.techTree.tick(increment)
             self.orbitSim.tick(increment)
             self.planetSim.tick(increment)
+            self.colonySim.tick(increment)
     
