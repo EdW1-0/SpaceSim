@@ -37,6 +37,13 @@ class ColonyTabPanel(SideStatusPanel):
                                           container = self.container, 
                                           manager=manager)
         
+        self.resource_button = UIButton(pygame.Rect(100, 50, 100, 50),
+                                        text="Resources",
+                                        container = self.container,
+                                        manager=manager)
+
+
+        
     def handle_event(self, event):
         self.upperEvent = 0
         if super().handle_event(event):
@@ -56,9 +63,44 @@ class ColonyTabPanel(SideStatusPanel):
         elif event.ui_element == self.construction_button:
             self.upperEvent = 5
             return True
+        elif event.ui_element == self.resource_button:
+            self.upperEvent = 6
+            return True
         else:
             return False
         
+
+class ColonyItemPanel(SideStatusPanel):
+    def __init__(self, rect, manager=None, colony=None, title = "Default title", sourceList = None, itemRect=None):
+        super().__init__(rect, manager)
+        self.colony = colony
+        self.sourceList = sourceList
+        self.item_hash = ""
+        self.manager = manager
+        if not itemRect:
+            self.itemRect = pygame.Rect(0, 100, 400, 500)
+        else:
+            self.itemRect = itemRect
+
+        self.title_text = UILabel(pygame.Rect(0, 50, 400, 50), text=title, manager=manager, container=self.container)
+
+        self.item_list = SelectionListId(self.itemRect,
+                                            [],
+                                            manager=manager,
+                                            container=self.container)
+    def update(self):
+        newHash = "".join(map(str, [item.id for item in self.sourceList.values()]))
+        if newHash != self.item_hash:
+            if len(self.sourceList) == 0:
+                self.item_list.set_item_list([])
+            elif isinstance(next(iter(self.sourceList.values())), Building):
+                self.item_list.set_item_list([(item.buildingClass.name + " " + str(item.id)) for item in self.sourceList.values()])
+            elif isinstance(next(iter(self.sourceList.values())), ProductionOrder):
+                self.item_list.set_item_list([(item.reaction.name + " " + str(item.amount), str(item.id)) for item in self.sourceList.values()])
+            else:
+                self.item_list.set_item_list([item.name for item in self.sourceList.values()])
+            self.item_list.show()
+            self.item_hash = newHash
 
 class ColonyVehicleDetailPanel(SideStatusPanel):
     def __init__(self, rect, manager = None, vehicle=None):
@@ -295,37 +337,7 @@ class ColonyConstructionDetailPanel(SideStatusPanel):
         self.construction_text.set_text("Time: {0}<br>Cost: {1}".format(self.buildingClass.constructionTime, self.buildingClass.constructionCost))
         self.function_text.set_text("Stuff here")
 
-class ColonyItemPanel(SideStatusPanel):
-    def __init__(self, rect, manager=None, colony=None, title = "Default title", sourceList = None, itemRect=None):
-        super().__init__(rect, manager)
-        self.colony = colony
-        self.sourceList = sourceList
-        self.item_hash = ""
-        self.manager = manager
-        if not itemRect:
-            self.itemRect = pygame.Rect(0, 100, 400, 500)
-        else:
-            self.itemRect = itemRect
 
-        self.title_text = UILabel(pygame.Rect(0, 50, 400, 50), text=title, manager=manager, container=self.container)
-
-        self.item_list = SelectionListId(self.itemRect,
-                                            [],
-                                            manager=manager,
-                                            container=self.container)
-    def update(self):
-        newHash = "".join(map(str, [item.id for item in self.sourceList.values()]))
-        if newHash != self.item_hash:
-            if len(self.sourceList) == 0:
-                self.item_list.set_item_list([])
-            elif isinstance(next(iter(self.sourceList.values())), Building):
-                self.item_list.set_item_list([(item.buildingClass.name + " " + str(item.id)) for item in self.sourceList.values()])
-            elif isinstance(next(iter(self.sourceList.values())), ProductionOrder):
-                self.item_list.set_item_list([(item.reaction.name + " " + str(item.amount), str(item.id)) for item in self.sourceList.values()])
-            else:
-                self.item_list.set_item_list([item.name for item in self.sourceList.values()])
-            self.item_list.show()
-            self.item_hash = newHash
 
 class ColonyProductionDetailPanel(ColonyItemPanel):
     def __init__(self, *args, **kwargs):
@@ -429,3 +441,12 @@ class ColonyProductionPanel(ColonyItemPanel):
             self.pause_button.hide()
             self.resume_button.hide()
             self.cancel_button.hide()
+
+
+class ColonyResourcePanel(ColonyItemPanel):
+    pass
+
+class ColonyResourceDetailPanel(SideStatusPanel):
+    def __init__(self, rect, manager = None, colony = None):
+        super().__init__(rect, manager)
+        self.colony = colony

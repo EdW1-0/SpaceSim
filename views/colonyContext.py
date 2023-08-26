@@ -9,7 +9,9 @@ from views.sidePanels.colonyStatusPanels import (ColonyTabPanel,
                                                  ColonyBuildingDetailPanel,
                                                  ColonyConstructionDetailPanel,
                                                  ColonyProductionPanel,
-                                                 ColonyProductionDetailPanel)
+                                                 ColonyProductionDetailPanel,
+                                                 ColonyResourcePanel,
+                                                 ColonyResourceDetailPanel)
 
 from colonysim.colony import Colony
 
@@ -66,6 +68,8 @@ class ColonyContext(GUIContext):
         self.production_panel.hide()
         self.construction_panel = ColonyItemPanel(summary_rect, manager=manager, colony=colony, title="Construction", sourceList=self.model.colonySim.buildingClassesForColony(colony.id))
         self.construction_panel.hide()
+        self.resource_panel = ColonyItemPanel(summary_rect, manager=manager, colony=colony, title="Resources", sourceList=self.model.colonySim._resources)
+        self.resource_panel.hide()
 
         self.vehicle_detail_panel = ColonyVehicleDetailPanel(detail_rect, manager=manager)
         self.vehicle_detail_panel.hide()
@@ -81,6 +85,10 @@ class ColonyContext(GUIContext):
                                                           title="Available Production", 
                                                           sourceList = self.model.colonySim._reactions)
         self.production_detail_panel.hide()
+        self.resource_detail_panel = ColonyResourceDetailPanel(detail_rect,
+                                                               manager=manager,
+                                                               colony=self.colony)
+        self.resource_detail_panel.hide()
 
         self.active_panel = None
         self.detail_panel = None
@@ -139,6 +147,8 @@ class ColonyContext(GUIContext):
                         self.active_panel = self.ship_panel
                     elif self.tab_panel.upperEvent == 5:
                         self.active_panel = self.construction_panel
+                    elif self.tab_panel.upperEvent == 6:
+                        self.active_panel = self.resource_panel
 
                     self.active_panel.update()
                     self.active_panel.show()
