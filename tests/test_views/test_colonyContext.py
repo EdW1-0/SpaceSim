@@ -8,6 +8,8 @@ import pygame_gui
 
 
 class ColonySimMock:
+    _resources = None
+    _reactions = None
     def buildingClassesForColony(self, c):
         return None
     

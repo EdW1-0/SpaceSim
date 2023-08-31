@@ -132,6 +132,9 @@ class ColonySim:
     def colonyById(self, id):
         return getIntId(id, self._colonies)
     
+    def resourceById(self, id):
+        return getStringId(id, self._resources)
+    
     def reactionById(self, id):
         return getStringId(id, self._reactions)
     

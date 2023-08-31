@@ -447,6 +447,36 @@ class ColonyResourcePanel(ColonyItemPanel):
     pass
 
 class ColonyResourceDetailPanel(SideStatusPanel):
-    def __init__(self, rect, manager = None, colony = None):
+    def __init__(self, rect, model, manager = None, colony = None):
         super().__init__(rect, manager)
         self.colony = colony
+        self.model = model
+
+        self.name_text = UILabel(pygame.Rect(300, 50, 200, 50), text = "name placeholder", manager=manager, container=self.container)
+        self.properties_text = UILabel(pygame.Rect(50, 100, 200, 50), text = "prop placeholder", manager=manager, container=self.container)
+        self.reactions_text = UILabel(pygame.Rect(50, 150, 200, 50), text = "react placeholder", manager=manager, container=self.container)
+
+        self.amount_text = UILabel(pygame.Rect(350, 100, 200, 50), text = "amnt placeholder", manager=manager, container=self.container)
+        self.capacity_text = UILabel(pygame.Rect(350, 150, 200, 50), text = "cap placeholder", manager=manager, container=self.container)
+        self.projection_text = UILabel(pygame.Rect(350, 200, 200, 50), text = "proj placeholder", manager=manager, container=self.container)
+
+    def setResource(self, resource):
+        self.resource = resource
+
+    def update(self):
+        if self.resource:
+
+            self.name_text.set_text(self.resource.name)
+            self.properties_text.set_text("Base value: {0}, units:{1}".format(self.resource.baseValue, self.resource.units))
+            self.reactions_text.set_text("Reactions go here")
+
+            self.amount_text.set_text("Amount: {0} {1}".format(self.colony.reportResources(self.resource.id), self.resource.units))
+            self.capacity_text.set_text("Capacity: {0} {1}".format(self.colony.reportCapacity(self.resource.id), self.resource.units))
+            self.projection_text.set_text("Projection will go here")
+        else:
+            self.name_text.set_text("No resource selected")
+            self.properties_text.set_text("")
+            self.reactions_text.set_text("")
+            self.amount_text.set_text("")
+            self.capacity_text.set_text("")
+            self.projection_text.set_text("")

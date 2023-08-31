@@ -136,6 +136,20 @@ class Colony:
                     break
         return surplus
     
+    def reportResources(self, resource):
+        total = 0
+        for b in self.buildings.values():
+            if isinstance(b, StorageBuilding) and b.contents == resource:
+                total += b.amount
+        return total
+    
+    def reportCapacity(self, resource):
+        capacity = 0
+        for b in self.buildings.values():
+            if isinstance(b, StorageBuilding) and b.contents == resource:
+                capacity += b.capacity()
+        return capacity
+    
     def addShip(self, name, shipClass, deltaV = 0):
         shipId = self.orbitSim.createShip(name, shipClass, deltaV = deltaV)
         ship = self.orbitSim.transferShip(shipId)

@@ -86,6 +86,7 @@ class ColonyContext(GUIContext):
                                                           sourceList = self.model.colonySim._reactions)
         self.production_detail_panel.hide()
         self.resource_detail_panel = ColonyResourceDetailPanel(detail_rect,
+                                                               model = model,
                                                                manager=manager,
                                                                colony=self.colony)
         self.resource_detail_panel.hide()
@@ -211,6 +212,13 @@ class ColonyContext(GUIContext):
                             reaction = r
                     assert(reaction)
                     self.production_detail_panel.setReaction(reaction)
+                elif event.ui_element == self.resource_panel.item_list:
+                    self.populateDetailPanel(event.text,
+                                             self.model.colonySim._resources.values(),
+                                             self.resource_detail_panel,
+                                             self.resource_detail_panel.setResource,
+                                             lambda item, key: item.name == key)
+
 
             self.manager.process_events(event)
 

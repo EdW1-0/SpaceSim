@@ -162,6 +162,38 @@ class TestColonyGetSetResources(unittest.TestCase):
         self.assertEqual(self.c.storeResources("H2", 2000), 600)
         self.assertEqual(self.c.buildingById(1).amount, 1000)
 
+class TestColonyReportResources(unittest.TestCase):
+    def setUp(self):
+        self.sbc1 = StorageBuildingClass("SBC1", "Gas", stores={"H2": 1000, "O2": 1000, "H2O": 1000, "He": 1000, "CO2": 1000})
+        self.sbc2 = StorageBuildingClass("SBC2", "Ore", stores={"HEMATITE": 1000, "BAUXITE": 1000, "MALACHITE": 1000})
+        self.c = Colony(0, "TEST")
+        for i in range(3):
+            self.c.addBuilding(self.sbc1)
+        for i in range(3):
+            self.c.addBuilding(self.sbc2)
+
+    def testReportEmpty(self):
+        self.assertEqual(self.c.reportResources("H2"), 0)
+
+    def testReportSingle(self):
+        self.c.buildingById(0).setContents("H2O")
+        self.c.storeResources("H2O", 500)
+        self.assertEqual(self.c.reportResources("H2O"), 500)
+        self.assertEqual(self.c.reportResources("CO2"), 0)
+
+    def testReportMultiple(self):
+        self.c.buildingById(0).setContents("H2O")
+        self.c.buildingById(2).setContents("H2O")
+        self.c.storeResources("H2O", 700)
+        self.c.storeResources("H2", 600)
+        self.c.storeResources("H2O", 800)
+        self.assertEqual(self.c.reportResources("H2O"), 1500)
+        self.assertEqual(self.c.reportResources("H2"), 600)
+
+    def testReportCapacityEmpty(self):
+        self.assertEqual(self.c.reportCapacity("H2O"), 0)
+        self.assertEqual(self.c.reportCapacity("H2"), 3000)
+
     
 
 class TestColonyTick(unittest.TestCase):
