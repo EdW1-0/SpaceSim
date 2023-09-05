@@ -34,7 +34,17 @@
                 "CH4": 16000,
                 "CO2": 48000,
                 "O2": 32000,
-                "H2": 2000
+                "H2": 2000,
+                "H2O": 18000
+            }
+        },
+        {
+            "id": "BATTERY",
+            "name": "Battery Array",
+            "constructionCost": 1000,
+            "constructionTime": 100,
+            "stores": {
+                "ENERGY": 50000
             }
         }
     ]

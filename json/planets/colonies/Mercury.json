@@ -18,13 +18,34 @@
                     "id": 2,
                     "buildingClass": "TANK",
                     "status": "ACTIVE",
-                    "contents": "O2",
+                    "contents": "H2O",
                     "amount": 200
                 },
                 {
                     "id": 3,
                     "buildingClass": "REACTOR",
                     "reaction": "ELECTROLYSIS"
+                },
+                {
+                    "id": 4,
+                    "buildingClass": "BATTERY",
+                    "status": "ACTIVE",
+                    "contents": "ENERGY",
+                    "amount": 6000
+                },
+                {
+                    "id": 5,
+                    "buildingClass": "TANK",
+                    "status": "ACTIVE",
+                    "contents": "H2",
+                    "amount": 0
+                },
+                {
+                    "id": 6,
+                    "buildingClass": "TANK",
+                    "status": "ACTIVE",
+                    "contents": "O2",
+                    "amount": 0
                 }
             ],
             "productionOrders": [
