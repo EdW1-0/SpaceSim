@@ -41,3 +41,9 @@ class TestShipCargo(unittest.TestCase):
         with self.assertRaises(KeyError):
             self.s.cargo["CH4"]
         self.assertEqual(self.s.cargo["NH3"], 4500)
+
+    def testAddNegativeCargo(self):
+        self.skipTest()
+
+    def testRemoveNegativeCargo(self):
+        self.skipTest()

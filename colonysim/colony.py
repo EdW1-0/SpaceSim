@@ -193,6 +193,25 @@ class Colony:
         ship.locale = self
         return True
 
+    def stowShip(self, ship, manifest):
+        resources = {}
+        for r in manifest:
+            amount = self.getResources(r, manifest[r])
+            resources[r] = amount
+        overage = ship.addCargo(resources)
+        for r in overage:
+            self.storeResources(r, overage[r])
+
+        return {key: resources[key] - overage[key] for key in manifest.keys()}
+    
+    def unloadShip(self, ship, manifest):
+        resources = ship.removeCargo(manifest)
+        overage = {}
+        for r in resources:
+            overage[r] = self.storeResources(r, resources[r])
+        ship.addCargo(overage)
+            
+        return {key: resources[key] - overage[key] for key in manifest.keys()}
 
     def tick(self, increment):
         while increment:

@@ -17,11 +17,16 @@ class Ship:
         self.dv -= deltaV
 
     def addCargo(self, cargo):
+        overage = {}
         for commodity in cargo:
             if commodity in self.cargo:
                 self.cargo[commodity] += cargo[commodity]
+                overage[commodity] = 0
             else:
-                self.cargo[commodity] = cargo[commodity]
+                if cargo[commodity] > 0:
+                    self.cargo[commodity] = cargo[commodity]
+                overage[commodity] = 0
+        return overage
 
     def removeCargo(self, cargo):
         retDict = {}

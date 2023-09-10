@@ -365,6 +365,34 @@ class testColonyShip(unittest.TestCase):
         self.assertGreater(len(self.c.ships), 0)
         self.assertEqual(self.c.ships[4].shipClass, self.sc)
         self.assertEqual(self.c.ships[4].deltaV(), 56)
+
+    def testColonyLoadShip(self):
+        colony = self.gm.colonySim.colonyById(0)
+        ship = colony.shipById(4)
+        retDict = colony.stowShip(ship, {"H2": 100, "H2O": 20})
+        self.assertEqual(retDict["H2"], 0)
+        self.assertEqual(retDict["H2O"], 20)
+        with self.assertRaises(KeyError):
+            ship.cargo["H2"]
+        self.assertEqual(ship.cargo["H2O"], 20)
+        self.assertEqual(colony.reportResources("H2"), 0)
+        self.assertEqual(colony.reportResources("H2O"), 180)
+
+    def testColonyUnloadShip(self):
+        colony = self.gm.colonySim.colonyById(0)
+        ship = colony.shipById(4)
+        ship.addCargo({"ENERGY": 500, "H2O": 200, "CHEESE": 200})
+        retDict = colony.unloadShip(ship, {"ENERGY":300, "H2O": 500, "CHEESE": 200})
+        self.assertEqual(retDict["ENERGY"], 300)
+        self.assertEqual(retDict["H2O"], 200)
+        self.assertEqual(retDict["CHEESE"], 0)
+        self.assertEqual(ship.cargo["ENERGY"], 200)
+        with self.assertRaises(KeyError):
+            ship.cargo["H2O"]
+        self.assertEqual(ship.cargo["CHEESE"], 200)
+        self.assertEqual(colony.reportResources("ENERGY"), 6300)
+        self.assertEqual(colony.reportResources("H2O"), 400)
+        self.assertEqual(colony.reportResources("CHEESE"), 0)
         
 class testColonyVehicle(unittest.TestCase):
     def setUp(self):
