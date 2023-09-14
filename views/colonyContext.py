@@ -4,7 +4,9 @@ from views.timingView import TimingPanel
 
 from views.sidePanels.colonyStatusPanels import (ColonyTabPanel, 
                                                  ColonyVehicleDetailPanel, 
-                                                 ColonyShipDetailPanel, 
+                                                 ColonyShipPanel,
+                                                 ColonyShipDetailPanel,
+                                                 ColonyShipLoadingPanel, 
                                                  ColonyItemPanel, 
                                                  ColonyBuildingDetailPanel,
                                                  ColonyConstructionDetailPanel,
@@ -60,7 +62,7 @@ class ColonyContext(GUIContext):
 
         self.vehicle_panel = ColonyItemPanel(summary_rect, manager=manager, colony=colony, title="Vehicles", sourceList=self.colony.vehicles)
         self.vehicle_panel.hide()
-        self.ship_panel = ColonyItemPanel(summary_rect, manager=manager, colony=colony, title="Ships", sourceList=self.colony.ships)
+        self.ship_panel = ColonyShipPanel(summary_rect, manager=manager, colony=colony, title="Ships", sourceList=self.colony.ships)
         self.ship_panel.hide()
         self.building_panel = ColonyItemPanel(summary_rect, manager=manager, colony=colony, title="Buildings", sourceList=self.colony.buildings)
         self.building_panel.hide()
@@ -75,6 +77,8 @@ class ColonyContext(GUIContext):
         self.vehicle_detail_panel.hide()
         self.ship_detail_panel = ColonyShipDetailPanel(detail_rect, manager=manager, orbitSim = self.model.orbitSim)
         self.ship_detail_panel.hide()
+        self.ship_loading_panel = ColonyShipLoadingPanel(detail_rect, manager=manager, orbitSim = self.model.orbitSim)
+        self.ship_loading_panel.hide()
         self.building_detail_panel = ColonyBuildingDetailPanel(detail_rect, manager=manager, colony=self.colony)
         self.building_detail_panel.hide()
         self.construction_detail_panel = ColonyConstructionDetailPanel(detail_rect, manager=manager, colony=self.colony)
@@ -155,7 +159,16 @@ class ColonyContext(GUIContext):
                     self.active_panel.show()
                     pass
                 elif self.active_panel and self.active_panel.handle_event(event):
-                    pass
+                    if self.active_panel == self.ship_panel:
+                        if self.detail_panel:
+                            self.detail_panel.hide()
+                        if self.active_panel.upperAction == 1:
+                            self.detail_panel = self.ship_detail_panel
+                        elif self.active_panel.upperAction == 2:
+                            self.detail_panel = self.ship_loading_panel
+                        self.detail_panel.update()
+                        self.detail_panel.show()
+
                 elif self.detail_panel and self.detail_panel.handle_event(event):
                     if self.detail_panel == self.vehicle_detail_panel:
                         self.colony.deployVehicle(self.vehicle_detail_panel.vehicle.id)

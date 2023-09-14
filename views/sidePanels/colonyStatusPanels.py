@@ -157,6 +157,32 @@ class ColonyVehicleDetailPanel(SideStatusPanel):
             return False
         
 
+class ColonyShipPanel(ColonyItemPanel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs, itemRect=pygame.Rect(0, 100, 400, 200))
+        self.target_button = UIButton(pygame.Rect(0, 300, 200, 50), 
+                                      "Trajectory",
+                                        manager=self.manager,
+                                        container=self.container)
+        self.loading_button = UIButton(pygame.Rect(200, 300, 200, 50),
+                                       "Payload",
+                                       manager=self.manager,
+                                       container=self.container)
+        
+    def handle_event(self, event):
+        self.upperAction = 0
+        if super().handle_event(event):
+            return True
+        elif event.ui_element == self.target_button:
+            self.upperAction = 1
+            return True
+        elif event.ui_element == self.loading_button:
+            self.upperAction = 2
+            return True
+        else:
+            return False
+
+
 ###TODO: Currently ColonyVehicleDetailPanel and ColonyShipDetailPanel are almost identical. Probably should merge into common superclass
 class ColonyShipDetailPanel(SideStatusPanel):
     def __init__(self, rect, manager = None, orbitSim = None, ship=None):
@@ -243,6 +269,15 @@ class ColonyShipDetailPanel(SideStatusPanel):
             return True
         else:
             return False
+        
+class ColonyShipLoadingPanel(SideStatusPanel):
+    def __init__(self, rect, manager = None, orbitSim = None, ship=None):
+        super().__init__(rect, manager)
+        self.ship = ship
+        self.orbitSim = orbitSim
+
+    def update(self):
+        pass
 
 class ColonyBuildingDetailPanel(SideStatusPanel):
     def __init__(self, rect, manager = None, colony = None, building = None):
