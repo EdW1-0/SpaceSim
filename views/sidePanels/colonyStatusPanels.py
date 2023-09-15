@@ -168,6 +168,10 @@ class ColonyShipPanel(ColonyItemPanel):
                                        "Payload",
                                        manager=self.manager,
                                        container=self.container)
+        self.ship = None
+        
+    def setSelectedShip(self, ship):
+        self.ship = ship
         
     def handle_event(self, event):
         self.upperAction = 0
@@ -181,6 +185,15 @@ class ColonyShipPanel(ColonyItemPanel):
             return True
         else:
             return False
+        
+    def update(self):
+        super().update()
+        if not self.ship:
+            self.target_button.hide()
+            self.loading_button.hide()
+        else:
+            self.target_button.show()
+            self.loading_button.show()
 
 
 ###TODO: Currently ColonyVehicleDetailPanel and ColonyShipDetailPanel are almost identical. Probably should merge into common superclass

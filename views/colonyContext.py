@@ -197,6 +197,12 @@ class ColonyContext(GUIContext):
                                              self.ship_detail_panel,
                                              self.ship_detail_panel.setShip,
                                              lambda item, key: item.name == key)
+                    ship = None
+                    for s in self.colony.ships.values():
+                        if s.name == event.text:
+                            ship = s
+                    self.ship_panel.setSelectedShip(ship)
+
                 elif event.ui_element == self.building_panel.item_list:
                     self.populateDetailPanel(int(event.text.split()[-1]),
                                              self.colony.buildings.values(), 
