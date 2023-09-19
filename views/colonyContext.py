@@ -77,7 +77,7 @@ class ColonyContext(GUIContext):
         self.vehicle_detail_panel.hide()
         self.ship_detail_panel = ColonyShipDetailPanel(detail_rect, manager=manager, orbitSim = self.model.orbitSim)
         self.ship_detail_panel.hide()
-        self.ship_loading_panel = ColonyShipLoadingPanel(detail_rect, manager=manager, orbitSim = self.model.orbitSim)
+        self.ship_loading_panel = ColonyShipLoadingPanel(detail_rect, manager=manager, colonySim = self.model.colonySim, colony = self.colony)
         self.ship_loading_panel.hide()
         self.building_detail_panel = ColonyBuildingDetailPanel(detail_rect, manager=manager, colony=self.colony)
         self.building_detail_panel.hide()
@@ -166,6 +166,7 @@ class ColonyContext(GUIContext):
                             self.detail_panel = self.ship_detail_panel
                         elif self.active_panel.upperAction == 2:
                             self.detail_panel = self.ship_loading_panel
+                            self.ship_loading_panel.ship = self.ship_panel.ship
                         self.detail_panel.update()
                         self.detail_panel.show()
 
@@ -202,6 +203,13 @@ class ColonyContext(GUIContext):
                         if s.name == event.text:
                             ship = s
                     self.ship_panel.setSelectedShip(ship)
+                elif event.ui_element == self.ship_loading_panel.item_list:
+                    resource = None
+                    for r in self.model.colonySim._resources.values():
+                        if r.name == event.text:
+                            resource = r
+                    self.ship_loading_panel.setResource(resource)
+                    self.ship_loading_panel.update()
 
                 elif event.ui_element == self.building_panel.item_list:
                     self.populateDetailPanel(int(event.text.split()[-1]),

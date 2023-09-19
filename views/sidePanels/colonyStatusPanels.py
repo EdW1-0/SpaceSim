@@ -282,15 +282,135 @@ class ColonyShipDetailPanel(SideStatusPanel):
             return True
         else:
             return False
-        
-class ColonyShipLoadingPanel(SideStatusPanel):
-    def __init__(self, rect, manager = None, orbitSim = None, ship=None):
-        super().__init__(rect, manager)
+
+###TODO: Overengineering for now. Eventually this will prune the full list of resources existing in the game down to just those 
+# actually stored either in the colony or ship.         
+class ResourceUnion:
+    def __init__(self, ship, colony):
         self.ship = ship
-        self.orbitSim = orbitSim
+        self.colony = colony
+
+    def values(self):
+        unionMap = {}
+        for k in self.ship.cargo.keys():
+            unionMap[k] = 0
+        #for k in self.
+
+
+
+class ColonyShipLoadingPanel(ColonyItemPanel):
+    def __init__(self, rect, manager = None, colonySim = None, colony=None):
+        super().__init__(rect, manager, colony, title="Cargo Loading", sourceList = colonySim._resources)
+
+        self.ship = None
+        self.resource = None
+
+        self.resource_label = UILabel(pygame.Rect(500, 50, 200, 50), 
+                                      text = "Default resource", 
+                                      manager=manager, 
+                                      container=self.container)
+        self.colony_cap = UILabel(pygame.Rect(450, 100, 50, 50), 
+                                      text = "Colcap", 
+                                      manager=manager, 
+                                      container=self.container)
+        self.colony_amount = UILabel(pygame.Rect(400, 100, 50, 50), 
+                                      text = "Colamt", 
+                                      manager=manager, 
+                                      container=self.container)
+
+        self.amount_slider = UIHorizontalSlider(pygame.Rect(460, 150, 300, 50), 
+                                        0, 
+                                        (-100, 100), 
+                                        manager=self.manager, 
+                                        container=self.container)
+        self.amount_tally = UILabel(pygame.Rect(600, 100, 50, 50), 
+                                      text = "0", 
+                                      manager=manager, 
+                                      container=self.container)
+
+        self.ship_amount = UILabel(pygame.Rect(700, 100, 50, 50), 
+                                      text = "Shipamt", 
+                                      manager=manager, 
+                                      container=self.container)
+        self.ship_cap = UILabel(pygame.Rect(750, 100, 50, 50), 
+                                      text = "Shipcap", 
+                                      manager=manager, 
+                                      container=self.container)
+        self.confirm_button =  UIButton(pygame.Rect(700, 200, 100, 50), 
+                                      "Confirm",
+                                        manager=manager,
+                                                   container=self.container)
+
+
+    def setShip(self, ship):
+        self.ship = ship
+
+    def setResource(self, resource):
+        self.resource = resource
+
+    def getBid(self):
+        col_amt = self.colony.reportResources(self.resource.id)
+        if self.resource.id in self.ship.cargo:
+            ship_amt = self.ship.cargo[self.resource.id]
+        else:
+            ship_amt = 0
+
+        sliderpos = self.amount_slider.get_current_value()
+        if sliderpos < 0:
+            amount = ship_amt*sliderpos/100
+        elif sliderpos > 0:
+            amount = col_amt*sliderpos/100
+        else:
+            amount = 0
+
+        return amount
+
 
     def update(self):
-        pass
+        super().update()
+        if self.resource:
+            col_amt = self.colony.reportResources(self.resource.id)
+            if self.resource.id in self.ship.cargo:
+                ship_amt = self.ship.cargo[self.resource.id]
+            else:
+                ship_amt = 0
+            col_cap = self.colony.reportCapacity(self.resource.id)
+            ship_cap = "Inf"
+
+            self.resource_label.set_text(self.resource.name)
+            self.colony_amount.set_text(str(col_amt))
+            self.colony_cap.set_text(str(col_cap))
+            self.ship_amount.set_text(str(ship_amt))
+            self.ship_cap.set_text(str(ship_cap))
+
+            self.amount_tally.set_text(str(self.getBid()))
+
+
+
+        else:
+            self.resource_label.set_text("No resource")
+            self.colony_amount.set_text("0")
+            self.colony_cap.set_text("0")
+            self.ship_amount.set_text("0")
+            self.ship_cap.set_text("0")
+
+    def handle_event(self, event):
+        if super(ColonyShipLoadingPanel, self).handle_event(event):
+            return True
+        elif event.ui_element == self.confirm_button:
+            bid = self.getBid()
+            if bid > 0:
+                ###TODO: Should probably make this a utility method - "transferResource". Should also probably add some consistency
+                # between how colonies and ships describe resources - dict or not?
+                excess = self.ship.addCargo({self.resource.id: self.colony.getResources(self.resource.id, bid)})
+                self.colony.storeResources(self.resource.id, excess[self.resource.id])
+            elif bid < 0:
+                excess = self.colony.storeResources(self.resource.id, self.ship.removeCargo({self.resource.id: -bid})[self.resource.id])
+                self.ship.addCargo({self.resource.id: excess})
+
+            return True
+        else:
+            return False
 
 class ColonyBuildingDetailPanel(SideStatusPanel):
     def __init__(self, rect, manager = None, colony = None, building = None):
