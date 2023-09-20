@@ -43,7 +43,7 @@ class TestShipCargo(unittest.TestCase):
         self.assertEqual(self.s.cargo["NH3"], 4500)
 
     def testAddNegativeCargo(self):
-        self.skipTest()
+        self.skipTest(reason = "Not implemented yet")
 
     def testRemoveNegativeCargo(self):
-        self.skipTest()
+        self.skipTest(reason="Not implemented yet")
