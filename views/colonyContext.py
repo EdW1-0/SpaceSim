@@ -60,7 +60,7 @@ class ColonyContext(GUIContext):
         self.tab_panel = ColonyTabPanel(tab_rect, manager=manager)
         self.timing_panel = TimingPanel(timing_rect, manager = manager, timingMaster=model.timingMaster)
 
-        self.vehicle_panel = ColonyItemPanel(summary_rect, manager=manager, colony=colony, title="Vehicles", sourceList=self.colony.vehicles)
+        self.vehicle_panel = ColonyShipPanel(summary_rect, manager=manager, colony=colony, title="Vehicles", sourceList=self.colony.vehicles)
         self.vehicle_panel.hide()
         self.ship_panel = ColonyShipPanel(summary_rect, manager=manager, colony=colony, title="Ships", sourceList=self.colony.ships)
         self.ship_panel.hide()
@@ -75,6 +75,8 @@ class ColonyContext(GUIContext):
 
         self.vehicle_detail_panel = ColonyVehicleDetailPanel(detail_rect, manager=manager)
         self.vehicle_detail_panel.hide()
+        self.vehicle_loading_panel = ColonyShipLoadingPanel(detail_rect, manager=manager, colonySim = self.model.colonySim, colony=self.colony)
+        self.vehicle_loading_panel.hide()
         self.ship_detail_panel = ColonyShipDetailPanel(detail_rect, manager=manager, orbitSim = self.model.orbitSim)
         self.ship_detail_panel.hide()
         self.ship_loading_panel = ColonyShipLoadingPanel(detail_rect, manager=manager, colonySim = self.model.colonySim, colony = self.colony)
@@ -169,6 +171,16 @@ class ColonyContext(GUIContext):
                             self.ship_loading_panel.ship = self.ship_panel.ship
                         self.detail_panel.update()
                         self.detail_panel.show()
+                    elif self.active_panel == self.vehicle_panel:
+                        if self.detail_panel:
+                            self.detail_panel.hide()
+                        if self.active_panel.upperAction == 1:
+                            self.detail_panel = self.vehicle_detail_panel
+                        elif self.active_panel.upperAction == 2:
+                            self.detail_panel = self.vehicle_loading_panel
+                            self.vehicle_loading_panel.ship = self.vehicle_panel.ship
+                        self.detail_panel.update()
+                        self.detail_panel.show()
 
                 elif self.detail_panel and self.detail_panel.handle_event(event):
                     if self.detail_panel == self.vehicle_detail_panel:
@@ -192,6 +204,11 @@ class ColonyContext(GUIContext):
                                              self.vehicle_detail_panel, 
                                              self.vehicle_detail_panel.setVehicle,
                                              lambda item, key: item.name == key)
+                    vehicle = None
+                    for v in self.colony.vehicles.values():
+                        if v.name == event.text:
+                            vehicle = v
+                    self.vehicle_panel.setSelectedShip(vehicle)
                 elif event.ui_element == self.ship_panel.item_list:
                     self.populateDetailPanel(event.text, 
                                              self.colony.ships.values(),
@@ -203,13 +220,14 @@ class ColonyContext(GUIContext):
                         if s.name == event.text:
                             ship = s
                     self.ship_panel.setSelectedShip(ship)
-                elif event.ui_element == self.ship_loading_panel.item_list:
+                elif event.ui_element == self.ship_loading_panel.item_list or event.ui_element == self.vehicle_loading_panel.item_list:
                     resource = None
                     for r in self.model.colonySim._resources.values():
                         if r.name == event.text:
                             resource = r
-                    self.ship_loading_panel.setResource(resource)
-                    self.ship_loading_panel.update()
+                    self.detail_panel.setResource(resource)
+                    self.detail_panel.update()
+
 
                 elif event.ui_element == self.building_panel.item_list:
                     self.populateDetailPanel(int(event.text.split()[-1]),

@@ -700,7 +700,8 @@ class SurfaceContext(GUIContext):
 
         for entity in self.all_sprites:
             if entity.surfaceObject.killed:
-                self.sprite_index.remove(entity.surfaceObject.id)
+                if entity.surfaceObject.id in self.sprite_index:
+                    self.sprite_index.remove(entity.surfaceObject.id)
                 entity.kill()
             else:
                 self.screen.blit(entity.surf, entity.rect)

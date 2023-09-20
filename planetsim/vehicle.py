@@ -1,5 +1,8 @@
-class Vehicle:
-    def __init__(self, id, name, vehicleClass, fuel = 0):
+from colonysim.vessel import Vessel
+
+class Vehicle(Vessel):
+    def __init__(self, id, name, vehicleClass, fuel = 0, cargo = None):
+        super().__init__(cargo)
         self.id = id
         self.name = name
         self.vehicleClass = vehicleClass
