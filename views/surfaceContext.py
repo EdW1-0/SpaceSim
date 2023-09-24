@@ -642,30 +642,31 @@ class SurfaceContext(GUIContext):
                     if event.ui_element == self.ship_panel.launch_button:
                         self.ship_panel.trajectory().state = TrajectoryState.PENDING
 
-
             if event.type == UI_BUTTON_ON_HOVERED:
-                print (event.ui_element)
+                print(event.ui_element)
 
             self.manager.process_events(event)
 
         for object in self.object_sprites:
-            (lat, long) = (object.surfaceObject.point.latitude, object.surfaceObject.point.longitude)
+            (lat, long) = (object.surfaceObject.point.latitude,
+                           object.surfaceObject.point.longitude)
             if self.latLongOccluded(lat, long):
                 self.all_sprites.remove(object)
             else:
                 coordinate = vector(lat, long)
                 rotatedLong = self.zRot(coordinate, self.meridian[1])
                 rotatedLat = self.yRot(rotatedLong, self.meridian[0])
-                rotatedCoordinate = latLong(rotatedLat)                
+                rotatedCoordinate = latLong(rotatedLat)
                 screenCoordinate = self.latLongToXY(rotatedCoordinate)
                 object.rect.center = screenCoordinate
                 self.all_sprites.add(object)
 
         for destination_sprite in self.destination_sprites:
-            if self.selectedObject and isinstance(self.selectedObject, SurfaceObjectSprite):
-                so = self.selectedObject.surfaceObject
+            selected = self.selectedObject
+            if selected and isinstance(selected, SurfaceObjectSprite):
+                so = selected.surfaceObject
                 if not (isinstance(so, SurfaceVehicle) and so.destination):
-                    continue    
+                    continue
                 destination_sprite.surfaceObject = so
                 (lat, long) = destination_sprite.latLong()
                 if self.latLongOccluded(lat, long):
@@ -674,7 +675,7 @@ class SurfaceContext(GUIContext):
                     coordinate = vector(lat, long)
                     rotatedLong = self.zRot(coordinate, self.meridian[1])
                     rotatedLat = self.yRot(rotatedLong, self.meridian[0])
-                    rotatedCoordinate = latLong(rotatedLat)                
+                    rotatedCoordinate = latLong(rotatedLat)
                     screenCoordinate = self.latLongToXY(rotatedCoordinate)
                     destination_sprite.rect.center = screenCoordinate
                     self.all_sprites.add(destination_sprite)
@@ -686,17 +687,16 @@ class SurfaceContext(GUIContext):
             self.active_panel.update()
 
         if self.ship_panel.container.visible:
-            if self.ship_panel.ship and not self.planetSurface.objectForContent(self.ship_panel.ship):
+            ship = self.ship_panel.ship
+            if (ship and not self.planetSurface.objectForContent(ship)):
                 self.ship_panel.setShip(None)
             self.ship_panel.update()
-
 
         self.screen.blit(self.surf, pygame.Rect(0, 0, 1200, 800))
 
         for object in self.planetSurface.points.values():
             if object.id not in self.sprite_index:
                 self.addObjectSprite(object)
-
 
         for entity in self.all_sprites:
             if entity.surfaceObject.killed:
@@ -705,7 +705,5 @@ class SurfaceContext(GUIContext):
                 entity.kill()
             else:
                 self.screen.blit(entity.surf, entity.rect)
-        
 
         return returnCode
-    
