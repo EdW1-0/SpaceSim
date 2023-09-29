@@ -12,13 +12,23 @@
             "justMyCode": false
         },
         {
-            "name": "Run all tests",
+            "name": "Run unit tests",
             "type": "python",
             "request": "launch",
             "module": "unittest",
             "console": "integratedTerminal",
-            "justMyCode": true
+            "justMyCode": true,
+            "args": ["discover", "-s", "./tests"]
         },
+        {
+            "name": "Run system tests",
+            "type": "python",
+            "request": "launch",
+            "module": "unittest",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": ["discover", "-s", "./systemTests"]
+        }
         {
             "name": "Generate coverage",
             "type": "bashdb",

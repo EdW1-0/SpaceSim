@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import MagicMock
 
 from enum import Enum
 
@@ -41,7 +42,7 @@ class WOMock:
 class TestTaskComplete(unittest.TestCase):
     def setUp(self):
         self.womock = WOMock()
-        self.womock.complete = unittest.mock.MagicMock()
+        self.womock.complete = MagicMock()
         self.task = Task(TaskCategory.PLANT_WHEAT, target = self.womock)
         
 
