@@ -1,5 +1,5 @@
 class Vessel:
-    def __init__(self, cargo = None):
+    def __init__(self, cargo=None):
         if cargo is None:
             self.cargo = {}
         else:

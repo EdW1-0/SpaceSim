@@ -7,9 +7,11 @@ import techtree.techNode as techNode
 
 from utility.dictLookup import getIntId
 
+
 class TechEffectClass(Enum):
     BUILDING = 0
     VEHICLE = 1
+
 
 @dataclass
 class TechEffect:
@@ -20,7 +22,7 @@ class TechEffect:
 # TODO: Make a singleton. I think we just make a class variable to store it and add to it
 # if needed. Maybe reinitialise if jsonPath changes.
 class TechTree:
-    def __init__(self, jsonPath = "json/Technologies.json"):
+    def __init__(self, jsonPath="json/Technologies.json"):
         jsonFile = open(jsonPath, "r")
         jsonTechs = json.load(jsonFile)
 
@@ -29,18 +31,18 @@ class TechTree:
         self.nodes = {node["id"]: techNode.TechNode(**node) for node in jsonNodes}
         self.totalNodes = len(self.nodes)
 
-        # Validate no duplicate ids 
-        assert(self.totalNodes == len(jsonNodes))
+        # Validate no duplicate ids
+        assert self.totalNodes == len(jsonNodes)
 
         # Validate ancestors - check every ancestor points to a real key
         for node in self.nodes:
             for ancestor in self.nodeById(node).ancestors:
-                assert(ancestor in self.nodes)
+                assert ancestor in self.nodes
 
-        # Not optimal - we recheck many nodes by setting up checked afresh on every node. Probably a faster way to do this, but 
+        # Not optimal - we recheck many nodes by setting up checked afresh on every node. Probably a faster way to do this, but
         # we only need to do this check once, at load time, so may be tolerable.
         def cycleCheck(node, checked):
-            assert(node.id not in checked)
+            assert node.id not in checked
             checked.add(node.id)
 
             for ancestor in node.ancestors:
@@ -48,14 +50,12 @@ class TechTree:
                 # so don't keep checked state from ancestor branches, only descendents
                 branchChecked = checked.copy()
                 cycleCheck(self.nodeById(ancestor), branchChecked)
-        
+
         for node in self.nodes.values():
             checked = set()
             cycleCheck(node, checked)
 
         jsonFile.close()
-
-
 
     def nodeById(self, id):
         return getIntId(id, self.nodes)
@@ -66,7 +66,7 @@ class TechTree:
 
     def descendentsOfId(self, id):
         return [node for node in self.nodes.values() if id in node.ancestors]
-    
+
     def tick(self, increment):
-        # Intentionally does nothing - this is supposed to be a static object store. 
+        # Intentionally does nothing - this is supposed to be a static object store.
         pass

@@ -16,17 +16,17 @@ from pygame.locals import (
 
 from views.guiContext import GUICode
 
+
 class MenuItem(pygame.sprite.Sprite):
     def __init__(self, center=(0, 0), text="Default", handler=None):
         super(MenuItem, self).__init__()
         self.text = text
-        if (handler):
+        if handler:
             self.handler = handler
-        else:        
+        else:
             self.handler = self.click
         self.surf = pygame.surface.Surface((100, 50))
         pygame.draw.rect(self.surf, (10, 10, 10), pygame.Rect(0, 0, 100, 50))
-        
 
         font = pygame.font.Font(size=20)
         text = font.render(self.text, True, (128, 128, 230))
@@ -38,10 +38,7 @@ class MenuItem(pygame.sprite.Sprite):
         self.rect = self.surf.get_rect(center=center)
 
     def click(self):
-        print (self.text)
-
-
-
+        print(self.text)
 
 
 class MenuContext(GUIContext):
@@ -65,7 +62,9 @@ class MenuContext(GUIContext):
             elif event.type == MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
 
-                clicked_items = [s for s in self.all_sprites if s.rect.collidepoint(pos)]
+                clicked_items = [
+                    s for s in self.all_sprites if s.rect.collidepoint(pos)
+                ]
                 for c in clicked_items:
                     handlerCode = c.handler()
                     if handlerCode == 1:
@@ -78,12 +77,10 @@ class MenuContext(GUIContext):
 
         return returnCode
 
-
     def quitHandler(self):
         print("Quitting...")
         pygame.event.post(pygame.event.Event(QUIT))
         return 0
-
 
     def loadHandler(self):
         print("Loading...")

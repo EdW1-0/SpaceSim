@@ -2,8 +2,9 @@ import pygame
 
 from orbitsim.orbitNode import LeafClass
 
+
 class OrbitNodeView(pygame.sprite.Sprite):
-    def __init__(self, node, center=(0, 0), selected = False):
+    def __init__(self, node, center=(0, 0), selected=False):
         super(OrbitNodeView, self).__init__()
         self.center = center
         self.node = node
@@ -23,11 +24,10 @@ class OrbitNodeView(pygame.sprite.Sprite):
         pygame.draw.circle(self.surf, color, (11, 11), 10.0)
 
         if selected:
-            pygame.draw.circle(self.surf, (250, 0, 0), (11,11), 11.0, width=1)
+            pygame.draw.circle(self.surf, (250, 0, 0), (11, 11), 11.0, width=1)
 
-        self.rect = self.surf.get_rect(center = self.center)
+        self.rect = self.surf.get_rect(center=self.center)
 
-        
 
 class OrbitNodeViewLabel(pygame.sprite.Sprite):
     def __init__(self, node, center=(0, 0)):
@@ -37,6 +37,7 @@ class OrbitNodeViewLabel(pygame.sprite.Sprite):
         self.surf = font.render(self.node.name, True, (230, 230, 230))
         self.rect = self.surf.get_rect()
         self.rect.center = center
+
 
 class OrbitLinkViewLabel(pygame.sprite.Sprite):
     def __init__(self, link, center=(0, 0)):
@@ -49,9 +50,8 @@ class OrbitLinkViewLabel(pygame.sprite.Sprite):
 
 
 class OrbitLinkView(pygame.sprite.Sprite):
-    def __init__(self, link, start = (0,0), end = (0,0)):
+    def __init__(self, link, start=(0, 0), end=(0, 0)):
         super(OrbitLinkView, self).__init__()
-
 
         left = min(start[0], end[0])
         width = max(abs(end[0] - start[0]), 10)
@@ -68,7 +68,7 @@ class OrbitLinkView(pygame.sprite.Sprite):
             top = top - 5
             left = left + 10
             width = width - 20
-        
+
         # May have shrunk to zero if zoomed, that's OK, but don't let it go below zero or we crash
         width = max(width, 0)
         height = max(height, 0)
@@ -78,10 +78,11 @@ class OrbitLinkView(pygame.sprite.Sprite):
         self.surf = pygame.surface.Surface((width, height))
         self.surf.set_colorkey((0, 0, 0))
         pygame.draw.rect(self.surf, (50, 200, 50), (0, 0, width, height))
-        self.rect = self.surf.get_rect(top = top, left=left)
+        self.rect = self.surf.get_rect(top=top, left=left)
+
 
 class ParticleView(pygame.sprite.Sprite):
-    def __init__(self, particle, center = (0, 0)):
+    def __init__(self, particle, center=(0, 0)):
         super(ParticleView, self).__init__()
         self.particle = particle
         self.surf = pygame.surface.Surface((10, 10))

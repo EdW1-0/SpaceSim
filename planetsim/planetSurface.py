@@ -15,8 +15,17 @@ from utility.dictLookup import getIntId
 
 EARTH_RADIUS = 6371000
 
+
 class PlanetSurface:
-    def __init__(self, orbitSim, jsonPath = "json/planets/surfaces/Surface.json", vehiclePath = None, radius = EARTH_RADIUS, vehicleClasses = {}, vehicleRegisterCallback = None):
+    def __init__(
+        self,
+        orbitSim,
+        jsonPath="json/planets/surfaces/Surface.json",
+        vehiclePath=None,
+        radius=EARTH_RADIUS,
+        vehicleClasses={},
+        vehicleRegisterCallback=None,
+    ):
         self.orbitSim = orbitSim
         self.radius = radius
         self.vehicleClasses = vehicleClasses
@@ -34,16 +43,21 @@ class PlanetSurface:
             anchor = SurfacePoint(r["anchor"][0], r["anchor"][1])
             vertices = r["edges"]
             borders = []
-            for i in range(len(vertices)-1):
+            for i in range(len(vertices) - 1):
                 p1 = vertices[i]
-                p2 = vertices[i+1]
-                borders.append(SurfacePath(SurfacePoint(p1[0], p1[1]), SurfacePoint(p2[0], p2[1])))
+                p2 = vertices[i + 1]
+                borders.append(
+                    SurfacePath(SurfacePoint(p1[0], p1[1]), SurfacePoint(p2[0], p2[1]))
+                )
             p1 = vertices[-1]
             p2 = vertices[0]
-            borders.append(SurfacePath(SurfacePoint(p1[0], p1[1]), SurfacePoint(p2[0], p2[1])))
+            borders.append(
+                SurfacePath(SurfacePoint(p1[0], p1[1]), SurfacePoint(p2[0], p2[1]))
+            )
 
-
-            region = SurfaceRegion(r["id"], anchor, borders, name=r.get("name"), terrain=r.get("terrain"))
+            region = SurfaceRegion(
+                r["id"], anchor, borders, name=r.get("name"), terrain=r.get("terrain")
+            )
             self.regions[region.id] = region
 
         if vehiclePath:
@@ -63,12 +77,18 @@ class PlanetSurface:
                 pointArray = object["point"]
                 point = SurfacePoint(pointArray[0], pointArray[1])
                 if "colonyId" in object:
-                    self.createBase(None, point, name = object["name"], colonyId = object["colonyId"])
+                    self.createBase(
+                        None, point, name=object["name"], colonyId=object["colonyId"]
+                    )
                 elif "vehicle" in object:
-                    self.createVehicle(None, point, name = object["name"], payload = self.vehicles[object["vehicle"]])
+                    self.createVehicle(
+                        None,
+                        point,
+                        name=object["name"],
+                        payload=self.vehicles[object["vehicle"]],
+                    )
                 else:
-                    self.createObject(None, point, name = object["name"])
-
+                    self.createObject(None, point, name=object["name"])
 
         jsonFile.close()
 
@@ -86,19 +106,23 @@ class PlanetSurface:
 
     def createObject(self, content, position, name=""):
         id = next(self.pointIdGenerator)
-        self.points[id] = SurfaceObject(id, content, position, name = name)
+        self.points[id] = SurfaceObject(id, content, position, name=name)
         return id
-    
+
     def createVehicle(self, content, position, name="", payload=None):
         id = next(self.pointIdGenerator)
-        self.points[id] = SurfaceVehicle(id, content, position, name = name, payload = payload)
+        self.points[id] = SurfaceVehicle(
+            id, content, position, name=name, payload=payload
+        )
         if payload:
             self.vehicles[payload.id] = payload
-        return id 
+        return id
 
-    def createBase(self, content, position, name="", colonyId = None):
+    def createBase(self, content, position, name="", colonyId=None):
         id = next(self.pointIdGenerator)
-        self.points[id] = SurfaceBase(id, content, position, name = name, colonyId = colonyId)
+        self.points[id] = SurfaceBase(
+            id, content, position, name=name, colonyId=colonyId
+        )
         return id
 
     def destroyObject(self, id):
@@ -116,12 +140,17 @@ class PlanetSurface:
             if isinstance(point, SurfaceBase) and point.colonyId == colony.id:
                 point.content = colony
 
-    # Runtime action to build a colony as part of gameplay. 
+    # Runtime action to build a colony as part of gameplay.
     def buildColony(self, objectId, buildColonyCallback):
         object = self.pointById(objectId)
         location = object.point
-        colony = buildColonyCallback(name = "Placeholder colony", locale = self)
-        baseId = self.createBase(content=colony, position = location, name = "Placeholder colony", colonyId=colony.id)
+        colony = buildColonyCallback(name="Placeholder colony", locale=self)
+        baseId = self.createBase(
+            content=colony,
+            position=location,
+            name="Placeholder colony",
+            colonyId=colony.id,
+        )
         if isinstance(object, SurfaceVehicle):
             colony.vehicleArrival(object.payload)
             self.destroyObject(objectId)
@@ -130,11 +159,9 @@ class PlanetSurface:
             for p in self.orbitSim._particles.values():
                 if p.payload == object.content:
                     particle = p
-            assert(particle)
+            assert particle
             self.orbitSim.particleArrival(particle.id, self.id, self.pointById(baseId))
             self.destroyObject(objectId)
-            
-
 
     def transferVehicle(self, id):
         vehicle = self.vehicleById(id)
@@ -170,14 +197,14 @@ class PlanetSurface:
                 maxDistance = self._distanceForTime(p.id, increment)
                 path = SurfacePath(p.point, p.destination)
                 remainingDistance = self.gcDistance(path)
-                if (maxDistance >= remainingDistance):
+                if maxDistance >= remainingDistance:
                     distance = remainingDistance
                 else:
                     distance = maxDistance
 
                 # Now see how far fuel load will get us
                 fuelBurn = p.fuelPerM() * distance
-                if (fuelBurn <= p.payload.fuel):
+                if fuelBurn <= p.payload.fuel:
                     p.payload.fuel -= fuelBurn
                 else:
                     distance = p.payload.fuel / p.fuelPerM()
@@ -185,28 +212,27 @@ class PlanetSurface:
 
                 # Now do the actual move
                 if distance:
-                    fraction = distance/remainingDistance
+                    fraction = distance / remainingDistance
                 else:
                     fraction = 0.0
                 waypoint = path.intermediatePointTrig(fraction).canonical()
                 p.point = waypoint
-                    
+
                 # Check if we've arrived and clear destination
-                if math.isclose(p.point.latitude, p.destination.latitude) and math.isclose(p.point.longitude, p.destination.longitude):
+                if math.isclose(
+                    p.point.latitude, p.destination.latitude
+                ) and math.isclose(p.point.longitude, p.destination.longitude):
                     p.setDestination(None)
                     for dp in self.objectsAtPoint(p.point):
                         if dp is p:
                             continue
                         terminal = dp.content.vehicleArrival(p.payload)
-                        if (terminal):
+                        if terminal:
                             purgeIds.add(p.id)
                             break
 
         for id in purgeIds:
             self.destroyObject(id)
-
-
-
 
         # For each point
         # If it has a destination,
@@ -218,7 +244,14 @@ class PlanetSurface:
         # Set point to this position.
 
     def objectsAtPoint(self, point):
-        return tuple(p for p in self.points.values() if (math.isclose(p.point.longitude, point.longitude) and math.isclose(p.point.latitude, point.latitude)))
+        return tuple(
+            p
+            for p in self.points.values()
+            if (
+                math.isclose(p.point.longitude, point.longitude)
+                and math.isclose(p.point.latitude, point.latitude)
+            )
+        )
 
     def objectForContent(self, content):
         for o in self.points.values():
@@ -231,12 +264,6 @@ class PlanetSurface:
 
     def pointById(self, id):
         return getIntId(id, self.points)
-        
+
     def vehicleById(self, id):
         return getIntId(id, self.vehicles)
-    
-
-
-
-
-

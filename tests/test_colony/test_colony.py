@@ -1,14 +1,25 @@
 import unittest
 
 from colonysim.colony import Colony
-from colonysim.buildingClass import BuildingClass, ProductionBuildingClass, StorageBuildingClass, ExtractionBuildingClass
-from colonysim.building import Building, BuildingStatus, ProductionBuilding, StorageBuilding
+from colonysim.buildingClass import (
+    BuildingClass,
+    ProductionBuildingClass,
+    StorageBuildingClass,
+    ExtractionBuildingClass,
+)
+from colonysim.building import (
+    Building,
+    BuildingStatus,
+    ProductionBuilding,
+    StorageBuilding,
+)
 from colonysim.colonySim import ColonySim
 from gameModel import GameModel
 from colonysim.productionOrder import OrderStatus
 from planetsim.surfacePoint import SurfacePoint
 from planetsim.planetSurface import PlanetSurface
 from planetsim.vehicle import Vehicle
+
 
 class TestColony(unittest.TestCase):
     def testColony(self):
@@ -30,10 +41,13 @@ class TestColony(unittest.TestCase):
         self.assertTrue(hasattr(c, "orbitSim"))
         self.assertTrue(hasattr(c, "locale"))
 
+
 class TestColonyBuildingConstruction(unittest.TestCase):
     def setUp(self):
         self.bc = BuildingClass("MOCK", "Mock Building")
-        self.pbc = ProductionBuildingClass("MOCKP", "Production", reactions={"ELECTROLYSIS": 1.0})
+        self.pbc = ProductionBuildingClass(
+            "MOCKP", "Production", reactions={"ELECTROLYSIS": 1.0}
+        )
         self.sbc = StorageBuildingClass("MOCKS", "Storage", stores={"H2O": 100})
         self.cs = ColonySim()
 
@@ -44,15 +58,15 @@ class TestColonyBuildingConstruction(unittest.TestCase):
         self.assertEqual(c.addBuilding(self.bc), 1)
         self.assertEqual(len(c.buildings), 2)
         self.assertTrue(isinstance(c.buildingById(1), Building))
-    
+
     def testColonyAddStorageBuilding(self):
-        c = Colony(1, "Default", buildings = {})
+        c = Colony(1, "Default", buildings={})
         self.assertEqual(c.addBuilding(self.sbc), 0)
         self.assertTrue(isinstance(c.buildingById(0), StorageBuilding))
 
     def testColonyAddProductionBuilding(self):
-        c = Colony(2, "Default", buildings = {})
-        self.assertEqual(c.addBuilding(self.pbc, colonySim = self.cs), 0)
+        c = Colony(2, "Default", buildings={})
+        self.assertEqual(c.addBuilding(self.pbc, colonySim=self.cs), 0)
         self.assertTrue(isinstance(c.buildingById(0), ProductionBuilding))
 
     def testColonyConstructBuilding(self):
@@ -87,13 +101,15 @@ class TestColonyBuildingConstruction(unittest.TestCase):
         with self.assertRaises(KeyError):
             c.buildingById(id)
 
+
 class TestColonyProductionManagement(unittest.TestCase):
     def setUp(self):
         self.cs = ColonySim()
-        self.pbc = ProductionBuildingClass("MOCK", "Mock", reactions={"ELECTROLYSIS": 2.0})
+        self.pbc = ProductionBuildingClass(
+            "MOCK", "Mock", reactions={"ELECTROLYSIS": 2.0}
+        )
         self.reaction = self.cs.reactionById("ELECTROLYSIS")
 
-        
     def testColonyAddProductionOrder(self):
         c = Colony(0, "TEST")
         c.addProductionOrder(self.reaction, 10)
@@ -122,10 +138,17 @@ class TestColonyProductionManagement(unittest.TestCase):
         self.assertEqual(len(c.productionBuildings()), 2)
         self.assertEqual(c.productionBuildings()[1].id, 4)
 
+
 class TestColonyGetSetResources(unittest.TestCase):
     def setUp(self):
-        self.sbc1 = StorageBuildingClass("SBC1", "Gas", stores={"H2": 1000, "O2": 1000, "H2O": 1000, "He": 1000, "CO2": 1000})
-        self.sbc2 = StorageBuildingClass("SBC2", "Ore", stores={"HEMATITE": 1000, "BAUXITE": 1000, "MALACHITE": 1000})
+        self.sbc1 = StorageBuildingClass(
+            "SBC1",
+            "Gas",
+            stores={"H2": 1000, "O2": 1000, "H2O": 1000, "He": 1000, "CO2": 1000},
+        )
+        self.sbc2 = StorageBuildingClass(
+            "SBC2", "Ore", stores={"HEMATITE": 1000, "BAUXITE": 1000, "MALACHITE": 1000}
+        )
         self.c = Colony(0, "TEST")
         for i in range(3):
             self.c.addBuilding(self.sbc1)
@@ -162,10 +185,17 @@ class TestColonyGetSetResources(unittest.TestCase):
         self.assertEqual(self.c.storeResources("H2", 2000), 600)
         self.assertEqual(self.c.buildingById(1).amount, 1000)
 
+
 class TestColonyReportResources(unittest.TestCase):
     def setUp(self):
-        self.sbc1 = StorageBuildingClass("SBC1", "Gas", stores={"H2": 1000, "O2": 1000, "H2O": 1000, "He": 1000, "CO2": 1000})
-        self.sbc2 = StorageBuildingClass("SBC2", "Ore", stores={"HEMATITE": 1000, "BAUXITE": 1000, "MALACHITE": 1000})
+        self.sbc1 = StorageBuildingClass(
+            "SBC1",
+            "Gas",
+            stores={"H2": 1000, "O2": 1000, "H2O": 1000, "He": 1000, "CO2": 1000},
+        )
+        self.sbc2 = StorageBuildingClass(
+            "SBC2", "Ore", stores={"HEMATITE": 1000, "BAUXITE": 1000, "MALACHITE": 1000}
+        )
         self.c = Colony(0, "TEST")
         for i in range(3):
             self.c.addBuilding(self.sbc1)
@@ -194,13 +224,16 @@ class TestColonyReportResources(unittest.TestCase):
         self.assertEqual(self.c.reportCapacity("H2O"), 0)
         self.assertEqual(self.c.reportCapacity("H2"), 3000)
 
-    
 
 class TestColonyTick(unittest.TestCase):
     def setUp(self):
         self.cs = ColonySim()
-        self.pbc = ProductionBuildingClass("MOCK", "Mock", reactions={"ELECTROLYSIS": 2.0})
-        self.sbc = StorageBuildingClass("SBC", "Sbc", stores={"H2": 1000, "O2": 1000, "H2O": 1000})
+        self.pbc = ProductionBuildingClass(
+            "MOCK", "Mock", reactions={"ELECTROLYSIS": 2.0}
+        )
+        self.sbc = StorageBuildingClass(
+            "SBC", "Sbc", stores={"H2": 1000, "O2": 1000, "H2O": 1000}
+        )
         self.sbce = StorageBuildingClass("SBCE", "Battery", stores={"ENERGY": 100000})
         self.reaction = self.cs.reactionById("ELECTROLYSIS")
         self.c = Colony(0, "TEST")
@@ -219,7 +252,6 @@ class TestColonyTick(unittest.TestCase):
         self.c.buildingById(3).setContents("H2O")
         self.c.buildingById(3).add({"H2O": 500})
         self.c.buildingById(4).add({"ENERGY": 5000})
-
 
     def testColonyTickOrderPending(self):
         po = self.c.productionOrderById(0)
@@ -242,7 +274,7 @@ class TestColonyTick(unittest.TestCase):
         self.c.startProductionOrder(po.id)
         self.assertEqual(po.remaining, 100)
         self.c.tick(1)
-        self.assertEqual(po.remaining, 98) 
+        self.assertEqual(po.remaining, 98)
         self.assertEqual(self.c.getResources("H2O", 10000), 496.0)
         self.assertEqual(self.c.getResources("H2", 50), 4.0)
 
@@ -263,10 +295,13 @@ class TestColonyTick(unittest.TestCase):
         self.assertEqual(self.c.getResources("H2", 50), 20.0)
         self.assertEqual(self.c.getResources("H2O", 10000), 480.0)
 
+
 class TestColonyTickExtraction(unittest.TestCase):
     def setUp(self):
         self.sbc = StorageBuildingClass("BATTERY", "Battery", stores={"ENERGY": 10000})
-        self.ebc = ExtractionBuildingClass("SOLAR", "Solar Array", extracts={"ENERGY": 100})
+        self.ebc = ExtractionBuildingClass(
+            "SOLAR", "Solar Array", extracts={"ENERGY": 100}
+        )
 
     def testColonyTickExtract(self):
         self.c = Colony(0, "Test")
@@ -288,12 +323,14 @@ class TestColonyTickExtraction(unittest.TestCase):
         self.assertEqual(self.c.buildingById(0).amount, 300)
         self.c.tick(10)
         self.assertEqual(self.c.buildingById(0).amount, 2300)
-        
+
 
 class TestColonyTickConstruction(unittest.TestCase):
     def setUp(self):
         self.bc = BuildingClass("MOCK", "Mock Building", constructionTime=20)
-        self.pbc = ProductionBuildingClass("MOCKP", "Production", reactions={"ELECTROLYSIS": 1.0})
+        self.pbc = ProductionBuildingClass(
+            "MOCKP", "Production", reactions={"ELECTROLYSIS": 1.0}
+        )
         self.sbc = StorageBuildingClass("MOCKS", "Storage", stores={"H2O": 100})
         self.cs = ColonySim()
 
@@ -320,10 +357,13 @@ class TestColonyTickConstruction(unittest.TestCase):
         self.assertEqual(self.c.buildingById(2).constructionProgress, 14)
         self.assertEqual(self.c.buildingById(2).status, BuildingStatus.CONSTRUCTION)
 
+
 class TestColonyTickDemolition(unittest.TestCase):
     def setUp(self):
         self.bc = BuildingClass("MOCK", "Mock Building", demolitionTime=20)
-        self.pbc = ProductionBuildingClass("MOCKP", "Production", reactions={"ELECTROLYSIS": 1.0})
+        self.pbc = ProductionBuildingClass(
+            "MOCKP", "Production", reactions={"ELECTROLYSIS": 1.0}
+        )
         self.sbc = StorageBuildingClass("MOCKS", "Storage", stores={"H2O": 100})
         self.cs = ColonySim()
 
@@ -353,6 +393,7 @@ class TestColonyTickDemolition(unittest.TestCase):
         with self.assertRaises(KeyError):
             self.c.buildingById(2)
 
+
 class testColonyShip(unittest.TestCase):
     def setUp(self):
         self.gm = GameModel()
@@ -361,7 +402,7 @@ class testColonyShip(unittest.TestCase):
 
     def testColonyAddShip(self):
         self.c = Colony(0, "TEST", self.gm.orbitSim)
-        self.c.addShip("Test ship", self.sc, deltaV = 56)
+        self.c.addShip("Test ship", self.sc, deltaV=56)
         self.assertGreater(len(self.c.ships), 0)
         self.assertEqual(self.c.ships[4].shipClass, self.sc)
         self.assertEqual(self.c.ships[4].deltaV(), 56)
@@ -382,7 +423,7 @@ class testColonyShip(unittest.TestCase):
         colony = self.gm.colonySim.colonyById(0)
         ship = colony.shipById(4)
         ship.addCargo({"ENERGY": 500, "H2O": 200, "CHEESE": 200})
-        retDict = colony.unloadShip(ship, {"ENERGY":300, "H2O": 500, "CHEESE": 200})
+        retDict = colony.unloadShip(ship, {"ENERGY": 300, "H2O": 500, "CHEESE": 200})
         self.assertEqual(retDict["ENERGY"], 300)
         self.assertEqual(retDict["H2O"], 200)
         self.assertEqual(retDict["CHEESE"], 0)
@@ -393,7 +434,8 @@ class testColonyShip(unittest.TestCase):
         self.assertEqual(colony.reportResources("ENERGY"), 6300)
         self.assertEqual(colony.reportResources("H2O"), 400)
         self.assertEqual(colony.reportResources("CHEESE"), 0)
-        
+
+
 class testColonyVehicle(unittest.TestCase):
     def setUp(self):
         self.gm = GameModel()
@@ -404,20 +446,20 @@ class testColonyVehicle(unittest.TestCase):
     def testColonyAddVehicle(self):
         self.c = Colony(0, "TEST", self.gm.orbitSim, self.ps)
         self.assertFalse(2 in self.gm.orbitSim._vehicleIds)
-        self.assertEqual(self.c.addVehicle("Test vehicle", fuel = 100), 2)
+        self.assertEqual(self.c.addVehicle("Test vehicle", fuel=100), 2)
         self.assertGreater(len(self.c.vehicles), 0)
         self.assertTrue(2 in self.gm.orbitSim._vehicleIds)
 
     def testColonyDeployVehicle(self):
         self.c = Colony(3, "TEST", self.gm.orbitSim, self.ps)
         self.ps.connectColony(self.c)
-        id = self.c.addVehicle("Test vehicle", fuel = 100)
+        id = self.c.addVehicle("Test vehicle", fuel=100)
         self.assertEqual(len(self.c.vehicles), 1)
         self.assertEqual(len(self.ps.vehicles), 1)
         self.c.deployVehicle(id)
         self.assertEqual(len(self.c.vehicles), 0)
         self.assertEqual(len(self.ps.vehicles), 2)
-        
+
     def testColonyVehicleArrival(self):
         self.c = Colony(4, "TEST", self.gm.orbitSim, self.ps)
         self.ps.connectColony(self.c)
@@ -425,8 +467,3 @@ class testColonyVehicle(unittest.TestCase):
         v = Vehicle(99, "Test Vehicle", next(iter(self.ps.vehicleClasses.values())), 60)
         self.assertTrue(self.c.vehicleArrival(v))
         self.assertEqual(len(self.c.vehicles), 1)
-
-
-
-
-          

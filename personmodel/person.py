@@ -1,7 +1,8 @@
 from personmodel.task import Task, TaskCategory
 
+
 class Person:
-    def __init__(self, id, name = "Jane Bloggs", age = 25, sex = "F"):
+    def __init__(self, id, name="Jane Bloggs", age=25, sex="F"):
         self.id = id
         self.name = name
         self.age = age
@@ -22,7 +23,7 @@ class Person:
                 self.task.progress += increment
                 increment = 0
             else:
-                increment -= (100 - self.task.progress)
+                increment -= 100 - self.task.progress
                 self.completeTask()
 
     def completeTask(self):

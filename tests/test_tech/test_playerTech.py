@@ -3,27 +3,30 @@ import unittest
 import techtree.playerTech as playerTech
 import techtree.techTree as techTree
 
+
 class TestPlayerTechImport(unittest.TestCase):
     def test_playerTechImport(self):
         self.assertNotEqual(playerTech, False)
         self.assertNotEqual(playerTech.PlayerTech, False)
 
+
 class TestPlayerTechConstructor(unittest.TestCase):
     def test_playerTechConstructor(self):
         self.assertTrue(playerTech.PlayerTech())
         self.assertTrue(playerTech.PlayerTech(techTree.TechTree()))
-        
+
 
 class TestPlayerTechDiscovered(unittest.TestCase):
     def setUp(self):
         self.pt = playerTech.PlayerTech()
 
     def test_playerTechDiscoveredEmpty(self):
-        self.assertEqual(self.pt.discovered, set())        
+        self.assertEqual(self.pt.discovered, set())
 
     def test_playerTechDiscoveredReadOnly(self):
         with self.assertRaises(AttributeError):
             self.pt.discovered = {4}
+
 
 class TestPlayerTechActiveTech(unittest.TestCase):
     def setUp(self):
@@ -36,6 +39,7 @@ class TestPlayerTechActiveTech(unittest.TestCase):
     def test_playerTechSetActiveTech(self):
         self.pt.setActiveTech(0)
         self.assertEqual(self.pt.activeTech.id, 0)
+
 
 class TestPlayerTechDiscoverTech(unittest.TestCase):
     def setUp(self):
@@ -52,6 +56,7 @@ class TestPlayerTechDiscoverTech(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.pt._completeTech()
 
+
 class TestPlayerTechProgressTech(unittest.TestCase):
     def setUp(self):
         tt = techTree.TechTree()
@@ -59,7 +64,7 @@ class TestPlayerTechProgressTech(unittest.TestCase):
 
     def test_playerTechReadProgress(self):
         self.assertEqual(self.pt.progress, 0)
-    
+
     def test_playerTechMakeProgress(self):
         self.pt.addResearch(50)
         self.assertEqual(self.pt.progress, 50)
@@ -83,16 +88,17 @@ class TestPlayerTechProgressTech(unittest.TestCase):
         self.assertEqual(self.pt.progress, 0)
         self.assertEqual(self.pt.discovered, set())
 
+
 class test_playerTechAccessPossibleTargets(unittest.TestCase):
     def setUp(self):
         tt = techTree.TechTree()
         self.pt = playerTech.PlayerTech(tt)
 
     def test_playerTechAccessPossibleTargets(self):
-        self.assertEqual(self.pt.possibleTargets, {0,1,2})
+        self.assertEqual(self.pt.possibleTargets, {0, 1, 2})
         self.pt.setActiveTech(1)
         self.pt.addResearch(1000)
-        self.assertEqual(self.pt.possibleTargets, {0,2,4})
+        self.assertEqual(self.pt.possibleTargets, {0, 2, 4})
 
 
 class test_playerTechEffects(unittest.TestCase):
@@ -111,5 +117,3 @@ class test_playerTechEffects(unittest.TestCase):
         self.pt.addResearch(500)
         self.assertEqual(self.pt.allowedBuildings, [7])
         self.assertEqual(self.pt.allowedVehicles, [3])
-    
-

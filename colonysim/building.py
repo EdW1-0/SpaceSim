@@ -1,13 +1,16 @@
 import enum
 
+
 class BuildingStatus(enum.StrEnum):
     CONSTRUCTION = "CONSTRUCTION"
     IDLE = "IDLE"
     ACTIVE = "ACTIVE"
     DEMOLITION = "DEMOLITION"
 
+
 class BuildingStatusError(Exception):
     pass
+
 
 class Building:
     def __init__(self, id, buildingClass):
@@ -22,12 +25,12 @@ class Building:
         if self.status != BuildingStatus.CONSTRUCTION:
             raise BuildingStatusError
         self.status = BuildingStatus.IDLE
-        
+
     def start(self):
         if self.status != BuildingStatus.IDLE:
             raise BuildingStatusError
         self.status = BuildingStatus.ACTIVE
-        
+
     def stop(self):
         if self.status != BuildingStatus.ACTIVE:
             raise BuildingStatusError
@@ -38,18 +41,19 @@ class Building:
 
     def idle(self):
         return self.status == BuildingStatus.IDLE
-    
+
     def constructing(self):
         return self.status == BuildingStatus.CONSTRUCTION
-    
+
     def running(self):
         return self.status == BuildingStatus.ACTIVE
-    
+
     def demolishing(self):
         return self.status == BuildingStatus.DEMOLITION
-    
+
     def summaryString(self):
         return str(self.buildingClass.name)
+
 
 class ProductionBuilding(Building):
     def __init__(self, id, buildingClass, colonySim):
@@ -62,7 +66,7 @@ class ProductionBuilding(Building):
         self.reaction = id
         self.rate = self.buildingClass.reactions[self.reaction]
 
-    def react(self, reactants, quota = None):
+    def react(self, reactants, quota=None):
         # Algorithm for this:
         # Sanity checking on reactants type etc.
         # Check reactants has each of required inputs.
@@ -81,10 +85,10 @@ class ProductionBuilding(Building):
         for input in reaction.inputs:
             if input not in reactants:
                 raise KeyError
-            
+
         if quota is None:
             quota = 99999999
-            
+
         inputs = reaction.inputs.copy()
         outputs = reaction.outputs.copy()
         endstate = reactants.copy()
@@ -92,7 +96,7 @@ class ProductionBuilding(Building):
         for i in inputs:
             inputs[i] *= min(self.rate, quota)
             if inputs[i] > endstate[i]:
-                minFraction = min(minFraction, endstate[i]/inputs[i])
+                minFraction = min(minFraction, endstate[i] / inputs[i])
 
         for i in inputs:
             endstate[i] -= inputs[i] * minFraction
@@ -107,14 +111,12 @@ class ProductionBuilding(Building):
         return endstate
 
 
-
-
 class StorageBuilding(Building):
     def __init__(self, id, buildingClass):
         super(StorageBuilding, self).__init__(id, buildingClass)
         self.amount = 0
         self.contents = next(iter(buildingClass.stores))
-        
+
     def setContents(self, id):
         self.buildingClass.stores[id]
         if self.amount > 0:
@@ -123,13 +125,13 @@ class StorageBuilding(Building):
 
     def capacity(self):
         return self.buildingClass.stores[self.contents]
-    
+
     def add(self, amount):
         if not (isinstance(amount, dict)):
             raise TypeError
         elif not (len(amount) == 1):
             raise ValueError
-        
+
         value = amount[self.contents]
         if value <= (self.capacity() - self.amount):
             self.amount += value
@@ -138,20 +140,21 @@ class StorageBuilding(Building):
             excess = value - (self.capacity() - self.amount)
             self.amount = self.capacity()
 
-        return excess      
-    
+        return excess
+
     def remove(self, amount):
         if not (isinstance(amount, dict)):
             raise TypeError
         elif not (len(amount) == 1):
             raise ValueError
-        
+
         value = amount[self.contents]
         supply = min(value, self.amount)
         self.amount -= supply
 
         return supply
-    
+
+
 class ExtractionBuilding(Building):
     def __init__(self, id, buildingClass):
         super(ExtractionBuilding, self).__init__(id, buildingClass)
@@ -161,13 +164,8 @@ class ExtractionBuilding(Building):
 
     def rate(self):
         return next(iter(self.buildingClass.extracts.values()))
-    
+
     def extract(self, amount=None):
         if amount is None:
             amount = self.rate()
         return min(amount, self.rate())
-
-        
-
-
-

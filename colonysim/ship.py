@@ -1,7 +1,8 @@
 from colonysim.vessel import Vessel
 
+
 class Ship(Vessel):
-    def __init__(self, id, name, shipClass, locale = None, deltaV=0, cargo = None):
+    def __init__(self, id, name, shipClass, locale=None, deltaV=0, cargo=None):
         super().__init__(cargo)
         self.id = id
         self.name = name
@@ -9,11 +10,8 @@ class Ship(Vessel):
         self.locale = locale
         self.dv = deltaV
 
-
     def deltaV(self):
         return self.dv
-    
+
     def burnDeltaV(self, deltaV):
         self.dv -= deltaV
-
-

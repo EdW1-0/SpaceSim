@@ -1,9 +1,11 @@
 import techtree.techTree as techTree
 from techtree.techNode import TechEffectClass
-# TODO: Not sure it should be resposibility of this class to be passed tech tree. 
+
+
+# TODO: Not sure it should be resposibility of this class to be passed tech tree.
 # Think it should just discover instance internally.
 class PlayerTech:
-    def __init__(self, techTree = None):
+    def __init__(self, techTree=None):
         self._discovered = set()
         self.techTree = techTree
         self.activeTech = None
@@ -32,8 +34,7 @@ class PlayerTech:
                 case TechEffectClass.VEHICLE:
                     self.allowedVehicles.append(effect.value)
                 case _:
-                    assert(False, f"Invalid effect class, {effect.effect}")
-
+                    assert (False, f"Invalid effect class, {effect.effect}")
 
     def addResearch(self, increment):
         self.progress += increment
@@ -48,7 +49,7 @@ class PlayerTech:
     @property
     def possibleTargets(self):
         targets = set()
-        #For each tech in tree
+        # For each tech in tree
         for id in self.techTree.nodes.keys():
             # If discovered, reject
             if id not in self._discovered:
@@ -61,10 +62,5 @@ class PlayerTech:
 
                 if ancestorsDiscovered:
                     targets.add(id)
-            
+
         return targets
-
-
-
-
-

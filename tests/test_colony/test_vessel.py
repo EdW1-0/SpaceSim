@@ -2,6 +2,7 @@ import unittest
 
 from colonysim.vessel import Vessel
 
+
 class TestVessel(unittest.TestCase):
     def setUp(self):
         self.v = Vessel()
@@ -15,7 +16,7 @@ class TestVessel(unittest.TestCase):
 
     def testRemoveCargo(self):
         self.v.addCargo({"NH3": 5000, "CH4": 2000})
-        retDict = self.v.removeCargo({"NH3":500, "CH4": 3000, "H2": 200})
+        retDict = self.v.removeCargo({"NH3": 500, "CH4": 3000, "H2": 200})
         self.assertEqual(retDict["NH3"], 500)
         self.assertEqual(retDict["CH4"], 2000)
         self.assertEqual(retDict["H2"], 0)

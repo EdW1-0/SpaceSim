@@ -2,12 +2,14 @@ from gameModel import GameModel
 
 import unittest
 
+
 class TestGameModelModule(unittest.TestCase):
     def testGameModel(self):
         self.assertTrue(GameModel)
 
     def testGameModelConstructor(self):
         self.assertTrue(GameModel())
+
 
 class TestGameModelClass(unittest.TestCase):
     def setUp(self):
@@ -26,6 +28,7 @@ class TestGameModelClass(unittest.TestCase):
         self.assertIsNone(self.gm.timingMaster)
         self.assertFalse(self.gm.get_init())
 
+
 class TestGameModelLoading(unittest.TestCase):
     def setUp(self):
         self.gm = GameModel()
@@ -37,5 +40,3 @@ class TestGameModelLoading(unittest.TestCase):
     def testGameModelFileNotFound(self):
         with self.assertRaises(FileNotFoundError):
             self.gm.load("not_a_json_path")
-            
-

@@ -2,11 +2,14 @@ import unittest
 
 from planetsim.planet import Planet
 
+
 class SurfaceMock:
     pass
 
+
 class AtmosphereMock:
     pass
+
 
 class TestPlanet(unittest.TestCase):
     def testPlanetModule(self):
@@ -22,11 +25,15 @@ class TestPlanet(unittest.TestCase):
 
     def testPlanetConstructor(self):
         self.assertTrue(Planet(0, "Earth", 7.0))
-        self.assertTrue(Planet(0, "Earth", gravity = 6.0))
-        self.assertEqual(Planet(0, "Earth", gravity = 5.0).gravity, 5.0)
-        self.assertTrue(Planet(0, "Earth", gravity = 3.0, surface = SurfaceMock()))
+        self.assertTrue(Planet(0, "Earth", gravity=6.0))
+        self.assertEqual(Planet(0, "Earth", gravity=5.0).gravity, 5.0)
+        self.assertTrue(Planet(0, "Earth", gravity=3.0, surface=SurfaceMock()))
         sm = SurfaceMock()
-        self.assertEqual(Planet(0, "Earth", gravity = 1.0, surface = sm).surface, sm)
-        self.assertTrue(Planet(0, "Earth", gravity = 2.0, surface = sm, atmosphere = AtmosphereMock()))
+        self.assertEqual(Planet(0, "Earth", gravity=1.0, surface=sm).surface, sm)
+        self.assertTrue(
+            Planet(0, "Earth", gravity=2.0, surface=sm, atmosphere=AtmosphereMock())
+        )
         am = AtmosphereMock()
-        self.assertEqual(Planet(0, "Earth", gravity = 3.0, surface = sm, atmosphere = am).atmosphere, am)
+        self.assertEqual(
+            Planet(0, "Earth", gravity=3.0, surface=sm, atmosphere=am).atmosphere, am
+        )

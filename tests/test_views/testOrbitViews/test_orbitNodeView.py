@@ -1,9 +1,16 @@
 import unittest
 
-from views.orbitViews.orbitViews import OrbitNodeView, OrbitLinkView, OrbitNodeViewLabel, OrbitLinkViewLabel, ParticleView
+from views.orbitViews.orbitViews import (
+    OrbitNodeView,
+    OrbitLinkView,
+    OrbitNodeViewLabel,
+    OrbitLinkViewLabel,
+    ParticleView,
+)
 
 from orbitsim.orbitNode import OrbitNode, LeafClass
 import pygame
+
 
 class OrbitNodeMock:
     pass
@@ -19,9 +26,8 @@ class TestOrbitNodeView(unittest.TestCase):
 
     def testOrbitNodeViewConstructor(self):
         self.assertTrue(OrbitNodeView(self.onm))
-        self.assertTrue(OrbitNodeView(self.onm, center = (1,1)))
-        self.assertTrue(OrbitNodeView(self.onm, center = (1,1), selected = True))
-
+        self.assertTrue(OrbitNodeView(self.onm, center=(1, 1)))
+        self.assertTrue(OrbitNodeView(self.onm, center=(1, 1), selected=True))
 
     def testOrbitNodeViewAttributes(self):
         onv = OrbitNodeView(self.onm)
@@ -33,7 +39,8 @@ class TestOrbitNodeView(unittest.TestCase):
     def testOrbitNodeViewCenter(self):
         onm = OrbitNodeMock()
         onm.leaf = 0
-        self.assertEqual(OrbitNodeView(onm).center, (0,0))
+        self.assertEqual(OrbitNodeView(onm).center, (0, 0))
+
 
 class TestOrbitLinkView(unittest.TestCase):
     def setUp(self):
@@ -87,6 +94,7 @@ class TestOrbitLinkView(unittest.TestCase):
         self.assertEqual(rect.top, 20)
         self.assertEqual(rect.left, 45)
 
+
 class TestParticleView(unittest.TestCase):
     def testParticleView(self):
         self.assertTrue(ParticleView)
@@ -99,11 +107,9 @@ class TestParticleView(unittest.TestCase):
         self.assertTrue(hasattr(ParticleView(pm), "rect"))
 
 
-
 class TestOrbitNodeViewLabel(unittest.TestCase):
     def setUp(self):
         pygame.init()
-
 
     def testOrbitNodeViewLabel(self):
         self.assertTrue(OrbitNodeViewLabel)
@@ -115,10 +121,10 @@ class TestOrbitNodeViewLabel(unittest.TestCase):
         self.assertTrue(ovl)
         self.assertTrue(hasattr(ovl, "node"))
 
+
 class TestOrbitLinkViewLabel(unittest.TestCase):
     def setUp(self):
         pygame.init()
-
 
     def testOrbitLinkViewLabel(self):
         self.assertTrue(OrbitLinkViewLabel)

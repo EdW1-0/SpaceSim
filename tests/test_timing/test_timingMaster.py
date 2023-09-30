@@ -4,6 +4,7 @@ from timingMaster import TimingMaster
 
 import time
 
+
 class TestTimingMaster(unittest.TestCase):
     def testTimingMaster(self):
         self.assertTrue(TimingMaster)
@@ -20,6 +21,7 @@ class TestTimingMaster(unittest.TestCase):
         self.assertTrue(tm)
         self.assertEqual(tm.timestamp, 0)
         self.assertEqual(TimingMaster(3780).timestamp, 3780)
+
 
 class TestTimingMasterStartStop(unittest.TestCase):
     def setUp(self):
@@ -46,5 +48,3 @@ class TestTimingMasterStartStop(unittest.TestCase):
         end = self.tm.timestamp
         self.assertNotEqual(start, end)
         self.assertEqual(start + self.tm.increment, end)
-        
-        

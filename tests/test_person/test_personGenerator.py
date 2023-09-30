@@ -3,6 +3,7 @@ import unittest
 from personmodel.personGenerator import PersonGenerator
 from personmodel.person import Person
 
+
 class TestPersonGenerator(unittest.TestCase):
     def testPersonGenerator(self):
         self.assertTrue(PersonGenerator)
@@ -15,7 +16,7 @@ class TestPersonGenerator(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             self.assertTrue(PersonGenerator("test_json"))
         self.assertTrue(PersonGenerator("test_json/test_person"))
-        
+
 
 class TestPersonGeneratorStatistics(unittest.TestCase):
     def setUp(self):
@@ -63,4 +64,3 @@ class TestPersonGeneratorStatistics(unittest.TestCase):
         self.assertGreater(len(uniquefemale), 1)
 
         self.assertEqual(len(uniquemale.intersection(uniquefemale)), 0)
-        

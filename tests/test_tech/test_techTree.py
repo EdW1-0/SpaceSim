@@ -1,12 +1,11 @@
 import unittest
 
 
-
 import techtree.techTree as techTree
 import techtree.techNode as techNode
 
+
 class TestTechTreeLoading(unittest.TestCase):
-    
     def test_techTreeImport(self):
         self.assertNotEqual(techTree, False)
         self.assertNotEqual(techTree.TechTree, False)
@@ -18,13 +17,9 @@ class TestTechTreeLoading(unittest.TestCase):
         self.assertTrue(techTree.TechTree())
 
 
-
-
 class TestTechTreeInteraction(unittest.TestCase):
-
     def setUp(self):
         self.techTree = techTree.TechTree("json/Technologies.json")
-        
 
     def test_techTreeAccessBadNode(self):
         with self.assertRaises(ValueError):
@@ -58,11 +53,11 @@ class TestTechTreeInteraction(unittest.TestCase):
         self.assertEqual(tt.nodeById(4).id, 4)
         self.assertEqual(tt.nodeById(5).id, 5)
 
+
 class TestTechTreeValidation(unittest.TestCase):
     def test_techTreeRejectDuplicates(self):
         with self.assertRaises(AssertionError):
             techTree.TechTree("test_json/test_tech/test_duplicates.json")
-
 
     def test_techTreeRejectLoops(self):
         with self.assertRaises(AssertionError):
@@ -72,30 +67,32 @@ class TestTechTreeValidation(unittest.TestCase):
         with self.assertRaises(AssertionError):
             techTree.TechTree("test_json/test_tech/test_loops_ternary.json")
 
-
     def test_techTreeNonExistantAncestor(self):
         with self.assertRaises(AssertionError):
             techTree.TechTree("test_json/test_tech/test_invalid_ancestor.json")
+
 
 class TestTechTreeLinkage(unittest.TestCase):
     def setUp(self):
         self.techTree = techTree.TechTree("test_json/test_tech/test_happy_case.json")
 
     def test_techTreeAncestorLookup(self):
-        self.assertEqual([node.id for node in self.techTree.ancestorsOfId(5)], [3,4])
+        self.assertEqual([node.id for node in self.techTree.ancestorsOfId(5)], [3, 4])
         self.assertEqual(self.techTree.ancestorsOfId(0), [])
-        self.assertEqual([node.id for node in self.techTree.ancestorsOfId(self.techTree.ancestorsOfId(5)[0].id)], [1,2])
-
-        
+        self.assertEqual(
+            [
+                node.id
+                for node in self.techTree.ancestorsOfId(
+                    self.techTree.ancestorsOfId(5)[0].id
+                )
+            ],
+            [1, 2],
+        )
 
     def test_techTreeDescendentLookup(self):
-        self.assertEqual([node.id for node in self.techTree.descendentsOfId(1)], [3,4])
+        self.assertEqual([node.id for node in self.techTree.descendentsOfId(1)], [3, 4])
         self.assertEqual(self.techTree.descendentsOfId(0), [])
 
 
-
-
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

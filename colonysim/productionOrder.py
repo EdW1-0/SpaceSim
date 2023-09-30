@@ -2,14 +2,15 @@ from colonysim.reaction import Reaction
 
 from enum import Enum
 
+
 class OrderStatus(Enum):
-    PENDING = 0,
-    RUNNING = 1,
+    PENDING = (0,)
+    RUNNING = (1,)
     PAUSED = 2
 
 
 class ProductionOrder:
-    def __init__(self, id, reaction, amount = 0, remaining = None):
+    def __init__(self, id, reaction, amount=0, remaining=None):
         self.id = id
         self.amount = amount
         if not isinstance(reaction, Reaction):

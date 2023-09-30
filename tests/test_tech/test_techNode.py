@@ -15,22 +15,37 @@ class TestTechNode(unittest.TestCase):
 
     def test_techNodeInit(self):
         self.assertTrue(techNode.TechNode(0))
-        self.assertTrue(techNode.TechNode(id = 0))
-        self.assertTrue(techNode.TechNode(id = 0, name = "Foo"))
-        self.assertTrue(techNode.TechNode(id = 0, name = "Foo", description = "Bar"))
-        self.assertTrue(techNode.TechNode(id = 0, name = "Foo", description = "Bar", cost = 100))
-        self.assertTrue(techNode.TechNode(id = 0, name = "Foo", description = "Bar", cost = 100, ancestors = [3]))
-        self.assertTrue(techNode.TechNode(id = 0, name = "Foo", description = "Bar", cost = 100, ancestors = [3], effects = [{"effect": "VEHICLE", "value": 3}]))
+        self.assertTrue(techNode.TechNode(id=0))
+        self.assertTrue(techNode.TechNode(id=0, name="Foo"))
+        self.assertTrue(techNode.TechNode(id=0, name="Foo", description="Bar"))
+        self.assertTrue(
+            techNode.TechNode(id=0, name="Foo", description="Bar", cost=100)
+        )
+        self.assertTrue(
+            techNode.TechNode(
+                id=0, name="Foo", description="Bar", cost=100, ancestors=[3]
+            )
+        )
+        self.assertTrue(
+            techNode.TechNode(
+                id=0,
+                name="Foo",
+                description="Bar",
+                cost=100,
+                ancestors=[3],
+                effects=[{"effect": "VEHICLE", "value": 3}],
+            )
+        )
 
     def test_techNodeBadEffects(self):
         with self.assertRaises(KeyError):
-            techNode.TechNode(id = 0, effects = [{"value": 0}])
+            techNode.TechNode(id=0, effects=[{"value": 0}])
         with self.assertRaises(KeyError):
-            techNode.TechNode(id = 0, effects = [{"effect": "BUILDING"}])
+            techNode.TechNode(id=0, effects=[{"effect": "BUILDING"}])
         with self.assertRaises(KeyError):
-            techNode.TechNode(id = 0, effects = [{"effect": "BYILDING", "value": 0}])
+            techNode.TechNode(id=0, effects=[{"effect": "BYILDING", "value": 0}])
         with self.assertRaises(KeyError):
-            techNode.TechNode(id = 0, effects = [{"effect": 0, "value": 0}])
+            techNode.TechNode(id=0, effects=[{"effect": 0, "value": 0}])
 
     def test_techNodeId(self):
         self.assertEqual(techNode.TechNode(0).id, 0)
@@ -41,7 +56,6 @@ class TestTechNodeData(unittest.TestCase):
     def setUp(self):
         self.techTree = techTree.TechTree()
         self.nodeZero = self.techTree.nodeById(0)
-
 
     def test_techNodeAttributes(self):
         self.assertTrue(hasattr(self.nodeZero, "id"))
@@ -55,16 +69,20 @@ class TestTechNodeData(unittest.TestCase):
         self.assertEqual(self.nodeZero.id, 0)
         self.assertEqual(self.nodeZero.name, "Solid Fueled Rockets")
         self.assertEqual(self.nodeZero.cost, 50)
-        self.assertEqual(self.nodeZero.description, "Basic singe-staged rockets allow for sub-orbital space flight")
+        self.assertEqual(
+            self.nodeZero.description,
+            "Basic singe-staged rockets allow for sub-orbital space flight",
+        )
         self.assertEqual(self.nodeZero.ancestors, [])
         self.assertEqual(self.nodeZero.effects, [])
 
     def test_techNodeEffects(self):
         node3 = self.techTree.nodeById(3)
         self.assertEqual(node3.id, 3)
-        self.assertEqual(node3.ancestors, [1,2])
+        self.assertEqual(node3.ancestors, [1, 2])
         self.assertEqual(node3.effects[0], TechEffect(TechEffectClass.BUILDING, 7))
         self.assertEqual(node3.effects[1], TechEffect(TechEffectClass.VEHICLE, 3))
+
 
 class TestTechEffect(unittest.TestCase):
     def test_techEffectLoad(self):
@@ -77,29 +95,38 @@ class TestTechEffect(unittest.TestCase):
     def test_techEffectAttributes(self):
         self.assertTrue(hasattr(techNode.TechEffect(0, 0), "effect"))
         self.assertTrue(hasattr(techNode.TechEffect(0, 0), "value"))
-        self.assertTrue(isinstance(techNode.TechEffect(techNode.TechEffectClass.BUILDING, 0).effect, techNode.TechEffectClass))
+        self.assertTrue(
+            isinstance(
+                techNode.TechEffect(techNode.TechEffectClass.BUILDING, 0).effect,
+                techNode.TechEffectClass,
+            )
+        )
 
     def test_techEffectEquality(self):
-        self.assertEqual(techNode.TechEffect(0,0), techNode.TechEffect(0,0))
-        self.assertNotEqual(techNode.TechEffect(1,1), techNode.TechEffect(0,0))
+        self.assertEqual(techNode.TechEffect(0, 0), techNode.TechEffect(0, 0))
+        self.assertNotEqual(techNode.TechEffect(1, 1), techNode.TechEffect(0, 0))
 
     def test_techEffectImmutable(self):
         with self.assertRaises(FrozenInstanceError):
-            techNode.TechEffect(0,0).effect = 0
+            techNode.TechEffect(0, 0).effect = 0
         with self.assertRaises(FrozenInstanceError):
-            techNode.TechEffect(1,1).value = 3
+            techNode.TechEffect(1, 1).value = 3
+
 
 class TestTechEffectClass(unittest.TestCase):
-        def test_techEffectClassInit(self):
-            self.assertNotEqual(techNode.TechEffectClass, False)
-            self.assertTrue(techNode.TechEffectClass(0))
+    def test_techEffectClassInit(self):
+        self.assertNotEqual(techNode.TechEffectClass, False)
+        self.assertTrue(techNode.TechEffectClass(0))
 
-        def test_techEffectClassIntrospection(self):
-            self.assertTrue(issubclass(techNode.TechEffectClass, Enum))
-            self.assertTrue(isinstance(techNode.TechEffectClass.BUILDING, techNode.TechEffectClass))
-            self.assertTrue(isinstance(techNode.TechEffectClass(1), techNode.TechEffectClass))
+    def test_techEffectClassIntrospection(self):
+        self.assertTrue(issubclass(techNode.TechEffectClass, Enum))
+        self.assertTrue(
+            isinstance(techNode.TechEffectClass.BUILDING, techNode.TechEffectClass)
+        )
+        self.assertTrue(
+            isinstance(techNode.TechEffectClass(1), techNode.TechEffectClass)
+        )
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

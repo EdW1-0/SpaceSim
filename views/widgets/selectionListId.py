@@ -11,15 +11,20 @@ class SelectionListId(UISelectionList):
 
         """
         if not self.allow_multi_select:
-            selected_list = [(item['text'], item['object_id']) for
-                             item in self.item_list if item['selected']]
+            selected_list = [
+                (item["text"], item["object_id"])
+                for item in self.item_list
+                if item["selected"]
+            ]
             if len(selected_list) == 1:
                 return selected_list[0]
             elif len(selected_list) == 0:
                 return None
             else:
-                raise RuntimeError('More than one item selected in'
-                                   ' single-selection selection list')
+                raise RuntimeError(
+                    "More than one item selected in" " single-selection selection list"
+                )
         else:
-            raise RuntimeError('Requesting single selection,'
-                               ' from multi-selection list')
+            raise RuntimeError(
+                "Requesting single selection," " from multi-selection list"
+            )

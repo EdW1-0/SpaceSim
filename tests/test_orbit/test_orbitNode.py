@@ -2,13 +2,16 @@ import unittest
 
 from orbitsim.orbitNode import OrbitNode, LeafClass
 
+
 class PlanetMock:
     pass
+
 
 class TestOrbitNode(unittest.TestCase):
     def testOrbitNode(self):
         self.assertTrue(OrbitNode)
         self.assertTrue(OrbitNode(0))
+
 
 class TestOrbitNodeAttributes(unittest.TestCase):
     def testOrbitNodeAttributes(self):
@@ -19,21 +22,24 @@ class TestOrbitNodeAttributes(unittest.TestCase):
         self.assertTrue(hasattr(OrbitNode(0), "id"))
         self.assertTrue(hasattr(OrbitNode(0), "leaf"))
 
+
 class TestOrbitNodeConstructor(unittest.TestCase):
     def testOrbitNodeConstructor(self):
         with self.assertRaises(TypeError):
             OrbitNode()
         self.assertTrue(OrbitNode(0))
-        self.assertTrue(OrbitNode(0, planet = PlanetMock()))
-        self.assertTrue(OrbitNode(id = 0, planet = PlanetMock(), gravity = 9.8))
-        
+        self.assertTrue(OrbitNode(0, planet=PlanetMock()))
+        self.assertTrue(OrbitNode(id=0, planet=PlanetMock(), gravity=9.8))
+
     def testOrbitNodeLeaf(self):
         self.assertEqual(OrbitNode(0).leaf, LeafClass.NONE)
         self.assertEqual(OrbitNode(0, leaf=2).leaf, LeafClass.PLANET)
 
+
 class TestOrbitNodeLinks(unittest.TestCase):
     def testOrbitNodeLinks(self):
         self.assertEqual(OrbitNode(0).links, [])
+
 
 class TestOrbitNodeParticles(unittest.TestCase):
     def setUp(self):
@@ -48,5 +54,3 @@ class TestOrbitNodeParticles(unittest.TestCase):
 
         self.assertEqual(len(self.n0.particles), 1)
         self.assertTrue(1 in self.n0.particles)
-
-        

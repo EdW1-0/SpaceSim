@@ -2,6 +2,7 @@ import pygame
 
 from enum import Enum
 
+
 class GUICode(Enum):
     LOADORBITVIEW = pygame.USEREVENT + 1
     LOADMENUVIEW = pygame.USEREVENT + 2
@@ -13,6 +14,7 @@ class GUICode(Enum):
     LOADSURFACEVIEW_LAUNCH_RETURN = pygame.USEREVENT + 8
     LOADCOLONYVIEW_LAUNCH_RETURN = pygame.USEREVENT + 9
     LOADORBITVIEW_LAUNCH_LAND_RETURN = pygame.USEREVENT + 10
+
 
 class GUIContext:
     def __init__(self, screen, model, manager):

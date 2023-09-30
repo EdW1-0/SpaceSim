@@ -3,17 +3,18 @@ from dataclasses import dataclass
 from planetsim.surfacePoint import SurfacePoint
 
 # Inheritance hierarchy:
-# - SurfaceObject: 
+# - SurfaceObject:
 #   - Location, id, name
 #
 # - Landmark
 #   - class
 #
-# - Colony 
+# - Colony
 #   - colony id, crew? Vehicles? Ships? Resources?
 #
 # - Vehicle
 #   - Fuel, maxV, range, destination, crew, cargo, equipment?
+
 
 @dataclass
 class SurfaceObject:
@@ -25,5 +26,3 @@ class SurfaceObject:
 
     def kill(self):
         self.killed = True
-
-    

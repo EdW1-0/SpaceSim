@@ -1,6 +1,7 @@
 import json
 import os
 
+
 def extractEntityJson(path, id):
     entityFile = open(path, "r")
     entityJson = json.load(entityFile)
@@ -11,7 +12,8 @@ def extractEntityJson(path, id):
     entityFile.close()
     return entities
 
-def loadEntityFile(path, id, EntityClass, altClasses = {}):
+
+def loadEntityFile(path, id, EntityClass, altClasses={}):
     entityDict = {}
     for subdir, dirs, files in os.walk(path):
         for file in files:

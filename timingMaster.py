@@ -1,5 +1,5 @@
 class TimingMaster:
-    def __init__(self, timestamp = 0):
+    def __init__(self, timestamp=0):
         self.timestamp = timestamp
         self.running = False
         self.stepping = False

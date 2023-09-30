@@ -1,7 +1,8 @@
 from colonysim.vessel import Vessel
 
+
 class Vehicle(Vessel):
-    def __init__(self, id, name, vehicleClass, fuel = 0, cargo = None):
+    def __init__(self, id, name, vehicleClass, fuel=0, cargo=None):
         super().__init__(cargo)
         self.id = id
         self.name = name
@@ -10,6 +11,6 @@ class Vehicle(Vessel):
 
     def maxV(self):
         return self.vehicleClass.maxV
-    
+
     def fuelPerM(self):
         return self.vehicleClass.fuelPerM

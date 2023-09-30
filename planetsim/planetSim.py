@@ -11,8 +11,15 @@ from planetsim.surfaceBase import SurfaceBase
 from utility.fileLoad import loadEntityFile
 from utility.dictLookup import getStringId
 
+
 class PlanetSim:
-    def __init__(self, orbitSim, jsonPath = "json/Planets.json", vehicleClassPath = "json/vehicleClasses", vehicleRegisterCallback = None):
+    def __init__(
+        self,
+        orbitSim,
+        jsonPath="json/Planets.json",
+        vehicleClassPath="json/vehicleClasses",
+        vehicleRegisterCallback=None,
+    ):
         planetsFile = open(jsonPath, "r")
         planetsJson = json.load(planetsFile)
 
@@ -21,8 +28,7 @@ class PlanetSim:
         self.planets = {planet["id"]: Planet(**planet) for planet in planets}
         planetsFile.close()
 
-
-        classesFolder = 'json/planets/classes/'
+        classesFolder = "json/planets/classes/"
 
         self.planetClasses = {}
         for subdir, dirs, files in os.walk(classesFolder):
@@ -32,23 +38,33 @@ class PlanetSim:
                 classId = classJson["id"]
                 self.planetClasses[classId] = {}
                 terrainTypes = classJson["Terrain"]
-                self.planetClasses[classId] = {terrain["id"]: PlanetTerrain(**terrain) for terrain in terrainTypes}
+                self.planetClasses[classId] = {
+                    terrain["id"]: PlanetTerrain(**terrain) for terrain in terrainTypes
+                }
                 classFile.close()
         if vehicleClassPath:
-            self.vehicleClasses = loadEntityFile(vehicleClassPath, "VehicleClasses", VehicleClass)
+            self.vehicleClasses = loadEntityFile(
+                vehicleClassPath, "VehicleClasses", VehicleClass
+            )
         else:
             self.vehicleClasses = {}
 
-        surfacesFolder = 'json/planets/surfaces/'
+        surfacesFolder = "json/planets/surfaces/"
 
         for subdir, dirs, files in os.walk(surfacesFolder):
             for file in files:
-                surface = PlanetSurface(orbitSim, surfacesFolder + file, radius = 1000, vehiclePath = "json/planets/vehicles", vehicleClasses=self.vehicleClasses, vehicleRegisterCallback=vehicleRegisterCallback)
+                surface = PlanetSurface(
+                    orbitSim,
+                    surfacesFolder + file,
+                    radius=1000,
+                    vehiclePath="json/planets/vehicles",
+                    vehicleClasses=self.vehicleClasses,
+                    vehicleRegisterCallback=vehicleRegisterCallback,
+                )
                 for planetId in self.planets.keys():
                     if planetId == surface.id:
                         ###TODO: Bit of a kludge to set this later when it should go in via constructor. Should load all these first, then call constructor
                         self.planets[planetId].surface = surface
-
 
     def landShip(self, ship, planet, surfaceCoordinates):
         planet = self.planetById(planet)
@@ -61,18 +77,14 @@ class PlanetSim:
             return surfaceCoordinates.content.shipArrival(ship)
         else:
             print("unrecognised surface coordinates type: ", surfaceCoordinates)
-            assert(False)
-
-
-        
+            assert False
 
     def planetClassById(self, id):
         return getStringId(id, self.planetClasses)
 
     def planetById(self, id):
         return getStringId(id, self.planets)
-    
+
     def tick(self, increment):
         for planet in self.planets.values():
             planet.tick(increment)
-

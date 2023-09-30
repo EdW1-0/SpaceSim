@@ -3,6 +3,7 @@ import unittest
 from colonysim.ship import Ship
 from colonysim.shipClass import ShipClass
 
+
 class TestShip(unittest.TestCase):
     def setUp(self):
         self.sc = ShipClass("TEST", "Test", 100)
@@ -20,6 +21,7 @@ class TestShip(unittest.TestCase):
         self.assertTrue(hasattr(s, "deltaV"))
         self.assertTrue(hasattr(s, "shipClass"))
 
+
 class TestShipCargo(unittest.TestCase):
     def setUp(self):
         self.sc = ShipClass("TEST", "Test", 100)
@@ -34,7 +36,7 @@ class TestShipCargo(unittest.TestCase):
 
     def testRemoveCargo(self):
         self.s.addCargo({"NH3": 5000, "CH4": 2000})
-        retDict = self.s.removeCargo({"NH3":500, "CH4": 3000, "H2": 200})
+        retDict = self.s.removeCargo({"NH3": 500, "CH4": 3000, "H2": 200})
         self.assertEqual(retDict["NH3"], 500)
         self.assertEqual(retDict["CH4"], 2000)
         self.assertEqual(retDict["H2"], 0)
@@ -43,7 +45,7 @@ class TestShipCargo(unittest.TestCase):
         self.assertEqual(self.s.cargo["NH3"], 4500)
 
     def testAddNegativeCargo(self):
-        self.skipTest(reason = "Not implemented yet")
+        self.skipTest(reason="Not implemented yet")
 
     def testRemoveNegativeCargo(self):
         self.skipTest(reason="Not implemented yet")

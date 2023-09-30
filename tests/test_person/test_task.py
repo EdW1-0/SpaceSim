@@ -5,6 +5,7 @@ from enum import Enum
 
 from personmodel.task import Task, TaskCategory
 
+
 class TestTask(unittest.TestCase):
     def testTask(self):
         self.assertTrue(Task)
@@ -21,6 +22,7 @@ class TestTask(unittest.TestCase):
     def testTaskConstructor(self):
         self.assertEqual(Task(TaskCategory.SLEEP).category, TaskCategory.SLEEP)
 
+
 class TestTaskCategory(unittest.TestCase):
     def testTaskCategoryInit(self):
         self.assertTrue(TaskCategory)
@@ -30,21 +32,22 @@ class TestTaskCategory(unittest.TestCase):
         self.assertTrue(issubclass(TaskCategory, Enum))
         self.assertTrue(isinstance(TaskCategory.IDLE, TaskCategory))
         self.assertTrue(isinstance(TaskCategory(1), TaskCategory))
-    
+
     def testTaskCategoryEnum(self):
         self.assertTrue(TaskCategory.IDLE)
         self.assertTrue(TaskCategory.SLEEP)
         self.assertTrue(TaskCategory.PLANT_WHEAT)
 
+
 class WOMock:
     pass
+
 
 class TestTaskComplete(unittest.TestCase):
     def setUp(self):
         self.womock = WOMock()
         self.womock.complete = MagicMock()
-        self.task = Task(TaskCategory.PLANT_WHEAT, target = self.womock)
-        
+        self.task = Task(TaskCategory.PLANT_WHEAT, target=self.womock)
 
     def testTaskComplete(self):
         self.task.complete(None)

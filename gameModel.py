@@ -4,12 +4,13 @@ from colonysim.colonySim import ColonySim
 from planetsim.planetSim import PlanetSim
 from timingMaster import TimingMaster
 
+
 class GameModel:
     # Needs:
     # Set of orbits
     # Planet surfaces
     # Tech tree
-    # People 
+    # People
     def __init__(self):
         self.techTree = None
         self.orbitSim = None
@@ -17,20 +18,28 @@ class GameModel:
         self.timingMaster = None
         self.init = False
 
-    def load(self, jsonRoot = "json", reload = False):
-
+    def load(self, jsonRoot="json", reload=False):
         if not reload and self.init:
-            print ("Already loaded")
+            print("Already loaded")
             return
-        
+
         # TODO: Wrap these in a try/catch to do special exception handling rather than just the default file errors.
         self.techTree = TechTree(jsonRoot + "/Technologies.json")
-        self.orbitSim = OrbitSim(jsonRoot + "/Orbits.json", jsonRoot + "/Particles.json")
-        self.planetSim = PlanetSim(self.orbitSim, jsonRoot + "/Planets.json", vehicleClassPath="json/vehicleClasses", vehicleRegisterCallback=self.orbitSim.registerVehicleId)
-        self.colonySim = ColonySim(self.orbitSim, self.planetSim, jsonRoot + "/planets/colonies")
+        self.orbitSim = OrbitSim(
+            jsonRoot + "/Orbits.json", jsonRoot + "/Particles.json"
+        )
+        self.planetSim = PlanetSim(
+            self.orbitSim,
+            jsonRoot + "/Planets.json",
+            vehicleClassPath="json/vehicleClasses",
+            vehicleRegisterCallback=self.orbitSim.registerVehicleId,
+        )
+        self.colonySim = ColonySim(
+            self.orbitSim, self.planetSim, jsonRoot + "/planets/colonies"
+        )
 
         self.orbitSim.landCallback = self.planetSim.landShip
-        
+
         self.orbitSim.validatePlanets(self.planetSim)
 
         self.timingMaster = TimingMaster(0)
@@ -39,19 +48,18 @@ class GameModel:
 
     def get_init(self):
         return self.init
-    
+
     def tick(self):
         if not self.timingMaster:
             return
-        
+
         start = self.timingMaster.timestamp
         self.timingMaster.tick()
         end = self.timingMaster.timestamp
-        
+
         increment = end - start
         if increment:
             self.techTree.tick(increment)
             self.orbitSim.tick(increment)
             self.planetSim.tick(increment)
             self.colonySim.tick(increment)
-    

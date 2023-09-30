@@ -1,4 +1,11 @@
-from views.orbitContext import OrbitContext, PlanetStatusPanel, OrbitStatusPanel, LinkStatusPanel, ShipStatusPanel, TargetSettingPanel
+from views.orbitContext import (
+    OrbitContext,
+    PlanetStatusPanel,
+    OrbitStatusPanel,
+    LinkStatusPanel,
+    ShipStatusPanel,
+    TargetSettingPanel,
+)
 from views.guiContext import GUIContext
 
 import unittest
@@ -9,14 +16,13 @@ import pygame
 import pygame_gui
 
 
-
 class ModelMock:
     pass
+
 
 class ShipMock:
     def deltaV(self):
         return 7
-
 
 
 class TestOrbitContext(unittest.TestCase):
@@ -35,5 +41,3 @@ class TestOrbitContext(unittest.TestCase):
 
     def testOrbitContextConstructor(self):
         self.assertTrue(OrbitContext(None, self.mm, self.manager))
-
-    

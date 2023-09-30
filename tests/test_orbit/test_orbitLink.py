@@ -3,13 +3,16 @@ import unittest
 from orbitsim.orbitLink import OrbitLink
 from orbitsim.particle import Particle
 
+
 class NodeMock:
     pass
+
 
 class TestOrbitLink(unittest.TestCase):
     def testOrbitLink(self):
         self.assertTrue(OrbitLink)
         self.assertTrue(OrbitLink(0, 0, 1))
+
 
 class TestOrbitLinkAttributes(unittest.TestCase):
     def testOrbitLinkAttributes(self):
@@ -21,6 +24,7 @@ class TestOrbitLinkAttributes(unittest.TestCase):
         self.assertTrue(hasattr(OrbitLink(0, 0, 1), "distance"))
         self.assertTrue(hasattr(OrbitLink(0, 0, 1), "id"))
 
+
 class TestOrbitLinkConstructor(unittest.TestCase):
     def testOrbitLinkConstructor(self):
         with self.assertRaises(TypeError):
@@ -30,15 +34,25 @@ class TestOrbitLinkConstructor(unittest.TestCase):
         with self.assertRaises(TypeError):
             OrbitLink(0, None, None)
         with self.assertRaises(TypeError):
-            OrbitLink(0,0,0)
+            OrbitLink(0, 0, 0)
 
-        self.assertTrue(OrbitLink(0, topNode = 0, bottomNode = 1))
-        self.assertTrue(OrbitLink(id = 0, topNode = 0, bottomNode = 1, deltaV = 3.0, travelTime = 1000, distance = 10000))
+        self.assertTrue(OrbitLink(0, topNode=0, bottomNode=1))
+        self.assertTrue(
+            OrbitLink(
+                id=0,
+                topNode=0,
+                bottomNode=1,
+                deltaV=3.0,
+                travelTime=1000,
+                distance=10000,
+            )
+        )
 
 
 class TestOrbitLinkConnections(unittest.TestCase):
     def testOrbitLinkConnections(self):
         pass
+
 
 class TestOrbitLinkParticles(unittest.TestCase):
     def setUp(self):

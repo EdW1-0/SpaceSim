@@ -11,6 +11,7 @@ from planetsim.vehicleClass import VehicleClass
 from planetsim.surfaceVehicle import SurfaceVehicle
 from planetsim.planetSim import PlanetSim
 
+
 class TestPlanetSurface(unittest.TestCase):
     def testPlanetSurfaceModule(self):
         self.assertTrue(PlanetSurface)
@@ -24,12 +25,14 @@ class TestPlanetSurface(unittest.TestCase):
         self.assertTrue(isinstance(PlanetSurface(None).regions, dict))
         self.assertTrue(isinstance(PlanetSurface(None).points, dict))
 
-
     def testPlanetSurfaceConstructor(self):
         self.assertTrue(PlanetSurface("test_json/test_surfaces/single_region.json"))
-        self.assertEqual(PlanetSurface("test_json/test_surfaces/single_region.json").radius, EARTH_RADIUS)
-        
-        
+        self.assertEqual(
+            PlanetSurface("test_json/test_surfaces/single_region.json").radius,
+            EARTH_RADIUS,
+        )
+
+
 class TestPlanetSurfaceLoading(unittest.TestCase):
     def setUp(self):
         self.ps = PlanetSurface(None, "test_json/test_surfaces/single_region.json")
@@ -44,32 +47,58 @@ class TestPlanetSurfaceLoading(unittest.TestCase):
         for b in self.ps.regions[0].borders:
             self.assertIsInstance(b, SurfacePath)
         self.assertEqual(len(self.fulltile.regions), 8)
-        self.assertEqual(self.fulltile.regions[3].borders[1], SurfacePath(SurfacePoint(70,0),SurfacePoint(0,0)))
+        self.assertEqual(
+            self.fulltile.regions[3].borders[1],
+            SurfacePath(SurfacePoint(70, 0), SurfacePoint(0, 0)),
+        )
 
     def testPlanetSurfaceFullTiling(self):
-        self.assertEqual(self.fulltile.regionById(2).borders[2].p1, SurfacePoint(0, 240))
-        self.assertEqual(self.fulltile.regionById(2).borders[2].p2, SurfacePoint(0, 120))
+        self.assertEqual(
+            self.fulltile.regionById(2).borders[2].p1, SurfacePoint(0, 240)
+        )
+        self.assertEqual(
+            self.fulltile.regionById(2).borders[2].p2, SurfacePoint(0, 120)
+        )
+
 
 class TestGreatCircleGeodetics(unittest.TestCase):
     def setUp(self):
-        self.ps = PlanetSurface("test_json/test_surfaces/single_region.json", vehiclePath=None)
-        self.twor = PlanetSurface("test_json/test_surfaces/2_hemispheres.json", vehiclePath=None)
-        
-
-
+        self.ps = PlanetSurface(
+            "test_json/test_surfaces/single_region.json", vehiclePath=None
+        )
+        self.twor = PlanetSurface(
+            "test_json/test_surfaces/2_hemispheres.json", vehiclePath=None
+        )
 
     def testGreatCircleDistance(self):
-        self.assertAlmostEqual(self.ps.gcDistance(SurfacePath(SurfacePoint(90.0, 0.0), SurfacePoint(0.0,0.0))), 10007543, delta = 1)
-        self.assertAlmostEqual(self.ps.gcDistance(SurfacePath(SurfacePoint(0.0, 0.0), SurfacePoint(0.0,180.0))), 20015086, delta = 1)
-        london = SurfacePoint(51.5,0.1)
-        oxford = SurfacePoint(51.7,1.2)
+        self.assertAlmostEqual(
+            self.ps.gcDistance(
+                SurfacePath(SurfacePoint(90.0, 0.0), SurfacePoint(0.0, 0.0))
+            ),
+            10007543,
+            delta=1,
+        )
+        self.assertAlmostEqual(
+            self.ps.gcDistance(
+                SurfacePath(SurfacePoint(0.0, 0.0), SurfacePoint(0.0, 180.0))
+            ),
+            20015086,
+            delta=1,
+        )
+        london = SurfacePoint(51.5, 0.1)
+        oxford = SurfacePoint(51.7, 1.2)
         newYork = SurfacePoint(40.7, 74.0)
-        self.assertAlmostEqual(self.ps.gcDistance(SurfacePath(london, newYork)), 5585000, delta = 20000)
-        self.assertAlmostEqual(self.ps.gcDistance(SurfacePath(london, oxford)), 81890, delta = 5000)
+        self.assertAlmostEqual(
+            self.ps.gcDistance(SurfacePath(london, newYork)), 5585000, delta=20000
+        )
+        self.assertAlmostEqual(
+            self.ps.gcDistance(SurfacePath(london, oxford)), 81890, delta=5000
+        )
 
     def testAngleForDistance(self):
-        self.assertEqual(self.ps._angleForDistance(1000), 1000.0/self.ps.radius)
-        self.assertEqual(self.ps._angleForDistance(2000), 2000/self.ps.radius)
+        self.assertEqual(self.ps._angleForDistance(1000), 1000.0 / self.ps.radius)
+        self.assertEqual(self.ps._angleForDistance(2000), 2000 / self.ps.radius)
+
 
 class TestPlanetSurfaceIdLookup(unittest.TestCase):
     def setUp(self):
@@ -81,10 +110,8 @@ class TestPlanetSurfaceIdLookup(unittest.TestCase):
         self.assertEqual(self.ft.regionById(3).id, 3)
 
     def testPointIdLookup(self):
-        self.ft.createObject(None, SurfacePoint(10,10))
+        self.ft.createObject(None, SurfacePoint(10, 10))
         self.assertEqual(self.ft.pointById(0).id, 0)
-
-
 
 
 class TestPlanetSurfaceObjectLifecycle(unittest.TestCase):
@@ -121,10 +148,8 @@ class TestPlanetSurfaceObjectMovement(unittest.TestCase):
         self.ft = PlanetSurface("test_json/test_surfaces/full_tiling.json")
         vc = VehicleClass("ROVER", "Rover", 100, 3.0, 10.0)
         self.v = Vehicle(0, "Vic 1", vc, 100)
-        self.ft.createVehicle(None, SurfacePoint(20,20), payload=self.v)
+        self.ft.createVehicle(None, SurfacePoint(20, 20), payload=self.v)
         self.pt = self.ft.pointById(0)
-        
-
 
     def testSurfaceVehicleNilMovement(self):
         self.pt.setDestination(SurfacePoint(80, 100))
@@ -135,24 +160,31 @@ class TestPlanetSurfaceObjectMovement(unittest.TestCase):
         self.pt.payload.vehicleClass.maxV = 20
         self.assertEqual(self.ft._distanceForTime(0, 100), 2000)
 
+
 class TestPlanetSurfaceTick(unittest.TestCase):
     def setUp(self):
         self.ft = PlanetSurface("test_json/test_surfaces/full_tiling.json")
 
-        
 
 class TestPlanetSurfaceObjectTick(unittest.TestCase):
     def setUp(self):
         self.r = 100000000000
-        vc = VehicleClass("A", "a", maxFuel = 10000000000000000, maxV = 1)
-        self.ft = PlanetSurface("test_json/test_surfaces/full_tiling.json", radius = self.r)
-        self.ft.createVehicle(None, SurfacePoint(20, 20), payload = Vehicle(0, "Vic 1", vc, 100000000000))
-        self.ft.createVehicle(None, SurfacePoint(0, -10), payload = Vehicle(1, "Vic 2", vc, 100000000000))
-        self.ft.createVehicle(None, SurfacePoint(0, 0), payload = Vehicle(2, "Vic 3", vc, 100000000000))
+        vc = VehicleClass("A", "a", maxFuel=10000000000000000, maxV=1)
+        self.ft = PlanetSurface(
+            "test_json/test_surfaces/full_tiling.json", radius=self.r
+        )
+        self.ft.createVehicle(
+            None, SurfacePoint(20, 20), payload=Vehicle(0, "Vic 1", vc, 100000000000)
+        )
+        self.ft.createVehicle(
+            None, SurfacePoint(0, -10), payload=Vehicle(1, "Vic 2", vc, 100000000000)
+        )
+        self.ft.createVehicle(
+            None, SurfacePoint(0, 0), payload=Vehicle(2, "Vic 3", vc, 100000000000)
+        )
         self.ft.pointById(2).setDestination(SurfacePoint(90, 0))
         self.ft.pointById(1).setDestination(SurfacePoint(0, 10))
 
-    
     def testPlanetSurfaceTickPartway(self):
         self.ft.tick(100)
         self.assertEqual(self.ft.pointById(0).point, SurfacePoint(20, 20))
@@ -160,22 +192,30 @@ class TestPlanetSurfaceObjectTick(unittest.TestCase):
 
     def testPlanetSurfaceTick45(self):
         self.ft.pointById(1).setDestination(SurfacePoint(0, 30))
-        self.ft.tick((self.r*2*math.pi)/36)
-        self.assertAlmostEqual(self.ft.gcDistance(SurfacePath(self.ft.pointById(1).point, SurfacePoint(0, -10))),
-         (self.r*2*math.pi)/36,
-         places = 1)
-        self.assertTrue(almostEqual(self.ft.pointById(1).point, SurfacePoint(0, 0), True))
+        self.ft.tick((self.r * 2 * math.pi) / 36)
+        self.assertAlmostEqual(
+            self.ft.gcDistance(
+                SurfacePath(self.ft.pointById(1).point, SurfacePoint(0, -10))
+            ),
+            (self.r * 2 * math.pi) / 36,
+            places=1,
+        )
+        self.assertTrue(
+            almostEqual(self.ft.pointById(1).point, SurfacePoint(0, 0), True)
+        )
 
     def testPlanetSurfaceTickQuarter(self):
-        self.ft.tick((self.r*2*math.pi)/8)
+        self.ft.tick((self.r * 2 * math.pi) / 8)
         self.assertTrue(almostEqual(self.ft.pointById(2).point, SurfacePoint(45, 0)))
 
-
     def testPlanetSurfaceTickMeasured(self):
-        self.ft.tick((self.r*2*math.pi)/36)
-        self.assertTrue(almostEqual(self.ft.pointById(1).point, SurfacePoint(0, 0), True))
-        self.assertTrue(almostEqual(self.ft.pointById(2).point, SurfacePoint(10, 0), True))
-
+        self.ft.tick((self.r * 2 * math.pi) / 36)
+        self.assertTrue(
+            almostEqual(self.ft.pointById(1).point, SurfacePoint(0, 0), True)
+        )
+        self.assertTrue(
+            almostEqual(self.ft.pointById(2).point, SurfacePoint(10, 0), True)
+        )
 
     def testPlanetSurfaceTickArrival(self):
         self.ft.tick(999999999999)
@@ -183,20 +223,29 @@ class TestPlanetSurfaceObjectTick(unittest.TestCase):
         self.assertIsNone(self.ft.pointById(1).destination)
 
     def testPlanetSurfaceRepeatedTicks(self):
-        self.ft.tick((self.r*2*math.pi)/36)
-        self.ft.tick((self.r*2*math.pi)/36)
-        self.ft.tick((self.r*2*math.pi)/36)
-        self.assertTrue(almostEqual(self.ft.pointById(2).point, SurfacePoint(30, 0), True))
+        self.ft.tick((self.r * 2 * math.pi) / 36)
+        self.ft.tick((self.r * 2 * math.pi) / 36)
+        self.ft.tick((self.r * 2 * math.pi) / 36)
+        self.assertTrue(
+            almostEqual(self.ft.pointById(2).point, SurfacePoint(30, 0), True)
+        )
         self.ft.pointById(2).point = SurfacePoint(0, 0)
-        self.ft.tick(3*(self.r*2*math.pi)/36)
-        self.assertTrue(almostEqual(self.ft.pointById(2).point, SurfacePoint(30, 0), True))
+        self.ft.tick(3 * (self.r * 2 * math.pi) / 36)
+        self.assertTrue(
+            almostEqual(self.ft.pointById(2).point, SurfacePoint(30, 0), True)
+        )
+
 
 class TestPlanetSurfaceFuelConsumption(unittest.TestCase):
     def setUp(self):
-        self.r = 3.6*500/math.pi
-        self.ft = PlanetSurface("test_json/test_surfaces/full_tiling.json", radius = self.r)
-        vc = VehicleClass("A", "a", maxFuel = 10000000000000000, maxV = 1, fuelPerM=10.0)
-        self.ft.createVehicle(None, SurfacePoint(0, 0), payload = Vehicle(0, "V", vc, 100))
+        self.r = 3.6 * 500 / math.pi
+        self.ft = PlanetSurface(
+            "test_json/test_surfaces/full_tiling.json", radius=self.r
+        )
+        vc = VehicleClass("A", "a", maxFuel=10000000000000000, maxV=1, fuelPerM=10.0)
+        self.ft.createVehicle(
+            None, SurfacePoint(0, 0), payload=Vehicle(0, "V", vc, 100)
+        )
         self.p1 = self.ft.pointById(0)
         self.p1.setDestination(SurfacePoint(-45, -45))
 
@@ -236,8 +285,10 @@ class TestPlanetSurfaceFuelConsumption(unittest.TestCase):
         self.assertEqual(self.p1.point, SurfacePoint(-45, 315))
         self.assertEqual(self.p1.fuel(), 0)
 
+
 class MockDestination:
     pass
+
 
 class TestPlanetSurfacePointArrival(unittest.TestCase):
     def setUp(self):
@@ -245,12 +296,16 @@ class TestPlanetSurfacePointArrival(unittest.TestCase):
         terminal.vehicleArrival = MagicMock(return_value=True)
         waypoint = MockDestination()
         waypoint.vehicleArrival = MagicMock(return_value=False)
-        self.r = 3.6*500/math.pi
-        self.ft = PlanetSurface("test_json/test_surfaces/full_tiling.json", radius = self.r)
-        vc = VehicleClass("A", "a", maxFuel = 1000, maxV = 1)
+        self.r = 3.6 * 500 / math.pi
+        self.ft = PlanetSurface(
+            "test_json/test_surfaces/full_tiling.json", radius=self.r
+        )
+        vc = VehicleClass("A", "a", maxFuel=1000, maxV=1)
         self.ft.createObject(terminal, SurfacePoint(10, 20))
         self.ft.createObject(waypoint, SurfacePoint(-20, 345))
-        self.ft.createVehicle(None, SurfacePoint(0, 0), payload=Vehicle(0, "A", vc, 1000))
+        self.ft.createVehicle(
+            None, SurfacePoint(0, 0), payload=Vehicle(0, "A", vc, 1000)
+        )
         self.p = self.ft.pointById(2)
         self.waypoint = waypoint
         self.terminal = terminal
@@ -272,16 +327,17 @@ class TestPlanetSurfacePointArrival(unittest.TestCase):
         self.assertTrue(self.terminal.vehicleArrival.called)
 
 
-    
 class TestPlanetSurfaceObjectAtPoint(unittest.TestCase):
     def setUp(self):
-        self.r = 3.6*500/math.pi
-        self.ft = PlanetSurface("test_json/test_surfaces/full_tiling.json", radius = self.r)
+        self.r = 3.6 * 500 / math.pi
+        self.ft = PlanetSurface(
+            "test_json/test_surfaces/full_tiling.json", radius=self.r
+        )
         self.ft.createObject(None, SurfacePoint(50, 40))
         self.ft.createObject(None, SurfacePoint(-30, 300))
         self.ft.createObject(None, SurfacePoint(-30, 300))
         self.ft.createObject(None, SurfacePoint(-30, 300))
-    
+
     def testObjectAtPointSingle(self):
         self.assertEqual(self.ft.objectsAtPoint(SurfacePoint(50, 40))[0].id, 0)
 
@@ -290,20 +346,20 @@ class TestPlanetSurfaceObjectAtPoint(unittest.TestCase):
 
     def testObjectAtPointClose(self):
         self.assertFalse(self.ft.objectsAtPoint(SurfacePoint(50.1, 40)))
-    
+
     def testObjectAtPointMultiple(self):
-        ps = self.ft.objectsAtPoint(SurfacePoint(-30,300))
+        ps = self.ft.objectsAtPoint(SurfacePoint(-30, 300))
         self.assertEqual(len(ps), 3)
         for i in range(3):
-            self.assertEqual(ps[i].id, i+1)
-
-
+            self.assertEqual(ps[i].id, i + 1)
 
 
 class TestPlanetSurfaceRegionTesting(unittest.TestCase):
     def setUp(self):
-        self.r = 3.6*500/math.pi
-        self.ft = PlanetSurface(None, "test_json/test_surfaces/full_tiling.json", radius = self.r)
+        self.r = 3.6 * 500 / math.pi
+        self.ft = PlanetSurface(
+            None, "test_json/test_surfaces/full_tiling.json", radius=self.r
+        )
         self.ft.createObject(None, SurfacePoint(88, 0))
         self.ft.createObject(None, SurfacePoint(-88, 0))
         self.ft.createObject(None, SurfacePoint(10, 10))
@@ -331,7 +387,8 @@ class TestPlanetSurfaceRegionTesting(unittest.TestCase):
     @unittest.skip("Skip full testing of regionForPoint as may require rework")
     def testRegionForPointNotFullTiled(self):
         self.assertTrue(False)
-        
+
+
 class ColonyMock:
     def __init__(self, *args, **kwargs):
         self.id = 0
@@ -339,20 +396,25 @@ class ColonyMock:
     def vehicleArrival(self, vehicle):
         return True
 
+
 class TestPlanetSurfaceBuildColony(unittest.TestCase):
     def setUp(self):
-        self.r = 3.6*500/math.pi
-        self.ft = PlanetSurface("test_json/test_surfaces/full_tiling.json", radius = self.r)
+        self.r = 3.6 * 500 / math.pi
+        self.ft = PlanetSurface(
+            "test_json/test_surfaces/full_tiling.json", radius=self.r
+        )
         self.vehicle = Vehicle(0, VehicleClass("TEST", "Test", 100, 100, 1), 100)
-        self.v = self.ft.createVehicle(content=None, position = SurfacePoint(10, 10), name = "TestVehice", payload = self.vehicle)
-
-        
+        self.v = self.ft.createVehicle(
+            content=None,
+            position=SurfacePoint(10, 10),
+            name="TestVehice",
+            payload=self.vehicle,
+        )
 
     def mockColonySimCallback(self, name, locale):
         self.calledCallback = True
         return ColonyMock()
 
-        
     def testPlanetSurfaceBuildColony(self):
         self.calledCallback = False
 

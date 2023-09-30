@@ -2,10 +2,11 @@ import unittest
 
 from utility.dictLookup import getIntId
 
+
 class TestGetIntId(unittest.TestCase):
     def setUp(self):
         self.d = {0: "foo", 1: "bar", 3: "baz", "FOUR": "bee", -2: "kay", 3.67: "lee"}
-        
+
     def testGetIntId(self):
         self.assertTrue(getIntId)
 
@@ -17,7 +18,7 @@ class TestGetIntId(unittest.TestCase):
     def testGetIntIdMissingId(self):
         with self.assertRaises(KeyError):
             getIntId(2, self.d)
-            
+
     def testGetIntIdNonInteger(self):
         with self.assertRaises(TypeError):
             getIntId(3.67, self.d)
@@ -28,5 +29,3 @@ class TestGetIntId(unittest.TestCase):
     def testGetIntIdNegative(self):
         with self.assertRaises(ValueError):
             getIntId(-2, self.d)
-        
-        

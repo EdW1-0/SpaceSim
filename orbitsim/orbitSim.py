@@ -14,10 +14,18 @@ from planetsim.planetSurface import PlanetSurface
 from utility.fileLoad import loadEntityFile
 from utility.dictLookup import getIntId, getStringId
 
+
 class OrbitSim:
-    def __init__(self, jsonPath = "json/Orbits.json", particlePath = None, shipClassPath = "json/shipClasses", shipPath = "json/ships", landCallback = None):
+    def __init__(
+        self,
+        jsonPath="json/Orbits.json",
+        particlePath=None,
+        shipClassPath="json/shipClasses",
+        shipPath="json/ships",
+        landCallback=None,
+    ):
         self.landCallback = landCallback
-        
+
         jsonFile = open(jsonPath, "r")
 
         jsonBlob = json.load(jsonFile)
@@ -28,7 +36,8 @@ class OrbitSim:
             if "links" in x:
                 del x["links"]
             return x
-        orbitalsDelinked = [stripLinks(orbital.copy()) for orbital in  orbitalsArray]
+
+        orbitalsDelinked = [stripLinks(orbital.copy()) for orbital in orbitalsArray]
 
         # Unpack the nodes into self._nodes; use this rather than comprehension because we need to check for duplicates
         self._nodes = {}
@@ -36,10 +45,13 @@ class OrbitSim:
             if node["id"] in self._nodes:
                 firstNode = self._nodes[node["id"]].name
                 secondNode = node["name"]
-                raise KeyError("Orbits file contains duplicate nodes {0} and {1} with same id {2})".format(firstNode, secondNode, node["id"]))
+                raise KeyError(
+                    "Orbits file contains duplicate nodes {0} and {1} with same id {2})".format(
+                        firstNode, secondNode, node["id"]
+                    )
+                )
             else:
                 self._nodes[node["id"]] = OrbitNode(**node)
-            
 
         self._links = {}
         linkIdCount = 0
@@ -47,9 +59,11 @@ class OrbitSim:
             if "links" in orbital:
                 for link in orbital["links"]:
                     sourceId = orbital["id"]
-                    destId = link["id"] 
+                    destId = link["id"]
                     del link["id"]
-                    self._links[linkIdCount] = OrbitLink(id = linkIdCount, bottomNode = sourceId, topNode = destId, **link)
+                    self._links[linkIdCount] = OrbitLink(
+                        id=linkIdCount, bottomNode=sourceId, topNode=destId, **link
+                    )
                     self.nodeById(sourceId).links.append(linkIdCount)
                     self.nodeById(destId).links.append(linkIdCount)
                     linkIdCount += 1
@@ -70,10 +84,10 @@ class OrbitSim:
         # create a link object
         # add it to our array
         # add link id to links for source and destination
-        
+
         self.idGenerator = self.newParticleId()
         self._particles = {}
-        if (particlePath):
+        if particlePath:
             particlesFile = open(particlePath, "r")
 
             particleBlob = json.load(particlesFile)
@@ -91,15 +105,14 @@ class OrbitSim:
 
         jsonFile.close()
 
-        # Vehicles aren't stored here, but we register them here so ids are globally unique. 
+        # Vehicles aren't stored here, but we register them here so ids are globally unique.
         self.vehicleIdGenerator = self.newVehicleId()
         self._vehicleIds = set()
 
     def validatePlanets(self, planetSim):
         for node in self._nodes.values():
             if node.planet:
-                assert(node.planet in planetSim.planets.keys())
-
+                assert node.planet in planetSim.planets.keys()
 
     def newParticleId(self):
         nodeIdCounter = 0
@@ -130,19 +143,19 @@ class OrbitSim:
         self._vehicleIds.add(id)
         return id
 
-    def createShip(self, name, shipClass, deltaV = 0):
+    def createShip(self, name, shipClass, deltaV=0):
         id = next(self.shipIdGenerator)
-        while (id in self._ships):
+        while id in self._ships:
             id = next(self.shipIdGenerator)
 
         self._ships[id] = Ship(id, name, shipClass=shipClass, deltaV=deltaV)
         return id
-    
+
     def particleForShip(self, ship):
         for particle in self._particles.values():
             if particle.payload == ship:
                 return particle
-            
+
         return None
 
     def transferShip(self, id):
@@ -153,15 +166,15 @@ class OrbitSim:
         del self._ships[ship.id]
         return ship
 
-    def createParticle(self, node, payload = None):
+    def createParticle(self, node, payload=None):
         id = next(self.idGenerator)
-        while(id in self._particles):
+        while id in self._particles:
             id = next(self.idGenerator)
 
         if not hasattr(payload, "locale") or not payload.locale:
             payload.locale = node
-        self._particles[id] = Particle(id, payload = payload)
-        if(isinstance(node, OrbitNode)):
+        self._particles[id] = Particle(id, payload=payload)
+        if isinstance(node, OrbitNode):
             node.particles.add(id)
             return id
         else:
@@ -191,7 +204,7 @@ class OrbitSim:
 
         else:
             target = self.nodeById(targetId)
-            if (location.id in target.links):
+            if location.id in target.links:
                 target.particles.add(id)
                 particle.velocity = 0
                 del location.particles[id]
@@ -199,7 +212,15 @@ class OrbitSim:
                 raise ValueError
             particle.payload.locale = target
 
-    def createTrajectory(self, targetId, particleId = None, sourceId = None, payload = None, surfaceCoordinates = None, initialState = TrajectoryState.DEFINITION):
+    def createTrajectory(
+        self,
+        targetId,
+        particleId=None,
+        sourceId=None,
+        payload=None,
+        surfaceCoordinates=None,
+        initialState=TrajectoryState.DEFINITION,
+    ):
         if particleId is not None:
             try:
                 self.trajectoryForParticle(particleId)
@@ -228,8 +249,13 @@ class OrbitSim:
                 minDv = dv
                 minPath = path
 
-        ot = OrbitTrajectory(particleId, minPath, state = initialState, surfaceCoordinates=surfaceCoordinates)
-        #Key the trajectory using the particleId. This ensures 1-1 mapping. 
+        ot = OrbitTrajectory(
+            particleId,
+            minPath,
+            state=initialState,
+            surfaceCoordinates=surfaceCoordinates,
+        )
+        # Key the trajectory using the particleId. This ensures 1-1 mapping.
         if particleId is not None:
             self._trajectories[particleId] = ot
         return ot
@@ -238,19 +264,19 @@ class OrbitSim:
         try:
             t = self.trajectoryForParticle(id)
         except KeyError:
-            print ("Tried to cancel non-existant trajectory ", id)
-            return 
-        
+            print("Tried to cancel non-existant trajectory ", id)
+            return
+
         location = self._particleLocation(id)
         # If on a node, can cancel immediately. Otherwise should target next node and stop there.
-        if (isinstance(location, OrbitNode)):
+        if isinstance(location, OrbitNode):
             t = self.trajectoryForParticle(id)
             t.trajectory = [location.id]
             t.state = TrajectoryState.COMPLETE
         else:
             t = self.trajectoryForParticle(id)
             p = self.particleById(id)
-            if (p.velocity > 0):
+            if p.velocity > 0:
                 t.trajectory = [location.bottomNode, location.id, location.topNode]
             else:
                 t.trajectory = [location.topNode, location.id, location.bottomNode]
@@ -259,16 +285,18 @@ class OrbitSim:
 
     def _pruneTrajectories(self):
         def isTerminal(t):
-            return (t.state == TrajectoryState.COMPLETE)
+            return t.state == TrajectoryState.COMPLETE
             # location = self._particleLocation(t.particleId)
             # if (isinstance(location, OrbitNode)) and (location.id == t.trajectory[-1]):
             #     return True
             # else:
             #     return False
 
-        self._trajectories = {t: self._trajectories[t] for t in self._trajectories if (not isTerminal(self.trajectoryForParticle(t)))}
-
-
+        self._trajectories = {
+            t: self._trajectories[t]
+            for t in self._trajectories
+            if (not isTerminal(self.trajectoryForParticle(t)))
+        }
 
     def tick(self, increment):
         for t in self._trajectories.values():
@@ -282,17 +310,19 @@ class OrbitSim:
                 t.state = TrajectoryState.ACTIVE
 
             if t.state != TrajectoryState.ACTIVE:
-                continue 
+                continue
 
             timeBudget = increment
             while timeBudget > 0:
                 location = self._particleLocation(t.particleId)
                 if isinstance(location, OrbitNode):
-                    if (location.id == t.trajectory[-1]):
+                    if location.id == t.trajectory[-1]:
                         t.state = TrajectoryState.COMPLETE
                         timeBudget = 0
                         if location.planet and t.surfaceCoordinates:
-                            self.particleArrival(t.particleId, location.planet, t.surfaceCoordinates)
+                            self.particleArrival(
+                                t.particleId, location.planet, t.surfaceCoordinates
+                            )
                         continue
 
                     linkId = t.nextLink(location.id)
@@ -312,17 +342,18 @@ class OrbitSim:
                     delta = timeBudget * particle.velocity
                     newTime = location.particles[t.particleId] + delta
                     if newTime < 0:
-                        timeBudget = (newTime/particle.velocity)
+                        timeBudget = newTime / particle.velocity
                         self.transitParticle(t.particleId, location.bottomNode)
                     elif newTime > location.travelTime:
-                        timeBudget = int((newTime - location.travelTime)/particle.velocity)
+                        timeBudget = int(
+                            (newTime - location.travelTime) / particle.velocity
+                        )
                         self.transitParticle(t.particleId, location.topNode)
                     else:
                         location.particles[t.particleId] += delta
                         timeBudget = 0
 
         self._pruneTrajectories()
-
 
     def _findPath(self, sourceId, targetId, priorPath):
         path = [*priorPath, sourceId]
@@ -333,7 +364,7 @@ class OrbitSim:
         validPaths = []
         for linkId in sourceNode.links:
             # Don't traverse links we have already traversed in this path
-            checkedLinks = [path[2*i+1] for i in range(int(len(path)/2))]
+            checkedLinks = [path[2 * i + 1] for i in range(int(len(path) / 2))]
             if linkId not in checkedLinks:
                 nextPath = [*path, linkId]
                 link = self.linkById(linkId)
@@ -344,8 +375,8 @@ class OrbitSim:
                 else:
                     assert False, "Invalid link id for this node!"
                 # Reject paths with redundant loops
-                checkedNodes = [path[2*i] for i in range(int(len(path)/2))]
-                # Note we use in rather than direct equivalence - not perfect but here I think it's OK because we literally are 
+                checkedNodes = [path[2 * i] for i in range(int(len(path) / 2))]
+                # Note we use in rather than direct equivalence - not perfect but here I think it's OK because we literally are
                 # looking for the same id (so the same object, not just the same value). And the code to check properly would be
                 # ugly without actually covering any additional functionality.
                 if nextId not in checkedNodes:
@@ -364,33 +395,30 @@ class OrbitSim:
         # Collate array of subarrays
         # Return arrays
 
-    def particleArrival(self, particleId, planet, surfaceCoordinates = None):
+    def particleArrival(self, particleId, planet, surfaceCoordinates=None):
         particle = self.particleById(particleId)
         ship = particle.payload
         if self.landCallback(ship, planet, surfaceCoordinates):
             self.destroyParticle(particleId)
 
-
     def _deltaVCost(self, path):
         dv = 0
-        for i in range(int(len(path)/2)):
-            dv += self.linkById(path[2*i+1]).deltaV
+        for i in range(int(len(path) / 2)):
+            dv += self.linkById(path[2 * i + 1]).deltaV
         return dv
-    
+
     def _totalTime(self, path):
         time = 0
-        for i in range(int(len(path)/2)):
-            time += self.linkById(path[2*i+1]).travelTime
+        for i in range(int(len(path) / 2)):
+            time += self.linkById(path[2 * i + 1]).travelTime
         return time
 
     def _totalDistance(self, path):
         distance = 0
-        for i in range(int(len(path)/2)):
-            distance += self.linkById(path[2*i+1]).distance
+        for i in range(int(len(path) / 2)):
+            distance += self.linkById(path[2 * i + 1]).distance
         return distance
 
-
-        
     def _particleLocation(self, id):
         for n in self._nodes.values():
             if id in n.particles:
@@ -401,7 +429,6 @@ class OrbitSim:
                 return l
 
         raise KeyError
-        
 
     def nodeById(self, id):
         return getStringId(id, self._nodes)
@@ -414,15 +441,13 @@ class OrbitSim:
 
     def shipClassById(self, id):
         return getStringId(id, self._shipClasses)
-    
+
     def shipById(self, id):
         return getIntId(id, self._ships)
-    
+
     def trajectoryForParticle(self, particleId):
         if not isinstance(particleId, int):
             raise TypeError
         elif particleId < 0:
             raise ValueError
         return self._trajectories[particleId]
-
-

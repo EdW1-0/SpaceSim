@@ -10,9 +10,10 @@ import pygame_gui
 class ColonySimMock:
     _resources = None
     _reactions = None
+
     def buildingClassesForColony(self, c):
         return None
-    
+
 
 class ModelMock:
     id = None
@@ -20,6 +21,7 @@ class ModelMock:
     buildings = None
     productionOrders = None
     colonySim = ColonySimMock()
+
 
 class TestColonyContext(unittest.TestCase):
     def setUp(self):
@@ -43,4 +45,3 @@ class TestColonyContext(unittest.TestCase):
         cc = ColonyContext(ModelMock(), self.mm, self.manager, self.cm)
         self.assertTrue(issubclass(ColonyContext, GUIContext))
         self.assertTrue(isinstance(cc, GUIContext))
-         
