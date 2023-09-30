@@ -27,12 +27,10 @@ from views.surfaceContext import SCMode
 
 
 from pygame.locals import (
-    RLEACCEL,
     K_UP,
     K_DOWN,
     K_LEFT,
     K_RIGHT,
-    K_ESCAPE,
     KEYDOWN,
     MOUSEBUTTONUP,
     MOUSEWHEEL,
@@ -158,7 +156,8 @@ class OrbitContext(GUIContext):
 
             self.target_panel.set_source(node)
             self.target_panel.set_ship(landingContext["ship"])
-            ###TODO: This is a hack. Trajectory should really be managed by particle and looked up by view, not created.
+            # TODO: This is a hack. Trajectory should really be managed by
+            # particle and looked up by view, not created.
             if "trajectory" in landingContext:
                 self.target_panel.trajectory = landingContext["trajectory"]
             if "target" in landingContext:
@@ -199,7 +198,8 @@ class OrbitContext(GUIContext):
         # Now draw the branch.
         count = 0
         for path in branchPaths:
-            # Start by finding the view for the branch point, so we know what height to draw from
+            # Start by finding the view for the branch point,
+            # so we know what height to draw from
             branchPoint = path[0]
             branchRoot = (0, 0)
             for ov in self.node_sprites:
@@ -326,21 +326,22 @@ class OrbitContext(GUIContext):
                     if ov.node == location:
                         view = ov
                         break
-                center = ov.center
+                center = view.center
             elif isinstance(location, OrbitLink):
                 view = None
                 for ov in self.link_sprites:
                     if ov.link == location:
                         view = ov
                         break
-                center = ov.rect.center
+                center = view.rect.center
 
             particleView = None
             for pv in self.particle_sprites:
                 if pv.particle == particle:
                     particleView = pv
                     break
-            ###TODO: This is a kludge due to not having handled particle creation/destruction properly at the GUI level, which we ought to do.
+            # TODO: This is a kludge due to not having handled particle
+            # creation/destruction properly at the GUI level, which we ought to do.
             if not particleView:
                 self.computeLayout()
                 return

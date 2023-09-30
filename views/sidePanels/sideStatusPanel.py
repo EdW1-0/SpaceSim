@@ -226,9 +226,10 @@ class ShipStatusPanel(SideStatusPanel):
             manager=manager,
         )
 
-        # This is how we end up passing control up to OrbitContext to switch out a view or otherwise do something.
+        # This is how we end up passing control up to OrbitContext
+        # to switch out a view or otherwise do something.
         # I think there must be a better way, so revise this later.
-        ###TODO: Improve on this mess!
+        # TODO: Improve on this mess!
         self.upperAction = 0
 
     def handle_event(self, event):
@@ -353,7 +354,8 @@ class TargetSettingPanel(SideStatusPanel):
             ):
                 self.model.orbitSim.cancelTrajectory(self.ship.id)
             else:
-                ###TODO: Probably shouldn't have set target in this case. Once we have the tests to prove this doesn't
+                # TODO: Probably shouldn't have set target in this case.
+                # Once we have the tests to prove this doesn't
                 # break everything, fix this.
                 return
 
@@ -427,7 +429,10 @@ class TargetSettingPanel(SideStatusPanel):
                     self.trajectory.surfaceCoordinates.longitude,
                 )
                 self.route_text.set_text(
-                    "Delta V: {0}m/s<br>Total time: {1}<br>Total distance: {2}<br>Coords: {3}".format(
+                    "Delta V: {0}m/s<br>"
+                    "Total time: {1}<br>"
+                    "Total distance: {2}<br>"
+                    "Coords: {3}".format(
                         dv, time, distance, coords
                     )
                 )
@@ -436,7 +441,10 @@ class TargetSettingPanel(SideStatusPanel):
             ):
                 baseName = self.trajectory.surfaceCoordinates.name
                 self.route_text.set_text(
-                    "Delta V: {0}m/s<br>Total time: {1}<br>Total distance: {2}<br>Rendezvous: {3}".format(
+                    "Delta V: {0}m/s<br>"
+                    "Total time: {1}<br>"
+                    "Total distance: {2}<br>"
+                    "Rendezvous: {3}".format(
                         dv, time, distance, baseName
                     )
                 )

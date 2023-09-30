@@ -59,7 +59,8 @@ class OrbitLinkView(pygame.sprite.Sprite):
         top = min(start[1], end[1])
         height = max(abs(end[1] - start[1]), 10)
 
-        # Adjust rect a bit to account for the margins needed for nodes, and to offset start to midpoint of rect
+        # Adjust rect a bit to account for the margins needed for nodes,
+        # and to offset start to midpoint of rect
         if height > width:
             left = left - 5
             top = top + 10
@@ -69,7 +70,8 @@ class OrbitLinkView(pygame.sprite.Sprite):
             left = left + 10
             width = width - 20
 
-        # May have shrunk to zero if zoomed, that's OK, but don't let it go below zero or we crash
+        # May have shrunk to zero if zoomed, that's OK,
+        # but don't let it go below zero or we crash
         width = max(width, 0)
         height = max(height, 0)
         self.start = start

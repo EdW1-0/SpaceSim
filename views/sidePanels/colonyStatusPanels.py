@@ -4,17 +4,14 @@ from views.sidePanels.sideStatusPanel import SideStatusPanel
 
 from pygame_gui.elements import (
     UIButton,
-    UIImage,
     UILabel,
     UITextBox,
-    UISelectionList,
     UIHorizontalSlider,
 )
 
 from views.widgets.selectionListId import SelectionListId
-from orbitsim.orbitTrajectory import TrajectoryState
-from colonysim.building import Building, BuildingStatus
-from colonysim.productionOrder import ProductionOrder, OrderStatus
+from colonysim.building import Building
+from colonysim.productionOrder import ProductionOrder
 
 
 class ColonyTabPanel(SideStatusPanel):
@@ -213,11 +210,9 @@ class ColonyVehicleDetailPanel(SideStatusPanel):
         self.vehicle_mission.set_text("Orders: Not implemented<br>")
 
     def handle_event(self, event):
-        upperAction = 0
         if super().handle_event(event):
             return True
         elif event.ui_element == self.embark_button:
-            upperAction = 1
             self.hide()
             return True
         else:
@@ -267,7 +262,8 @@ class ColonyShipPanel(ColonyItemPanel):
             self.loading_button.show()
 
 
-###TODO: Currently ColonyVehicleDetailPanel and ColonyShipDetailPanel are almost identical. Probably should merge into common superclass
+# TODO: ColonyVehicleDetailPanel and ColonyShipDetailPanel are almost identical.
+# Probably should merge into common superclass
 class ColonyShipDetailPanel(SideStatusPanel):
     def __init__(self, rect, manager=None, orbitSim=None, ship=None):
         super().__init__(rect, manager)
@@ -349,12 +345,10 @@ class ColonyShipDetailPanel(SideStatusPanel):
             if p.payload == self.ship:
                 particle = p
 
-        traj = False
         trajectory = None
         if particle:
             try:
                 trajectory = self.orbitSim.trajectoryForParticle(particle.id)
-                traj = True
             except KeyError:
                 pass
 
@@ -374,7 +368,8 @@ class ColonyShipDetailPanel(SideStatusPanel):
             return False
 
 
-###TODO: Overengineering for now. Eventually this will prune the full list of resources existing in the game down to just those
+# TODO: Overengineering for now. Eventually this will prune the full list of
+# resources existing in the game down to just those
 # actually stored either in the colony or ship.
 class ResourceUnion:
     def __init__(self, ship, colony):
@@ -508,7 +503,8 @@ class ColonyShipLoadingPanel(ColonyItemPanel):
         elif event.ui_element == self.confirm_button:
             bid = self.getBid()
             if bid > 0:
-                ###TODO: Should probably make this a utility method - "transferResource". Should also probably add some consistency
+                # TODO: Should probably make this a utility method - "transferResource".
+                # Should also probably add some consistency
                 # between how colonies and ships describe resources - dict or not?
                 excess = self.ship.addCargo(
                     {self.resource.id: self.colony.getResources(self.resource.id, bid)}

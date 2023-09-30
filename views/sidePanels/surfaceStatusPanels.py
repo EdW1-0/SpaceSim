@@ -7,8 +7,7 @@ from planetsim.surfaceBase import SurfaceBase
 
 from colonysim.ship import Ship
 
-from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox, UISelectionList
-from pygame_gui.core import UIContainer
+from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox
 
 
 class RegionStatusPanel(SideStatusPanel):

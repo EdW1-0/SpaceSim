@@ -7,7 +7,7 @@ def getIntId(id, sourceDict):
 
 
 def getStringId(id, sourceDict):
-    if not (type(id) == int or isinstance(id, str)):
+    if not (type(id) is int or isinstance(id, str)):
         raise TypeError
     elif isinstance(id, str) and not id.isupper():
         raise ValueError

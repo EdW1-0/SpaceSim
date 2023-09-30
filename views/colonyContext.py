@@ -1,5 +1,4 @@
 from views.guiContext import GUIContext, GUICode
-from views.sidePanels.sideStatusPanel import SideStatusPanel
 from views.timingView import TimingPanel
 
 from views.sidePanels.colonyStatusPanels import (
@@ -13,11 +12,8 @@ from views.sidePanels.colonyStatusPanels import (
     ColonyConstructionDetailPanel,
     ColonyProductionPanel,
     ColonyProductionDetailPanel,
-    ColonyResourcePanel,
     ColonyResourceDetailPanel,
 )
-
-from colonysim.colony import Colony
 
 from orbitsim.orbitTrajectory import TrajectoryState
 
@@ -26,18 +22,9 @@ from pygame_gui.elements import UILabel, UIButton
 from pygame_gui import (
     UI_BUTTON_PRESSED,
     UI_SELECTION_LIST_NEW_SELECTION,
-    UI_BUTTON_ON_HOVERED,
 )
 
 from pygame.locals import (
-    RLEACCEL,
-    K_UP,
-    K_DOWN,
-    K_LEFT,
-    K_RIGHT,
-    K_ESCAPE,
-    KEYDOWN,
-    MOUSEBUTTONUP,
     QUIT,
 )
 

@@ -3,13 +3,6 @@ from views.guiContext import GUIContext
 import pygame
 
 from pygame.locals import (
-    RLEACCEL,
-    K_UP,
-    K_DOWN,
-    K_LEFT,
-    K_RIGHT,
-    K_ESCAPE,
-    KEYDOWN,
     MOUSEBUTTONUP,
     QUIT,
 )
