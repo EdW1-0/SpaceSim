@@ -70,14 +70,16 @@ class ProductionBuilding(Building):
         # Algorithm for this:
         # Sanity checking on reactants type etc.
         # Check reactants has each of required inputs.
-        # Then formula is - each of reactants in proportions from reaction * efficiency of building
+        # Then formula is
+        #  - each of reactants in proportions from reaction * efficiency of building
         # If all inputs have enough, then this is the reaction that happens.
         # If one or more is short, find ratio of available input to max input
         # Find smallest ratio
         # Multiply all reactants by this ratio
         # Compute output dict - subtract inputs from starting reactants and add outputs.
         # Algorithm should ignore any unused reactants and pass them through unchanged
-        # Algorithm should not care if outputs are not in reactant dict, but should add them to output dict
+        # Algorithm should not care if outputs are not in reactant dict, but should add
+        #   them to output dict
         if not isinstance(reactants, dict):
             raise TypeError
 

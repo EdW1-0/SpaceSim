@@ -17,7 +17,6 @@ from colonysim.colonySim import ColonySim
 from gameModel import GameModel
 from colonysim.productionOrder import OrderStatus
 from planetsim.surfacePoint import SurfacePoint
-from planetsim.planetSurface import PlanetSurface
 from planetsim.vehicle import Vehicle
 
 

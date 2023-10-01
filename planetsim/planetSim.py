@@ -63,7 +63,9 @@ class PlanetSim:
                 )
                 for planetId in self.planets.keys():
                     if planetId == surface.id:
-                        ###TODO: Bit of a kludge to set this later when it should go in via constructor. Should load all these first, then call constructor
+                        # TODO: Bit of a kludge to set this later when it should go
+                        # in via constructor. Should load all these first, then call
+                        # constructor
                         self.planets[planetId].surface = surface
 
     def landShip(self, ship, planet, surfaceCoordinates):

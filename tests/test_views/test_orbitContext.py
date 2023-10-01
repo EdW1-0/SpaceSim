@@ -1,23 +1,13 @@
 from views.orbitContext import (
     OrbitContext,
-    PlanetStatusPanel,
-    OrbitStatusPanel,
-    LinkStatusPanel,
-    ShipStatusPanel,
-    TargetSettingPanel,
 )
-from views.guiContext import GUIContext
 
 import unittest
-from tests.test_views.test_guiContext import ScreenMock, ModelMock
-from orbitsim.orbitSim import OrbitSim, TrajectoryState
+from tests.test_views.test_guiContext import ModelMock
+from orbitsim.orbitSim import OrbitSim
 
 import pygame
 import pygame_gui
-
-
-class ModelMock:
-    pass
 
 
 class ShipMock:
@@ -37,7 +27,7 @@ class TestOrbitContext(unittest.TestCase):
         self.mm.orbitSim = os
         pygame.init()
         self.manager = pygame_gui.UIManager((1200, 800))
-        screen = pygame.display.set_mode((1200, 800))
+        pygame.display.set_mode((1200, 800))
 
     def testOrbitContextConstructor(self):
         self.assertTrue(OrbitContext(None, self.mm, self.manager))

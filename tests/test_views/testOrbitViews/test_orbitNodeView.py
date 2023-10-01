@@ -8,7 +8,6 @@ from views.orbitViews.orbitViews import (
     ParticleView,
 )
 
-from orbitsim.orbitNode import OrbitNode, LeafClass
 import pygame
 
 

@@ -7,19 +7,8 @@ from views.orbitContext import OrbitContext
 from views.surfaceContext import SurfaceContext
 from views.colonyContext import ColonyContext
 
-# Define constants for the screen width and height
-SCREEN_WIDTH = 1200
-SCREEN_HEIGHT = 800
 
 from pygame.locals import (
-    RLEACCEL,
-    K_UP,
-    K_DOWN,
-    K_LEFT,
-    K_RIGHT,
-    K_ESCAPE,
-    KEYDOWN,
-    MOUSEBUTTONUP,
     QUIT,
 )
 
@@ -27,6 +16,11 @@ from views.orbitContext import OCMode
 from views.surfaceContext import SCMode
 
 from views.guiContext import GUICode
+
+
+# Define constants for the screen width and height
+SCREEN_WIDTH = 1200
+SCREEN_HEIGHT = 800
 
 
 def main(testingCallback=None):

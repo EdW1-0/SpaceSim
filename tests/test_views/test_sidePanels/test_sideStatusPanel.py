@@ -7,17 +7,13 @@ from views.sidePanels.sideStatusPanel import (
 )
 
 import unittest
-from tests.test_views.test_guiContext import ScreenMock, ModelMock
+from tests.test_views.test_guiContext import ModelMock
 from orbitsim.orbitSim import OrbitSim, TrajectoryState
 
 from gameModel import GameModel
 
 import pygame
 import pygame_gui
-
-
-class ModelMock:
-    pass
 
 
 class ShipMock:
@@ -29,7 +25,7 @@ class TestPlanetStatusPanel(unittest.TestCase):
     def setUp(self):
         pygame.init()
         self.manager = pygame_gui.UIManager((1200, 800))
-        screen = pygame.display.set_mode((1200, 800))
+        pygame.display.set_mode((1200, 800))
 
     def testPlanetStatusPanel(self):
         self.assertTrue(PlanetStatusPanel)
@@ -86,7 +82,7 @@ class TestOrbitStatusPanel(unittest.TestCase):
     def setUp(self):
         pygame.init()
         self.manager = pygame_gui.UIManager((1200, 800))
-        screen = pygame.display.set_mode((1200, 800))
+        pygame.display.set_mode((1200, 800))
         self.model = GameModel()
         self.model.load()
 
@@ -94,7 +90,6 @@ class TestOrbitStatusPanel(unittest.TestCase):
         self.assertTrue(OrbitStatusPanel)
 
     def testOrbitStatusPanelConstructor(self):
-        mn = ModelMock()
         self.assertTrue(
             OrbitStatusPanel(pygame.Rect(800, 200, 400, 600), manager=self.manager)
         )
@@ -112,7 +107,7 @@ class TestLinkStatusPanel(unittest.TestCase):
     def setUp(self):
         pygame.init()
         self.manager = pygame_gui.UIManager((1200, 800))
-        screen = pygame.display.set_mode((1200, 800))
+        pygame.display.set_mode((1200, 800))
 
     def testLinkStatusPanel(self):
         self.assertTrue(LinkStatusPanel)
@@ -137,7 +132,7 @@ class TestShipStatusPanel(unittest.TestCase):
         pygame.init()
         self.manager = pygame_gui.UIManager((1200, 800))
         self.orbitSim = OrbitSim(particlePath="json/Particles.json")
-        screen = pygame.display.set_mode((1200, 800))
+        pygame.display.set_mode((1200, 800))
 
     def testShipStatusPanel(self):
         self.assertTrue(ShipStatusPanel)
@@ -189,7 +184,7 @@ class TestTargetSettingPanel(unittest.TestCase):
     def setUp(self):
         pygame.init()
         self.manager = pygame_gui.UIManager((1200, 800))
-        screen = pygame.display.set_mode((1200, 800))
+        pygame.display.set_mode((1200, 800))
         self.orbitSim = OrbitSim(particlePath="json/Particles.json")
         self.model = GameModel()
         self.model.load()

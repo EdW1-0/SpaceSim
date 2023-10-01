@@ -39,14 +39,16 @@ class OrbitSim:
 
         orbitalsDelinked = [stripLinks(orbital.copy()) for orbital in orbitalsArray]
 
-        # Unpack the nodes into self._nodes; use this rather than comprehension because we need to check for duplicates
+        # Unpack the nodes into self._nodes; use this rather than
+        # comprehension because we need to check for duplicates
         self._nodes = {}
         for node in orbitalsDelinked:
             if node["id"] in self._nodes:
                 firstNode = self._nodes[node["id"]].name
                 secondNode = node["name"]
                 raise KeyError(
-                    "Orbits file contains duplicate nodes {0} and {1} with same id {2})".format(
+                    "Orbits file contains duplicate nodes"
+                    " {0} and {1} with same id {2})".format(
                         firstNode, secondNode, node["id"]
                     )
                 )
@@ -72,9 +74,10 @@ class OrbitSim:
 
         self.shipIdGenerator = self.newShipId()
         self._ships = loadEntityFile(shipPath, "Ships", Ship)
-        ###TODO: Workaround to fix the fact ship gets the class id but should have a direct reference.
-        # Long term would be better to adapt loadEntityFile to handle this since this is a common pattern
-        # Perhaps pass an optional dict of tags to ref along with source dict (self._shipClasses in this case)
+        # TODO: Workaround to fix the fact ship gets the class id but should have a
+        # direct reference. Long term would be better to adapt loadEntityFile to
+        # handle this since this is a common pattern. Perhaps pass an optional dict
+        # of tags to ref along with source dict (self._shipClasses in this case)
         for ship in self._ships.values():
             ship.shipClass = self._shipClasses[ship.shipClass]
 
@@ -105,7 +108,8 @@ class OrbitSim:
 
         jsonFile.close()
 
-        # Vehicles aren't stored here, but we register them here so ids are globally unique.
+        # Vehicles aren't stored here, but we register them here so
+        # ids are globally unique.
         self.vehicleIdGenerator = self.newVehicleId()
         self._vehicleIds = set()
 
@@ -234,7 +238,7 @@ class OrbitSim:
 
         paths = self._findPath(sourceId, targetId, [])
 
-        # This seems to do the right thing if paths is empty, not sure this is pythonic though
+        # TODO: Check correct in all cases
         if not paths:
             raise ValueError("No valid path found between endpoints")
 
@@ -268,7 +272,8 @@ class OrbitSim:
             return
 
         location = self._particleLocation(id)
-        # If on a node, can cancel immediately. Otherwise should target next node and stop there.
+        # If on a node, can cancel immediately.
+        # Otherwise should target next node and stop there.
         if isinstance(location, OrbitNode):
             t = self.trajectoryForParticle(id)
             t.trajectory = [location.id]
@@ -286,11 +291,6 @@ class OrbitSim:
     def _pruneTrajectories(self):
         def isTerminal(t):
             return t.state == TrajectoryState.COMPLETE
-            # location = self._particleLocation(t.particleId)
-            # if (isinstance(location, OrbitNode)) and (location.id == t.trajectory[-1]):
-            #     return True
-            # else:
-            #     return False
 
         self._trajectories = {
             t: self._trajectories[t]
@@ -376,9 +376,10 @@ class OrbitSim:
                     assert False, "Invalid link id for this node!"
                 # Reject paths with redundant loops
                 checkedNodes = [path[2 * i] for i in range(int(len(path) / 2))]
-                # Note we use in rather than direct equivalence - not perfect but here I think it's OK because we literally are
-                # looking for the same id (so the same object, not just the same value). And the code to check properly would be
-                # ugly without actually covering any additional functionality.
+                # Note we use in rather than direct equivalence - not perfect but here I
+                # think it's OK because we literally are looking for the same id (so the
+                # same object, not just the same value). And the code to check properly
+                # would be ugly without actually covering any additional functionality.
                 if nextId not in checkedNodes:
                     paths = self._findPath(nextId, targetId, nextPath)
                     for p in paths:
@@ -424,9 +425,9 @@ class OrbitSim:
             if id in n.particles:
                 return n
 
-        for l in self._links.values():
-            if id in l.particles.keys():
-                return l
+        for link in self._links.values():
+            if id in link.particles.keys():
+                return link
 
         raise KeyError
 

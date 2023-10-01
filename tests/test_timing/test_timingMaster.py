@@ -2,8 +2,6 @@ import unittest
 
 from timingMaster import TimingMaster
 
-import time
-
 
 class TestTimingMaster(unittest.TestCase):
     def testTimingMaster(self):

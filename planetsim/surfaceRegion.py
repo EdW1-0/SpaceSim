@@ -13,7 +13,8 @@ class SurfaceRegion:
 
     def pointInRegion(self, point):
         path = SurfacePath(point, self.homePoint)
-        # If path from point to home point crosses border an even number of times, point is in region.
+        # If path from point to home point crosses border
+        # an even number of times, point is in region.
         inRegion = True
         for border in self.borders:
             if pathsIntersect(path, border):

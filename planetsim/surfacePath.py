@@ -2,17 +2,17 @@ from dataclasses import dataclass, field
 import math
 
 from planetsim.surfacePoint import (
-    SurfacePoint,
     magnitude,
     dot,
     cross,
     pointFromVector,
     normalise,
 )
+from planetsim.surfacePoint import SurfacePoint
 
 # Encodes an arc on a great circle path as a pair of points.
-# By convention is the shortest GC path between them, unless long is set in which case it is the
-# reverse (long) path that is taken.
+# By convention is the shortest GC path between them, unless long is set
+# in which case it is the reverse (long) path that is taken.
 # For antipodes the choice of path is ambiguous. In this case we follow a convention:
 # "Short" path is the path travelling east from p1.
 # If path is on a meridian, then "short" path is northwards.
@@ -36,7 +36,8 @@ class SurfacePath:
         v2 = self.p2.vector()
         c = cross(v1, v2)
         mag = magnitude(c)
-        # Special case of degenerate path - divideb by zero, so arbitrarily set this to a meridian.
+        # Special case of degenerate path - divide by zero, so arbitrarily
+        # set this to a meridian.
         if self.p1 == self.p2:
             gc = normalise((-v1[1], v1[0], 0.0))
         else:
@@ -83,11 +84,13 @@ class SurfacePath:
         else:
             return False
 
-    # Tests if a given great circle point falls within the arc described on the GC by this path.
-    # IMPORTANT: Does *NOT* test whether point falls on the great circle in the first place. It assumes it
-    # does, and given that, just checks whether it falls on the arc between these points or the arc
-    # outside it.
-    # Testing with a point not on the great circle will give unpredictable and probably wrong results!
+    # Tests if a given great circle point falls within the arc described
+    # on the GC by this path.
+    # IMPORTANT: Does *NOT* test whether point falls on the great circle in
+    # the first place. It assumes it does, and given that, just checks whether
+    # it falls on the arc between these points or the arc outside it.
+    # Testing with a point not on the great circle will give unpredictable and
+    # probably wrong results!
     def pointOnPath(self, point):
         if self.p1.longitude > self.p2.longitude:
             # path crosses dateline so test if p1.lo < long < 360 or 0 < long < p2.lo
@@ -119,7 +122,8 @@ class SurfacePath:
     # z = a ⋅ sin φ1 + b ⋅ sin φ2
     # φi = atan2(z, √x² + y²)
     # λi = atan2(y, x)
-    # where	f is fraction along great circle route (f=0 is point 1, f=1 is point 2), δ is the angular distance d/R between the two points.
+    # where	f is fraction along great circle route (f=0 is point 1, f=1 is point 2),
+    #       δ is the angular distance d/R between the two points.
     def intermediatePointTrig(self, fraction):
         d = self.gcAngle()
 
@@ -165,7 +169,8 @@ def pathsIntersect(path1, path2):
         pIntersect = [False, False]
         for index, path in enumerate((path1, path2)):
             if path.isMeridian():
-                # Meridianal paths don't describe a full 360 in longitude so need special handling
+                # Meridianal paths don't describe a full 360 in longitude
+                # so need special handling
                 if math.isclose(path.p1.longitude, path.p2.longitude):
                     # Path stays in a single meridian or else loops around both poles
                     if path.isDoublePolar():
@@ -181,7 +186,8 @@ def pathsIntersect(path1, path2):
                         ):
                             pIntersect[index] = True
                 else:
-                    # Path crosses a single pole, so figure out which hemisphere i is in and then test each pole
+                    # Path crosses a single pole, so figure out
+                    # which hemisphere i is in and then test each pole
                     for p in (path.p1, path.p2):
                         if math.isclose(i.longitude, p.longitude):
                             if path.isNorthPolar() and i.latitude > p.latitude:
@@ -189,14 +195,14 @@ def pathsIntersect(path1, path2):
                             elif path.isSouthPolar() and i.latitude < p.latitude:
                                 pIntersect[index] = True
             elif path.crossesDateline():
-                # path crosses dateline so test if p1.lo < long < 360 or 0 < long < p2.lo
+                # path crosses dateline, test if p1.lo < long < 360 or 0 < long < p2.lo
                 if not isIntermediate(
                     i.longitude, (path.p2.longitude, path.p1.longitude)
                 ):
                     pIntersect[index] = True
             elif isIntermediate(i.longitude, (path.p1.longitude, path.p2.longitude)):
-                # path is on a longitudinal great circle and doesn't cross the dateline, so a simple check
-                # longitude is intermediate
+                # path is on a longitudinal great circle and doesn't cross the dateline,
+                # so a simple check longitude is intermediate
                 pIntersect[index] = True
 
         intersect = pIntersect[0] and pIntersect[1]

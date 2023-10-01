@@ -66,7 +66,8 @@ class TestSurfacePathGeodetics(unittest.TestCase):
         meridianGc = SurfacePath(SurfacePoint(-90, 220), SurfacePoint(0, 220)).gc()
         degGc = SurfacePath(SurfacePoint(0, 220), SurfacePoint(0, 220)).gc()
         for i in range(3):
-            # We end up flipped 180, but because it's a great circle this is actually the same path.
+            # We end up flipped 180, but because it's a great circle
+            # this is actually the same path.
             # We don't care about the direction.
             self.assertAlmostEqual(meridianGc[i], -degGc[i])
 
@@ -250,9 +251,6 @@ class TestPathIntersections(unittest.TestCase):
         self.assertAlmostEqual(ints[0].longitude, 50.0)
         self.assertAlmostEqual(ints[1].latitude, 0.0)
         self.assertAlmostEqual(ints[1].longitude, 230.0)
-        # path1 = (SurfacePoint(51.5,0.1), SurfacePoint(40.7, 74.0)) # London - New York
-        # path2 = (SurfacePoint(46.8, 71.2), SurfacePoint(44.6, 63.5)) # Quebec - Halifax
-        # self.assertEqual(self.ps.gcIntersections(path1, path2)[1], SurfacePoint(45.2, 65.4).vector())
 
     def testPathsIntersectNoWrapNoSingularity(self):
         path1 = SurfacePath(SurfacePoint(50, 20), SurfacePoint(-50, 80))
@@ -369,14 +367,17 @@ class TestPathIntersections(unittest.TestCase):
         self.assertFalse(pathsIntersect(pathToAnchor, b2))
 
     # TODO
-    # This edge case is a bug in my current geodetics engine. It arises because we get some floating point error
-    # in my code to compute the intersections between great circles used to determine whether two paths cross each
-    # other or not. This is normally acceptable but shows up if a path happens to pass very close to the vertex
-    # between two consecutive borders. In this case, the intersections computed with their respective great circles
-    # should be identical since it is the same point, but in this implementation they aren't due to the above
-    # FP error. This means if we are unlucky, they will be shifted enough affect the hit test - meaning a path could
-    # test as crossing both borders or neither, either of which will give a wrong result when we want to use an odd
-    # number of crossings to denote the point being outside a polygon.
+    # This edge case is a bug in my current geodetics engine. It arises because
+    # we get some floating point error in my code to compute the intersections between
+    # great circles used to determine whether two paths cross each other or not. This
+    # is normally acceptable but shows up if a path happens to pass very close to the
+    # vertex between two consecutive borders. In this case, the intersections computed
+    # with their respective great circles should be identical since it is the same
+    # point, but in this implementation they aren't due to the above FP error. This
+    # means if we are unlucky, they will be shifted enough affect the hit test -
+    # meaning a path could test as crossing both borders or neither, either of which
+    # will give a wrong result when we want to use an odd number of crossings to denote
+    # the point being outside a polygon.
     @unittest.expectedFailure
     def testBackDiagonalCornerFPError(self):
         pathToAnchor = SurfacePath(SurfacePoint(-40, 300), SurfacePoint(40, 180))

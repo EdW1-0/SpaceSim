@@ -23,7 +23,8 @@ class GameModel:
             print("Already loaded")
             return
 
-        # TODO: Wrap these in a try/catch to do special exception handling rather than just the default file errors.
+        # TODO: Wrap these in a try/catch to do special exception handling
+        # rather than just the default file errors.
         self.techTree = TechTree(jsonRoot + "/Technologies.json")
         self.orbitSim = OrbitSim(
             jsonRoot + "/Orbits.json", jsonRoot + "/Particles.json"

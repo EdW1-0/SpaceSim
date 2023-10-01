@@ -18,7 +18,7 @@ from colonysim.building import (
 from colonysim.colony import Colony
 from colonysim.productionOrder import ProductionOrder
 
-from utility.fileLoad import loadEntityFile, extractEntityJson
+from utility.fileLoad import loadEntityFile
 from utility.dictLookup import getIntId, getStringId
 
 
@@ -125,7 +125,8 @@ class ColonySim:
                         )
                         self._colonies[id] = colony
 
-    ###TODO: This has been copy/pasted a few times now, should really go in its own utility library with a few other commonly used patterns
+    # TODO: This has been copy/pasted a few times now, should really go in its own
+    # utility library with a few other commonly used patterns
     def newColonyId(self):
         nodeIdCounter = 0
         while True:

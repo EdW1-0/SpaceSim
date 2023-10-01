@@ -1,4 +1,3 @@
-import os
 import json
 from dataclasses import dataclass
 from enum import Enum
@@ -19,8 +18,8 @@ class TechEffect:
     value: int
 
 
-# TODO: Make a singleton. I think we just make a class variable to store it and add to it
-# if needed. Maybe reinitialise if jsonPath changes.
+# TODO: Make a singleton. I think we just make a class variable to store it
+# and add to it if needed. Maybe reinitialise if jsonPath changes.
 class TechTree:
     def __init__(self, jsonPath="json/Technologies.json"):
         jsonFile = open(jsonPath, "r")
@@ -39,7 +38,8 @@ class TechTree:
             for ancestor in self.nodeById(node).ancestors:
                 assert ancestor in self.nodes
 
-        # Not optimal - we recheck many nodes by setting up checked afresh on every node. Probably a faster way to do this, but
+        # Not optimal - we recheck many nodes by setting up checked afresh on every node
+        # Probably a faster way to do this, but
         # we only need to do this check once, at load time, so may be tolerable.
         def cycleCheck(node, checked):
             assert node.id not in checked

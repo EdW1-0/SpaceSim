@@ -78,9 +78,11 @@ class Colony:
                 productionIdCounter += 1
             yield productionIdCounter
 
-    # Question over whether this should be given a buildingClass reference directly, or just an id and look it up from colonySim.
-    # I think this should be OK even though we will proliferate refs to buildingClass instances - these should all be singleton objects
-    # with lifespan equal to the life of the game instance anyway, and this saves an extra lookup through colonysim.
+    # Question over whether this should be given a buildingClass reference directly,
+    # or just an id and look it up from colonySim. I think this should be OK even
+    # though we will proliferate refs to buildingClass instances - these should all
+    # be singleton objects with lifespan equal to the life of the game instance anyway,
+    # and this saves an extra lookup through colonysim.
     def addBuilding(self, buildingClass, colonySim=None):
         id = next(self.buildingIdGenerator)
         if isinstance(buildingClass, ProductionBuildingClass):
@@ -144,7 +146,8 @@ class Colony:
     def cancelProductionOrder(self, id):
         del self.productionOrders[id]
 
-    # Try to get the full amount requested by removing it from each of our stores, but if can't fully satisfy, send all that we do have.
+    # Try to get the full amount requested by removing it from each of our stores,
+    # but if can't fully satisfy, send all that we do have.
     def getResources(self, resource, quantity):
         requisitioned = 0
         for b in self.buildings.values():
@@ -269,7 +272,8 @@ class Colony:
             inputs = po.reaction.inputs.copy()
             workingDict = {}
             for i in inputs:
-                # May not be the full amount, depending on what we have in stores. That's OK, work with what we have. mrd
+                # May not be the full amount, depending on what we have in stores.
+                # That's OK, work with what we have.
                 workingDict[i] = self.getResources(i, inputs[i] * po.amount)
 
             for pb in self.productionBuildings():
@@ -285,15 +289,18 @@ class Colony:
                 if po.remaining <= 0:
                     break
 
+            wastage = 0
             for r in workingDict:
-                # Not all products can necessarily be stored so record how much is wasted.
-                wastage = self.storeResources(r, workingDict[r])
+                # Not all products can necessarily be stored
+                # so record how much is wasted.
+                wastage += self.storeResources(r, workingDict[r])
 
     def tickExtraction(self):
+        wastage = 0
         for building in self.extractionBuildings():
             if building.status == BuildingStatus.ACTIVE:
                 production = building.extract()
-                wastage = self.storeResources(building.material(), production)
+                wastage += self.storeResources(building.material(), production)
 
     def tickConstruction(self):
         for building in self.buildings.values():

@@ -1,6 +1,5 @@
 import unittest
 
-from colonysim.building import Building, BuildingStatus, BuildingStatusError
 from colonysim.buildingClass import ProductionBuildingClass
 
 

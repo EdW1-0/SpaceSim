@@ -8,7 +8,6 @@ from planetsim.surfaceObject import SurfaceObject
 from planetsim.surfaceVehicle import SurfaceVehicle
 from planetsim.surfaceBase import SurfaceBase
 from planetsim.vehicle import Vehicle
-from colonysim.ship import Ship
 
 from utility.fileLoad import loadEntityFile
 from utility.dictLookup import getIntId
@@ -64,7 +63,7 @@ class PlanetSurface:
             self.vehicles = loadEntityFile(vehiclePath, self.id, Vehicle)
         else:
             self.vehicles = {}
-        ###TODO: See same thing in orbitSim for ship classes
+        # TODO: See same thing in orbitSim for ship classes
         for vehicle in self.vehicles.values():
             vehicle.vehicleClass = self.vehicleClasses[vehicle.vehicleClass]
             if vehicleRegisterCallback:
@@ -133,8 +132,9 @@ class PlanetSurface:
         object = self.objectForContent(ship)
         self.destroyObject(object.id)
 
-    # Only used during initialisation. Gives SurfaceBase objects a direct link to their colony object.
-    # Probably could be avoided by just storing the id and letting clients look up the colony themself.
+    # Only used during initialisation. Gives SurfaceBase objects a direct link
+    # to their colony object. Probably could be avoided by just storing the id
+    # and letting clients look up the colony themself.
     def connectColony(self, colony):
         for point in self.points.values():
             if isinstance(point, SurfaceBase) and point.colonyId == colony.id:
@@ -240,7 +240,8 @@ class PlanetSurface:
         # Work out the total distance remaining.
         # If travel > remaining, point reaches destination
         # Otherwise, work out angle subtended by distance.
-        # Work out point reached on path by moving this angle from start. (see resource on intermediate point)
+        # Work out point reached on path by moving this angle from start.
+        #   (see resource on intermediate point)
         # Set point to this position.
 
     def objectsAtPoint(self, point):

@@ -1,4 +1,3 @@
-import techtree.techTree as techTree
 from techtree.techNode import TechEffectClass
 
 
@@ -34,7 +33,7 @@ class PlayerTech:
                 case TechEffectClass.VEHICLE:
                     self.allowedVehicles.append(effect.value)
                 case _:
-                    assert (False, f"Invalid effect class, {effect.effect}")
+                    assert False, f"Invalid effect class, {effect.effect}"
 
     def addResearch(self, increment):
         self.progress += increment

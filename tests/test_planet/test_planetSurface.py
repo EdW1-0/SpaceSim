@@ -8,8 +8,6 @@ from planetsim.surfacePath import SurfacePath
 from planetsim.surfacePoint import SurfacePoint, almostEqual
 from planetsim.vehicle import Vehicle
 from planetsim.vehicleClass import VehicleClass
-from planetsim.surfaceVehicle import SurfaceVehicle
-from planetsim.planetSim import PlanetSim
 
 
 class TestPlanetSurface(unittest.TestCase):

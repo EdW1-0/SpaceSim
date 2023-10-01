@@ -4,13 +4,11 @@ from views.surfaceContext import (
     SurfaceDestinationSprite,
     SELECTED_REGION_COLOUR,
 )
-from views.guiContext import GUIContext
 
 import unittest
-from tests.test_views.test_guiContext import ScreenMock, ModelMock
+from tests.test_views.test_guiContext import ModelMock
 
 from planetsim.surfacePoint import SurfacePoint
-from planetsim.planetSim import PlanetSim
 
 from gameModel import GameModel
 
@@ -29,10 +27,6 @@ class PlanetMock:
         self.surface = SurfaceMock()
         self.name = "Test Planet"
         self.gravity = 14
-
-
-class ModelMock:
-    pass
 
 
 class TestSurfaceObjectSprite(unittest.TestCase):
@@ -79,7 +73,7 @@ class TestSurfaceContext(unittest.TestCase):
         self.mm.timingMaster = tm
         pygame.init()
         self.manager = pygame_gui.UIManager((1200, 800))
-        screen = pygame.display.set_mode((1200, 800))
+        pygame.display.set_mode((1200, 800))
         self.model = GameModel()
         self.model.load()
 
@@ -114,7 +108,7 @@ class TestSurfaceContextGraphics(unittest.TestCase):
     def setUp(self):
         pygame.init()
         self.manager = pygame_gui.UIManager((1200, 800))
-        screen = pygame.display.set_mode((1200, 800))
+        pygame.display.set_mode((1200, 800))
         self.model = GameModel()
         self.model.load()
 

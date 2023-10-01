@@ -3,7 +3,7 @@ import unittest
 import json
 
 from orbitsim.orbitSim import OrbitSim
-from orbitsim.particle import DeltaVError, Particle
+from orbitsim.particle import Particle
 from orbitsim.orbitTrajectory import OrbitTrajectory, TrajectoryState
 from gameModel import GameModel
 from planetsim.surfacePoint import SurfacePoint
@@ -147,10 +147,10 @@ class TestOrbitSimProperties(unittest.TestCase):
         self.assertEqual(l1.distance, 200000)
 
     def testOrbitSimLinkAll(self):
-        for l in self.os._links.values():
-            self.assertGreater(l.deltaV, 0)
-            self.assertGreater(l.travelTime, 0)
-            self.assertGreater(l.travelTime, 0)
+        for link in self.os._links.values():
+            self.assertGreater(link.deltaV, 0)
+            self.assertGreater(link.travelTime, 0)
+            self.assertGreater(link.travelTime, 0)
 
 
 class TestOrbitSimParticleCreation(unittest.TestCase):
@@ -641,7 +641,7 @@ class TestOrbitSimTrajectory(unittest.TestCase):
     def testOrbitSimCancelNonexistant(self):
         try:
             self.os.cancelTrajectory(0)
-        except:
+        except Exception:
             self.fail(
                 "Unexpected exception thrown on cancelling nonexistant trajectory"
             )

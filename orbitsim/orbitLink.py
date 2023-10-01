@@ -1,6 +1,3 @@
-from orbitsim.orbitNode import OrbitNode
-
-
 class OrbitLink:
     def __init__(self, id, topNode, bottomNode, deltaV=0, travelTime=0, distance=0):
         self.particles = {}

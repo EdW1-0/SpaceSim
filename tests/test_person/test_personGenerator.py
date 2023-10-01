@@ -33,12 +33,14 @@ class TestPersonGeneratorStatistics(unittest.TestCase):
         male = 0
         female = 0
         for p in self.people.values():
-            if p.sex is "M":
+            if p.sex == "M":
                 male += 1
-            elif p.sex is "F":
+            elif p.sex == "F":
                 female += 1
 
-        # OK, so there is a statistical chance of a false positive here. Chance of 50 consecutive M or F is 2* 1/2**N for N gives ~10-16. I'll take it.
+        # OK, so there is a statistical chance of a false positive here.
+        # Chance of 50 consecutive M or F is 2* 1/2**N for N gives ~10-16.
+        # I'll take it.
         self.assertTrue(male)
         self.assertTrue(female)
         self.assertEqual(male + female, 50)

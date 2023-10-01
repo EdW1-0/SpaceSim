@@ -1,7 +1,6 @@
 import unittest
 
 from orbitsim.orbitLink import OrbitLink
-from orbitsim.particle import Particle
 
 
 class NodeMock:

@@ -2,13 +2,6 @@ import unittest
 import pygame
 
 from pygame.locals import (
-    RLEACCEL,
-    K_UP,
-    K_DOWN,
-    K_LEFT,
-    K_RIGHT,
-    K_ESCAPE,
-    KEYDOWN,
     MOUSEBUTTONUP,
     QUIT,
 )
@@ -20,11 +13,10 @@ from pygame_gui import UI_BUTTON_PRESSED, UI_SELECTION_LIST_NEW_SELECTION
 import spacesim
 
 from views.menuContext import MenuContext
-from views.orbitContext import OrbitContext, OrbitNodeView, OrbitLinkView, OCMode
+from views.orbitContext import OrbitContext, OrbitNodeView, OCMode
 from views.surfaceContext import SurfaceContext, SCMode, SurfaceObjectSprite
 from views.colonyContext import ColonyContext
 from planetsim.surfaceBase import SurfaceBase
-from planetsim.surfaceObject import SurfaceObject
 from colonysim.ship import Ship
 
 

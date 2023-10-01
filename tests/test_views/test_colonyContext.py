@@ -27,7 +27,7 @@ class TestColonyContext(unittest.TestCase):
     def setUp(self):
         pygame.init()
         self.manager = pygame_gui.UIManager((1200, 800))
-        screen = pygame.display.set_mode((1200, 800))
+        pygame.display.set_mode((1200, 800))
         self.mm = ModelMock()
         self.mm.timingMaster = ModelMock()
 

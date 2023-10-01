@@ -14,7 +14,8 @@ class Person:
         self.task = task
 
     def tick(self, increment):
-        # Some tasks are placeholders and will never be complete. Later should make this more sophisticated to
+        # Some tasks are placeholders and will never be complete.
+        # Later should make this more sophisticated to
         # Handle other cases.
         if self.task.category == TaskCategory.IDLE:
             return
