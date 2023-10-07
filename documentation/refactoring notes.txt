@@ -1,0 +1,77 @@
+
+QOL
+
+Big goals:
+-support serialisation
+-Cleaner abstractions
+-Clean up heavy nesting
+
+-ci - get GitHub runners up to run tests, do coverage/
+-Black & flake8/
+-More tests?
+-Targetted tests for below refactorings
+-move all xbyid type functions into a single class
+-Clean surface objects so content and payload same thing
+-Make consistent lifecycle structure for transient objects (create, serialise, deserialise, kill)
+-Make common modality system for contexts and make sure all event code respects it
+-Clean up and regularise surface coord code - remove duplication, consistent CS
+-Apply load/save functions consistently and extend to cover all use cases (and add tests)
+
+Enforce object hierarchy:
+Prerequisite for reliable load save
+
+Permanent model objects:
+Singletons, lifecycle is load/save cycle
+Ok to share refs promiscuously
+Never serialised, structure is same every time (tho contents vary)
+Contains interface to serialise contents
+Preferably fully unit tested
+Eg colonysim, orbitsim
+
+Dynamic model objects
+Intended to be created/destroyed at runtime
+Intended to be reliably serialised & deserialised
+Often pod classes
+Some will be essentially immutable (eg planets, research nodes) but treat them the same
+Always have an Id
+This is unique for that class
+This is either a human readable string (for hand- made game data, eg planets) or a sequential integer (dynamically generated objects)
+Other model classes never have direct ref, only id
+Thus serialisation easy because no need to fix up refs
+Always owned by parent model object (eg sim. What about colony? Planet?)
+Always access other objects from owner using id
+Thus no need for fiddly deserialisation code
+Probably unit tested (should be simple)
+Eg ship, orbit node, building
+Care needed over lifecycle - eg particle with ship payload. Need to account for id no longer existing or else prevent this.
+
+view objects
+Intended to be transient
+Never hold information to serialised
+Access information in model
+Can have fairly extensive access into model
+Can cache refs to model objects (but guard against non persistence - handle case where model object has disappeared)
+Rely on Pygame wherever possible rather than rolling own code
+Typically hierarchy - context, then views or panels
+Not cached outside own children - set up and tear down as needed (may violate this for expensive objects)
+Selectively unit tested - target tricky logic and generic code (eg abstract base classes)
+May use system testing for complex workflows
+Eg colonycontext, orbit node view, vehicle target panel
+
+
+
+Specific notes:
+
+spacesim.py:
+Huge stack of outerEvent handlers - this is messy and is much to low a level of abstraction for spacesim to be dealing with.
+  - we run GuiContext and get a return code, then do a huge if/else lookup to decide what to do next. 
+  - Fundamentally we are here because we closed the previous context and need to decide which one to open next. 
+  - We use mix of GUICode return code and type of returning class to decide what to do. 
+  - And we need to do a lot of marshalling parameters for the next context from upperContext dict - this should probably be a 
+  dedicated object.
+
+
+gameModel.py:
+- Try/catch on loads
+- Refactor landcallback stuff
+- 
