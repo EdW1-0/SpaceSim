@@ -69,9 +69,15 @@ Huge stack of outerEvent handlers - this is messy and is much to low a level of 
   - We use mix of GUICode return code and type of returning class to decide what to do. 
   - And we need to do a lot of marshalling parameters for the next context from upperContext dict - this should probably be a 
   dedicated object.
+- Could replace all the dicts flying about with dedicated object - all param copying code goes away.
+- Could use object to signal state for next context - most branches go away. 
+
 
 
 gameModel.py:
 - Try/catch on loads
 - Refactor landcallback stuff
 - 
+
+guiContext.py:
+- too many gui codes

@@ -24,15 +24,12 @@ SCREEN_HEIGHT = 800
 
 
 def main(testingCallback=None):
-    pygame.init()
-
-    manager = pygame_gui.UIManager((1200, 800))
-
-    guiContext = None
     gameModel = GameModel()
 
+    pygame.init()
+    manager = pygame_gui.UIManager((1200, 800))
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-
+    
     guiContext = MenuContext(screen, gameModel, manager)
 
     clock = pygame.time.Clock()
