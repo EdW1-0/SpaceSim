@@ -21,15 +21,6 @@
             "args": ["discover", "-s", "./tests"]
         },
         {
-            "name": "Run system tests",
-            "type": "python",
-            "request": "launch",
-            "module": "unittest",
-            "console": "integratedTerminal",
-            "justMyCode": false,
-            "args": ["discover", "-s", "./systemTests"]
-        }
-        {
             "name": "Generate coverage",
             "type": "bashdb",
             "request": "launch",
