@@ -28,9 +28,11 @@ from pygame.locals import (
     QUIT,
 )
 
+from views.routingModeInfo import RoutingModeInfo
+
 
 class ColonyContext(GUIContext):
-    def __init__(self, screen, model, manager, colony, launchContext=None):
+    def __init__(self, screen, model, manager, colony, info=None):
         super().__init__(screen, model, manager)
         self.colony = colony
 
@@ -150,8 +152,9 @@ class ColonyContext(GUIContext):
         self.active_panel = None
         self.detail_panel = None
 
-        if launchContext:
-            self.ship_detail_panel.setShip(launchContext["ship"])
+        self.info = info
+        if self.info:
+            self.ship_detail_panel.setShip(self.info.ship)
             self.ship_detail_panel.update()
             self.detail_panel = self.ship_detail_panel
             self.detail_panel.show()
@@ -239,10 +242,9 @@ class ColonyContext(GUIContext):
                         self.active_panel.update()
                     elif self.detail_panel == self.ship_detail_panel:
                         if event.ui_element == self.ship_detail_panel.target_button:
-                            self.upperContext = {
-                                "ship": self.ship_detail_panel.ship,
-                                "colony": self.colony.id,
-                            }
+                            self.info = RoutingModeInfo()
+                            self.info.ship = self.ship_detail_panel.ship
+                            self.info.start = self.colony
                             returnCode = GUICode.LOADORBITVIEW_LAUNCH_PLAN
                             break
                         elif event.ui_element == self.ship_detail_panel.launch_button:

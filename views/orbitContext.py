@@ -25,6 +25,8 @@ from orbitsim.orbitTrajectory import TrajectoryState
 
 from views.surfaceContext import SCMode
 
+from views.routingModeInfo import RoutingModeInfo
+
 
 from pygame.locals import (
     K_UP,
@@ -56,8 +58,8 @@ class OrbitContext(GUIContext):
         model,
         manager,
         boundsRect=pygame.Rect(-100, -100, 1400, 2000),
-        mode=OCMode.Standard,
-        landingContext=None,
+        mode = OCMode.Standard,
+        info=None,
     ):
         super(OrbitContext, self).__init__(screen, model, manager)
         self.all_sprites = pygame.sprite.Group()
@@ -113,19 +115,22 @@ class OrbitContext(GUIContext):
             timing_rect, manager=manager, timingMaster=self.model.timingMaster
         )
 
-        self.target_mode = mode
-
-        self.landingContext = landingContext
+        if info:
+            self.target_mode = info.mode
+            self.info = info
+        else:
+            self.target_mode = OCMode.Standard
+            self.info = None
 
         if self.target_mode == OCMode.Target:
-            self.ship_summary.set_ship(landingContext["ship"])
+            self.ship_summary.set_ship(self.info.ship)
             self.ship_summary.show()
             self.active_summary = self.ship_summary
-            self.target_panel.set_ship(landingContext["ship"])
+            self.target_panel.set_ship(self.info.ship)
             self.target_panel.set_source(self.ship_summary.ship_location())
-            self.target_panel.set_target(landingContext["target"])
-            if "surfaceCoordinates" in landingContext:
-                self.target_panel.set_coordinates(landingContext["surfaceCoordinates"])
+            self.target_panel.set_target(self.info.end)
+            if self.info.surfaceCoordinates:
+                self.target_panel.set_coordinates(self.info.surfaceCoordinates)
             self.target_panel.show()
         elif self.target_mode == OCMode.LaunchPlan:
             # Get source - this will be colony or planet ship is on.
@@ -133,20 +138,18 @@ class OrbitContext(GUIContext):
             # Can get this from colony locale - surface.
             # Go through planetsim to look up relevant planet
             # Then go through orbitsim to look up relevant node.
-            if "colony" in landingContext:
-                colony = model.colonySim.colonyById(landingContext["colony"])
+            if isinstance(self.info.start, Colony):
+                colony = self.info.start
 
                 locale = colony.locale
                 planet = None
                 for p in model.planetSim.planets.values():
                     if p.surface == locale:
                         planet = p
-            elif "sourcePlanet" in landingContext:
-                planet = model.planetSim.planetById(landingContext["sourcePlanet"])
-            elif "planet" in landingContext:
-                planet = model.planetSim.planetById(landingContext["planet"])
+            elif isinstance(self.info.start, Planet):
+                planet = self.info.start
             else:
-                print("Insufficient information to find planet:", landingContext)
+                print("Insufficient information to find planet:", self.info)
                 assert False
 
             node = None
@@ -155,15 +158,15 @@ class OrbitContext(GUIContext):
                     node = n
 
             self.target_panel.set_source(node)
-            self.target_panel.set_ship(landingContext["ship"])
+            self.target_panel.set_ship(self.info.ship)
             # TODO: This is a hack. Trajectory should really be managed by
             # particle and looked up by view, not created.
-            if "trajectory" in landingContext:
-                self.target_panel.trajectory = landingContext["trajectory"]
-            if "target" in landingContext:
-                self.target_panel.set_target(landingContext["target"])
-            if "surfaceCoordinates" in landingContext:
-                self.target_panel.set_coordinates(landingContext["surfaceCoordinates"])
+            if self.info.trajectory:
+                self.target_panel.trajectory = self.info.trajectory
+            if self.info.end:
+                self.target_panel.set_target(self.info.end)
+            if self.info.surfaceCoordinates:
+                self.target_panel.set_coordinates(self.info.surfaceCoordinates)
             self.target_panel.update()
             self.target_panel.show()
 
@@ -485,41 +488,16 @@ class OrbitContext(GUIContext):
                             self.target_panel.trajectory.state = TrajectoryState.PENDING
                             self.target_panel.clear_state()
                         elif self.target_mode == OCMode.LaunchPlan:
-                            if "colony" in self.landingContext:
-                                self.upperContext = {
-                                    "colony": self.landingContext["colony"],
-                                    "ship": self.landingContext["ship"],
-                                    "trajectory": self.target_panel.trajectory,
-                                }
+                            if isinstance(self.info.start, Colony):
+                                self.info.trajectory = self.target_mode.trajectory
                                 returnCode = GUICode.LOADCOLONYVIEW_LAUNCH_RETURN
-                            elif "planet" in self.landingContext:
-                                self.upperContext = {
-                                    "planet": self.landingContext["planet"],
-                                    "ship": self.landingContext["ship"],
-                                    "trajectory": self.target_panel.trajectory,
-                                    "mode": SCMode.Target,
-                                }
-                                if "targetPlanet" in self.landingContext:
-                                    self.upperContext[
-                                        "targetPlanet"
-                                    ] = self.landingContext["targetPlanet"]
+                            elif isinstance(self.info.start, Planet):
                                 returnCode = GUICode.LOADSURFACEVIEW_LAUNCH_RETURN
                             break
                     elif self.target_panel.upperAction == 2:
-                        self.upperContext = {
-                            "targetPlanet": self.target_panel.target.planet,
-                            "mode": SCMode.Landing,
-                            "ship": self.target_panel.ship,
-                            "node": self.target_panel.target,
-                        }
-                        if self.landingContext and "colony" in self.landingContext:
-                            self.upperContext["colony"] = self.landingContext["colony"]
-                        elif self.landingContext and "planet" in self.landingContext:
-                            self.upperContext["planet"] = self.landingContext["planet"]
+                        self.info.end = self.target_panel.target.planet
                         if self.target_panel.trajectory:
-                            self.upperContext[
-                                "trajectory"
-                            ] = self.target_panel.trajectory
+                            self.info.trajectory = self.target_panel.trajectory
                         returnCode = GUICode.LOADSURFACEVIEW_LANDING_PLAN
                         break
                 else:

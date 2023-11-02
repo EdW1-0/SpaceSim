@@ -14,10 +14,14 @@ from planetsim.surfaceRegion import SurfaceRegion
 from planetsim.surfacePath import SurfacePath
 from planetsim.surfaceVehicle import SurfaceVehicle
 from planetsim.surfaceBase import SurfaceBase
+from planetsim.planet import Planet
 
 from orbitsim.orbitTrajectory import TrajectoryState
 
 from colonysim.ship import Ship
+from colonysim.colony import Colony
+
+from views.routingModeInfo import RoutingModeInfo
 
 import pygame
 import math
@@ -121,15 +125,18 @@ class SurfaceContext(GUIContext):
         planet,
         meridian=(0, 0),
         radius=300.0,
-        mode=SCMode.Standard,
-        landingContext=None,
+        info: RoutingModeInfo = None
     ):
         super(SurfaceContext, self).__init__(screen, model, manager)
-        self.planet = planet
+        self.planet = model.planetSim.planetById(planet)
         self.meridian = meridian
         self.radius = radius
-        self.targetMode = mode
-        self.landingContext = landingContext
+        if info:
+            self.targetMode = info.mode
+            self.info = info
+        else:
+            self.targetMode = SCMode.Standard
+            self.info = None
 
         self.polyCount = 0
         self.surf = pygame.Surface((1200, 800))
@@ -180,12 +187,12 @@ class SurfaceContext(GUIContext):
         self.planet_panel = PlanetStatusPanel(
             summary_rect, manager=manager, model=model
         )
-        self.planet_panel.set_planet(planet)
+        self.planet_panel.set_planet(self.planet)
         self.planet_panel.surface_button.hide()
         self.planet_panel.update()
 
         self.region_panel = RegionStatusPanel(
-            summary_rect, manager=manager, model=model, planet=planet
+            summary_rect, manager=manager, model=model, planet=self.planet
         )
         self.region_panel.hide()
 
@@ -207,7 +214,7 @@ class SurfaceContext(GUIContext):
         )
         self.ship_panel.target_button.hide()
         if self.targetMode == SCMode.Target:
-            self.ship_panel.setShip(landingContext["ship"])
+            self.ship_panel.setShip(self.info.ship)
             self.ship_panel.update()
             self.ship_panel.show()
         else:
@@ -638,20 +645,20 @@ class SurfaceContext(GUIContext):
                                 elif isinstance(
                                     self.vehicle_panel.vehicle.content, Ship
                                 ):
-                                    self.upperContext = {
-                                        "ship": self.vehicle_panel.vehicle.content,
-                                        "planet": self.planet.id,
-                                    }
-                                    returnCode = GUICode.LOADORBITVIEW_LAUNCH_PLAN
+                                    routingModeInfo = RoutingModeInfo()
+                                    routingModeInfo.ship = self.vehicle_panel.vehicle.content
+                                    routingModeInfo.start = self.planet
+                                    self.routingModeInfo = routingModeInfo
+                                    returnCode = GUICode.LOADORBITVIEW
                                     break
                             elif self.targetMode == SCMode.Target:
                                 pass
                             elif self.targetMode == SCMode.Landing:
-                                self.upperContext = {
-                                    "ship": self.vehicle_panel.vehicle.content,
-                                    "planet": self.planet.id,
-                                }
-                                returnCode = GUICode.LOADORBITVIEW_LAUNCH_PLAN
+                                routingModeInfo = RoutingModeInfo()
+                                routingModeInfo.ship = self.vehicle_panel.vehicle.content
+                                routingModeInfo.end = self.planet
+                                self.routingModeInfo = routingModeInfo
+                                returnCode = GUICode.LOADORBITVIEW
                                 break
                         elif event.ui_element == self.vehicle_panel.stopButton:
                             self.vehicle_panel.vehicle.setDestination(None)
@@ -678,14 +685,10 @@ class SurfaceContext(GUIContext):
                                 self.target_panel.target
                             )
                         elif self.targetMode == SCMode.Landing:
-                            self.landingContext[
-                                "surfaceCoordinates"
-                            ] = self.target_panel.target
-                            self.upperContext = self.landingContext
-                            if (
-                                "colony" in self.upperContext
-                                or "planet" in self.upperContext
-                            ):
+                            self.info.surfaceCoordinates = self.target_panel.target
+                            if (isinstance(self.info.start, Planet)):
+                                returnCode = GUICode.LOADORBITVIEW_LAUNCH_LAND_RETURN
+                            elif (isinstance(self.info.start, Colony)):
                                 returnCode = GUICode.LOADORBITVIEW_LAUNCH_LAND_RETURN
                             else:
                                 returnCode = GUICode.LOADORBITVIEW_TARGET_RETURN
