@@ -107,7 +107,7 @@ def main(testingCallback=None):
 
             elif outerEvent == GUICode.LOADSURFACEVIEW_LANDING_PLAN:
                 # Drop down to set target for landing
-                planet = guiContext.info.planet
+                planet = guiContext.info.end.planet
                 guiContext = SurfaceContext(
                     screen,
                     gameModel,

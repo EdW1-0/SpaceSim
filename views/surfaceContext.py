@@ -125,18 +125,15 @@ class SurfaceContext(GUIContext):
         planet,
         meridian=(0, 0),
         radius=300.0,
+        mode=SCMode.Standard,
         info: RoutingModeInfo = None
     ):
         super(SurfaceContext, self).__init__(screen, model, manager)
         self.planet = model.planetSim.planetById(planet)
         self.meridian = meridian
         self.radius = radius
-        if info:
-            self.targetMode = info.mode
-            self.info = info
-        else:
-            self.targetMode = SCMode.Standard
-            self.info = None
+        self.targetMode = mode
+        self.info = info
 
         self.polyCount = 0
         self.surf = pygame.Surface((1200, 800))

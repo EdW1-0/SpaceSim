@@ -115,12 +115,8 @@ class OrbitContext(GUIContext):
             timing_rect, manager=manager, timingMaster=self.model.timingMaster
         )
 
-        if info:
-            self.target_mode = info.mode
-            self.info = info
-        else:
-            self.target_mode = OCMode.Standard
-            self.info = None
+        self.target_mode = mode
+        self.info = info
 
         if self.target_mode == OCMode.Target:
             self.ship_summary.set_ship(self.info.ship)
@@ -495,7 +491,11 @@ class OrbitContext(GUIContext):
                                 returnCode = GUICode.LOADSURFACEVIEW_LAUNCH_RETURN
                             break
                     elif self.target_panel.upperAction == 2:
-                        self.info.end = self.target_panel.target.planet
+                        if not self.info:
+                            self.info = RoutingModeInfo()
+                            self.info.start = self.target_panel.source
+                            self.info.ship = self.target_panel.ship
+                        self.info.end = self.target_panel.target
                         if self.target_panel.trajectory:
                             self.info.trajectory = self.target_panel.trajectory
                         returnCode = GUICode.LOADSURFACEVIEW_LANDING_PLAN
