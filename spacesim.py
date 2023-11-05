@@ -116,6 +116,16 @@ def main(testingCallback=None):
                     mode=SCMode.Landing,
                     info = guiContext.info
                 )
+            elif outerEvent == GUICode.LOADSURFACEVIEW_LAUNCH_RETURN:
+                planet = guiContext.info.start.id
+                guiContext = SurfaceContext(
+                    screen,
+                    gameModel,
+                    manager,
+                    planet,
+                    mode=SCMode.Target,
+                    info = guiContext.info
+                )
 
             elif outerEvent == GUICode.LOADCOLONYVIEW:
                 if "colony" not in guiContext.upperContext:

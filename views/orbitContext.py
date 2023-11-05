@@ -22,10 +22,14 @@ from orbitsim.orbitNode import LeafClass, OrbitNode
 from orbitsim.orbitLink import OrbitLink
 from orbitsim.orbitTrajectory import TrajectoryState
 
+from planetsim.planet import Planet
+from colonysim.colony import Colony
 
 from views.surfaceContext import SCMode
 
 from views.routingModeInfo import RoutingModeInfo
+
+
 
 
 from pygame.locals import (
@@ -488,6 +492,8 @@ class OrbitContext(GUIContext):
                                 self.info.trajectory = self.target_mode.trajectory
                                 returnCode = GUICode.LOADCOLONYVIEW_LAUNCH_RETURN
                             elif isinstance(self.info.start, Planet):
+                                self.info.trajectory = self.target_panel.trajectory
+                                self.info.end = self.target_panel.target
                                 returnCode = GUICode.LOADSURFACEVIEW_LAUNCH_RETURN
                             break
                     elif self.target_panel.upperAction == 2:

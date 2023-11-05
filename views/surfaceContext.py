@@ -645,8 +645,8 @@ class SurfaceContext(GUIContext):
                                     routingModeInfo = RoutingModeInfo()
                                     routingModeInfo.ship = self.vehicle_panel.vehicle.content
                                     routingModeInfo.start = self.planet
-                                    self.routingModeInfo = routingModeInfo
-                                    returnCode = GUICode.LOADORBITVIEW
+                                    self.info = routingModeInfo
+                                    returnCode = GUICode.LOADORBITVIEW_LAUNCH_PLAN
                                     break
                             elif self.targetMode == SCMode.Target:
                                 pass
@@ -654,7 +654,7 @@ class SurfaceContext(GUIContext):
                                 routingModeInfo = RoutingModeInfo()
                                 routingModeInfo.ship = self.vehicle_panel.vehicle.content
                                 routingModeInfo.end = self.planet
-                                self.routingModeInfo = routingModeInfo
+                                self.info = routingModeInfo
                                 returnCode = GUICode.LOADORBITVIEW
                                 break
                         elif event.ui_element == self.vehicle_panel.stopButton:
