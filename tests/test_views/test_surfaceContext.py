@@ -84,13 +84,13 @@ class TestSurfaceContext(unittest.TestCase):
                 None,
                 self.model,
                 self.manager,
-                self.model.planetSim.planetById("MERCURY"),
+                "MERCURY",
             )
         )
 
     def testSurfaceContextCoordinateConversion(self):
         sc = SurfaceContext(
-            None, self.model, self.manager, self.model.planetSim.planetById("MERCURY")
+            None, self.model, self.manager, "MERCURY"
         )
         self.assertEqual((500, 400), sc.latLongToXY(sc.xyToLatLong((500, 400))))
         p1 = (400, 300)
@@ -114,7 +114,7 @@ class TestSurfaceContextGraphics(unittest.TestCase):
 
     def testSurfaceContextComputeRegionColour(self):
         sc = SurfaceContext(
-            None, self.model, self.manager, self.model.planetSim.planetById("MERCURY")
+            None, self.model, self.manager, self.model.planetSim.planetById("MERCURY").id
         )
         r = self.model.planetSim.planetById("MERCURY").surface.regionById(1)
         sc.computeRegionColour(r)
@@ -126,7 +126,7 @@ class TestSurfaceContextGraphics(unittest.TestCase):
 
     def testSurfaceContextExtractPolygons(self):
         sc = SurfaceContext(
-            None, self.model, self.manager, self.model.planetSim.planetById("MERCURY")
+            None, self.model, self.manager, self.model.planetSim.planetById("MERCURY").id
         )
         pc = sc.polyCount
         sc.extractPolygons()
