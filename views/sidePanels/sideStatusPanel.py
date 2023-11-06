@@ -373,7 +373,7 @@ class TargetSettingPanel(SideStatusPanel):
                 )
         elif self.ship and isinstance(self.ship, Ship):
             particle = self.model.orbitSim.particleForShip(self.ship)
-            if particle and not self.trajectory:
+            if particle and not (self.trajectory and self.trajectory.state != TrajectoryState.COMPLETE):
                 self.trajectory = self.model.orbitSim.createTrajectory(
                     self.target.id,
                     sourceId=self.source.id,

@@ -489,7 +489,8 @@ class OrbitContext(GUIContext):
                             self.target_panel.clear_state()
                         elif self.target_mode == OCMode.LaunchPlan:
                             if isinstance(self.info.start, Colony):
-                                self.info.trajectory = self.target_mode.trajectory
+                                self.info.trajectory = self.target_panel.trajectory
+                                self.info.end = self.target_panel.target
                                 returnCode = GUICode.LOADCOLONYVIEW_LAUNCH_RETURN
                             elif isinstance(self.info.start, Planet):
                                 self.info.trajectory = self.target_panel.trajectory
