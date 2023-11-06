@@ -360,6 +360,7 @@ class TargetSettingPanel(SideStatusPanel):
                 return
 
         if self.ship and isinstance(self.ship, Particle):
+            # TODO: Not sure this ever still executes. Investigate whether this can be eliminated.
             try:
                 self.model.orbitSim.trajectoryForParticle(self.ship.id)
             except KeyError:
@@ -372,14 +373,14 @@ class TargetSettingPanel(SideStatusPanel):
                 )
         elif self.ship and isinstance(self.ship, Ship):
             particle = self.model.orbitSim.particleForShip(self.ship)
-            if particle:
+            if particle and not self.trajectory:
                 self.trajectory = self.model.orbitSim.createTrajectory(
                     self.target.id,
                     sourceId=self.source.id,
                     particleId=particle.id,
                     payload=self.ship,
                 )
-            else:
+            elif not particle:
                 self.trajectory = self.model.orbitSim.createTrajectory(
                     self.target.id, sourceId=self.source.id, payload=self.ship
                 )
