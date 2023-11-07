@@ -3,11 +3,11 @@ from views.guiContext import GUIContext
 
 import unittest
 from unittest.mock import MagicMock
-from tests.test_views.test_guiContext import ScreenMock, ModelMock
+from tests.test_views.test_guiContext import ScreenMock, ModelMock, isLocal
 
 import pygame
 
-
+@unittest.skipUnless(isLocal(), "requires Windows")
 class TestMenuContext(unittest.TestCase):
     def setUp(self):
         pygame.init()

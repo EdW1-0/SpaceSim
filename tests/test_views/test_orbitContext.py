@@ -3,7 +3,7 @@ from views.orbitContext import (
 )
 
 import unittest
-from tests.test_views.test_guiContext import ModelMock
+from tests.test_views.test_guiContext import ModelMock, isLocal
 from orbitsim.orbitSim import OrbitSim
 
 import pygame
@@ -14,7 +14,7 @@ class ShipMock:
     def deltaV(self):
         return 7
 
-
+@unittest.skipUnless(isLocal(), "requires Windows")
 class TestOrbitContext(unittest.TestCase):
     def testOrbitContext(self):
         self.assertTrue(OrbitContext)

@@ -10,7 +10,11 @@ class ScreenMock:
 class ModelMock:
     pass
 
+import sys
+def isLocal():
+    return sys.platform.startswith("win")
 
+@unittest.skipUnless(isLocal(), "requires Windows")
 class TestGUIContextModule(unittest.TestCase):
     def testGUIContext(self):
         self.assertTrue(GUIContext)

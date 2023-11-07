@@ -6,6 +6,8 @@ from views.guiContext import GUIContext
 import pygame
 import pygame_gui
 
+from tests.test_views.test_guiContext import isLocal
+
 
 class ColonySimMock:
     _resources = None
@@ -22,7 +24,7 @@ class ModelMock:
     productionOrders = None
     colonySim = ColonySimMock()
 
-
+@unittest.skipUnless(isLocal(), "requires Windows")
 class TestColonyContext(unittest.TestCase):
     def setUp(self):
         pygame.init()

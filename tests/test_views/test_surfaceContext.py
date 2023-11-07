@@ -6,7 +6,7 @@ from views.surfaceContext import (
 )
 
 import unittest
-from tests.test_views.test_guiContext import ModelMock
+from tests.test_views.test_guiContext import ModelMock, isLocal
 
 from planetsim.surfacePoint import SurfacePoint
 
@@ -15,9 +15,6 @@ from gameModel import GameModel
 import pygame
 import pygame_gui
 
-import sys
-def isLocal():
-    return sys.platform.startswith("win"), "requires Windows"
 
 
 class SurfaceMock:
@@ -32,7 +29,7 @@ class PlanetMock:
         self.name = "Test Planet"
         self.gravity = 14
 
-@unittest.skipUnless(isLocal())
+@unittest.skipUnless(isLocal(), "requires Windows")
 class TestSurfaceObjectSprite(unittest.TestCase):
     def testSurfaceObjectSprite(self):
         self.assertTrue(SurfaceObjectSprite)
@@ -52,7 +49,7 @@ class TestSurfaceObjectSprite(unittest.TestCase):
         sprite = SurfaceObjectSprite(so)
         self.assertEqual(sprite.latLong(), (30, 40))
 
-@unittest.skipUnless(isLocal())
+@unittest.skipUnless(isLocal(), "requires Windows")
 class TestSurfaceDestinationSprite(unittest.TestCase):
     def testSurfaceDestinationSprite(self):
         self.assertTrue(SurfaceDestinationSprite)
@@ -69,7 +66,7 @@ class TestSurfaceDestinationSprite(unittest.TestCase):
         sds.surfaceObject = so
         self.assertEqual(sds.latLong(), (5, 10))
 
-@unittest.skipUnless(isLocal())
+@unittest.skipUnless(isLocal(), "requires Windows")
 class TestSurfaceContext(unittest.TestCase):
     def setUp(self):
         self.mm = ModelMock()
@@ -107,7 +104,7 @@ class TestSurfaceContext(unittest.TestCase):
         self.assertAlmostEqual(p1[0], p2[0])
         self.assertAlmostEqual(p1[1], p2[1])
 
-@unittest.skipUnless(isLocal())
+@unittest.skipUnless(isLocal(), "requires Windows")
 class TestSurfaceContextGraphics(unittest.TestCase):
     def setUp(self):
         pygame.init()
