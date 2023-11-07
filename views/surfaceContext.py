@@ -1,7 +1,7 @@
 from views.guiContext import GUIContext, GUICode
 
 from views.timingView import TimingPanel
-from views.sidePanels.sideStatusPanel import PlanetStatusPanel
+from views.sidePanels.orbitStatusPanels import PlanetStatusPanel
 from views.sidePanels.surfaceStatusPanels import (
     RegionStatusPanel,
     VehicleStatusPanel,

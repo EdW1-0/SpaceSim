@@ -1,6 +1,7 @@
 import pygame
 
-from views.sidePanels.sideStatusPanel import SideStatusPanel
+
+from views.sidePanels.sideStatusPanels import SideStatusPanel
 
 from pygame_gui.elements import (
     UIButton,

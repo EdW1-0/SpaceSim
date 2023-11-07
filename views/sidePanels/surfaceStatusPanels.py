@@ -1,6 +1,6 @@
 import pygame
 
-from views.sidePanels.sideStatusPanel import SideStatusPanel
+from views.sidePanels.sideStatusPanels import SideStatusPanel
 
 from planetsim.surfaceVehicle import SurfaceVehicle
 from planetsim.surfaceBase import SurfaceBase

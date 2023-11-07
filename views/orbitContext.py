@@ -10,7 +10,7 @@ from views.orbitViews.orbitViews import (
     OrbitLinkViewLabel,
     ParticleView,
 )
-from views.sidePanels.sideStatusPanel import (
+from views.sidePanels.orbitStatusPanels import (
     OrbitStatusPanel,
     LinkStatusPanel,
     PlanetStatusPanel,
