@@ -1,4 +1,4 @@
-from views.sidePanels.sideStatusPanel import (
+from views.sidePanels.orbitStatusPanels import (
     PlanetStatusPanel,
     OrbitStatusPanel,
     LinkStatusPanel,
@@ -7,7 +7,7 @@ from views.sidePanels.sideStatusPanel import (
 )
 
 import unittest
-from tests.test_views.test_guiContext import ModelMock
+from tests.test_views.test_guiContext import ModelMock, isLocal
 from orbitsim.orbitSim import OrbitSim, TrajectoryState
 
 from gameModel import GameModel
@@ -20,7 +20,7 @@ class ShipMock:
     def deltaV(self):
         return 7
 
-
+@unittest.skipUnless(isLocal(), "requires Windows")
 class TestPlanetStatusPanel(unittest.TestCase):
     def setUp(self):
         pygame.init()
@@ -77,7 +77,7 @@ class TestPlanetStatusPanel(unittest.TestCase):
         self.assertFalse(psp.container.visible)
         self.assertEqual(psp.upperAction, 0)
 
-
+@unittest.skipUnless(isLocal(), "requires Windows")
 class TestOrbitStatusPanel(unittest.TestCase):
     def setUp(self):
         pygame.init()
@@ -102,7 +102,7 @@ class TestOrbitStatusPanel(unittest.TestCase):
         osp.update()
         self.assertEqual(osp.orbit_name_label.text, "Mercury orbit")
 
-
+@unittest.skipUnless(isLocal(), "requires Windows")
 class TestLinkStatusPanel(unittest.TestCase):
     def setUp(self):
         pygame.init()
@@ -126,7 +126,7 @@ class TestLinkStatusPanel(unittest.TestCase):
         lsp.update()
         self.assertEqual(lsp.link_name_label.text, "ONE - TWO")
 
-
+@unittest.skipUnless(isLocal(), "requires Windows")
 class TestShipStatusPanel(unittest.TestCase):
     def setUp(self):
         pygame.init()
@@ -179,7 +179,7 @@ class TestShipStatusPanel(unittest.TestCase):
         self.assertEqual(ssp.container.visible, 0)
         self.assertEqual(ssp.upperAction, 0)
 
-
+@unittest.skipUnless(isLocal(), "requires Windows")
 class TestTargetSettingPanel(unittest.TestCase):
     def setUp(self):
         pygame.init()
