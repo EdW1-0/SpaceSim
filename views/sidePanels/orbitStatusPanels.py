@@ -160,7 +160,7 @@ class ShipStatusPanel(SideStatusPanel):
     def __init__(self, rect, manager=None, model=None):
         super(ShipStatusPanel, self).__init__(rect, manager)
         self.model = model
-        self.ship = None
+        self.particle = None
         self.ship_name_label = UILabel(
             pygame.Rect(0, 0, rect.width, 100),
             text="Ship placeholder",
@@ -213,12 +213,12 @@ class ShipStatusPanel(SideStatusPanel):
         else:
             return False
 
-    def set_ship(self, ship):
-        self.ship = ship
+    def set_particle(self, particle):
+        self.particle = particle
 
     def ship_location(self):
         try:
-            location = self.model.orbitSim._particleLocation(self.ship.id)
+            location = self.model.orbitSim._particleLocation(self.particle.id)
         except KeyError:
             location = None
         return location
@@ -226,18 +226,18 @@ class ShipStatusPanel(SideStatusPanel):
     def ship_trajectory(self):
         trajectory = None
         try:
-            trajectory = self.model.orbitSim.trajectoryForParticle(self.ship.id)
+            trajectory = self.model.orbitSim.trajectoryForParticle(self.particle.id)
         except KeyError:
             trajectory = None
 
         return trajectory
 
     def update(self):
-        if not self.ship:
+        if not self.particle:
             self.hide()
             return
 
-        self.ship_name_label.set_text(self.ship.payload.name)
+        self.ship_name_label.set_text(self.particle.payload.name)
 
         location = self.ship_location()
         if not location:
@@ -255,7 +255,7 @@ class ShipStatusPanel(SideStatusPanel):
 
         self.ship_text.set_text(
             "Delta V: {0}m/s<br>Velocity: {1}m/s<br>Location: {2}".format(
-                self.ship.deltaV(), self.ship.velocity, locationText
+                self.particle.deltaV(), self.particle.velocity, locationText
             )
         )
 
@@ -315,44 +315,7 @@ class TargetSettingPanel(SideStatusPanel):
 
     def set_target(self, target):
         self.target = target
-        if self.trajectory:
-            if (
-                self.trajectory.state == TrajectoryState.COMPLETE
-                or self.trajectory.state == TrajectoryState.DEFINITION
-            ):
-                self.model.orbitSim.cancelTrajectory(self.ship.id)
-            else:
-                # TODO: Probably shouldn't have set target in this case.
-                # Once we have the tests to prove this doesn't
-                # break everything, fix this.
-                return
 
-        if self.ship and isinstance(self.ship, Particle):
-            # TODO: Not sure this ever still executes. Investigate whether this can be eliminated.
-            try:
-                self.model.orbitSim.trajectoryForParticle(self.ship.id)
-            except KeyError:
-                self.trajectory = self.model.orbitSim.createTrajectory(
-                    self.target.id, self.ship.id, self.source.id
-                )
-            else:
-                self.trajectory = self.model.orbitSim.trajectoryForParticle(
-                    self.ship.id
-                )
-        elif self.ship and isinstance(self.ship, Ship):
-            particle = self.model.orbitSim.particleForShip(self.ship)
-            if particle and not (self.trajectory and self.trajectory.state != TrajectoryState.COMPLETE):
-                self.trajectory = self.model.orbitSim.createTrajectory(
-                    self.target.id,
-                    sourceId=self.source.id,
-                    particleId=particle.id,
-                    payload=self.ship,
-                )
-            elif not particle:
-                self.trajectory = self.model.orbitSim.createTrajectory(
-                    self.target.id, sourceId=self.source.id, payload=self.ship
-                )
-        self.update()
 
     def set_coordinates(self, coordinates):
         assert self.trajectory

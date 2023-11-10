@@ -18,9 +18,12 @@ from views.sidePanels.orbitStatusPanels import (
     ShipStatusPanel,
 )
 
+from gameModel import GameModel
+
 from orbitsim.orbitNode import LeafClass, OrbitNode
 from orbitsim.orbitLink import OrbitLink
-from orbitsim.orbitTrajectory import TrajectoryState
+from orbitsim.orbitTrajectory import TrajectoryState, OrbitTrajectory
+from orbitsim.particle import Particle
 
 from planetsim.planet import Planet
 from colonysim.colony import Colony
@@ -59,7 +62,7 @@ class OrbitContext(GUIContext):
     def __init__(
         self,
         screen,
-        model,
+        model: GameModel,
         manager,
         boundsRect=pygame.Rect(-100, -100, 1400, 2000),
         mode = OCMode.Standard,
@@ -123,14 +126,23 @@ class OrbitContext(GUIContext):
         self.info = info
 
         if self.target_mode == OCMode.Target:
-            self.ship_summary.set_ship(self.info.ship)
+            particle = None
+            for p in self.model.orbitSim._particles.values():
+                if p.payload == self.info.ship:
+                    particle = p
+
+            assert(particle)
+            
+            self.ship_summary.set_particle(particle)
             self.ship_summary.show()
             self.active_summary = self.ship_summary
             self.target_panel.set_ship(self.info.ship)
             self.target_panel.set_source(self.ship_summary.ship_location())
             self.target_panel.set_target(self.info.end)
+            self.target_panel.trajectory = self.applyTrajectory(self.ship_summary.particle)
             if self.info.surfaceCoordinates:
                 self.target_panel.set_coordinates(self.info.surfaceCoordinates)
+
             self.target_panel.show()
         elif self.target_mode == OCMode.LaunchPlan:
             # Get source - this will be colony or planet ship is on.
@@ -161,10 +173,16 @@ class OrbitContext(GUIContext):
             self.target_panel.set_ship(self.info.ship)
             # TODO: This is a hack. Trajectory should really be managed by
             # particle and looked up by view, not created.
-            if self.info.trajectory:
-                self.target_panel.trajectory = self.info.trajectory
             if self.info.end:
                 self.target_panel.set_target(self.info.end)
+                particle = None
+                for p in self.model.orbitSim._particles.values():
+                    if p.payload == self.info.ship:
+                        particle = p
+                assert(particle)
+                self.target_panel.trajectory = self.applyTrajectory(particle)
+
+
             if self.info.surfaceCoordinates:
                 self.target_panel.set_coordinates(self.info.surfaceCoordinates)
             self.target_panel.update()
@@ -356,6 +374,19 @@ class OrbitContext(GUIContext):
             if isinstance(c, OrbitNodeView):
                 if c.node != self.target_panel.source:
                     self.target_panel.set_target(c.node)
+                    if not self.info:
+                        self.info = RoutingModeInfo()
+                        self.info.start = self.target_panel.source
+                        self.info.ship = self.target_panel.ship
+                    self.info.end = c.node
+
+                    particle = None
+                    for p in self.model.orbitSim._particles.values():
+                        if p.payload == self.info.ship:
+                            particle = p
+
+                    assert(particle)            
+                    self.target_panel.trajectory = self.applyTrajectory(particle)
                     self.target_panel.update()
         elif isinstance(c, OrbitLinkViewLabel) or isinstance(c, OrbitNodeViewLabel):
             return
@@ -402,11 +433,58 @@ class OrbitContext(GUIContext):
                     break
             self.resolveNodeClick(locationView)
         elif self.ship_summary.upperAction == 2:
-            self.target_panel.set_ship(self.ship_summary.ship)
+            self.target_panel.set_ship(self.ship_summary.particle.payload)
             self.target_panel.set_source(self.ship_summary.ship_location())
             self.target_panel.show()
             self.target_panel.update()
             self.target_mode = OCMode.Target
+
+
+    def applyTrajectory(self, particle: Particle) -> OrbitTrajectory:
+        if not self.info or not self.info.start or not self.info.end or not self.info.ship:
+            return None
+
+        node = self.model.orbitSim._particleLocation(particle.id)
+        # Get trajectory for particle
+        try:
+            self.model.orbitSim.trajectoryForParticle(particle.id)
+        except:
+                    # if it doesn't exist, create it.
+            self.model.orbitSim.createTrajectory(
+                    self.info.end.id,
+                    sourceId=node.id,
+                    particleId=particle.id,
+                    payload=self.info.ship,
+                )
+
+        trajectory = self.model.orbitSim.trajectoryForParticle(particle.id)
+
+        # If it does exist, but doesn't have the right components,            
+        if (trajectory.trajectory[0] != node.id) or (trajectory.trajectory[-1] != self.info.end.id) or (trajectory.particleId != particle.id):
+            if (
+                trajectory.state == TrajectoryState.COMPLETE
+                or trajectory.state == TrajectoryState.DEFINITION
+            ):
+                # Cancel it if it's not in progress
+                self.model.orbitSim.cancelTrajectory(particle.id)
+                # Then create new one with right components. 
+                trajectory = self.model.orbitSim.createTrajectory(
+                    self.info.end.id,
+                    sourceId=node.id,
+                    particleId=particle.id,
+                    payload=self.info.ship,
+                )
+            else:
+                # Otherwise return fail (or throw an exception)
+                return None
+            
+        # Update target coords if needed
+        if self.info.surfaceCoordinates:
+            trajectory.surfaceCoordinates = self.info.surfaceCoordinates
+
+        
+        # Return trajectory
+        return trajectory
 
     # Alternative algo:
     # - OrbitSim has a _findPath method
@@ -487,6 +565,7 @@ class OrbitContext(GUIContext):
                             self.target_mode = OCMode.Standard
                             self.target_panel.trajectory.state = TrajectoryState.PENDING
                             self.target_panel.clear_state()
+                            self.info = None
                         elif self.target_mode == OCMode.LaunchPlan:
                             if isinstance(self.info.start, Colony):
                                 self.info.trajectory = self.target_panel.trajectory
@@ -511,17 +590,17 @@ class OrbitContext(GUIContext):
                     assert "Unknown UI element {0}".format(event.ui_element)
             elif event.type == UI_SELECTION_LIST_NEW_SELECTION:
                 if event.ui_element == self.active_summary.station_list:
-                    ship = None
+                    particle = None
                     for s in self.model.orbitSim._particles.values():
                         if s.payload.name == event.text:
-                            ship = s
+                            particle = s
 
-                    assert ship
+                    assert particle
 
                     if self.active_summary:
                         self.active_summary.hide()
 
-                    self.ship_summary.set_ship(ship)
+                    self.ship_summary.set_particle(particle)
                     self.active_summary = self.ship_summary
 
                     self.active_summary.update()
