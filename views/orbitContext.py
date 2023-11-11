@@ -385,6 +385,9 @@ class OrbitContext(GUIContext):
                         if p.payload == self.info.ship:
                             particle = p
 
+                    if not particle:
+                        particleId = self.model.orbitSim.createParticle(self.target_panel.source, self.info.ship)
+                        particle = self.model.orbitSim.particleById(particleId)
                     assert(particle)            
                     self.target_panel.trajectory = self.applyTrajectory(particle)
                     self.target_panel.update()
