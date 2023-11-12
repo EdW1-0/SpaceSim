@@ -210,7 +210,10 @@ class TestTargetSettingPanel(unittest.TestCase):
         tsp.set_ship(self.model.orbitSim.particleById(0))
         tsp.set_source(self.model.orbitSim.nodeById("EAS"))
         tsp.set_target(self.model.orbitSim.nodeById("MOS"))
-        self.assertTrue(tsp.trajectory)
+        
+        tsp.trajectory = self.orbitSim.createTrajectory("MOS", 0, "EAS")
+        tsp.update()
+
         self.assertEqual(tsp.source_label.text, "Earth")
         self.assertEqual(tsp.target_label.text, "Moon")
         self.assertEqual(
@@ -249,6 +252,9 @@ class TestTargetSettingPanel(unittest.TestCase):
         tsp.set_ship(self.model.orbitSim.particleById(0))
         tsp.set_source(self.model.orbitSim.nodeById("EAS"))
         tsp.set_target(self.model.orbitSim.nodeById("MOS"))
+
+        tsp.trajectory = self.orbitSim.createTrajectory("MOS", 0, "EAS")
+        tsp.update()
 
         self.assertTrue(tsp.handle_event(event))
         self.assertEqual(tsp.trajectory.state, TrajectoryState.DEFINITION)
