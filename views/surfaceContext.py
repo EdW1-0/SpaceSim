@@ -614,10 +614,10 @@ class SurfaceContext(GUIContext):
                     self.meridianLatitude(20.0)
                     self.renderGlobe()
                 elif event.key == K_RIGHT:
-                    self.meridianLongitude(20.0)
+                    self.meridianLongitude(-20.0)
                     self.renderGlobe()
                 elif event.key == K_LEFT:
-                    self.meridianLongitude(-20.0)
+                    self.meridianLongitude(20.0)
                     self.renderGlobe()
 
             if event.type == UI_BUTTON_PRESSED:
