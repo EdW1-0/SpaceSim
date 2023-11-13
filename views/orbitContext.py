@@ -82,7 +82,7 @@ class OrbitContext(GUIContext):
 
         self.computeLayout()
 
-        self.hello_button = UIButton(
+        self.menu_button = UIButton(
             relative_rect=pygame.Rect((0, 0), (100, 50)),
             text="Settings",
             manager=manager,
@@ -489,6 +489,112 @@ class OrbitContext(GUIContext):
         # Return trajectory
         return trajectory
 
+    def handleMouseClick(self, event):
+        pos = pygame.mouse.get_pos()
+
+        clicked_items = [
+            s for s in self.all_sprites if s.rect.collidepoint(pos)
+        ]
+        for c in clicked_items:
+            self.resolveNodeClick(c)
+
+    def handleMouseWheel(self, event):
+        if event.y == 1:
+            self.scale = max(self.scale - 0.1, 0.1)
+        elif event.y == -1:
+            self.scale = min(self.scale + 0.1, 2.0)
+        self.computeLayout()
+
+    def handleKeyPress(self, event):
+        if event.key == K_UP:
+            self.basePoint = (
+                self.basePoint[0],
+                max(self.basePoint[1] - 50, self.boundsRect.top),
+            )
+        elif event.key == K_DOWN:
+            self.basePoint = (
+                self.basePoint[0],
+                min(self.basePoint[1] + 50, self.boundsRect.bottom),
+            )
+        elif event.key == K_LEFT:
+            self.basePoint = (
+                max(self.basePoint[0] - 50, self.boundsRect.left),
+                self.basePoint[1],
+            )
+        elif event.key == K_RIGHT:
+            self.basePoint = (
+                min(self.basePoint[0] + 50, self.boundsRect.right),
+                self.basePoint[1],
+            )
+        self.computeLayout()
+
+    def handleGuiButton(self, event):
+        if event.ui_element == self.menu_button:
+            return GUICode.LOADMENUVIEW
+        elif self.active_summary and self.active_summary.handle_event(event):
+            if isinstance(self.active_summary, ShipStatusPanel):
+                self.handleShip(event)
+            elif isinstance(self.active_summary, PlanetStatusPanel):
+                if self.planet_summary.upperAction == 1:
+                    self.upperContext = {
+                        "planet": self.planet_summary.planet.id
+                    }
+                    return GUICode.LOADSURFACEVIEW
+        elif self.timing_panel.handle_event(event):
+            pass
+        elif self.target_panel.handle_event(event):
+            if (
+                event.ui_element == self.target_panel.hide_button
+                or self.target_panel.upperAction == 1
+            ):
+                if self.target_mode == OCMode.Target:
+                    self.target_mode = OCMode.Standard
+                    self.target_panel.trajectory.state = TrajectoryState.PENDING
+                    self.target_panel.clear_state()
+                    self.info = None
+                elif self.target_mode == OCMode.LaunchPlan:
+                    if isinstance(self.info.start, Colony):
+                        self.info.trajectory = self.target_panel.trajectory
+                        self.info.end = self.target_panel.target
+                        return GUICode.LOADCOLONYVIEW_LAUNCH_RETURN
+                    elif isinstance(self.info.start, Planet):
+                        self.info.trajectory = self.target_panel.trajectory
+                        self.info.end = self.target_panel.target
+                        return GUICode.LOADSURFACEVIEW_LAUNCH_RETURN
+                    
+            elif self.target_panel.upperAction == 2:
+                if not self.info:
+                    self.info = RoutingModeInfo()
+                    self.info.start = self.target_panel.source
+                    self.info.ship = self.target_panel.ship
+                self.info.end = self.target_panel.target
+                if self.target_panel.trajectory:
+                    self.info.trajectory = self.target_panel.trajectory
+                return GUICode.LOADSURFACEVIEW_LANDING_PLAN
+        else:
+            assert "Unknown UI element {0}".format(event.ui_element)
+            return 0
+
+
+    def handleListSelection(self, event):
+        if event.ui_element == self.active_summary.station_list:
+            particle = None
+            for s in self.model.orbitSim._particles.values():
+                if s.payload.name == event.text:
+                    particle = s
+
+            assert particle
+
+            if self.active_summary:
+                self.active_summary.hide()
+
+            self.ship_summary.set_particle(particle)
+            self.active_summary = self.ship_summary
+
+            self.active_summary.update()
+            self.active_summary.show()
+
+
     # Alternative algo:
     # - OrbitSim has a _findPath method
     # - First, traverse set of nodes to find all leaf nodes
@@ -505,109 +611,18 @@ class OrbitContext(GUIContext):
                 returnCode = QUIT
                 break
             elif event.type == MOUSEBUTTONUP:
-                pos = pygame.mouse.get_pos()
-
-                clicked_items = [
-                    s for s in self.all_sprites if s.rect.collidepoint(pos)
-                ]
-                for c in clicked_items:
-                    self.resolveNodeClick(c)
-
+                self.handleMouseClick(event)
             elif event.type == MOUSEWHEEL:
-                if event.y == 1:
-                    self.scale = max(self.scale - 0.1, 0.1)
-                elif event.y == -1:
-                    self.scale = min(self.scale + 0.1, 2.0)
-                self.computeLayout()
-
+                self.handleMouseWheel(event)
             elif event.type == KEYDOWN:
-                if event.key == K_UP:
-                    self.basePoint = (
-                        self.basePoint[0],
-                        max(self.basePoint[1] - 50, self.boundsRect.top),
-                    )
-                elif event.key == K_DOWN:
-                    self.basePoint = (
-                        self.basePoint[0],
-                        min(self.basePoint[1] + 50, self.boundsRect.bottom),
-                    )
-                elif event.key == K_LEFT:
-                    self.basePoint = (
-                        max(self.basePoint[0] - 50, self.boundsRect.left),
-                        self.basePoint[1],
-                    )
-                elif event.key == K_RIGHT:
-                    self.basePoint = (
-                        min(self.basePoint[0] + 50, self.boundsRect.right),
-                        self.basePoint[1],
-                    )
-                self.computeLayout()
-
-            if event.type == UI_BUTTON_PRESSED:
-                if event.ui_element == self.hello_button:
-                    returnCode = GUICode.LOADMENUVIEW
+                self.handleKeyPress(event)
+            elif event.type == UI_BUTTON_PRESSED:
+                returnCode = self.handleGuiButton(event)
+                if returnCode != 0:
                     break
-                elif self.active_summary and self.active_summary.handle_event(event):
-                    if isinstance(self.active_summary, ShipStatusPanel):
-                        self.handleShip(event)
-                    elif isinstance(self.active_summary, PlanetStatusPanel):
-                        if self.planet_summary.upperAction == 1:
-                            self.upperContext = {
-                                "planet": self.planet_summary.planet.id
-                            }
-                            returnCode = GUICode.LOADSURFACEVIEW
-                            break
-                elif self.timing_panel.handle_event(event):
-                    pass
-                elif self.target_panel.handle_event(event):
-                    if (
-                        event.ui_element == self.target_panel.hide_button
-                        or self.target_panel.upperAction == 1
-                    ):
-                        if self.target_mode == OCMode.Target:
-                            self.target_mode = OCMode.Standard
-                            self.target_panel.trajectory.state = TrajectoryState.PENDING
-                            self.target_panel.clear_state()
-                            self.info = None
-                        elif self.target_mode == OCMode.LaunchPlan:
-                            if isinstance(self.info.start, Colony):
-                                self.info.trajectory = self.target_panel.trajectory
-                                self.info.end = self.target_panel.target
-                                returnCode = GUICode.LOADCOLONYVIEW_LAUNCH_RETURN
-                            elif isinstance(self.info.start, Planet):
-                                self.info.trajectory = self.target_panel.trajectory
-                                self.info.end = self.target_panel.target
-                                returnCode = GUICode.LOADSURFACEVIEW_LAUNCH_RETURN
-                            break
-                    elif self.target_panel.upperAction == 2:
-                        if not self.info:
-                            self.info = RoutingModeInfo()
-                            self.info.start = self.target_panel.source
-                            self.info.ship = self.target_panel.ship
-                        self.info.end = self.target_panel.target
-                        if self.target_panel.trajectory:
-                            self.info.trajectory = self.target_panel.trajectory
-                        returnCode = GUICode.LOADSURFACEVIEW_LANDING_PLAN
-                        break
-                else:
-                    assert "Unknown UI element {0}".format(event.ui_element)
             elif event.type == UI_SELECTION_LIST_NEW_SELECTION:
-                if event.ui_element == self.active_summary.station_list:
-                    particle = None
-                    for s in self.model.orbitSim._particles.values():
-                        if s.payload.name == event.text:
-                            particle = s
+                self.handleListSelection(event)
 
-                    assert particle
-
-                    if self.active_summary:
-                        self.active_summary.hide()
-
-                    self.ship_summary.set_particle(particle)
-                    self.active_summary = self.ship_summary
-
-                    self.active_summary.update()
-                    self.active_summary.show()
 
             self.manager.process_events(event)
 
