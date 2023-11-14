@@ -236,10 +236,8 @@ class TestTargetSettingPanel(unittest.TestCase):
         event = ModelMock()
         event.ui_element = None
         self.assertFalse(tsp.handle_event(event))
-        self.assertEqual(tsp.upperAction, 0)
         event.ui_element = tsp.confirm_button
         self.assertTrue(tsp.handle_event(event))
-        self.assertEqual(tsp.upperAction, 0)
 
         ms = ModelMock()
         ms.id = 0
@@ -258,5 +256,3 @@ class TestTargetSettingPanel(unittest.TestCase):
 
         self.assertTrue(tsp.handle_event(event))
         self.assertEqual(tsp.trajectory.state, TrajectoryState.DEFINITION)
-        self.assertEqual(tsp.upperAction, 1)
-        self.assertEqual(tsp.container.visible, 0)

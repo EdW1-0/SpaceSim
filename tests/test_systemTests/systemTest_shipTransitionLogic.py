@@ -194,7 +194,7 @@ class SystemTestSurfaceLaunch(SystemTestShipLandingLogic, SystemTestMacros):
                         )
                     )
                 elif self.runCount == 56:
-                    self.assertEqual(guiContext.target_mode, OCMode.LaunchPlan)
+                    self.assertEqual(guiContext.targetMode, OCMode.LaunchPlan)
                     mercuryOrbit = None
                     for s in guiContext.all_sprites:
                         if not isinstance(s, OrbitNodeView):
@@ -300,7 +300,7 @@ class SystemTestColonyShipLaunch(unittest.TestCase):
                 post(event)
 
             elif self.runCount == 8:
-                self.assertEqual(guiContext.target_mode, OCMode.LaunchPlan)
+                self.assertEqual(guiContext.targetMode, OCMode.LaunchPlan)
                 mercuryTransfer = None
                 for s in guiContext.all_sprites:
                     if not isinstance(s, OrbitNodeView):
@@ -416,7 +416,7 @@ class SystemTestColonySurfaceLaunchLand(SystemTestColonyShipLaunch):
             guiContext.resolveNodeClick(moon)
         if self.runCount == 9:
             self.assertTrue(isinstance(guiContext, OrbitContext))
-            self.assertEqual(guiContext.target_mode, OCMode.LaunchPlan)
+            self.assertEqual(guiContext.targetMode, OCMode.LaunchPlan)
             post(
                 Event(
                     UI_BUTTON_PRESSED, ui_element=guiContext.target_panel.surface_button
@@ -435,7 +435,7 @@ class SystemTestColonySurfaceLaunchLand(SystemTestColonyShipLaunch):
             )
         elif self.runCount == 12:
             self.assertTrue(isinstance(guiContext, OrbitContext))
-            self.assertEqual(guiContext.target_mode, OCMode.LaunchPlan)
+            self.assertEqual(guiContext.targetMode, OCMode.LaunchPlan)
             post(
                 Event(
                     UI_BUTTON_PRESSED, ui_element=guiContext.target_panel.confirm_button

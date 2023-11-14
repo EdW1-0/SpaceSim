@@ -122,10 +122,10 @@ class OrbitContext(GUIContext):
             timing_rect, manager=manager, timingMaster=self.model.timingMaster
         )
 
-        self.target_mode = mode
+        self.targetMode = mode
         self.info = info
 
-        if self.target_mode == OCMode.Target:
+        if self.targetMode == OCMode.Target:
             particle = None
             for p in self.model.orbitSim._particles.values():
                 if p.payload == self.info.ship:
@@ -144,7 +144,7 @@ class OrbitContext(GUIContext):
                 self.target_panel.set_coordinates(self.info.surfaceCoordinates)
 
             self.target_panel.show()
-        elif self.target_mode == OCMode.LaunchPlan:
+        elif self.targetMode == OCMode.LaunchPlan:
             # Get source - this will be colony or planet ship is on.
             # In fact the node this is associated with.
             # Can get this from colony locale - surface.
@@ -370,7 +370,7 @@ class OrbitContext(GUIContext):
             particleView.rect.center = center
 
     def resolveNodeClick(self, c):
-        if self.target_mode == OCMode.Target or self.target_mode == OCMode.LaunchPlan:
+        if self.targetMode == OCMode.Target or self.targetMode == OCMode.LaunchPlan:
             if isinstance(c, OrbitNodeView):
                 if c.node != self.target_panel.source:
                     self.target_panel.set_target(c.node)
@@ -567,24 +567,24 @@ class OrbitContext(GUIContext):
             self.target_panel.set_source(self.ship_summary.ship_location())
             self.target_panel.show()
             self.target_panel.update()
-            self.target_mode = OCMode.Target
+            self.targetMode = OCMode.Target
 
     def handleTargetPanel(self, event):
         if event.ui_element == self.target_panel.hide_button:
-            self.target_mode = OCMode.Standard
+            self.targetMode = OCMode.Standard
             self.info = None
             self.target_panel.clear_state()
             self.target_panel.hide()
             return 0
         elif event.ui_element == self.target_panel.confirm_button:
-            if self.target_mode == OCMode.Target:
-                self.target_mode = OCMode.Standard
+            if self.targetMode == OCMode.Target:
+                self.targetMode = OCMode.Standard
                 self.target_panel.trajectory.state = TrajectoryState.PENDING
                 self.target_panel.clear_state()
                 self.target_panel.hide()
                 self.info = None
                 return 0
-            elif self.target_mode == OCMode.LaunchPlan:
+            elif self.targetMode == OCMode.LaunchPlan:
                 if isinstance(self.info.start, Colony):
                     self.info.trajectory = self.target_panel.trajectory
                     self.info.end = self.target_panel.target
