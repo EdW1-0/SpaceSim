@@ -390,18 +390,11 @@ class TargetSettingPanel(SideStatusPanel):
             self.route_text.set_text("")
 
     def handle_event(self, event):
-        self.upperAction = 0
         if super(TargetSettingPanel, self).handle_event(event):
             return True
         elif event.ui_element == self.confirm_button:
-            if self.trajectory and self.trajectory.state == TrajectoryState.DEFINITION:
-                self.hide()
-                self.upperAction = 1
-                return True
-            else:
-                return True
+            return True
         elif event.ui_element == self.surface_button:
-            self.upperAction = 2
             return True
         else:
             return False

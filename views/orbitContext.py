@@ -422,25 +422,6 @@ class OrbitContext(GUIContext):
             self.active_summary.update()
             self.active_summary.show()
 
-    def handleShip(self, event):
-        if self.ship_summary.upperAction == 1:
-            location = self.ship_summary.ship_location()
-            locationView = None
-            for ov in self.node_sprites:
-                if ov.node == location:
-                    locationView = ov
-                    break
-            for ov in self.link_sprites:
-                if ov.link == location:
-                    locationView = ov
-                    break
-            self.resolveNodeClick(locationView)
-        elif self.ship_summary.upperAction == 2:
-            self.target_panel.set_ship(self.ship_summary.particle.payload)
-            self.target_panel.set_source(self.ship_summary.ship_location())
-            self.target_panel.show()
-            self.target_panel.update()
-            self.target_mode = OCMode.Target
 
 
     def applyTrajectory(self, particle: Particle) -> OrbitTrajectory:
@@ -533,7 +514,7 @@ class OrbitContext(GUIContext):
             return GUICode.LOADMENUVIEW
         elif self.active_summary and self.active_summary.handle_event(event):
             if isinstance(self.active_summary, ShipStatusPanel):
-                self.handleShip(event)
+                self.handleShipPanel(event)
             elif isinstance(self.active_summary, PlanetStatusPanel):
                 if self.planet_summary.upperAction == 1:
                     self.upperContext = {
@@ -543,34 +524,8 @@ class OrbitContext(GUIContext):
         elif self.timing_panel.handle_event(event):
             pass
         elif self.target_panel.handle_event(event):
-            if (
-                event.ui_element == self.target_panel.hide_button
-                or self.target_panel.upperAction == 1
-            ):
-                if self.target_mode == OCMode.Target:
-                    self.target_mode = OCMode.Standard
-                    self.target_panel.trajectory.state = TrajectoryState.PENDING
-                    self.target_panel.clear_state()
-                    self.info = None
-                elif self.target_mode == OCMode.LaunchPlan:
-                    if isinstance(self.info.start, Colony):
-                        self.info.trajectory = self.target_panel.trajectory
-                        self.info.end = self.target_panel.target
-                        return GUICode.LOADCOLONYVIEW_LAUNCH_RETURN
-                    elif isinstance(self.info.start, Planet):
-                        self.info.trajectory = self.target_panel.trajectory
-                        self.info.end = self.target_panel.target
-                        return GUICode.LOADSURFACEVIEW_LAUNCH_RETURN
-                    
-            elif self.target_panel.upperAction == 2:
-                if not self.info:
-                    self.info = RoutingModeInfo()
-                    self.info.start = self.target_panel.source
-                    self.info.ship = self.target_panel.ship
-                self.info.end = self.target_panel.target
-                if self.target_panel.trajectory:
-                    self.info.trajectory = self.target_panel.trajectory
-                return GUICode.LOADSURFACEVIEW_LANDING_PLAN
+            return self.handleTargetPanel(event)
+
         else:
             assert "Unknown UI element {0}".format(event.ui_element)
             return 0
@@ -594,6 +549,60 @@ class OrbitContext(GUIContext):
             self.active_summary.update()
             self.active_summary.show()
 
+    def handleShipPanel(self, event):
+        if self.ship_summary.upperAction == 1:
+            location = self.ship_summary.ship_location()
+            locationView = None
+            for ov in self.node_sprites:
+                if ov.node == location:
+                    locationView = ov
+                    break
+            for ov in self.link_sprites:
+                if ov.link == location:
+                    locationView = ov
+                    break
+            self.resolveNodeClick(locationView)
+        elif self.ship_summary.upperAction == 2:
+            self.target_panel.set_ship(self.ship_summary.particle.payload)
+            self.target_panel.set_source(self.ship_summary.ship_location())
+            self.target_panel.show()
+            self.target_panel.update()
+            self.target_mode = OCMode.Target
+
+    def handleTargetPanel(self, event):
+        if event.ui_element == self.target_panel.hide_button:
+            self.target_mode = OCMode.Standard
+            self.info = None
+            self.target_panel.clear_state()
+            self.target_panel.hide()
+            return 0
+        elif event.ui_element == self.target_panel.confirm_button:
+            if self.target_mode == OCMode.Target:
+                self.target_mode = OCMode.Standard
+                self.target_panel.trajectory.state = TrajectoryState.PENDING
+                self.target_panel.clear_state()
+                self.target_panel.hide()
+                self.info = None
+                return 0
+            elif self.target_mode == OCMode.LaunchPlan:
+                if isinstance(self.info.start, Colony):
+                    self.info.trajectory = self.target_panel.trajectory
+                    self.info.end = self.target_panel.target
+                    return GUICode.LOADCOLONYVIEW_LAUNCH_RETURN
+                elif isinstance(self.info.start, Planet):
+                    self.info.trajectory = self.target_panel.trajectory
+                    self.info.end = self.target_panel.target
+                    return GUICode.LOADSURFACEVIEW_LAUNCH_RETURN
+                
+        elif event.ui_element == self.target_panel.surface_button:
+            if not self.info:
+                self.info = RoutingModeInfo()
+                self.info.start = self.target_panel.source
+                self.info.ship = self.target_panel.ship
+            self.info.end = self.target_panel.target
+            if self.target_panel.trajectory:
+                self.info.trajectory = self.target_panel.trajectory
+            return GUICode.LOADSURFACEVIEW_LANDING_PLAN
 
     # Alternative algo:
     # - OrbitSim has a _findPath method
