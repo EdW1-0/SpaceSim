@@ -554,6 +554,37 @@ class SurfaceContext(GUIContext):
         self.active_panel = self.region_panel
         self.region_panel.show()
 
+    def handleMouseClick(self, event):
+        pos = pygame.mouse.get_pos()
+        if self.timing_panel.rect.collidepoint(pos):
+            return
+        
+        if self.active_panel.rect.collidepoint(pos):
+            return
+        
+        if self.target_panel.rect.collidepoint(pos):
+            return
+        
+        if self.selectedObject and self.targetMode == SCMode.Standard:
+            if isinstance(self.selectedObject, SurfaceObjectSprite):
+                self.selectedObject.selected = False
+                self.selectedObject.update()
+            elif isinstance(self.selectedObject, SurfaceRegion):
+                region = self.selectedObject
+                self.selectedObject = None
+                self.computeRegionColour(region)
+                self.renderGlobe()
+            else:
+                print("Should never get here")
+                assert False
+            self.selectedObject = None
+
+        if self.hitTestSprite(pos):
+            return
+
+        self.hitTestRegion(pos)
+
+
 
     def handleMouseWheel(self, event):
         if event.y >= 1:
@@ -689,6 +720,17 @@ class SurfaceContext(GUIContext):
             else:
                 self.all_sprites.remove(destination_sprite)
 
+    def updatePanels(self):
+        self.timing_panel.update()
+        if self.active_panel:
+            self.active_panel.update()
+
+        if self.ship_panel.container.visible:
+            ship = self.ship_panel.ship
+            if ship and not self.planetSurface.objectForContent(ship):
+                self.ship_panel.setShip(None)
+            self.ship_panel.update()
+
     def reconcileSprites(self):
         for object in self.planetSurface.points.values():
             if object.id not in self.sprite_index:
@@ -700,6 +742,11 @@ class SurfaceContext(GUIContext):
                     self.sprite_index.remove(entity.surfaceObject.id)
                 entity.kill()        
 
+    def draw(self):
+        self.screen.blit(self.surf, pygame.Rect(0, 0, 1200, 800))
+        for entity in self.all_sprites:
+            self.screen.blit(entity.surf, entity.rect)
+
 
     def run(self):
         returnCode = 0
@@ -709,49 +756,12 @@ class SurfaceContext(GUIContext):
                 returnCode = QUIT
                 break
             elif event.type == MOUSEBUTTONUP:
-                pos = pygame.mouse.get_pos()
-                if self.timing_panel.rect.collidepoint(pos):
-                    self.manager.process_events(event)
-                    continue
-                if self.active_panel.rect.collidepoint(pos):
-                    self.manager.process_events(event)
-                    continue
-                if self.target_panel.rect.collidepoint(pos):
-                    self.manager.process_events(event)
-                    continue
-
-                if self.selectedObject and self.targetMode == SCMode.Standard:
-                    if isinstance(self.selectedObject, SurfaceObjectSprite):
-                        self.selectedObject.selected = False
-                        self.selectedObject.update()
-                    elif isinstance(self.selectedObject, SurfaceRegion):
-                        region = self.selectedObject
-                        self.selectedObject = None
-                        self.computeRegionColour(region)
-                        self.renderGlobe()
-                    else:
-                        print("Should never get here")
-                        assert False
-                    self.selectedObject = None
-
-                if self.hitTestSprite(pos):
-                    self.manager.process_events(event)
-                    continue
-
-                self.hitTestRegion(pos)
-
-                # Clicked on nothing so clear selection and show planet summary.
-                # if self.active_panel != self.planet_panel:
-                #     self.active_panel.hide()
-                #     self.active_panel = self.planet_panel
-                #     self.planet_panel.show()
-                #     self.planet_panel.update()
-
+                self.handleMouseClick(event)
             elif event.type == MOUSEWHEEL:
                 self.handleMouseWheel(event)
             elif event.type == KEYDOWN:
                 self.handleKeyPress(event)
-            if event.type == UI_BUTTON_PRESSED:
+            elif event.type == UI_BUTTON_PRESSED:
                 returnCode = self.handleGuiButton(event)
                 if returnCode != 0:
                     break
@@ -764,18 +774,9 @@ class SurfaceContext(GUIContext):
 
         self.reconcileSprites()
 
-        self.timing_panel.update()
-        if self.active_panel:
-            self.active_panel.update()
+        self.updatePanels()
 
-        if self.ship_panel.container.visible:
-            ship = self.ship_panel.ship
-            if ship and not self.planetSurface.objectForContent(ship):
-                self.ship_panel.setShip(None)
-            self.ship_panel.update()
+        self.draw()
 
-        self.screen.blit(self.surf, pygame.Rect(0, 0, 1200, 800))
-        for entity in self.all_sprites:
-            self.screen.blit(entity.surf, entity.rect)
 
         return returnCode

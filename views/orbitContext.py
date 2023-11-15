@@ -632,7 +632,6 @@ class OrbitContext(GUIContext):
             elif event.type == UI_SELECTION_LIST_NEW_SELECTION:
                 self.handleListSelection(event)
 
-
             self.manager.process_events(event)
 
         self.screen.fill((20, 20, 120))
