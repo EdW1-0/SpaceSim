@@ -554,6 +554,153 @@ class SurfaceContext(GUIContext):
         self.active_panel = self.region_panel
         self.region_panel.show()
 
+
+    def handleMouseWheel(self, event):
+        if event.y >= 1:
+            self.radius = max(self.radius - 100.0, 100.0)
+        elif event.y <= -1:
+            self.radius = min(self.radius + 100.0, 800.0)
+        self.renderGlobe()
+
+    def handleKeyPress(self, event):
+        if event.key == K_DOWN:
+            self.meridianLatitude(-20.0)
+            self.renderGlobe()
+        elif event.key == K_UP:
+            self.meridianLatitude(20.0)
+            self.renderGlobe()
+        elif event.key == K_RIGHT:
+            self.meridianLongitude(-20.0)
+            self.renderGlobe()
+        elif event.key == K_LEFT:
+            self.meridianLongitude(20.0)
+            self.renderGlobe()
+
+    def handleGuiButton(self, event):
+        if event.ui_element == self.settings_button:
+            return GUICode.LOADORBITVIEW
+        elif self.timing_panel.handle_event(event):
+            return 0
+        elif self.active_panel.handle_event(event):
+            if isinstance(self.active_panel, VehicleStatusPanel):
+                if event.ui_element == self.vehicle_panel.target_button:
+                    if self.targetMode == SCMode.Standard:
+                        if isinstance(
+                            self.vehicle_panel.vehicle, SurfaceVehicle
+                        ):
+                            self.target_panel.set_vehicle(
+                                self.vehicle_panel.vehicle
+                            )
+                            self.target_panel.update()
+                            self.target_panel.show()
+                            self.targetMode = SCMode.Target
+                        elif isinstance(
+                            self.vehicle_panel.vehicle.content, Ship
+                        ):
+                            routingModeInfo = RoutingModeInfo()
+                            routingModeInfo.ship = self.vehicle_panel.vehicle.content
+                            routingModeInfo.start = self.planet
+                            self.info = routingModeInfo
+                            return GUICode.LOADORBITVIEW_LAUNCH_PLAN
+                    elif self.targetMode == SCMode.Target:
+                        return 0
+                    elif self.targetMode == SCMode.Landing:
+                        routingModeInfo = RoutingModeInfo()
+                        routingModeInfo.ship = self.vehicle_panel.vehicle.content
+                        routingModeInfo.end = self.planet
+                        self.info = routingModeInfo
+                        return GUICode.LOADORBITVIEW
+                elif event.ui_element == self.vehicle_panel.stopButton:
+                    self.vehicle_panel.vehicle.setDestination(None)
+                elif event.ui_element == self.vehicle_panel.colony_button:
+                    self.upperContext = {
+                        "colony": self.vehicle_panel.vehicle.colonyId
+                    }
+                    return GUICode.LOADCOLONYVIEW
+                elif event.ui_element == self.vehicle_panel.build_button:
+                    if self.targetMode == SCMode.Standard:
+                        self.planetSurface.buildColony(
+                            self.vehicle_panel.vehicle.id,
+                            self.model.colonySim.createColony,
+                        )
+                        # Create a colony object
+                        # Create a surfaceBase object
+                        # Move the current vehicle or ship to the colony
+        elif self.target_panel.handle_event(event):
+            if event.ui_element == self.target_panel.confirm_button:
+                if self.targetMode == SCMode.Target:
+                    self.target_panel.hide()
+                    self.target_panel.vehicle.setDestination(
+                        self.target_panel.target
+                    )
+                elif self.targetMode == SCMode.Landing:
+                    self.info.surfaceCoordinates = self.target_panel.target
+                    if (isinstance(self.info.start, Planet)):
+                        return GUICode.LOADORBITVIEW_LAUNCH_LAND_RETURN
+                    elif (isinstance(self.info.start, Colony)):
+                        return GUICode.LOADORBITVIEW_LAUNCH_LAND_RETURN
+                    else:
+                        return GUICode.LOADORBITVIEW_TARGET_RETURN
+                else:
+                    print("Should never get here!")
+                    assert False
+            self.targetMode = SCMode.Standard
+            self.target_panel.clear_state()
+        elif self.ship_panel.handle_event(event):
+            if event.ui_element == self.ship_panel.launch_button:
+                self.ship_panel.trajectory().state = TrajectoryState.PENDING
+
+
+    def updateSpriteCoordinates(self):
+        for object in self.object_sprites:
+            (lat, long) = (
+                object.surfaceObject.point.latitude,
+                object.surfaceObject.point.longitude,
+            )
+            if self.latLongOccluded(lat, long):
+                self.all_sprites.remove(object)
+            else:
+                coordinate = vector(lat, long)
+                rotatedLong = self.zRot(coordinate, self.meridian[1])
+                rotatedLat = self.yRot(rotatedLong, self.meridian[0])
+                rotatedCoordinate = latLong(rotatedLat)
+                screenCoordinate = self.latLongToXY(rotatedCoordinate)
+                object.rect.center = screenCoordinate
+                self.all_sprites.add(object)
+
+        for destination_sprite in self.destination_sprites:
+            selected = self.selectedObject
+            if selected and isinstance(selected, SurfaceObjectSprite):
+                so = selected.surfaceObject
+                if not (isinstance(so, SurfaceVehicle) and so.destination):
+                    continue
+                destination_sprite.surfaceObject = so
+                (lat, long) = destination_sprite.latLong()
+                if self.latLongOccluded(lat, long):
+                    self.all_sprites.remove(destination_sprite)
+                else:
+                    coordinate = vector(lat, long)
+                    rotatedLong = self.zRot(coordinate, self.meridian[1])
+                    rotatedLat = self.yRot(rotatedLong, self.meridian[0])
+                    rotatedCoordinate = latLong(rotatedLat)
+                    screenCoordinate = self.latLongToXY(rotatedCoordinate)
+                    destination_sprite.rect.center = screenCoordinate
+                    self.all_sprites.add(destination_sprite)
+            else:
+                self.all_sprites.remove(destination_sprite)
+
+    def reconcileSprites(self):
+        for object in self.planetSurface.points.values():
+            if object.id not in self.sprite_index:
+                self.addObjectSprite(object)
+
+        for entity in self.all_sprites:
+            if entity.surfaceObject.killed:
+                if entity.surfaceObject.id in self.sprite_index:
+                    self.sprite_index.remove(entity.surfaceObject.id)
+                entity.kill()        
+
+
     def run(self):
         returnCode = 0
 
@@ -601,145 +748,21 @@ class SurfaceContext(GUIContext):
                 #     self.planet_panel.update()
 
             elif event.type == MOUSEWHEEL:
-                if event.y >= 1:
-                    self.radius = max(self.radius - 100.0, 100.0)
-                elif event.y <= -1:
-                    self.radius = min(self.radius + 100.0, 800.0)
-                self.renderGlobe()
+                self.handleMouseWheel(event)
             elif event.type == KEYDOWN:
-                if event.key == K_DOWN:
-                    self.meridianLatitude(-20.0)
-                    self.renderGlobe()
-                elif event.key == K_UP:
-                    self.meridianLatitude(20.0)
-                    self.renderGlobe()
-                elif event.key == K_RIGHT:
-                    self.meridianLongitude(-20.0)
-                    self.renderGlobe()
-                elif event.key == K_LEFT:
-                    self.meridianLongitude(20.0)
-                    self.renderGlobe()
-
+                self.handleKeyPress(event)
             if event.type == UI_BUTTON_PRESSED:
-                if event.ui_element == self.settings_button:
-                    returnCode = GUICode.LOADORBITVIEW
+                returnCode = self.handleGuiButton(event)
+                if returnCode != 0:
                     break
-                elif self.timing_panel.handle_event(event):
-                    pass
-                elif self.active_panel.handle_event(event):
-                    if isinstance(self.active_panel, VehicleStatusPanel):
-                        if event.ui_element == self.vehicle_panel.target_button:
-                            if self.targetMode == SCMode.Standard:
-                                if isinstance(
-                                    self.vehicle_panel.vehicle, SurfaceVehicle
-                                ):
-                                    self.target_panel.set_vehicle(
-                                        self.vehicle_panel.vehicle
-                                    )
-                                    self.target_panel.update()
-                                    self.target_panel.show()
-                                    self.targetMode = SCMode.Target
-                                elif isinstance(
-                                    self.vehicle_panel.vehicle.content, Ship
-                                ):
-                                    routingModeInfo = RoutingModeInfo()
-                                    routingModeInfo.ship = self.vehicle_panel.vehicle.content
-                                    routingModeInfo.start = self.planet
-                                    self.info = routingModeInfo
-                                    returnCode = GUICode.LOADORBITVIEW_LAUNCH_PLAN
-                                    break
-                            elif self.targetMode == SCMode.Target:
-                                pass
-                            elif self.targetMode == SCMode.Landing:
-                                routingModeInfo = RoutingModeInfo()
-                                routingModeInfo.ship = self.vehicle_panel.vehicle.content
-                                routingModeInfo.end = self.planet
-                                self.info = routingModeInfo
-                                returnCode = GUICode.LOADORBITVIEW
-                                break
-                        elif event.ui_element == self.vehicle_panel.stopButton:
-                            self.vehicle_panel.vehicle.setDestination(None)
-                        elif event.ui_element == self.vehicle_panel.colony_button:
-                            self.upperContext = {
-                                "colony": self.vehicle_panel.vehicle.colonyId
-                            }
-                            returnCode = GUICode.LOADCOLONYVIEW
-                            break
-                        elif event.ui_element == self.vehicle_panel.build_button:
-                            if self.targetMode == SCMode.Standard:
-                                self.planetSurface.buildColony(
-                                    self.vehicle_panel.vehicle.id,
-                                    self.model.colonySim.createColony,
-                                )
-                                # Create a colony object
-                                # Create a surfaceBase object
-                                # Move the current vehicle or ship to the colony
-                elif self.target_panel.handle_event(event):
-                    if event.ui_element == self.target_panel.confirm_button:
-                        if self.targetMode == SCMode.Target:
-                            self.target_panel.hide()
-                            self.target_panel.vehicle.setDestination(
-                                self.target_panel.target
-                            )
-                        elif self.targetMode == SCMode.Landing:
-                            self.info.surfaceCoordinates = self.target_panel.target
-                            if (isinstance(self.info.start, Planet)):
-                                returnCode = GUICode.LOADORBITVIEW_LAUNCH_LAND_RETURN
-                            elif (isinstance(self.info.start, Colony)):
-                                returnCode = GUICode.LOADORBITVIEW_LAUNCH_LAND_RETURN
-                            else:
-                                returnCode = GUICode.LOADORBITVIEW_TARGET_RETURN
-                            break
-                        else:
-                            print("Should never get here!")
-                            assert False
-                    self.targetMode = SCMode.Standard
-                    self.target_panel.clear_state()
-                elif self.ship_panel.handle_event(event):
-                    if event.ui_element == self.ship_panel.launch_button:
-                        self.ship_panel.trajectory().state = TrajectoryState.PENDING
-
             if event.type == UI_BUTTON_ON_HOVERED:
                 print(event.ui_element)
 
             self.manager.process_events(event)
 
-        for object in self.object_sprites:
-            (lat, long) = (
-                object.surfaceObject.point.latitude,
-                object.surfaceObject.point.longitude,
-            )
-            if self.latLongOccluded(lat, long):
-                self.all_sprites.remove(object)
-            else:
-                coordinate = vector(lat, long)
-                rotatedLong = self.zRot(coordinate, self.meridian[1])
-                rotatedLat = self.yRot(rotatedLong, self.meridian[0])
-                rotatedCoordinate = latLong(rotatedLat)
-                screenCoordinate = self.latLongToXY(rotatedCoordinate)
-                object.rect.center = screenCoordinate
-                self.all_sprites.add(object)
+        self.updateSpriteCoordinates()
 
-        for destination_sprite in self.destination_sprites:
-            selected = self.selectedObject
-            if selected and isinstance(selected, SurfaceObjectSprite):
-                so = selected.surfaceObject
-                if not (isinstance(so, SurfaceVehicle) and so.destination):
-                    continue
-                destination_sprite.surfaceObject = so
-                (lat, long) = destination_sprite.latLong()
-                if self.latLongOccluded(lat, long):
-                    self.all_sprites.remove(destination_sprite)
-                else:
-                    coordinate = vector(lat, long)
-                    rotatedLong = self.zRot(coordinate, self.meridian[1])
-                    rotatedLat = self.yRot(rotatedLong, self.meridian[0])
-                    rotatedCoordinate = latLong(rotatedLat)
-                    screenCoordinate = self.latLongToXY(rotatedCoordinate)
-                    destination_sprite.rect.center = screenCoordinate
-                    self.all_sprites.add(destination_sprite)
-            else:
-                self.all_sprites.remove(destination_sprite)
+        self.reconcileSprites()
 
         self.timing_panel.update()
         if self.active_panel:
@@ -752,17 +775,7 @@ class SurfaceContext(GUIContext):
             self.ship_panel.update()
 
         self.screen.blit(self.surf, pygame.Rect(0, 0, 1200, 800))
-
-        for object in self.planetSurface.points.values():
-            if object.id not in self.sprite_index:
-                self.addObjectSprite(object)
-
         for entity in self.all_sprites:
-            if entity.surfaceObject.killed:
-                if entity.surfaceObject.id in self.sprite_index:
-                    self.sprite_index.remove(entity.surfaceObject.id)
-                entity.kill()
-            else:
-                self.screen.blit(entity.surf, entity.rect)
+            self.screen.blit(entity.surf, entity.rect)
 
         return returnCode
