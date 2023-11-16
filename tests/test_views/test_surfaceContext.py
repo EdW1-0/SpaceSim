@@ -15,6 +15,13 @@ from gameModel import GameModel
 import pygame
 import pygame_gui
 
+from pygame.locals import (
+    K_DOWN,
+    K_UP,
+    K_LEFT, 
+    K_RIGHT
+)
+
 
 
 class SurfaceMock:
@@ -133,3 +140,81 @@ class TestSurfaceContextGraphics(unittest.TestCase):
         sc.extractPolygons()
         pc2 = sc.polyCount
         self.assertEqual(pc2 - pc, 8)
+
+class TestSurfaceContextCoordinateSystems(unittest.TestCase):
+    def setUp(self):
+        pygame.init()
+        self.manager = pygame_gui.UIManager((1200, 800))
+        pygame.display.set_mode((1200, 800))
+        self.model = GameModel()
+        self.model.load()
+        self.sc = SurfaceContext(
+            None, 
+            self.model, 
+            self.manager, 
+            self.model.planetSim.planetById("MERCURY").id, 
+            meridian = (30, 50))
+
+    def testMeridianLatitude(self):
+        self.assertEqual(self.sc.meridian[0], 30)
+        self.sc.meridianLatitude(20)
+        self.assertEqual(self.sc.meridian[0], 50)
+        self.sc.meridianLatitude(50)
+        self.assertEqual(self.sc.meridian[0], 90)
+        self.sc.meridianLatitude(-200)
+        self.assertEqual(self.sc.meridian[0], -90)
+
+    def testMeridianLongitude(self):
+        self.assertEqual(self.sc.meridian[1], 50)
+        self.sc.meridianLongitude(20)
+        self.assertEqual(self.sc.meridian[1], 70)
+        self.sc.meridianLongitude(-80)
+        self.assertEqual(self.sc.meridian[1], 350)
+        self.sc.meridianLongitude(810)
+        self.assertEqual(self.sc.meridian[1], 80)
+
+
+class TestSurfaceContextEventHandling(unittest.TestCase):
+    def setUp(self):
+        pygame.init()
+        self.manager = pygame_gui.UIManager((1200, 800))
+        pygame.display.set_mode((1200, 800))
+        self.model = GameModel()
+        self.model.load()
+        self.sc = SurfaceContext(
+            None, 
+            self.model, 
+            self.manager, 
+            self.model.planetSim.planetById("MERCURY").id, 
+            meridian = (30, 50))
+        
+    def testHandleMouseWheel(self):
+        event = ModelMock()
+        event.y = 50.0
+        self.assertEqual(self.sc.radius, 300.0)
+        self.sc.handleMouseWheel(event)
+        self.assertEqual(self.sc.radius, 200.0)
+        event.y = -10.0
+        self.sc.handleMouseWheel(event)
+        self.sc.handleMouseWheel(event)
+        self.assertEqual(self.sc.radius, 400.0)        
+
+    def testHandleKeyPress(self):
+        event = ModelMock()
+        self.assertEqual(self.sc.meridian, (30, 50))
+
+        event.key = K_UP
+        self.sc.handleKeyPress(event)
+        self.assertEqual(self.sc.meridian, (50, 50))
+
+        event.key = K_LEFT
+        self.sc.handleKeyPress(event)
+        self.assertEqual(self.sc.meridian, (50, 70))
+
+        event.key = K_DOWN
+        self.sc.handleKeyPress(event)
+        self.assertEqual(self.sc.meridian, (30, 70))
+
+        event.key = K_RIGHT
+        self.sc.handleKeyPress(event)
+        self.assertEqual(self.sc.meridian, (30, 50))
