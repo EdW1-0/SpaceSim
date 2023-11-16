@@ -1,6 +1,6 @@
 from views.guiContext import GUIContext, GUICode
 
-from views.timingView import TimingPanel
+from views.timingPanel import TimingPanel
 from views.sidePanels.orbitStatusPanels import PlanetStatusPanel
 from views.sidePanels.surfaceStatusPanels import (
     RegionStatusPanel,
@@ -27,6 +27,7 @@ import pygame
 import math
 import random
 
+from pygame.event import Event
 from pygame.locals import (
     K_UP,
     K_DOWN,
@@ -607,7 +608,7 @@ class SurfaceContext(GUIContext):
             self.meridianLongitude(20.0)
             self.renderGlobe()
 
-    def handleGuiButton(self, event):
+    def handleGuiButton(self, event: Event) -> GUICode:
         if event.ui_element == self.settings_button:
             return GUICode.LOADORBITVIEW
         elif self.timing_panel.handle_event(event):
@@ -680,6 +681,15 @@ class SurfaceContext(GUIContext):
         elif self.ship_panel.handle_event(event):
             if event.ui_element == self.ship_panel.launch_button:
                 self.ship_panel.trajectory().state = TrajectoryState.PENDING
+
+    def handleVehiclePanel(self, event: Event):
+        pass
+
+    def handleTargetPanel(self, event: Event):
+        pass
+
+    def handleShipPanel(self, event: Event):
+        pass
 
 
     def updateSpriteCoordinates(self):

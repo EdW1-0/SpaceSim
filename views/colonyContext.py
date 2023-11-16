@@ -1,5 +1,5 @@
 from views.guiContext import GUIContext, GUICode
-from views.timingView import TimingPanel
+from views.timingPanel import TimingPanel
 
 from views.sidePanels.colonyStatusPanels import (
     ColonyTabPanel,

@@ -1,8 +1,9 @@
 import pygame
 
 
+
 from views.guiContext import GUIContext, GUICode
-from views.timingView import TimingPanel
+from views.timingPanel import TimingPanel
 from views.orbitViews.orbitViews import (
     OrbitNodeView,
     OrbitNodeViewLabel,
@@ -34,7 +35,7 @@ from views.routingModeInfo import RoutingModeInfo
 
 
 
-
+from pygame.event import Event
 from pygame.locals import (
     K_UP,
     K_DOWN,
@@ -509,7 +510,7 @@ class OrbitContext(GUIContext):
             )
         self.computeLayout()
 
-    def handleGuiButton(self, event):
+    def handleGuiButton(self, event: Event):
         if event.ui_element == self.menu_button:
             return GUICode.LOADMENUVIEW
         elif self.active_summary and self.active_summary.handle_event(event):

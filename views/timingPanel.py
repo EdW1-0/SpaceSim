@@ -56,10 +56,15 @@ class TimingPanel:
         print(self.timingMaster.timestamp)
         if event.ui_element == self.start_button:
             self.timingMaster.start()
+            return True
         elif event.ui_element == self.step_button:
             self.timingMaster.step()
+            return True
         elif event.ui_element == self.stop_button:
             self.timingMaster.stop()
+            return True
+        else:
+            return False
 
     def update(self):
         self.time_label.set_text(str(self.timingMaster.timestamp))
