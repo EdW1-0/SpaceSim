@@ -3,12 +3,20 @@ from views.surfaceContext import (
     SurfaceObjectSprite,
     SurfaceDestinationSprite,
     SELECTED_REGION_COLOUR,
+    SCMode
 )
 
 import unittest
+from unittest.mock import MagicMock
 from tests.test_views.test_guiContext import ModelMock, isLocal
 
 from planetsim.surfacePoint import SurfacePoint
+from planetsim.surfaceVehicle import SurfaceVehicle, SurfaceObject
+from planetsim.planet import Planet
+from colonysim.colony import Colony
+from colonysim.ship import Ship
+from orbitsim.orbitTrajectory import TrajectoryState
+
 
 from gameModel import GameModel
 
@@ -21,6 +29,9 @@ from pygame.locals import (
     K_LEFT, 
     K_RIGHT
 )
+
+from views.guiContext import GUICode
+
 
 
 
@@ -218,3 +229,118 @@ class TestSurfaceContextEventHandling(unittest.TestCase):
         event.key = K_RIGHT
         self.sc.handleKeyPress(event)
         self.assertEqual(self.sc.meridian, (30, 50))
+
+    def testHandleGuiButton(self):
+        event = ModelMock()
+        event.ui_element = self.sc.settings_button
+        self.assertEqual(self.sc.handleGuiButton(event), GUICode.LOADORBITVIEW)
+        
+        event.ui_element = self.sc.timing_panel.stop_button
+        self.assertEqual(self.sc.handleGuiButton(event), 0)
+
+
+    def testHandleGuiButtonVehiclePanel(self):
+        event = ModelMock()
+        self.sc.active_panel = self.sc.vehicle_panel
+        event.ui_element = "foo"
+        self.assertEqual(self.sc.handleGuiButton(event), None)
+
+        event.ui_element = self.sc.vehicle_panel.target_button
+        self.sc.targetMode = SCMode.Standard
+        self.sc.vehicle_panel.set_vehicle(SurfaceVehicle(0, [], []))
+
+        self.assertEqual(self.sc.handleGuiButton(event), 0)
+        self.assertEqual(self.sc.targetMode, SCMode.Target)
+        self.assertEqual(self.sc.target_panel.vehicle, self.sc.vehicle_panel.vehicle)
+
+        self.assertEqual(self.sc.handleGuiButton(event), 0)
+
+        self.sc.targetMode = SCMode.Standard
+        ship = Ship(0, "Test", None)
+
+        self.sc.vehicle_panel.set_vehicle(SurfaceObject(0, ship))
+
+        self.assertEqual(self.sc.handleGuiButton(event), GUICode.LOADORBITVIEW_LAUNCH_PLAN)
+        self.assertTrue(self.sc.info)
+        self.assertEqual(self.sc.info.ship, self.sc.vehicle_panel.vehicle.content)
+
+        self.sc.targetMode = SCMode.Landing
+        self.assertEqual(self.sc.handleGuiButton(event), GUICode.LOADORBITVIEW)
+        self.assertTrue(self.sc.info)
+
+        vehicle = SurfaceVehicle(0, [], [])
+        self.sc.vehicle_panel.set_vehicle(vehicle)
+        vehicle.setDestination("mock")
+        self.assertEqual(vehicle.destination, "mock")
+        event.ui_element = self.sc.vehicle_panel.stopButton
+        
+        self.assertEqual(self.sc.handleGuiButton(event), 0)
+        self.assertIsNone(vehicle.destination)
+
+        fakeId = "Test colony"
+        vehicle.colonyId = fakeId
+        event.ui_element = self.sc.vehicle_panel.colony_button
+
+        self.assertEqual(self.sc.handleGuiButton(event), GUICode.LOADCOLONYVIEW)
+        self.assertEqual(self.sc.upperContext["colony"], fakeId)
+
+        self.sc.planetSurface.buildColony = MagicMock()
+        event.ui_element = self.sc.vehicle_panel.build_button
+        self.sc.targetMode = SCMode.Standard
+
+        self.assertEqual(self.sc.handleGuiButton(event), 0)
+        self.sc.planetSurface.buildColony.assert_called_once()
+
+    def testHandleGuiButtonTargetPanel(self):
+        event = ModelMock()
+        event.ui_element = self.sc.target_panel.confirm_button
+        
+        self.sc.targetMode = SCMode.Standard
+        with self.assertRaises(ValueError):
+            self.sc.handleGuiButton(event)
+
+        self.sc.targetMode = SCMode.Target
+        mockVehicle = ModelMock()
+        mockVehicle.setDestination = MagicMock()
+        mockTarget = ModelMock()
+        self.sc.target_panel.vehicle = mockVehicle
+        self.sc.target_panel.target = mockTarget
+        
+        self.assertEqual(self.sc.handleGuiButton(event), 0)
+        mockVehicle.setDestination.assert_called_with(mockTarget)
+
+        self.sc.targetMode = SCMode.Landing
+        self.sc.info = ModelMock()
+        self.sc.info.start = Planet(0, "foo", 3)
+
+        self.assertEqual(self.sc.handleGuiButton(event), GUICode.LOADORBITVIEW_LAUNCH_LAND_RETURN)
+        self.assertEqual(self.sc.info.surfaceCoordinates, mockTarget)
+
+        self.sc.info.start = Colony(0, "bar")
+
+        self.assertEqual(self.sc.handleGuiButton(event), GUICode.LOADORBITVIEW_LAUNCH_LAND_RETURN)
+
+        self.sc.info.start = "baz"
+        self.assertEqual(self.sc.handleGuiButton(event), GUICode.LOADORBITVIEW_TARGET_RETURN)
+
+        event.ui_element = self.sc.target_panel.hide_button
+        self.assertEqual(self.sc.handleGuiButton(event), 0)
+        self.assertEqual(self.sc.targetMode, SCMode.Standard)
+
+    def testHandleGuiButtonShipPanel(self):
+        ship = Ship(0, "Test ship", None)
+        particleId = self.model.orbitSim.createParticle(self.model.orbitSim.nodeById("EAS"), ship)
+        trajectory = self.model.orbitSim.createTrajectory("MAS", particleId)
+
+        self.sc.ship_panel.setShip(ship)
+
+        event = ModelMock()
+        event.ui_element = self.sc.ship_panel.launch_button
+
+        self.assertEqual(trajectory.state, TrajectoryState.DEFINITION)
+        self.assertEqual(self.sc.handleGuiButton(event), 0)
+        self.assertEqual(trajectory.state, TrajectoryState.PENDING)
+
+
+
+

@@ -626,6 +626,7 @@ class SurfaceContext(GUIContext):
                             self.target_panel.update()
                             self.target_panel.show()
                             self.targetMode = SCMode.Target
+                            return 0
                         elif isinstance(
                             self.vehicle_panel.vehicle.content, Ship
                         ):
@@ -644,6 +645,7 @@ class SurfaceContext(GUIContext):
                         return GUICode.LOADORBITVIEW
                 elif event.ui_element == self.vehicle_panel.stopButton:
                     self.vehicle_panel.vehicle.setDestination(None)
+                    return 0
                 elif event.ui_element == self.vehicle_panel.colony_button:
                     self.upperContext = {
                         "colony": self.vehicle_panel.vehicle.colonyId
@@ -655,9 +657,7 @@ class SurfaceContext(GUIContext):
                             self.vehicle_panel.vehicle.id,
                             self.model.colonySim.createColony,
                         )
-                        # Create a colony object
-                        # Create a surfaceBase object
-                        # Move the current vehicle or ship to the colony
+                        return 0
         elif self.target_panel.handle_event(event):
             if event.ui_element == self.target_panel.confirm_button:
                 if self.targetMode == SCMode.Target:
@@ -665,6 +665,7 @@ class SurfaceContext(GUIContext):
                     self.target_panel.vehicle.setDestination(
                         self.target_panel.target
                     )
+                    return 0
                 elif self.targetMode == SCMode.Landing:
                     self.info.surfaceCoordinates = self.target_panel.target
                     if (isinstance(self.info.start, Planet)):
@@ -675,12 +676,15 @@ class SurfaceContext(GUIContext):
                         return GUICode.LOADORBITVIEW_TARGET_RETURN
                 else:
                     print("Should never get here!")
-                    assert False
-            self.targetMode = SCMode.Standard
-            self.target_panel.clear_state()
+                    raise ValueError
+            else:
+                self.targetMode = SCMode.Standard
+                self.target_panel.clear_state()
+                return 0
         elif self.ship_panel.handle_event(event):
             if event.ui_element == self.ship_panel.launch_button:
                 self.ship_panel.trajectory().state = TrajectoryState.PENDING
+                return 0
 
     def handleVehiclePanel(self, event: Event):
         pass
