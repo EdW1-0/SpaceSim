@@ -334,6 +334,20 @@ class ColonyContext(GUIContext):
                 lambda item, key: item.name == key,
             )        
 
+    def updatePanels(self):
+        self.timing_panel.update()
+        if self.active_panel:
+            self.active_panel.update()
+
+        if self.detail_panel is self.ship_detail_panel:
+            if (
+                self.detail_panel.ship
+                and self.detail_panel.ship.id not in self.colony.ships
+            ):
+                self.ship_detail_panel.setShip(None)
+
+        if self.detail_panel:
+            self.detail_panel.update()
 
     def run(self):
         returnCode = 0
@@ -349,25 +363,11 @@ class ColonyContext(GUIContext):
             elif event.type == UI_SELECTION_LIST_NEW_SELECTION:
                 self.handleListSelection(event)
 
-
             self.manager.process_events(event)
 
         self.colony_name_label.set_text(self.colony.name)
 
         self.screen.fill((250, 100, 50))
-
-        self.timing_panel.update()
-        if self.active_panel:
-            self.active_panel.update()
-
-        if self.detail_panel is self.ship_detail_panel:
-            if (
-                self.detail_panel.ship
-                and self.detail_panel.ship.id not in self.colony.ships
-            ):
-                self.ship_detail_panel.setShip(None)
-
-        if self.detail_panel:
-            self.detail_panel.update()
+        self.updatePanels()
 
         return returnCode
