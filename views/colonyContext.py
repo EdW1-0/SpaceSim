@@ -24,6 +24,7 @@ from pygame_gui import (
     UI_SELECTION_LIST_NEW_SELECTION,
 )
 
+from pygame.event import Event
 from pygame.locals import (
     QUIT,
 )
@@ -174,6 +175,85 @@ class ColonyContext(GUIContext):
         self.detail_panel = panel
         self.detail_panel.show()
 
+    def handleGuiButton(self, event: Event) -> GUICode:
+        if event.ui_element == self.settings_button:
+            self.upperContext = {"planet": self.colony.locale.id}
+            return GUICode.LOADSURFACEVIEW
+        if self.timing_panel.handle_event(event):
+            return 0
+        elif self.tab_panel.handle_event(event):
+            if self.active_panel:
+                self.active_panel.hide()
+            if self.detail_panel:
+                self.detail_panel.hide()
+
+            if self.tab_panel.upperEvent == 1:
+                self.active_panel = self.building_panel
+            elif self.tab_panel.upperEvent == 2:
+                self.active_panel = self.production_panel
+                self.detail_panel = self.production_detail_panel
+                self.detail_panel.update()
+                self.detail_panel.show()
+            elif self.tab_panel.upperEvent == 3:
+                self.active_panel = self.vehicle_panel
+            elif self.tab_panel.upperEvent == 4:
+                self.active_panel = self.ship_panel
+            elif self.tab_panel.upperEvent == 5:
+                self.active_panel = self.construction_panel
+            elif self.tab_panel.upperEvent == 6:
+                self.active_panel = self.resource_panel
+
+            self.active_panel.update()
+            self.active_panel.show()
+            return 0
+        elif self.active_panel and self.active_panel.handle_event(event):
+            if self.active_panel == self.ship_panel:
+                if self.detail_panel:
+                    self.detail_panel.hide()
+                if self.active_panel.upperAction == 1:
+                    self.detail_panel = self.ship_detail_panel
+                elif self.active_panel.upperAction == 2:
+                    self.detail_panel = self.ship_loading_panel
+                    self.ship_loading_panel.ship = self.ship_panel.ship
+                self.detail_panel.update()
+                self.detail_panel.show()
+            elif self.active_panel == self.vehicle_panel:
+                if self.detail_panel:
+                    self.detail_panel.hide()
+                if self.active_panel.upperAction == 1:
+                    self.detail_panel = self.vehicle_detail_panel
+                elif self.active_panel.upperAction == 2:
+                    self.detail_panel = self.vehicle_loading_panel
+                    self.vehicle_loading_panel.ship = self.vehicle_panel.ship
+                self.detail_panel.update()
+                self.detail_panel.show()
+            return 0
+
+        elif self.detail_panel and self.detail_panel.handle_event(event):
+            if self.detail_panel == self.vehicle_detail_panel:
+                self.colony.deployVehicle(self.vehicle_detail_panel.vehicle.id)
+                self.detail_panel = None
+                self.active_panel.update()
+                return 0
+            elif self.detail_panel == self.ship_detail_panel:
+                if event.ui_element == self.ship_detail_panel.target_button:
+                    self.info = RoutingModeInfo()
+                    self.info.ship = self.ship_detail_panel.ship
+                    self.info.start = self.colony
+                    return GUICode.LOADORBITVIEW_LAUNCH_PLAN
+                elif event.ui_element == self.ship_detail_panel.launch_button:
+                    self.ship_detail_panel.trajectory().state = (
+                        TrajectoryState.PENDING
+                    )
+                    return 0
+                
+        else:
+            # Unhandled button click; needs to be explicitly returned as
+            # this is usually a list item click, so returning None will
+            # suppress its handling.
+            return 0
+
+
     def run(self):
         returnCode = 0
 
@@ -182,76 +262,9 @@ class ColonyContext(GUIContext):
                 returnCode = QUIT
                 break
             if event.type == UI_BUTTON_PRESSED:
-                if event.ui_element == self.settings_button:
-                    self.upperContext = {"planet": self.colony.locale.id}
-                    returnCode = GUICode.LOADSURFACEVIEW
+                returnCode = self.handleGuiButton(event)
+                if returnCode != 0:
                     break
-                if self.timing_panel.handle_event(event):
-                    pass
-                elif self.tab_panel.handle_event(event):
-                    if self.active_panel:
-                        self.active_panel.hide()
-                    if self.detail_panel:
-                        self.detail_panel.hide()
-
-                    if self.tab_panel.upperEvent == 1:
-                        self.active_panel = self.building_panel
-                    elif self.tab_panel.upperEvent == 2:
-                        self.active_panel = self.production_panel
-                        self.detail_panel = self.production_detail_panel
-                        self.detail_panel.update()
-                        self.detail_panel.show()
-                    elif self.tab_panel.upperEvent == 3:
-                        self.active_panel = self.vehicle_panel
-                    elif self.tab_panel.upperEvent == 4:
-                        self.active_panel = self.ship_panel
-                    elif self.tab_panel.upperEvent == 5:
-                        self.active_panel = self.construction_panel
-                    elif self.tab_panel.upperEvent == 6:
-                        self.active_panel = self.resource_panel
-
-                    self.active_panel.update()
-                    self.active_panel.show()
-                    pass
-                elif self.active_panel and self.active_panel.handle_event(event):
-                    if self.active_panel == self.ship_panel:
-                        if self.detail_panel:
-                            self.detail_panel.hide()
-                        if self.active_panel.upperAction == 1:
-                            self.detail_panel = self.ship_detail_panel
-                        elif self.active_panel.upperAction == 2:
-                            self.detail_panel = self.ship_loading_panel
-                            self.ship_loading_panel.ship = self.ship_panel.ship
-                        self.detail_panel.update()
-                        self.detail_panel.show()
-                    elif self.active_panel == self.vehicle_panel:
-                        if self.detail_panel:
-                            self.detail_panel.hide()
-                        if self.active_panel.upperAction == 1:
-                            self.detail_panel = self.vehicle_detail_panel
-                        elif self.active_panel.upperAction == 2:
-                            self.detail_panel = self.vehicle_loading_panel
-                            self.vehicle_loading_panel.ship = self.vehicle_panel.ship
-                        self.detail_panel.update()
-                        self.detail_panel.show()
-
-                elif self.detail_panel and self.detail_panel.handle_event(event):
-                    if self.detail_panel == self.vehicle_detail_panel:
-                        self.colony.deployVehicle(self.vehicle_detail_panel.vehicle.id)
-                        self.detail_panel = None
-                        self.active_panel.update()
-                    elif self.detail_panel == self.ship_detail_panel:
-                        if event.ui_element == self.ship_detail_panel.target_button:
-                            self.info = RoutingModeInfo()
-                            self.info.ship = self.ship_detail_panel.ship
-                            self.info.start = self.colony
-                            returnCode = GUICode.LOADORBITVIEW_LAUNCH_PLAN
-                            break
-                        elif event.ui_element == self.ship_detail_panel.launch_button:
-                            self.ship_detail_panel.trajectory().state = (
-                                TrajectoryState.PENDING
-                            )
-
             elif event.type == UI_SELECTION_LIST_NEW_SELECTION:
                 if event.ui_element == self.vehicle_panel.item_list:
                     self.populateDetailPanel(
