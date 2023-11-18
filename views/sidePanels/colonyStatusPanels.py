@@ -65,22 +65,16 @@ class ColonyTabPanel(SideStatusPanel):
         if super().handle_event(event):
             return True
         elif event.ui_element == self.buildings_button:
-            self.upperEvent = 1
             return True
         elif event.ui_element == self.production_button:
-            self.upperEvent = 2
             return True
         elif event.ui_element == self.vehicles_button:
-            self.upperEvent = 3
             return True
         elif event.ui_element == self.ships_button:
-            self.upperEvent = 4
             return True
         elif event.ui_element == self.construction_button:
-            self.upperEvent = 5
             return True
         elif event.ui_element == self.resource_button:
-            self.upperEvent = 6
             return True
         else:
             return False

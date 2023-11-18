@@ -182,30 +182,7 @@ class ColonyContext(GUIContext):
         if self.timing_panel.handle_event(event):
             return 0
         elif self.tab_panel.handle_event(event):
-            if self.active_panel:
-                self.active_panel.hide()
-            if self.detail_panel:
-                self.detail_panel.hide()
-
-            if self.tab_panel.upperEvent == 1:
-                self.active_panel = self.building_panel
-            elif self.tab_panel.upperEvent == 2:
-                self.active_panel = self.production_panel
-                self.detail_panel = self.production_detail_panel
-                self.detail_panel.update()
-                self.detail_panel.show()
-            elif self.tab_panel.upperEvent == 3:
-                self.active_panel = self.vehicle_panel
-            elif self.tab_panel.upperEvent == 4:
-                self.active_panel = self.ship_panel
-            elif self.tab_panel.upperEvent == 5:
-                self.active_panel = self.construction_panel
-            elif self.tab_panel.upperEvent == 6:
-                self.active_panel = self.resource_panel
-
-            self.active_panel.update()
-            self.active_panel.show()
-            return 0
+            return self.handleTabPanel(event)
         elif self.active_panel and self.active_panel.handle_event(event):
             if self.active_panel == self.ship_panel:
                 if self.detail_panel:
@@ -253,6 +230,32 @@ class ColonyContext(GUIContext):
             # suppress its handling.
             return 0
         
+    def handleTabPanel(self, event):
+        if self.active_panel:
+            self.active_panel.hide()
+        if self.detail_panel:
+            self.detail_panel.hide()
+
+        if event.ui_element == self.tab_panel.buildings_button:
+            self.active_panel = self.building_panel
+        elif event.ui_element == self.tab_panel.production_button:
+            self.active_panel = self.production_panel
+            self.detail_panel = self.production_detail_panel
+            self.detail_panel.update()
+            self.detail_panel.show()
+        elif event.ui_element == self.tab_panel.vehicles_button:
+            self.active_panel = self.vehicle_panel
+        elif event.ui_element == self.tab_panel.ships_button:
+            self.active_panel = self.ship_panel
+        elif event.ui_element == self.tab_panel.construction_button:
+            self.active_panel = self.construction_panel
+        elif event.ui_element == self.tab_panel.resource_button:
+            self.active_panel = self.resource_panel
+
+        self.active_panel.update()
+        self.active_panel.show()
+        return 0
+
     def handleListSelection(self, event):
         if event.ui_element == self.vehicle_panel.item_list:
             self.populateDetailPanel(
