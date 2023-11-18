@@ -3,6 +3,8 @@ from unittest.mock import MagicMock
 
 from views.timingPanel import TimingPanel
 
+from tests.test_views.test_guiContext import isLocal
+
 from timingMaster import TimingMaster
 
 import pygame
@@ -11,6 +13,8 @@ import pygame_gui
 class EventMock:
     pass
 
+
+@unittest.skipUnless(isLocal(), "requires Windows")
 class TestTimingPanel(unittest.TestCase):
     def setUp(self):
         pygame.init()

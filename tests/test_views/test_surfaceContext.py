@@ -152,6 +152,8 @@ class TestSurfaceContextGraphics(unittest.TestCase):
         pc2 = sc.polyCount
         self.assertEqual(pc2 - pc, 8)
 
+
+@unittest.skipUnless(isLocal(), "requires Windows")
 class TestSurfaceContextCoordinateSystems(unittest.TestCase):
     def setUp(self):
         pygame.init()
@@ -185,6 +187,7 @@ class TestSurfaceContextCoordinateSystems(unittest.TestCase):
         self.assertEqual(self.sc.meridian[1], 80)
 
 
+@unittest.skipUnless(isLocal(), "requires Windows")
 class TestSurfaceContextEventHandling(unittest.TestCase):
     def setUp(self):
         pygame.init()
