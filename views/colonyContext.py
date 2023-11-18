@@ -252,6 +252,87 @@ class ColonyContext(GUIContext):
             # this is usually a list item click, so returning None will
             # suppress its handling.
             return 0
+        
+    def handleListSelection(self, event):
+        if event.ui_element == self.vehicle_panel.item_list:
+            self.populateDetailPanel(
+                event.text,
+                self.colony.vehicles.values(),
+                self.vehicle_detail_panel,
+                self.vehicle_detail_panel.setVehicle,
+                lambda item, key: item.name == key,
+            )
+            vehicle = None
+            for v in self.colony.vehicles.values():
+                if v.name == event.text:
+                    vehicle = v
+            self.vehicle_panel.setSelectedShip(vehicle)
+        elif event.ui_element == self.ship_panel.item_list:
+            self.populateDetailPanel(
+                event.text,
+                self.colony.ships.values(),
+                self.ship_detail_panel,
+                self.ship_detail_panel.setShip,
+                lambda item, key: item.name == key,
+            )
+            ship = None
+            for s in self.colony.ships.values():
+                if s.name == event.text:
+                    ship = s
+            self.ship_panel.setSelectedShip(ship)
+        elif (
+            event.ui_element == self.ship_loading_panel.item_list
+            or event.ui_element == self.vehicle_loading_panel.item_list
+        ):
+            resource = None
+            for r in self.model.colonySim._resources.values():
+                if r.name == event.text:
+                    resource = r
+            self.detail_panel.setResource(resource)
+            self.detail_panel.update()
+
+        elif event.ui_element == self.building_panel.item_list:
+            self.populateDetailPanel(
+                int(event.text.split()[-1]),
+                self.colony.buildings.values(),
+                self.building_detail_panel,
+                self.building_detail_panel.setBuilding,
+                lambda item, key: item.id == key,
+            )
+        elif event.ui_element == self.construction_panel.item_list:
+            self.populateDetailPanel(
+                event.text,
+                self.model.colonySim.buildingClassesForColony(
+                    self.colony.id
+                ).values(),
+                self.construction_detail_panel,
+                self.construction_detail_panel.setBuildingClass,
+                lambda item, key: item.name == key,
+            )
+        elif event.ui_element == self.production_panel.item_list:
+            po = None
+            (text, id) = self.production_panel.item_list.get_single_selection()
+            for order in self.colony.productionOrders.values():
+                if order.id == int(id):
+                    po = order
+            assert po
+            self.production_panel.setProductionOrder(po)
+            self.production_panel.update()
+        elif event.ui_element == self.production_detail_panel.item_list:
+            reaction = None
+            for r in self.model.colonySim._reactions.values():
+                if r.name == event.text:
+                    reaction = r
+            assert reaction
+            self.production_detail_panel.setReaction(reaction)
+        elif event.ui_element == self.resource_panel.item_list:
+            self.populateDetailPanel(
+                event.text,
+                self.model.colonySim._resources.values(),
+                self.resource_detail_panel,
+                self.resource_detail_panel.setResource,
+                lambda item, key: item.name == key,
+            )        
 
 
     def run(self):
@@ -266,85 +347,8 @@ class ColonyContext(GUIContext):
                 if returnCode != 0:
                     break
             elif event.type == UI_SELECTION_LIST_NEW_SELECTION:
-                if event.ui_element == self.vehicle_panel.item_list:
-                    self.populateDetailPanel(
-                        event.text,
-                        self.colony.vehicles.values(),
-                        self.vehicle_detail_panel,
-                        self.vehicle_detail_panel.setVehicle,
-                        lambda item, key: item.name == key,
-                    )
-                    vehicle = None
-                    for v in self.colony.vehicles.values():
-                        if v.name == event.text:
-                            vehicle = v
-                    self.vehicle_panel.setSelectedShip(vehicle)
-                elif event.ui_element == self.ship_panel.item_list:
-                    self.populateDetailPanel(
-                        event.text,
-                        self.colony.ships.values(),
-                        self.ship_detail_panel,
-                        self.ship_detail_panel.setShip,
-                        lambda item, key: item.name == key,
-                    )
-                    ship = None
-                    for s in self.colony.ships.values():
-                        if s.name == event.text:
-                            ship = s
-                    self.ship_panel.setSelectedShip(ship)
-                elif (
-                    event.ui_element == self.ship_loading_panel.item_list
-                    or event.ui_element == self.vehicle_loading_panel.item_list
-                ):
-                    resource = None
-                    for r in self.model.colonySim._resources.values():
-                        if r.name == event.text:
-                            resource = r
-                    self.detail_panel.setResource(resource)
-                    self.detail_panel.update()
+                self.handleListSelection(event)
 
-                elif event.ui_element == self.building_panel.item_list:
-                    self.populateDetailPanel(
-                        int(event.text.split()[-1]),
-                        self.colony.buildings.values(),
-                        self.building_detail_panel,
-                        self.building_detail_panel.setBuilding,
-                        lambda item, key: item.id == key,
-                    )
-                elif event.ui_element == self.construction_panel.item_list:
-                    self.populateDetailPanel(
-                        event.text,
-                        self.model.colonySim.buildingClassesForColony(
-                            self.colony.id
-                        ).values(),
-                        self.construction_detail_panel,
-                        self.construction_detail_panel.setBuildingClass,
-                        lambda item, key: item.name == key,
-                    )
-                elif event.ui_element == self.production_panel.item_list:
-                    po = None
-                    (text, id) = self.production_panel.item_list.get_single_selection()
-                    for order in self.colony.productionOrders.values():
-                        if order.id == int(id):
-                            po = order
-                    assert po
-                    self.production_panel.setProductionOrder(po)
-                    self.production_panel.update()
-                elif event.ui_element == self.production_detail_panel.item_list:
-                    reaction = None
-                    for r in self.model.colonySim._reactions.values():
-                        if r.name == event.text:
-                            reaction = r
-                    assert reaction
-                    self.production_detail_panel.setReaction(reaction)
-                elif event.ui_element == self.resource_panel.item_list:
-                    self.populateDetailPanel(
-                        event.text,
-                        self.model.colonySim._resources.values(),
-                        self.resource_detail_panel,
-                        self.resource_detail_panel.setResource,
-                        lambda item, key: item.name == key,
-                    )
 
             self.manager.process_events(event)
 
