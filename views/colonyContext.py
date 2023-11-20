@@ -17,6 +17,9 @@ from views.sidePanels.colonyStatusPanels import (
 
 from orbitsim.orbitTrajectory import TrajectoryState
 
+from colonysim.colony import Colony
+from gameModel import GameModel
+
 import pygame
 from pygame_gui.elements import UILabel, UIButton
 from pygame_gui import (
@@ -33,7 +36,7 @@ from views.routingModeInfo import RoutingModeInfo
 
 
 class ColonyContext(GUIContext):
-    def __init__(self, screen, model, manager, colony, info=None):
+    def __init__(self, screen, model: GameModel, manager, colony: Colony, info: RoutingModeInfo=None):
         super().__init__(screen, model, manager)
         self.colony = colony
 
@@ -184,6 +187,8 @@ class ColonyContext(GUIContext):
         elif self.tab_panel.handle_event(event):
             return self.handleTabPanel(event)
         elif self.active_panel and self.active_panel.handle_event(event):
+            if event.ui_element == self.active_panel.hide_button:
+                return 0
             if self.active_panel == self.ship_panel:
                 if self.detail_panel:
                     self.detail_panel.hide()
@@ -207,6 +212,8 @@ class ColonyContext(GUIContext):
             return 0
 
         elif self.detail_panel and self.detail_panel.handle_event(event):
+            if event.ui_element == self.detail_panel.hide_button:
+                return 0
             if self.detail_panel == self.vehicle_detail_panel:
                 self.colony.deployVehicle(self.vehicle_detail_panel.vehicle.id)
                 self.detail_panel = None
