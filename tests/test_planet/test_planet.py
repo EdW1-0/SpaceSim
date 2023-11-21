@@ -1,6 +1,6 @@
 import unittest
 
-from planetsim.planet import Planet
+from planetsim import Planet
 
 
 class SurfaceMock:

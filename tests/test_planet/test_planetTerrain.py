@@ -1,6 +1,6 @@
 import unittest
 
-from planetsim.planetTerrain import PlanetTerrain
+from planetsim import PlanetTerrain
 
 
 class TestPlanetTerrain(unittest.TestCase):

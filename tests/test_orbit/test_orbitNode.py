@@ -1,6 +1,6 @@
 import unittest
 
-from orbitsim.orbitNode import OrbitNode, LeafClass
+from orbitsim import OrbitNode, LeafClass
 
 
 class PlanetMock:

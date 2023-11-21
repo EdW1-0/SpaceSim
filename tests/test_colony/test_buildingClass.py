@@ -1,6 +1,6 @@
 import unittest
 
-from colonysim.buildingClass import (
+from colonysim import (
     BuildingClass,
     StorageBuildingClass,
     ExtractionBuildingClass,

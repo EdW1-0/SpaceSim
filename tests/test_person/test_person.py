@@ -1,7 +1,10 @@
 import unittest
 
-from personmodel.person import Person
-from personmodel.task import Task, TaskCategory
+from personmodel import (
+    Person,
+    Task,
+    TaskCategory
+)
 
 
 class TestPerson(unittest.TestCase):

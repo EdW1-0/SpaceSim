@@ -1,7 +1,6 @@
 import unittest
 
-from planetsim.surfaceObject import SurfaceObject
-from planetsim.surfacePoint import SurfacePoint
+from planetsim import SurfaceObject, SurfacePoint
 
 
 class ContentMock:

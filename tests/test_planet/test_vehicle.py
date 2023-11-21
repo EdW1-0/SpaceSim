@@ -1,7 +1,6 @@
 import unittest
 
-from planetsim.vehicle import Vehicle
-from planetsim.vehicleClass import VehicleClass
+from planetsim import Vehicle, VehicleClass
 
 
 class TestVehicle(unittest.TestCase):

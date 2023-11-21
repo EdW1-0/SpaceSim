@@ -1,7 +1,7 @@
 import unittest
 
-from orbitsim.orbitTrajectory import OrbitTrajectory
-from planetsim.surfacePoint import SurfacePoint
+from orbitsim import OrbitTrajectory
+from planetsim import SurfacePoint
 
 
 class TestOrbitTrajectory(unittest.TestCase):

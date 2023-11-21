@@ -1,7 +1,6 @@
 import unittest
 
-from colonysim.ship import Ship
-from colonysim.shipClass import ShipClass
+from colonysim import Ship, ShipClass
 
 
 class TestShip(unittest.TestCase):

@@ -1,8 +1,6 @@
 import unittest
 
-from planetsim.surfaceRegion import SurfaceRegion
-from planetsim.surfacePoint import SurfacePoint
-from planetsim.surfacePath import SurfacePath
+from planetsim import SurfaceRegion, SurfacePoint, SurfacePath
 
 
 class TestSurfaceRegion(unittest.TestCase):

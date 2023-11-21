@@ -1,21 +1,18 @@
 import unittest
 
-from colonysim.building import (
+from colonysim import (
+    ColonySim,
     Building,
     BuildingStatus,
     BuildingStatusError,
     ProductionBuilding,
     StorageBuilding,
     ExtractionBuilding,
-)
-from colonysim.buildingClass import (
     BuildingClass,
     ProductionBuildingClass,
     StorageBuildingClass,
     ExtractionBuildingClass,
 )
-from colonysim.colonySim import ColonySim
-
 
 class TestBuilding(unittest.TestCase):
     def setUp(self):

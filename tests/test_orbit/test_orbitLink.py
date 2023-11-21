@@ -1,6 +1,6 @@
 import unittest
 
-from orbitsim.orbitLink import OrbitLink
+from orbitsim import OrbitLink
 
 
 class NodeMock:

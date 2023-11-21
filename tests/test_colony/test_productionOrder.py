@@ -1,7 +1,6 @@
 import unittest
 
-from colonysim.productionOrder import ProductionOrder, OrderStatus
-from colonysim.reaction import Reaction
+from colonysim import ProductionOrder, OrderStatus, Reaction
 
 
 class TestProductionOrder(unittest.TestCase):

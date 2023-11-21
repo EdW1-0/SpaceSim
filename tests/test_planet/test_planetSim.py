@@ -1,4 +1,4 @@
-from planetsim.planetSim import PlanetSim
+from planetsim import PlanetSim
 
 import unittest
 

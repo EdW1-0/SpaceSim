@@ -1,7 +1,6 @@
 import unittest
 
-from colonysim.colonySim import ColonySim
-from colonysim.buildingClass import ProductionBuildingClass
+from colonysim import ColonySim, ProductionBuildingClass
 
 
 class MockLocale:

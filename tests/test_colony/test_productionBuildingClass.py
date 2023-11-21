@@ -1,6 +1,6 @@
 import unittest
 
-from colonysim.buildingClass import ProductionBuildingClass
+from colonysim import ProductionBuildingClass
 
 
 class TestProductionBuildingClass(unittest.TestCase):

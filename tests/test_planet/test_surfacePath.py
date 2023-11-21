@@ -2,13 +2,12 @@ import unittest
 
 import math
 
-from planetsim.surfacePath import SurfacePath, gcIntersections, pathsIntersect
-from planetsim.surfacePoint import (
+from planetsim.surfacePath import gcIntersections, pathsIntersect
+from planetsim import (
+    SurfacePath,
     SurfacePoint,
-    canonicalPoint,
-    pointFromVector,
-    almostEqual,
 )
+from planetsim.surfacePoint import canonicalPoint, pointFromVector, almostEqual
 
 
 class TestSurfacePath(unittest.TestCase):

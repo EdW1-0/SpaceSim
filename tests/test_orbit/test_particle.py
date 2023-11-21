@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 
-from orbitsim.particle import Particle, DeltaVError
+from orbitsim import Particle, DeltaVError
 
 
 class TestDeltaVError(unittest.TestCase):

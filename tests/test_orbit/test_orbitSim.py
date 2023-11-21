@@ -2,11 +2,14 @@ import unittest
 
 import json
 
-from orbitsim.orbitSim import OrbitSim
-from orbitsim.particle import Particle
-from orbitsim.orbitTrajectory import OrbitTrajectory, TrajectoryState
+from orbitsim import (
+    OrbitSim,
+    Particle,
+    OrbitTrajectory, 
+    TrajectoryState,
+)
 from gameModel import GameModel
-from planetsim.surfacePoint import SurfacePoint
+from planetsim import SurfacePoint
 
 
 class PayloadMock:

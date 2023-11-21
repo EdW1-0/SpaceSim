@@ -1,21 +1,20 @@
 import unittest
 
-from colonysim.colony import Colony
-from colonysim.buildingClass import (
+from colonysim import (
+    ColonySim,
+    Colony,
     BuildingClass,
     ProductionBuildingClass,
     StorageBuildingClass,
     ExtractionBuildingClass,
-)
-from colonysim.building import (
     Building,
     BuildingStatus,
     ProductionBuilding,
     StorageBuilding,
+    OrderStatus
 )
-from colonysim.colonySim import ColonySim
+
 from gameModel import GameModel
-from colonysim.productionOrder import OrderStatus
 from planetsim.surfacePoint import SurfacePoint
 from planetsim.vehicle import Vehicle
 

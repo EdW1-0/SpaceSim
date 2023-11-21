@@ -1,4 +1,4 @@
-from colonysim.vessel import Vessel
+from utility.vessel import Vessel
 
 
 class Ship(Vessel):

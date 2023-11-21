@@ -1,6 +1,6 @@
 import unittest
 
-from colonysim.reaction import Reaction
+from colonysim import Reaction
 
 
 class TestReaction(unittest.TestCase):

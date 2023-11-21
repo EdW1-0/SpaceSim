@@ -3,11 +3,14 @@ from unittest.mock import MagicMock
 
 import math
 
-from planetsim.planetSurface import PlanetSurface, EARTH_RADIUS
-from planetsim.surfacePath import SurfacePath
-from planetsim.surfacePoint import SurfacePoint, almostEqual
-from planetsim.vehicle import Vehicle
-from planetsim.vehicleClass import VehicleClass
+from planetsim import (
+    PlanetSurface, 
+    EARTH_RADIUS,
+    SurfacePath,
+    SurfacePoint,
+    Vehicle,
+    VehicleClass,)
+from planetsim.surfacePoint import almostEqual
 
 
 class TestPlanetSurface(unittest.TestCase):

@@ -1,6 +1,6 @@
 import unittest
 
-from colonysim.resource import Resource
+from colonysim import Resource
 
 
 class TestResource(unittest.TestCase):

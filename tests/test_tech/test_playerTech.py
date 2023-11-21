@@ -1,6 +1,6 @@
 import unittest
 
-import techtree.playerTech as playerTech
+import techtree as playerTech
 import techtree.techTree as techTree
 
 

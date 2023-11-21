@@ -11,8 +11,11 @@ from colonysim.colony import Colony
 
 from planetsim.planetSurface import PlanetSurface
 
-from utility.fileLoad import loadEntityFile
-from utility.dictLookup import getIntId, getStringId
+from utility import (
+    loadEntityFile,
+    getIntId,
+    getStringId
+)
 
 
 class OrbitSim:
