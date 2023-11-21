@@ -3,7 +3,6 @@ import pygame
 
 
 from views.guiContext import GUIContext, GUICode
-from views.timingPanel import TimingPanel
 from views.orbitViews.orbitViews import (
     OrbitNodeView,
     OrbitNodeViewLabel,
@@ -11,12 +10,13 @@ from views.orbitViews.orbitViews import (
     OrbitLinkViewLabel,
     ParticleView,
 )
-from views.sidePanels.orbitStatusPanels import (
+from views.panels import (
     OrbitStatusPanel,
     LinkStatusPanel,
     PlanetStatusPanel,
     TargetSettingPanel,
     ShipStatusPanel,
+    TimingPanel,
 )
 
 from gameModel import GameModel

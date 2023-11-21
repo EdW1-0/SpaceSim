@@ -1,13 +1,13 @@
 from views.guiContext import GUIContext, GUICode
 
-from views.timingPanel import TimingPanel
-from views.sidePanels.orbitStatusPanels import PlanetStatusPanel
-from views.sidePanels.surfaceStatusPanels import (
+from views.panels import (
+    PlanetStatusPanel,
     RegionStatusPanel,
     VehicleStatusPanel,
     VehicleRoutingPanel,
+    ColonyShipDetailPanel,
+    TimingPanel
 )
-from views.sidePanels.colonyStatusPanels import ColonyShipDetailPanel
 
 from planetsim import (
     SurfacePoint, 

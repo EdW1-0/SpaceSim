@@ -2,7 +2,7 @@ import pygame
 
 from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox, UISelectionList
 
-from views.sidePanels.sideStatusPanels import SideStatusPanel
+from views.panels.sideStatusPanels import SideStatusPanel
 
 from orbitsim import OrbitNode
 

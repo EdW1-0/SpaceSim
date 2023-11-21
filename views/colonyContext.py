@@ -1,7 +1,6 @@
 from views.guiContext import GUIContext, GUICode
-from views.timingPanel import TimingPanel
 
-from views.sidePanels.colonyStatusPanels import (
+from views.panels import (
     ColonyTabPanel,
     ColonyVehicleDetailPanel,
     ColonyShipPanel,
@@ -13,6 +12,7 @@ from views.sidePanels.colonyStatusPanels import (
     ColonyProductionPanel,
     ColonyProductionDetailPanel,
     ColonyResourceDetailPanel,
+    TimingPanel
 )
 
 from orbitsim import TrajectoryState
