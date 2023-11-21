@@ -192,4 +192,120 @@ class TestColonyContextHandleGUIButton(unittest.TestCase):
         self.assertIsNone(self.cc.detail_panel)
         self.assertEqual(len(self.cc.colony.vehicles), 0)
 
+@unittest.skipUnless(isLocal(), "requires Windows")
+class TestColonyContextHandleListSelection(unittest.TestCase):
+    def setUp(self):
+        pygame.init()
+        self.manager = pygame_gui.UIManager((1200, 800))
+        pygame.display.set_mode((1200, 800))
+
+        self.model = GameModel()
+        self.model.load()
+
+        self.cm = ModelMock()
+        self.cm.vehicles = {}
+        self.cm.ships = {}
+
+        self.cc = ColonyContext(ModelMock(), self.model, self.manager, self.model.colonySim.colonyById(0))
+
+    def testColonyContextPopulateDetailPanel(self):
+        detail_panel = ModelMock()
+        detail_panel.show = MagicMock()
+        detail_panel.update = MagicMock()
+        detail_panel.setter = MagicMock()
+
+        source_list = [1,2,3,4,5,6,7]
+
+        self.cc.populateDetailPanel(
+            5, 
+            source_list, 
+            detail_panel, 
+            detail_panel.setter, 
+            lambda item, key: item == key
+            )
+        self.assertEqual(self.cc.detail_panel, detail_panel)
+        detail_panel.show.assert_called()
+        detail_panel.update.assert_called()
+        detail_panel.setter.assert_called_with(5)
+
+    def testColonyContextListSelection(self):
+        event = ModelMock()
+        event.ui_element = self.cc.vehicle_panel.item_list
+        vehicle = next(iter(self.cc.colony.vehicles.values()))
+        event.text = vehicle.name
+
+        self.assertEqual(self.cc.handleListSelection(event), 0)
+        self.assertEqual(self.cc.vehicle_panel.ship, vehicle)
+        self.assertEqual(self.cc.detail_panel, self.cc.vehicle_detail_panel)
+        self.assertEqual(self.cc.vehicle_detail_panel.vehicle, vehicle)
+
+        event.ui_element = self.cc.ship_panel.item_list
+        ship = next(iter(self.cc.colony.ships.values()))
+        event.text = ship.name
+
+        self.assertEqual(self.cc.handleListSelection(event), 0)
+        self.assertEqual(self.cc.ship_panel.ship, ship)
+        self.assertEqual(self.cc.detail_panel, self.cc.ship_detail_panel)
+        self.assertEqual(self.cc.ship_detail_panel.ship, ship)
+
+        event.text = "Energy"
+        event.ui_element = self.cc.vehicle_loading_panel.item_list
+        self.cc.detail_panel = self.cc.vehicle_loading_panel
+        self.cc.vehicle_loading_panel.setShip(vehicle)
+
+        self.assertEqual(self.cc.handleListSelection(event), 0)
+        self.assertEqual(self.cc.vehicle_loading_panel.resource.name, event.text)
+
+        event.ui_element = self.cc.ship_loading_panel.item_list
+        self.cc.detail_panel = self.cc.ship_loading_panel
+        self.cc.ship_loading_panel.setShip(ship)
+
+        self.assertEqual(self.cc.handleListSelection(event), 0)
+        self.assertEqual(self.cc.ship_loading_panel.resource.name, event.text)
+        
+        event.ui_element = self.cc.building_panel.item_list
+        building = next(iter(self.cc.colony.buildings.values()))
+        event.text = building.buildingClass.name + " " + str(building.id)
+
+        self.assertEqual(self.cc.handleListSelection(event), 0)
+        self.assertEqual(self.cc.detail_panel, self.cc.building_detail_panel)
+        self.assertEqual(self.cc.building_detail_panel.building, building)
+
+        event.ui_element = self.cc.construction_panel.item_list
+        buildingClass = next(iter(self.cc.model.colonySim.buildingClassesForColony(self.cc.colony.id).values()))
+        event.text = buildingClass.name
+
+        self.assertEqual(self.cc.handleListSelection(event), 0)
+        self.assertEqual(self.cc.detail_panel, self.cc.construction_detail_panel)
+        self.assertEqual(self.cc.construction_detail_panel.buildingClass, buildingClass)
+
+        event.ui_element = self.cc.production_panel.item_list
+        po = next(iter(self.cc.colony.productionOrders.values()))
+        self.cc.production_panel.update()
+        self.cc.production_panel.item_list.item_list[0]['selected'] = True
+
+        self.assertEqual(self.cc.handleListSelection(event), 0)
+        (text, id) = self.cc.production_panel.item_list.get_single_selection()
+        self.assertEqual(self.cc.production_panel.productionOrder.id, int(id))
+
+        event.ui_element = self.cc.production_detail_panel.item_list
+        reaction = next(iter(self.cc.model.colonySim._reactions.values()))
+        event.text = reaction.name
+
+        self.assertEqual(self.cc.handleListSelection(event), 0)
+        self.assertEqual(self.cc.production_detail_panel.reaction, reaction)
+
+        event.ui_element = self.cc.resource_panel.item_list
+        resource = next(iter(self.model.colonySim._resources.values()))
+        event.text = resource.name
+
+        self.assertEqual(self.cc.handleListSelection(event), 0)
+        self.assertEqual(self.cc.resource_detail_panel, self.cc.detail_panel)
+        self.assertEqual(self.cc.resource_detail_panel.resource, resource)
+
+
+
+
+
+
 
