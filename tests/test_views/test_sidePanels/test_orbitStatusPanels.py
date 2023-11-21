@@ -1,4 +1,4 @@
-from views.sidePanels.orbitStatusPanels import (
+from views.panels import (
     PlanetStatusPanel,
     OrbitStatusPanel,
     LinkStatusPanel,
