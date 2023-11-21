@@ -1,6 +1,6 @@
 import pygame
 
-from orbitsim.orbitNode import LeafClass
+from orbitsim import LeafClass
 
 
 class OrbitNodeView(pygame.sprite.Sprite):

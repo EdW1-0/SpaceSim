@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
-from colonysim.ship import Ship
-from orbitsim.orbitTrajectory import OrbitTrajectory
-from planetsim.surfacePoint import SurfacePoint
+from colonysim import Ship
+from orbitsim import OrbitTrajectory
+from planetsim import SurfacePoint
 
 @dataclass
 class RoutingModeInfo:

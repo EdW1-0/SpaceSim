@@ -2,10 +2,9 @@ import pygame
 
 from views.sidePanels.sideStatusPanels import SideStatusPanel
 
-from planetsim.surfaceVehicle import SurfaceVehicle
-from planetsim.surfaceBase import SurfaceBase
+from planetsim import SurfaceVehicle, SurfaceBase
 
-from colonysim.ship import Ship
+from colonysim import Ship
 
 from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox
 

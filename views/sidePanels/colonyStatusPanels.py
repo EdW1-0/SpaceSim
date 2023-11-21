@@ -11,8 +11,7 @@ from pygame_gui.elements import (
 )
 
 from views.widgets.selectionListId import SelectionListId
-from colonysim.building import Building
-from colonysim.productionOrder import ProductionOrder
+from colonysim import Building, ProductionOrder
 
 
 class ColonyTabPanel(SideStatusPanel):

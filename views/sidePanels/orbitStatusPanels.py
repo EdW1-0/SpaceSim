@@ -4,15 +4,9 @@ from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox, UISelecti
 
 from views.sidePanels.sideStatusPanels import SideStatusPanel
 
-from orbitsim.orbitTrajectory import TrajectoryState
-from orbitsim.orbitNode import OrbitNode
-from orbitsim.particle import Particle
+from orbitsim import OrbitNode
 
-from planetsim.surfacePoint import SurfacePoint
-from planetsim.surfaceBase import SurfaceBase
-
-from colonysim.ship import Ship
-
+from planetsim import SurfacePoint, SurfaceBase
 
 
 

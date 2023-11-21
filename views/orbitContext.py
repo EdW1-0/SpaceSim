@@ -21,13 +21,17 @@ from views.sidePanels.orbitStatusPanels import (
 
 from gameModel import GameModel
 
-from orbitsim.orbitNode import LeafClass, OrbitNode
-from orbitsim.orbitLink import OrbitLink
-from orbitsim.orbitTrajectory import TrajectoryState, OrbitTrajectory
-from orbitsim.particle import Particle
+from orbitsim import (
+    LeafClass,
+    OrbitLink, 
+    OrbitNode, 
+    OrbitTrajectory, 
+    TrajectoryState,
+    Particle
+)
 
-from planetsim.planet import Planet
-from colonysim.colony import Colony
+from planetsim import Planet
+from colonysim import Colony
 
 from views.surfaceContext import SCMode
 

@@ -15,9 +15,9 @@ from views.sidePanels.colonyStatusPanels import (
     ColonyResourceDetailPanel,
 )
 
-from orbitsim.orbitTrajectory import TrajectoryState
+from orbitsim import TrajectoryState
 
-from colonysim.colony import Colony
+from colonysim import Colony
 from gameModel import GameModel
 
 import pygame

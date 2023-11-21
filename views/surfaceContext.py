@@ -9,17 +9,21 @@ from views.sidePanels.surfaceStatusPanels import (
 )
 from views.sidePanels.colonyStatusPanels import ColonyShipDetailPanel
 
-from planetsim.surfacePoint import SurfacePoint, dot, vector, latLong
-from planetsim.surfaceRegion import SurfaceRegion
-from planetsim.surfacePath import SurfacePath
-from planetsim.surfaceVehicle import SurfaceVehicle
-from planetsim.surfaceBase import SurfaceBase
-from planetsim.planet import Planet
+from planetsim import (
+    SurfacePoint, 
+    SurfaceRegion,
+    SurfacePath,
+    SurfaceBase,
+    SurfaceVehicle,
+    Planet,
+)
+from planetsim.surfacePoint import dot, vector, latLong
 
-from orbitsim.orbitTrajectory import TrajectoryState
 
-from colonysim.ship import Ship
-from colonysim.colony import Colony
+from orbitsim import TrajectoryState
+
+from colonysim import Ship
+from colonysim import Colony
 
 from views.routingModeInfo import RoutingModeInfo
 

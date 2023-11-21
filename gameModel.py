@@ -1,7 +1,7 @@
-from techtree.techTree import TechTree
-from orbitsim.orbitSim import OrbitSim
-from colonysim.colonySim import ColonySim
-from planetsim.planetSim import PlanetSim
+from techtree import TechTree
+from orbitsim import OrbitSim
+from colonysim import ColonySim
+from planetsim import PlanetSim
 from timingMaster import TimingMaster
 
 
