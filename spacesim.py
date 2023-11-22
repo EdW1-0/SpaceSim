@@ -2,20 +2,20 @@ import pygame
 import pygame_gui
 
 from gameModel import GameModel
-from views.menuContext import MenuContext
-from views.orbitContext import OrbitContext
-from views.surfaceContext import SurfaceContext
-from views.colonyContext import ColonyContext
+from views import MenuContext
+from views import OrbitContext
+from views import SurfaceContext
+from views import ColonyContext
 
 
 from pygame.locals import (
     QUIT,
 )
 
-from views.orbitContext import OCMode
-from views.surfaceContext import SCMode
+from views import OCMode
+from views import SCMode
 
-from views.guiContext import GUICode
+from views import GUICode
 
 
 # Define constants for the screen width and height
