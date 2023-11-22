@@ -1,4 +1,4 @@
-from views.panels.colonyStatusPanels import (
+from .colonyStatusPanels import (
     ColonyProductionDetailPanel,
     ColonyProductionPanel,
     ColonyResourceDetailPanel,
@@ -12,16 +12,16 @@ from views.panels.colonyStatusPanels import (
     ColonyConstructionDetailPanel,
     ColonyItemPanel,
 )
-from views.panels.orbitStatusPanels import (
+from .orbitStatusPanels import (
     OrbitStatusPanel,
     TargetSettingPanel,
     PlanetStatusPanel,
     LinkStatusPanel,
     ShipStatusPanel,
 )
-from views.panels.surfaceStatusPanels import (
+from .surfaceStatusPanels import (
     RegionStatusPanel,
     VehicleStatusPanel,
     VehicleRoutingPanel,
 )
-from views.panels.timingPanel import TimingPanel
+from .timingPanel import TimingPanel
