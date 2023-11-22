@@ -1,12 +1,12 @@
-from planetsim.planetSim import PlanetSim
-from planetsim.planet import Planet
-from planetsim.planetSurface import PlanetSurface, EARTH_RADIUS
-from planetsim.planetTerrain import PlanetTerrain
-from planetsim.surfaceBase import SurfaceBase
-from planetsim.surfaceObject import SurfaceObject
-from planetsim.surfacePoint import SurfacePoint
-from planetsim.surfacePath import SurfacePath
-from planetsim.surfaceRegion import SurfaceRegion 
-from planetsim.surfaceVehicle import SurfaceVehicle
-from planetsim.vehicle import Vehicle
-from planetsim.vehicleClass import VehicleClass
+from .planetSim import PlanetSim
+from .planet import Planet
+from .planetSurface import PlanetSurface, EARTH_RADIUS
+from .planetTerrain import PlanetTerrain
+from .surfaceBase import SurfaceBase
+from .surfaceObject import SurfaceObject
+from .surfacePoint import SurfacePoint
+from .surfacePath import SurfacePath
+from .surfaceRegion import SurfaceRegion 
+from .surfaceVehicle import SurfaceVehicle
+from .vehicle import Vehicle
+from .vehicleClass import VehicleClass

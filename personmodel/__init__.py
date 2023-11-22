@@ -1,4 +1,4 @@
-from personmodel.personGenerator import PersonGenerator
-from personmodel.person import Person
-from personmodel.task import Task, TaskCategory
+from .personGenerator import PersonGenerator
+from .person import Person
+from .task import Task, TaskCategory
 

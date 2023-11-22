@@ -1,6 +1,6 @@
-from colonysim.colonySim import ColonySim
-from colonysim.colony import Colony
-from colonysim.building import (
+from .colonySim import ColonySim
+from .colony import Colony
+from .building import (
     Building,
     BuildingStatus,
     BuildingStatusError,
@@ -8,14 +8,14 @@ from colonysim.building import (
     StorageBuilding,
     ExtractionBuilding,
 )
-from colonysim.buildingClass import (
+from .buildingClass import (
     BuildingClass,
     ProductionBuildingClass,
     StorageBuildingClass,
     ExtractionBuildingClass,
 )
-from colonysim.productionOrder import ProductionOrder, OrderStatus
-from colonysim.reaction import Reaction
-from colonysim.resource import Resource
-from colonysim.ship import Ship
-from colonysim.shipClass import ShipClass
+from .productionOrder import ProductionOrder, OrderStatus
+from .reaction import Reaction
+from .resource import Resource
+from .ship import Ship
+from .shipClass import ShipClass

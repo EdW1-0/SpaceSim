@@ -1,5 +1,5 @@
-from utility.dictLookup import getIntId, getStringId
+from .dictLookup import getIntId, getStringId
 
-from utility.fileLoad import loadEntityFile
+from .fileLoad import loadEntityFile
 
-from utility.vessel import Vessel
+from .vessel import Vessel
