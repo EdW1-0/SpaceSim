@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 
-from views.timingPanel import TimingPanel
+from views.panels import TimingPanel
 
 from tests.test_views.test_guiContext import isLocal
 
