@@ -402,8 +402,8 @@ class testColonyShip(unittest.TestCase):
         self.c = Colony(0, "TEST", self.gm.orbitSim)
         self.c.addShip("Test ship", self.sc, deltaV=56)
         self.assertGreater(len(self.c.ships), 0)
-        self.assertEqual(self.c.ships[4].shipClass, self.sc)
-        self.assertEqual(self.c.ships[4].deltaV(), 56)
+        self.assertEqual(self.c.ships[5].shipClass, self.sc)
+        self.assertEqual(self.c.ships[5].deltaV(), 56)
 
     def testColonyLoadShip(self):
         colony = self.gm.colonySim.colonyById(0)
