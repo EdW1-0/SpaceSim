@@ -25,7 +25,7 @@ class SystemTestMacros:
         if self.runCount >= terminator:
             return True
         if isinstance(guiContext, MenuContext):
-            pos = guiContext.loadItem.rect.center
+            pos = guiContext.newItem.rect.center
             pygame.mouse.set_pos(pos)
             post(Event(MOUSEBUTTONUP))
         elif isinstance(guiContext, OrbitContext):
@@ -72,7 +72,7 @@ class SystemTestShipLandingLogic(unittest.TestCase):
 
     def shipLandingLogicCallback(self, model, guiContext):
         if isinstance(guiContext, MenuContext):
-            pos = guiContext.loadItem.rect.center
+            pos = guiContext.newItem.rect.center
             pygame.mouse.set_pos(pos)
             post(Event(MOUSEBUTTONUP))
             self.assertEqual(self.runCount, 0)
@@ -275,7 +275,7 @@ class SystemTestColonyShipLaunch(unittest.TestCase):
 
     def colonyShipLaunchCallback(self, model, guiContext):
         if isinstance(guiContext, MenuContext):
-            pos = guiContext.loadItem.rect.center
+            pos = guiContext.newItem.rect.center
             pygame.mouse.set_pos(pos)
             post(Event(MOUSEBUTTONUP))
             self.assertEqual(self.runCount, 0)
@@ -606,7 +606,7 @@ class SystemTestContextStack(unittest.TestCase):
 
     def contextStackCallback(self, model, guiContext):
         if isinstance(guiContext, MenuContext):
-            pos = guiContext.loadItem.rect.center
+            pos = guiContext.newItem.rect.center
             pygame.mouse.set_pos(pos)
             post(Event(MOUSEBUTTONUP))
             self.assertEqual(self.runCount, 0)
