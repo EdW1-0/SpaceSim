@@ -15,7 +15,7 @@ from colonysim.productionOrder import ProductionOrder, OrderStatus
 from planetsim.planetSurface import PlanetSurface
 from planetsim.vehicle import Vehicle
 
-from utility.dictLookup import getIntId
+from utility import getIntId, IDGenerator
 
 
 class Colony:
@@ -42,8 +42,8 @@ class Colony:
             self.productionOrders = productionOrders
         else:
             self.productionOrders = {}
-        self.buildingIdGenerator = self.newBuildingId()
-        self.productionOrderIdGenerator = self.newProductionOrderId()
+        self.buildingIdGenerator = IDGenerator()
+        self.productionOrderIdGenerator = IDGenerator()
         self.ships = {}
         for shipId in ships:
             ship = orbitSim.transferShip(shipId)
@@ -58,25 +58,7 @@ class Colony:
         if locale:
             self.locale.connectColony(self)
 
-        # Things to do here:
-        # - Get ships from orbitSim
-        # - Get vehicles from locale
-        # - Create buildings
-        # - Link colony up on locale
 
-    def newBuildingId(self):
-        buildingIdCounter = 0
-        while True:
-            while buildingIdCounter in self.buildings:
-                buildingIdCounter += 1
-            yield buildingIdCounter
-
-    def newProductionOrderId(self):
-        productionIdCounter = 0
-        while True:
-            while productionIdCounter in self.productionOrders:
-                productionIdCounter += 1
-            yield productionIdCounter
 
     # Question over whether this should be given a buildingClass reference directly,
     # or just an id and look it up from colonySim. I think this should be OK even
@@ -84,7 +66,7 @@ class Colony:
     # be singleton objects with lifespan equal to the life of the game instance anyway,
     # and this saves an extra lookup through colonysim.
     def addBuilding(self, buildingClass, colonySim=None):
-        id = next(self.buildingIdGenerator)
+        id = self.buildingIdGenerator.generateId()
         if isinstance(buildingClass, ProductionBuildingClass):
             self.buildings[id] = ProductionBuilding(id, buildingClass, colonySim)
         elif isinstance(buildingClass, StorageBuildingClass):
@@ -112,7 +94,7 @@ class Colony:
         ]
 
     def addProductionOrder(self, reaction, amount):
-        id = next(self.productionOrderIdGenerator)
+        id = self.productionOrderIdGenerator.generateId()
         self.productionOrders[id] = ProductionOrder(id, reaction, amount)
         return id
 

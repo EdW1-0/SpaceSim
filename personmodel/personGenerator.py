@@ -3,6 +3,8 @@ import json
 
 from personmodel.person import Person
 
+from utility import IDGenerator
+
 
 class PersonGenerator:
     def __init__(self, path="test_json/test_person"):
@@ -18,7 +20,7 @@ class PersonGenerator:
         )
         [f.close() for f in (surnameFile, maleFile, femaleFile)]
 
-        self.personIdGenerator = self.newPersonId()
+        self.personIdGenerator = IDGenerator()
 
     def newPerson(self):
         sexes = ("M", "F")
@@ -30,10 +32,4 @@ class PersonGenerator:
             forename = random.choice(self.female_names)
         surname = random.choice(self.surnames)
         name = forename + " " + surname
-        return Person(next(self.personIdGenerator), name=name, sex=sex, age=age)
-
-    def newPersonId(self):
-        personIdCounter = 0
-        while True:
-            yield personIdCounter
-            personIdCounter += 1
+        return Person(self.personIdGenerator.generateId(), name=name, sex=sex, age=age)

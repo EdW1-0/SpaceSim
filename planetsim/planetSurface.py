@@ -9,8 +9,7 @@ from planetsim.surfaceVehicle import SurfaceVehicle
 from planetsim.surfaceBase import SurfaceBase
 from planetsim.vehicle import Vehicle
 
-from utility.fileLoad import loadEntityFile
-from utility.dictLookup import getIntId
+from utility import getIntId, loadEntityFile, IDGenerator
 
 EARTH_RADIUS = 6371000
 
@@ -30,7 +29,7 @@ class PlanetSurface:
         self.vehicleClasses = vehicleClasses
         self.regions = {}
         self.points = {}
-        self.pointIdGenerator = self.newPointId()
+        self.pointIdGenerator = IDGenerator()
         jsonFile = open(jsonPath, "r")
         jsonNodes = json.load(jsonFile)
 
@@ -91,11 +90,6 @@ class PlanetSurface:
 
         jsonFile.close()
 
-    def newPointId(self):
-        pointIdCounter = 0
-        while True:
-            yield pointIdCounter
-            pointIdCounter += 1
 
     def gcDistance(self, path):
         return self.radius * path.gcAngle()
@@ -104,12 +98,12 @@ class PlanetSurface:
         return distance / self.radius
 
     def createObject(self, content, position, name=""):
-        id = next(self.pointIdGenerator)
+        id = self.pointIdGenerator.generateId()
         self.points[id] = SurfaceObject(id, content, position, name=name)
         return id
 
     def createVehicle(self, content, position, name="", payload=None):
-        id = next(self.pointIdGenerator)
+        id = self.pointIdGenerator.generateId()
         self.points[id] = SurfaceVehicle(
             id, content, position, name=name, payload=payload
         )
@@ -118,7 +112,7 @@ class PlanetSurface:
         return id
 
     def createBase(self, content, position, name="", colonyId=None):
-        id = next(self.pointIdGenerator)
+        id = self.pointIdGenerator.generateId()
         self.points[id] = SurfaceBase(
             id, content, position, name=name, colonyId=colonyId
         )
@@ -127,6 +121,7 @@ class PlanetSurface:
     def destroyObject(self, id):
         self.points[id].kill()
         del self.points[id]
+        self.pointIdGenerator.clearId(id)
 
     def launchShip(self, ship):
         object = self.objectForContent(ship)

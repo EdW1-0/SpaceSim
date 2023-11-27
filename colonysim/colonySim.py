@@ -18,8 +18,7 @@ from colonysim.building import (
 from colonysim.colony import Colony
 from colonysim.productionOrder import ProductionOrder
 
-from utility.fileLoad import loadEntityFile
-from utility.dictLookup import getIntId, getStringId
+from utility import loadEntityFile, getIntId, getStringId, IDGenerator
 
 
 class ColonySim:
@@ -37,7 +36,7 @@ class ColonySim:
         self._resources = {}
         self._reactions = {}
 
-        self.idGenerator = self.newColonyId()
+        self.idGenerator = IDGenerator()
         self._colonies = {}
 
         self._resources = loadEntityFile(resourcePath, "Resources", Resource)
@@ -124,19 +123,11 @@ class ColonySim:
                             productionOrders=productionOrders,
                         )
                         self._colonies[id] = colony
+                        self.idGenerator.setId(id)
 
-    # TODO: This has been copy/pasted a few times now, should really go in its own
-    # utility library with a few other commonly used patterns
-    def newColonyId(self):
-        nodeIdCounter = 0
-        while True:
-            yield nodeIdCounter
-            nodeIdCounter += 1
 
     def createColony(self, name="Default Colony", locale=None):
-        id = next(self.idGenerator)
-        while id in self._colonies:
-            id = next(self.idGenerator)
+        id = self.idGenerator.generateId()
         colony = Colony(id, name, orbitSim=self.orbitSim, locale=locale)
         self._colonies[id] = colony
         return colony

@@ -14,7 +14,8 @@ from planetsim.planetSurface import PlanetSurface
 from utility import (
     loadEntityFile,
     getIntId,
-    getStringId
+    getStringId,
+    IDGenerator
 )
 
 
@@ -75,7 +76,7 @@ class OrbitSim:
 
         self._shipClasses = loadEntityFile(shipClassPath, "ShipClasses", ShipClass)
 
-        self.shipIdGenerator = self.newShipId()
+        self.shipIdGenerator = IDGenerator()
         self._ships = loadEntityFile(shipPath, "Ships", Ship)
         # TODO: Workaround to fix the fact ship gets the class id but should have a
         # direct reference. Long term would be better to adapt loadEntityFile to
@@ -83,6 +84,7 @@ class OrbitSim:
         # of tags to ref along with source dict (self._shipClasses in this case)
         for ship in self._ships.values():
             ship.shipClass = self._shipClasses[ship.shipClass]
+            self.shipIdGenerator.setId(ship.id)
 
         # for each orbital
         # if it has links
@@ -91,7 +93,7 @@ class OrbitSim:
         # add it to our array
         # add link id to links for source and destination
 
-        self.idGenerator = self.newParticleId()
+        self.particleIdGenerator = IDGenerator()
         self._particles = {}
         if particlePath:
             particlesFile = open(particlePath, "r")
@@ -113,7 +115,7 @@ class OrbitSim:
 
         # Vehicles aren't stored here, but we register them here so
         # ids are globally unique.
-        self.vehicleIdGenerator = self.newVehicleId()
+        self.vehicleIdGenerator = IDGenerator()
         self._vehicleIds = set()
 
     def validatePlanets(self, planetSim):
@@ -121,37 +123,20 @@ class OrbitSim:
             if node.planet:
                 assert node.planet in planetSim.planets.keys()
 
-    def newParticleId(self):
-        nodeIdCounter = 0
-        while True:
-            yield nodeIdCounter
-            nodeIdCounter += 1
-
-    def newShipId(self):
-        shipIdCounter = 0
-        while True:
-            yield shipIdCounter
-            shipIdCounter += 1
-
-    def newVehicleId(self):
-        vehicleIdCounter = 0
-        while True:
-            while vehicleIdCounter in self._vehicleIds:
-                vehicleIdCounter += 1
-            yield vehicleIdCounter
 
     def registerVehicleId(self, id):
         if id in self._vehicleIds:
             raise KeyError
         self._vehicleIds.add(id)
+        self.vehicleIdGenerator.setId(id)
 
     def getVehicleId(self):
-        id = next(self.vehicleIdGenerator)
+        id = self.vehicleIdGenerator.generateId()
         self._vehicleIds.add(id)
         return id
 
     def createShip(self, name, shipClass, deltaV=0):
-        id = next(self.shipIdGenerator)
+        id = self.shipIdGenerator.generateId()
         while id in self._ships:
             id = next(self.shipIdGenerator)
 
@@ -174,9 +159,7 @@ class OrbitSim:
         return ship
 
     def createParticle(self, node, payload=None):
-        id = next(self.idGenerator)
-        while id in self._particles:
-            id = next(self.idGenerator)
+        id = self.particleIdGenerator.generateId()
 
         if not hasattr(payload, "locale") or not payload.locale:
             payload.locale = node
@@ -191,6 +174,7 @@ class OrbitSim:
         location = self._particleLocation(id)
         location.particles.remove(id)
         del self._particles[id]
+        self.particleIdGenerator.clearId(id)
 
     def transitParticle(self, id, targetId):
         location = self._particleLocation(id)
