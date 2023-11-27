@@ -9,6 +9,9 @@ from pygame.locals import (
 
 from views.guiContext import GUICode
 
+from tkinter import simpledialog, filedialog
+import pickle
+
 
 class MenuItem(pygame.sprite.Sprite):
     def __init__(self, center=(0, 0), text="Default", handler=None):
@@ -37,12 +40,18 @@ class MenuItem(pygame.sprite.Sprite):
 class MenuContext(GUIContext):
     def __init__(self, screen, model, manager):
         super(MenuContext, self).__init__(screen, model, manager)
-        self.loadItem = MenuItem((200, 100), text="Load Game", handler=self.loadHandler)
+        self.newItem = MenuItem((200, 100), text="New Game", handler=self.newGameHandler)
         self.quitItem = MenuItem((200, 200), text="Quit Game", handler=self.quitHandler)
+        self.nameItem = MenuItem((200, 300), text="Enter name", handler=self.nameHandler)
+        self.saveItem = MenuItem((200, 400), text="Save Game", handler=self.saveHandler)
+        self.loadItem = MenuItem((200, 500), text="Load Game", handler=self.loadHandler)
 
         all_sprites = pygame.sprite.Group()
-        all_sprites.add(self.loadItem)
+        all_sprites.add(self.newItem)
         all_sprites.add(self.quitItem)
+        all_sprites.add(self.nameItem)
+        all_sprites.add(self.saveItem)
+        all_sprites.add(self.loadItem)
         self.all_sprites = all_sprites
 
     def run(self):
@@ -75,7 +84,25 @@ class MenuContext(GUIContext):
         pygame.event.post(pygame.event.Event(QUIT))
         return 0
 
-    def loadHandler(self):
+    def newGameHandler(self):
         print("Loading...")
         self.model.load()
+        return 1
+
+    def nameHandler(self):
+        self.name = simpledialog.askstring(title = "Player Name", prompt="Enter name...")
+
+    def saveHandler(self):
+        saveFile = filedialog.asksaveasfile(confirmoverwrite=True)
+
+        pickles = pickle.dumps(self.model)
+        stringy = "Well howdy"
+        saveFile.write(pickles)
+        saveFile.close()
+
+    def loadHandler(self):
+        loadFile = filedialog.askopenfile()
+        pickles = loadFile.readlines()
+        self.model = pickle.loads(pickles)
+        loadFile.close()
         return 1
