@@ -93,7 +93,7 @@ class MenuContext(GUIContext):
         self.name = simpledialog.askstring(title = "Player Name", prompt="Enter name...")
 
     def saveHandler(self):
-        saveFile = filedialog.asksaveasfile(confirmoverwrite=True)
+        saveFile = filedialog.asksaveasfile(mode="wb", confirmoverwrite=True)
 
         pickles = pickle.dumps(self.model)
         stringy = "Well howdy"
@@ -101,8 +101,9 @@ class MenuContext(GUIContext):
         saveFile.close()
 
     def loadHandler(self):
-        loadFile = filedialog.askopenfile()
-        pickles = loadFile.readlines()
-        self.model = pickle.loads(pickles)
+        loadFile = filedialog.askopenfile(mode="rb")
+        pickles = loadFile.read()
+        model = pickle.loads(pickles)
         loadFile.close()
+        self.upperContext = model
         return 1

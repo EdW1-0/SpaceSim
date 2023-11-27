@@ -47,6 +47,7 @@ class GameModel:
         # If we got here all the module loads succeeded so set our init flag
         self.init = True
 
+
     def get_init(self):
         return self.init
 

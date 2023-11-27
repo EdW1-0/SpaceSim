@@ -91,6 +91,8 @@ def main(testingCallback=None):
                 )
             elif outerEvent == GUICode.LOADORBITVIEW:
                 # Direct access
+                if hasattr(guiContext, "upperContext") and isinstance(guiContext.upperContext, GameModel):
+                    gameModel = guiContext.upperContext
                 guiContext = OrbitContext(screen, gameModel, manager)
 
             elif outerEvent == GUICode.LOADMENUVIEW:
