@@ -4,6 +4,7 @@ from colonysim import ColonySim
 from planetsim import PlanetSim
 from timingMaster import TimingMaster
 
+import pickle
 
 class GameModel:
     # Needs:
@@ -47,6 +48,19 @@ class GameModel:
         # If we got here all the module loads succeeded so set our init flag
         self.init = True
 
+    def saveModel(self, file):
+        saveArray = [self.techTree, self.orbitSim, self.planetSim, self.colonySim, self.timingMaster]
+
+        pickle.dump(saveArray, file)
+
+    def loadModel(self, file):
+        loadArray = pickle.load(file)
+        self.techTree = loadArray[0]
+        self.orbitSim = loadArray[1]
+        self.planetSim = loadArray[2]
+        self.colonySim = loadArray[3]
+        self.timingMaster = loadArray[4]
+        self.init = True
 
     def get_init(self):
         return self.init

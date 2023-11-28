@@ -9,8 +9,9 @@ from pygame.locals import (
 
 from views.guiContext import GUICode
 
+from gameModel import GameModel
+
 from tkinter import simpledialog, filedialog
-import pickle
 
 
 class MenuItem(pygame.sprite.Sprite):
@@ -38,7 +39,7 @@ class MenuItem(pygame.sprite.Sprite):
 
 
 class MenuContext(GUIContext):
-    def __init__(self, screen, model, manager):
+    def __init__(self, screen, model: GameModel, manager):
         super(MenuContext, self).__init__(screen, model, manager)
         self.newItem = MenuItem((200, 100), text="New Game", handler=self.newGameHandler)
         self.quitItem = MenuItem((200, 200), text="Quit Game", handler=self.quitHandler)
@@ -68,9 +69,9 @@ class MenuContext(GUIContext):
                     s for s in self.all_sprites if s.rect.collidepoint(pos)
                 ]
                 for c in clicked_items:
-                    handlerCode = c.handler()
-                    if handlerCode == 1:
-                        returnCode = GUICode.LOADORBITVIEW
+                    returnCode = c.handler()
+                    if returnCode != 0:
+                        break
 
         self.screen.fill((135, 206, 250))
 
@@ -87,23 +88,23 @@ class MenuContext(GUIContext):
     def newGameHandler(self):
         print("Loading...")
         self.model.load()
-        return 1
+        return GUICode.LOADORBITVIEW
 
     def nameHandler(self):
         self.name = simpledialog.askstring(title = "Player Name", prompt="Enter name...")
+        return 0
 
     def saveHandler(self):
         saveFile = filedialog.asksaveasfile(mode="wb", confirmoverwrite=True)
 
-        pickles = pickle.dumps(self.model)
-        stringy = "Well howdy"
-        saveFile.write(pickles)
+        self.model.saveModel(saveFile)
+
         saveFile.close()
+        return GUICode.LOADORBITVIEW
 
     def loadHandler(self):
         loadFile = filedialog.askopenfile(mode="rb")
-        pickles = loadFile.read()
-        model = pickle.loads(pickles)
+
+        self.model.loadModel(loadFile)
         loadFile.close()
-        self.upperContext = model
-        return 1
+        return GUICode.LOADORBITVIEW
