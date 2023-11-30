@@ -95,16 +95,19 @@ class MenuContext(GUIContext):
         return 0
 
     def saveHandler(self):
-        saveFile = filedialog.asksaveasfile(mode="wb", confirmoverwrite=True)
-
-        self.model.saveModel(saveFile)
-
-        saveFile.close()
-        return GUICode.LOADORBITVIEW
+        saveFile = filedialog.asksaveasfile(mode="wb", confirmoverwrite=True, defaultextension="sav", initialdir="D:\Applications\SpaceSim\Saves")
+        if saveFile:
+            self.model.saveModel(saveFile)
+            saveFile.close()
+            return GUICode.LOADORBITVIEW
+        else:
+            return 0
 
     def loadHandler(self):
         loadFile = filedialog.askopenfile(mode="rb")
-
-        self.model.loadModel(loadFile)
-        loadFile.close()
-        return GUICode.LOADORBITVIEW
+        if loadFile:
+            self.model.loadModel(loadFile)
+            loadFile.close()
+            return GUICode.LOADORBITVIEW
+        else:
+            return 0
