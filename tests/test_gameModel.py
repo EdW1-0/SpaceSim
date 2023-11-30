@@ -74,3 +74,14 @@ class TestGameModelLoadSave(unittest.TestCase):
 
     def tearDown(self):
         self.file.close()
+
+class TestGameModelValidateModel(unittest.TestCase):
+    def setUp(self):
+        self.gm = GameModel()
+
+    def testGameModelValidate(self):
+        self.assertFalse(self.gm.validateModel())
+
+        self.gm.load()
+
+        self.assertTrue(self.gm.validateModel())

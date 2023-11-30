@@ -65,6 +65,17 @@ class GameModel:
     def get_init(self):
         return self.init
 
+    def validateModel(self):
+        if not (self.techTree and self.colonySim and self.orbitSim and self.planetSim and self.timingMaster):
+            return False
+        
+        if len(self.orbitSim._nodes) > 0:
+            return True
+        else:
+            return False
+        
+
+
     def tick(self):
         if not self.timingMaster:
             return
