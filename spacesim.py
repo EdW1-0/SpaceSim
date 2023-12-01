@@ -2,21 +2,21 @@ import pygame
 import pygame_gui
 
 from gameModel import GameModel
-from views import MenuContext
-from views import OrbitContext
-from views import SurfaceContext
-from views import ColonyContext
+from views import (
+    MenuContext,
+    OrbitContext,
+    SurfaceContext,
+    ColonyContext,
+    TechContext,
+    OCMode,
+    SCMode,
+    GUICode,
+)
 
 
 from pygame.locals import (
     QUIT,
 )
-
-from views import OCMode
-from views import SCMode
-
-from views import GUICode
-
 
 # Define constants for the screen width and height
 SCREEN_WIDTH = 1200
@@ -97,6 +97,9 @@ def main(testingCallback=None):
 
             elif outerEvent == GUICode.LOADMENUVIEW:
                 guiContext = MenuContext(screen, gameModel, manager)
+
+            elif outerEvent == GUICode.LOADTECHVIEW:
+                guiContext = TechContext(screen, gameModel, manager)
 
             elif outerEvent == GUICode.LOADSURFACEVIEW:
                 guiContext = SurfaceContext(

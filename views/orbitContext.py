@@ -92,6 +92,11 @@ class OrbitContext(GUIContext):
             text="Settings",
             manager=manager,
         )
+        self.tech_button = UIButton(
+            relative_rect=pygame.Rect((100, 0), (100, 50)),
+            text="Technology",
+            manager=manager,
+        )
 
         summary_rect = pygame.Rect(800, 200, 400, 600)
         timing_rect = pygame.Rect(800, 0, 400, 200)
@@ -517,6 +522,8 @@ class OrbitContext(GUIContext):
     def handleGuiButton(self, event: Event):
         if event.ui_element == self.menu_button:
             return GUICode.LOADMENUVIEW
+        elif event.ui_element == self.tech_button:
+            return GUICode.LOADTECHVIEW
         elif self.active_summary and self.active_summary.handle_event(event):
             if isinstance(self.active_summary, ShipStatusPanel):
                 self.handleShipPanel(event)
