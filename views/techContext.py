@@ -19,10 +19,18 @@ class TechView(pygame.sprite.Sprite):
         super(TechView, self).__init__()
         self.center = center
         self.tech = tech
-        self.surf = pygame.surface.Surface((100, 60))
+        self.surf = pygame.surface.Surface((200, 100))
         self.surf.set_colorkey((0, 0, 0))
         color = (150, 250, 100)
-        pygame.draw.rect(self.surf, color, (0, 0, 100, 60))
+        pygame.draw.rect(self.surf, color, (0, 0, 200, 100))
+
+        font = pygame.font.Font(size=16)
+        text = font.render(self.tech.name, True, (128, 128, 230))
+        textRect = text.get_rect()
+        textRect.center = (100, 25)
+
+        self.surf.blit(text, textRect)
+
         self.rect = self.surf.get_rect(center=self.center)
 
 
@@ -33,10 +41,17 @@ class TechContext(GUIContext):
         super(TechContext, self).__init__(screen, model, manager)
         self.all_sprites = pygame.sprite.Group()
 
-        self.all_sprites.add(TechView(None, (300, 300)))
+        self.techTree = model.techTree
 
-        pass
-
+        x = 150
+        y = 100
+        for tech in self.techTree.nodes.values():
+            self.all_sprites.add(TechView(tech, (x, y)))
+            x += 250
+            if x >= 800:
+                x = 150
+                y += 150
+        
 
     def run(self):
         returnCode = 0
