@@ -24,4 +24,7 @@ from .surfaceStatusPanels import (
     VehicleStatusPanel,
     VehicleRoutingPanel,
 )
+from .techStatusPanels import (
+    TechStatusPanel,
+)
 from .timingPanel import TimingPanel

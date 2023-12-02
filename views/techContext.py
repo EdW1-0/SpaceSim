@@ -1,5 +1,7 @@
 from views.guiContext import GUIContext
 
+from views.panels import TechStatusPanel
+
 from techtree import (
     TechNode,
     TechTree,
@@ -11,6 +13,7 @@ import pygame
 
 from pygame.locals import (
     QUIT,
+    MOUSEBUTTONUP,
 )
 
 
@@ -51,7 +54,18 @@ class TechContext(GUIContext):
             if x >= 800:
                 x = 150
                 y += 150
+
+        summary_rect = pygame.Rect(800, 200, 400, 600)
+
+
+        self.tech_panel = TechStatusPanel(summary_rect, manager, model)
+        self.tech_panel.hide()
         
+    def resolveNodeClick(self, item):
+        if isinstance(item, TechView):
+            self.tech_panel.tech = item.tech
+            self.tech_panel.update()
+            self.tech_panel.show()
 
     def run(self):
         returnCode = 0
@@ -60,7 +74,20 @@ class TechContext(GUIContext):
             if event.type == QUIT:
                 returnCode = QUIT
                 break
-                        
+
+            elif event.type == MOUSEBUTTONUP:
+                pos = pygame.mouse.get_pos()
+
+                clicked_items = [
+                    s for s in self.all_sprites if s.rect.collidepoint(pos)
+                ]             
+                for item in clicked_items:
+                    self.resolveNodeClick(item)      
+
+                if not clicked_items:
+                    self.tech_panel.tech = None
+                    self.tech_panel.hide()    
+
             self.manager.process_events(event)
 
 
