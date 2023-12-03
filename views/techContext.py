@@ -14,6 +14,11 @@ import pygame
 from pygame.locals import (
     QUIT,
     MOUSEBUTTONUP,
+    KEYDOWN,
+    K_UP,
+    K_DOWN,
+    K_LEFT,
+    K_RIGHT,
 )
 
 
@@ -40,26 +45,56 @@ class TechView(pygame.sprite.Sprite):
 
 
 class TechContext(GUIContext):
-    def __init__(self, screen, model: GameModel, manager, ):
+    def __init__(self, screen, model: GameModel, manager, boundsRect=pygame.Rect(-100, -100, 1400, 2000)):
         super(TechContext, self).__init__(screen, model, manager)
         self.all_sprites = pygame.sprite.Group()
 
         self.techTree = model.techTree
 
-        x = 150
-        y = 100
-        for tech in self.techTree.nodes.values():
-            self.all_sprites.add(TechView(tech, (x, y)))
-            x += 250
-            if x >= 800:
-                x = 150
-                y += 150
+        self.boundsRect = boundsRect
+
+        self.basePoint = (150, 100)
+        self.computeLayout()
 
         summary_rect = pygame.Rect(800, 200, 400, 600)
 
 
         self.tech_panel = TechStatusPanel(summary_rect, manager, model)
         self.tech_panel.hide()
+
+    def computeLayout(self):
+        self.all_sprites.empty()
+        (x, y) = self.basePoint
+        for tech in self.techTree.nodes.values():
+            self.all_sprites.add(TechView(tech, (x, y)))
+            x += 250
+            if x >= 800:
+                x = self.basePoint[0]
+                y += 150
+
+
+    def handleKeyPress(self, event: pygame.event.Event):
+        if event.key == K_UP:
+            self.basePoint = (
+                self.basePoint[0],
+                max(self.basePoint[1] - 50, self.boundsRect.top),
+            )
+        elif event.key == K_DOWN:
+            self.basePoint = (
+                self.basePoint[0],
+                min(self.basePoint[1] + 50, self.boundsRect.bottom),
+            )
+        elif event.key == K_LEFT:
+            self.basePoint = (
+                max(self.basePoint[0] - 50, self.boundsRect.left),
+                self.basePoint[1],
+            )
+        elif event.key == K_RIGHT:
+            self.basePoint = (
+                min(self.basePoint[0] + 50, self.boundsRect.right),
+                self.basePoint[1],
+            )
+        self.computeLayout()
         
     def resolveNodeClick(self, item):
         if isinstance(item, TechView):
@@ -74,6 +109,8 @@ class TechContext(GUIContext):
             if event.type == QUIT:
                 returnCode = QUIT
                 break
+            elif event.type == KEYDOWN:
+                self.handleKeyPress(event)
 
             elif event.type == MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
