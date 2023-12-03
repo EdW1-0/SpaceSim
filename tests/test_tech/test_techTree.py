@@ -41,7 +41,7 @@ class TestTechTreeInteraction(unittest.TestCase):
 
     def test_techTreeTotalNodes(self):
         self.assertNotEqual(self.techTree.totalNodes, 0)
-        self.assertEqual(self.techTree.totalNodes, 7)
+        self.assertEqual(self.techTree.totalNodes, 8)
 
     def test_techTreeNodeGap(self):
         tt = techTree.TechTree("test_json/test_tech/test_id_gap.json")

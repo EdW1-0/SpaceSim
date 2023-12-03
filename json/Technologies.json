@@ -53,6 +53,12 @@
       "id": 6,
       "cost": 200,
       "ancestors": [4]
+    },
+    {
+      "name": "Fusion Drives",
+      "id": 7,
+      "cost": 10000,
+      "ancestors": [0, 3, 5]
     }
   ]
 

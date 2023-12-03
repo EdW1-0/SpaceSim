@@ -23,10 +23,11 @@ from pygame.locals import (
 
 
 class TechView(pygame.sprite.Sprite):
-    def __init__(self, tech: TechNode, center: tuple[int, int]=(0,0)):
+    def __init__(self, tech: TechNode, center: tuple[int, int]=(0,0), tier=-1):
         super(TechView, self).__init__()
         self.center = center
         self.tech = tech
+        self.tier = tier
         self.surf = pygame.surface.Surface((200, 100))
         self.surf.set_colorkey((0, 0, 0))
         color = (150, 250, 100)
@@ -44,6 +45,9 @@ class TechView(pygame.sprite.Sprite):
 
 
 
+
+
+
 class TechContext(GUIContext):
     def __init__(self, screen, model: GameModel, manager, boundsRect=pygame.Rect(-100, -100, 1400, 2000)):
         super(TechContext, self).__init__(screen, model, manager)
@@ -53,7 +57,7 @@ class TechContext(GUIContext):
 
         self.boundsRect = boundsRect
 
-        self.basePoint = (150, 100)
+        self.basePoint = (150, 700)
         self.computeLayout()
 
         summary_rect = pygame.Rect(800, 200, 400, 600)
@@ -65,12 +69,30 @@ class TechContext(GUIContext):
     def computeLayout(self):
         self.all_sprites.empty()
         (x, y) = self.basePoint
+        tierNodes = {}
         for tech in self.techTree.nodes.values():
-            self.all_sprites.add(TechView(tech, (x, y)))
-            x += 250
-            if x >= 800:
-                x = self.basePoint[0]
-                y += 150
+            tier = self.computeTier(tech)
+            if tier in tierNodes:
+                tierNodes[tier] += 1
+            else:
+                tierNodes[tier] = 0
+            self.all_sprites.add(TechView(tech, (self.basePoint[0] + 250*tierNodes[tier], self.basePoint[1] - 150*tier), tier))
+            
+
+    def computeTier(self, tech):
+        def ancestorDepth(tech: TechNode, techTree: TechTree):
+            if not tech.ancestors:
+                return 0
+            
+            maxDepth = 0
+            for ancestor in tech.ancestors:
+                depth = ancestorDepth(techTree.nodeById(ancestor), techTree) + 1
+                if depth > maxDepth:
+                    maxDepth = depth
+
+            return maxDepth
+        
+        return ancestorDepth(tech, self.techTree)
 
 
     def handleKeyPress(self, event: pygame.event.Event):
