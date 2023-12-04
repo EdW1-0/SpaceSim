@@ -60,7 +60,7 @@ class TechContext(GUIContext):
         self.basePoint = (150, 700)
         self.computeLayout()
 
-        summary_rect = pygame.Rect(800, 200, 400, 600)
+        summary_rect = pygame.Rect(800, 100, 400, 800)
 
 
         self.tech_panel = TechStatusPanel(summary_rect, manager, model)
