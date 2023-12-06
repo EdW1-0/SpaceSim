@@ -42,6 +42,45 @@ class TechView(pygame.sprite.Sprite):
 
         self.rect = self.surf.get_rect(center=self.center)
 
+class SimpleLink(pygame.sprite.Sprite):
+    def __init__(self, startPos: tuple[int, int]=(200,200)):
+        super(SimpleLink, self).__init__()
+        self.startPos = startPos
+        self.surf = pygame.surface.Surface((100,100))
+        self.surf.set_colorkey((0,0,0))
+        pygame.draw.circle(self.surf, (100, 100, 100), center=(20, 20), radius=20)
+        self.rect = self.surf.get_rect(center = startPos)
+
+
+class TechLink(pygame.sprite.Sprite):
+    def __init__(self, startPos: tuple[int, int]=(0,0), endPos: tuple[int, int]=(0,0)):
+        super(TechLink, self).__init__()
+        self.startPos = startPos
+        self.endPos = endPos 
+        
+        left = min(startPos[0], endPos[0])
+        width = max(abs(endPos[0] - startPos[0]), 10)
+
+        top = min(startPos[1], endPos[1])
+        height = max(abs(endPos[1] - startPos[1]), 10)
+
+        self.surf = pygame.surface.Surface(
+           (
+               abs(endPos[0] - startPos[0]),
+               abs(endPos[1] - startPos[1]),
+           )
+        )
+        self.surf.set_colorkey((0,0,0))
+        color = (250, 50, 150)
+        #pygame.draw.rect(self.surf, color, (startPos, endPos))
+
+        pygame.draw.line(self.surf, color, (0,0), (endPos[0]-startPos[0], endPos[1]-startPos[1]), width = 5)
+        pygame.draw.circle(self.surf, color, center=(20, 20), radius=20)
+        # pygame.draw.circle(self.surf, color, center=endPos, radius=50)
+
+        # self.rect = self.surf.get_rect(center = ((startPos[0]+endPos[0])/2, (startPos[1]+endPos[1])/2))
+        self.rect = self.surf.get_rect(left = startPos[0], top = startPos[1])
+
 
 
 
@@ -51,7 +90,8 @@ class TechView(pygame.sprite.Sprite):
 class TechContext(GUIContext):
     def __init__(self, screen, model: GameModel, manager, boundsRect=pygame.Rect(-100, -100, 1400, 2000)):
         super(TechContext, self).__init__(screen, model, manager)
-        self.all_sprites = pygame.sprite.Group()
+        self.tech_sprites = pygame.sprite.Group()
+        self.link_sprites = pygame.sprite.Group()
 
         self.techTree = model.techTree
 
@@ -67,7 +107,8 @@ class TechContext(GUIContext):
         self.tech_panel.hide()
 
     def computeLayout(self):
-        self.all_sprites.empty()
+        self.tech_sprites.empty()
+        self.link_sprites.empty()
         (x, y) = self.basePoint
         tierNodes = {}
         for tech in self.techTree.nodes.values():
@@ -76,7 +117,23 @@ class TechContext(GUIContext):
                 tierNodes[tier] += 1
             else:
                 tierNodes[tier] = 0
-            self.all_sprites.add(TechView(tech, (self.basePoint[0] + 250*tierNodes[tier], self.basePoint[1] - 150*tier), tier))
+            self.tech_sprites.add(TechView(tech, (self.basePoint[0] + 250*tierNodes[tier], self.basePoint[1] - 150*tier), tier))
+
+        for tv in self.tech_sprites:
+            for a in tv.tech.ancestors:
+                tech = self.techTree.nodeById(a)
+                sprite = self.techSpriteForTech(tech)
+                startPos = tv.rect.center
+                endPos = sprite.rect.center
+                linkSprite = TechLink(startPos, endPos)
+                self.link_sprites.add(linkSprite)
+
+    def techSpriteForTech(self, tech):
+        sprite = None
+        for t in self.tech_sprites:
+            if t.tech == tech:
+                sprite = t
+        return sprite
             
 
     def computeTier(self, tech):
@@ -138,7 +195,7 @@ class TechContext(GUIContext):
                 pos = pygame.mouse.get_pos()
 
                 clicked_items = [
-                    s for s in self.all_sprites if s.rect.collidepoint(pos)
+                    s for s in self.tech_sprites if s.rect.collidepoint(pos)
                 ]             
                 for item in clicked_items:
                     self.resolveNodeClick(item)      
@@ -152,7 +209,16 @@ class TechContext(GUIContext):
 
         self.screen.fill((140, 0, 25))
 
-        for entity in self.all_sprites:
+        for entity in self.tech_sprites:
             self.screen.blit(entity.surf, entity.rect)
+
+        for tv in self.link_sprites:
+            self.screen.blit(tv.surf, tv.rect)
+            # for a in tv.tech.ancestors:
+            #     tech = self.techTree.nodeById(a)
+            #     sprite = self.techSpriteForTech(tech)
+            #     startPos = tv.rect.center
+            #     endPos = sprite.rect.center
+            #     pygame.draw.line(self.screen, (250, 50, 150), startPos, endPos, width = 10)
 
         return returnCode

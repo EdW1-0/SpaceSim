@@ -52,7 +52,7 @@
       "name": "Lunar Bulk Storage",
       "id": 6,
       "cost": 200,
-      "ancestors": [4]
+      "ancestors": [3,4]
     },
     {
       "name": "Fusion Drives",

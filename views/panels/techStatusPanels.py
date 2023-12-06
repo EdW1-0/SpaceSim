@@ -69,4 +69,6 @@ class TechStatusPanel(SideStatusPanel):
         if self.tech:
             self.name_label.set_text(self.tech.name)
             self.cost_label.set_text(str(self.tech.cost))
+            self.description_text.set_text(str(self.tech.description))
+            
 
