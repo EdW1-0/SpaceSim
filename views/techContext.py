@@ -58,28 +58,33 @@ class TechLink(pygame.sprite.Sprite):
         self.startPos = startPos
         self.endPos = endPos 
         
-        left = min(startPos[0], endPos[0])
-        width = max(abs(endPos[0] - startPos[0]), 10)
+        xDiff = endPos[0] - startPos[0]
+        yDiff = endPos[1] - startPos[1]
 
-        top = min(startPos[1], endPos[1])
-        height = max(abs(endPos[1] - startPos[1]), 10)
 
-        self.surf = pygame.surface.Surface(
-           (
-               abs(endPos[0] - startPos[0]),
-               abs(endPos[1] - startPos[1]),
-           )
-        )
+        if abs(xDiff) < 10:
+            self.surf = pygame.surface.Surface((10, abs(yDiff)))
+        else:
+            self.surf = pygame.surface.Surface(
+               (
+                   abs(xDiff),
+                   abs(yDiff),
+               )
+            )
         self.surf.set_colorkey((0,0,0))
-        color = (250, 50, 150)
-        #pygame.draw.rect(self.surf, color, (startPos, endPos))
+        import random
+        color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 
-        pygame.draw.line(self.surf, color, (0,0), (endPos[0]-startPos[0], endPos[1]-startPos[1]), width = 5)
-        pygame.draw.circle(self.surf, color, center=(20, 20), radius=20)
-        # pygame.draw.circle(self.surf, color, center=endPos, radius=50)
+        if xDiff >= 0:
+            pygame.draw.line(self.surf, color, (0,0), (xDiff, yDiff), width = 5)
+        else:
+            pygame.draw.line(self.surf, color, (abs(xDiff), 0), (0, yDiff), width = 5)
 
-        # self.rect = self.surf.get_rect(center = ((startPos[0]+endPos[0])/2, (startPos[1]+endPos[1])/2))
-        self.rect = self.surf.get_rect(left = startPos[0], top = startPos[1])
+        if xDiff >= 0:
+            left = startPos[0]
+        else:
+            left = endPos[0]
+        self.rect = self.surf.get_rect(left = left, top = startPos[1])
 
 
 
