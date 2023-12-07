@@ -73,7 +73,7 @@ class TechLink(pygame.sprite.Sprite):
             )
         self.surf.set_colorkey((0,0,0))
         import random
-        color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+        color = (50, 100, 250)
 
         if xDiff >= 0:
             pygame.draw.line(self.surf, color, (0,0), (xDiff, yDiff), width = 5)
@@ -122,7 +122,9 @@ class TechContext(GUIContext):
                 tierNodes[tier] += 1
             else:
                 tierNodes[tier] = 0
-            self.tech_sprites.add(TechView(tech, (self.basePoint[0] + 250*tierNodes[tier], self.basePoint[1] - 150*tier), tier))
+            spritePos = (self.basePoint[0] + 350*tierNodes[tier] + 125 * (tier % 2),
+                        self.basePoint[1] - 250*tier)
+            self.tech_sprites.add(TechView(tech, spritePos, tier))
 
         for tv in self.tech_sprites:
             for a in tv.tech.ancestors:
@@ -130,7 +132,7 @@ class TechContext(GUIContext):
                 sprite = self.techSpriteForTech(tech)
                 startPos = tv.rect.center
                 endPos = sprite.rect.center
-                linkSprite = TechLink(startPos, endPos)
+                linkSprite = TechLink((startPos[0], startPos[1]+50), (endPos[0], endPos[1]-50))
                 self.link_sprites.add(linkSprite)
 
     def techSpriteForTech(self, tech):
@@ -214,16 +216,10 @@ class TechContext(GUIContext):
 
         self.screen.fill((140, 0, 25))
 
-        for entity in self.tech_sprites:
-            self.screen.blit(entity.surf, entity.rect)
 
         for tv in self.link_sprites:
             self.screen.blit(tv.surf, tv.rect)
-            # for a in tv.tech.ancestors:
-            #     tech = self.techTree.nodeById(a)
-            #     sprite = self.techSpriteForTech(tech)
-            #     startPos = tv.rect.center
-            #     endPos = sprite.rect.center
-            #     pygame.draw.line(self.screen, (250, 50, 150), startPos, endPos, width = 10)
+        for entity in self.tech_sprites:
+            self.screen.blit(entity.surf, entity.rect)
 
         return returnCode
