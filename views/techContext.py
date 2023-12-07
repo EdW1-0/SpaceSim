@@ -23,14 +23,17 @@ from pygame.locals import (
 
 
 class TechView(pygame.sprite.Sprite):
-    def __init__(self, tech: TechNode, center: tuple[int, int]=(0,0), tier=-1):
+    def __init__(self, tech: TechNode, center: tuple[int, int]=(0,0), tier=-1, selected=False):
         super(TechView, self).__init__()
         self.center = center
         self.tech = tech
         self.tier = tier
         self.surf = pygame.surface.Surface((200, 100))
         self.surf.set_colorkey((0, 0, 0))
-        color = (150, 250, 100)
+        if selected:
+            color = (200, 200, 50)
+        else:
+            color = (150, 250, 100)
         pygame.draw.rect(self.surf, color, (0, 0, 200, 100))
 
         font = pygame.font.Font(size=16)
@@ -41,6 +44,7 @@ class TechView(pygame.sprite.Sprite):
         self.surf.blit(text, textRect)
 
         self.rect = self.surf.get_rect(center=self.center)
+
 
 class SimpleLink(pygame.sprite.Sprite):
     def __init__(self, startPos: tuple[int, int]=(200,200)):
@@ -100,6 +104,9 @@ class TechContext(GUIContext):
 
         self.techTree = model.techTree
 
+        self.selectedTech = None
+
+
         self.boundsRect = boundsRect
 
         self.basePoint = (150, 700)
@@ -124,7 +131,11 @@ class TechContext(GUIContext):
                 tierNodes[tier] = 0
             spritePos = (self.basePoint[0] + 350*tierNodes[tier] + 125 * (tier % 2),
                         self.basePoint[1] - 250*tier)
-            self.tech_sprites.add(TechView(tech, spritePos, tier))
+            if self.selectedTech == tech:            
+                self.tech_sprites.add(TechView(tech, spritePos, tier, selected = True))
+            else:
+                self.tech_sprites.add(TechView(tech, spritePos, tier))
+                        
 
         for tv in self.tech_sprites:
             for a in tv.tech.ancestors:
@@ -184,9 +195,11 @@ class TechContext(GUIContext):
         
     def resolveNodeClick(self, item):
         if isinstance(item, TechView):
-            self.tech_panel.tech = item.tech
+            self.selectedTech = item.tech
+            self.tech_panel.tech = self.selectedTech
             self.tech_panel.update()
             self.tech_panel.show()
+            self.computeLayout()
 
     def run(self):
         returnCode = 0
@@ -210,6 +223,8 @@ class TechContext(GUIContext):
                 if not clicked_items:
                     self.tech_panel.tech = None
                     self.tech_panel.hide()    
+                    self.selectedTech = None
+                    self.computeLayout()
 
             self.manager.process_events(event)
 
