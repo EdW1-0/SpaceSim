@@ -4,8 +4,6 @@ import techtree.techNode as techNode
 import techtree.techTree as techTree
 from techtree.techNode import TechEffect, TechEffectClass
 
-from dataclasses import is_dataclass, FrozenInstanceError
-from enum import Enum
 
 
 class TestTechNode(unittest.TestCase):
@@ -84,48 +82,6 @@ class TestTechNodeData(unittest.TestCase):
         self.assertEqual(node3.effects[1], TechEffect(TechEffectClass.VEHICLE, 3))
 
 
-class TestTechEffect(unittest.TestCase):
-    def test_techEffectLoad(self):
-        self.assertNotEqual(techNode.TechEffect, False)
-        self.assertTrue(is_dataclass(techNode.TechEffect))
-
-    def test_techEffectInit(self):
-        self.assertTrue(techNode.TechEffect(0, 0))
-
-    def test_techEffectAttributes(self):
-        self.assertTrue(hasattr(techNode.TechEffect(0, 0), "effect"))
-        self.assertTrue(hasattr(techNode.TechEffect(0, 0), "value"))
-        self.assertTrue(
-            isinstance(
-                techNode.TechEffect(techNode.TechEffectClass.BUILDING, 0).effect,
-                techNode.TechEffectClass,
-            )
-        )
-
-    def test_techEffectEquality(self):
-        self.assertEqual(techNode.TechEffect(0, 0), techNode.TechEffect(0, 0))
-        self.assertNotEqual(techNode.TechEffect(1, 1), techNode.TechEffect(0, 0))
-
-    def test_techEffectImmutable(self):
-        with self.assertRaises(FrozenInstanceError):
-            techNode.TechEffect(0, 0).effect = 0
-        with self.assertRaises(FrozenInstanceError):
-            techNode.TechEffect(1, 1).value = 3
-
-
-class TestTechEffectClass(unittest.TestCase):
-    def test_techEffectClassInit(self):
-        self.assertNotEqual(techNode.TechEffectClass, False)
-        self.assertTrue(techNode.TechEffectClass(0))
-
-    def test_techEffectClassIntrospection(self):
-        self.assertTrue(issubclass(techNode.TechEffectClass, Enum))
-        self.assertTrue(
-            isinstance(techNode.TechEffectClass.BUILDING, techNode.TechEffectClass)
-        )
-        self.assertTrue(
-            isinstance(techNode.TechEffectClass(1), techNode.TechEffectClass)
-        )
 
 
 if __name__ == "__main__":

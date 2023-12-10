@@ -1,4 +1,4 @@
-from techtree.techNode import TechEffectClass
+from techtree.techEffect import TechEffectClass
 
 
 # TODO: Not sure it should be resposibility of this class to be passed tech tree.
