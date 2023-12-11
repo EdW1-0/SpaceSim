@@ -27,11 +27,13 @@
       "ancestors": [1, 2],
       "effects": [
          {
-           "effect": "BUILDING",
-           "value": 7
+           "class": "UNLOCK",
+           "domain": "BUILDING",
+           "id": 7
          },
          {
-           "effect": "VEHICLE",
+           "class": "PARAMETER", 
+           "effect": "LUNAR_CONSTRUCTION_SPEED",
            "value": 3
          }
       ]

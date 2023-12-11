@@ -1,4 +1,4 @@
-from techtree.techEffect import TechEffect, TechEffectClass
+from techtree.techEffect import TechEffect, TechEffectClass, TechEffectUnlock
 
 
 class TechNode:
@@ -8,6 +8,12 @@ class TechNode:
         self.description = description
         self.cost = cost
         self.ancestors = ancestors
-        self.effects = [
-            TechEffect(TechEffectClass[e["effect"]], e["value"]) for e in effects
-        ]
+        self.effects = []
+        for effect in effects:
+            if effect["class"] == "UNLOCK":
+                te = TechEffectUnlock(
+                        domain = effect["domain"],
+                        id = effect["id"]
+                    )
+                self.effects.append(te)
+

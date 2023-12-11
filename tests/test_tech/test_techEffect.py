@@ -1,5 +1,5 @@
 import unittest
-from techtree.techEffect import TechEffect, TechEffectClass
+from techtree.techEffect import TechEffect, TechEffectClass, TechEffectUnlock, TechEffectParameter
 
 from dataclasses import is_dataclass, FrozenInstanceError
 from enum import Enum
@@ -11,27 +11,25 @@ class TestTechEffect(unittest.TestCase):
         self.assertTrue(is_dataclass(TechEffect))
 
     def test_techEffectInit(self):
-        self.assertTrue(TechEffect(0, 0))
+        self.assertTrue(TechEffect())
 
     def test_techEffectAttributes(self):
-        self.assertTrue(hasattr(TechEffect(0, 0), "effect"))
-        self.assertTrue(hasattr(TechEffect(0, 0), "value"))
-        self.assertTrue(
-            isinstance(
-                TechEffect(TechEffectClass.BUILDING, 0).effect,
-                TechEffectClass,
-            )
-        )
+        self.assertTrue(hasattr(TechEffectUnlock("foo", 7), "domain"))
+        self.assertTrue(hasattr(TechEffectUnlock("foo", 6), "id"))
+        self.assertTrue(hasattr(TechEffectParameter("bar", 7), "parameter"))
+        self.assertTrue(hasattr(TechEffectParameter("bar", 6), "amount"))
+
+
 
     def test_techEffectEquality(self):
-        self.assertEqual(TechEffect(0, 0), TechEffect(0, 0))
-        self.assertNotEqual(TechEffect(1, 1), TechEffect(0, 0))
+        self.assertEqual(TechEffect(), TechEffect())
+        self.assertNotEqual(TechEffectUnlock("foo", 3), TechEffect())
 
     def test_techEffectImmutable(self):
         with self.assertRaises(FrozenInstanceError):
-            TechEffect(0, 0).effect = 0
+            TechEffect().effect = 0
         with self.assertRaises(FrozenInstanceError):
-            TechEffect(1, 1).value = 3
+            TechEffectUnlock("foo", 3).id = 7
 
 
 class TestTechEffectClass(unittest.TestCase):

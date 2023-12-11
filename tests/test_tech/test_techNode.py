@@ -2,7 +2,7 @@ import unittest
 
 import techtree.techNode as techNode
 import techtree.techTree as techTree
-from techtree.techNode import TechEffect, TechEffectClass
+from techtree.techNode import TechEffect, TechEffectClass, TechEffectUnlock, TechEffectParameter
 
 
 
@@ -31,7 +31,7 @@ class TestTechNode(unittest.TestCase):
                 description="Bar",
                 cost=100,
                 ancestors=[3],
-                effects=[{"effect": "VEHICLE", "value": 3}],
+                effects=[{"class": "UNLOCK", "domain": "VEHICLE", "id": 3}],
             )
         )
 
@@ -78,8 +78,8 @@ class TestTechNodeData(unittest.TestCase):
         node3 = self.techTree.nodeById(3)
         self.assertEqual(node3.id, 3)
         self.assertEqual(node3.ancestors, [1, 2])
-        self.assertEqual(node3.effects[0], TechEffect(TechEffectClass.BUILDING, 7))
-        self.assertEqual(node3.effects[1], TechEffect(TechEffectClass.VEHICLE, 3))
+        self.assertEqual(node3.effects[0], TechEffectUnlock(domain = "BUILDING", id= 3))
+        self.assertEqual(node3.effects[1], TechEffectParameter(parameter="RAD_RESISTANCE", value=20))
 
 
 

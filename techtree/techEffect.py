@@ -9,8 +9,7 @@ class TechEffectClass(Enum):
 
 @dataclass(frozen=True)
 class TechEffect:
-    effect: TechEffectClass
-    value: int
+    pass
 
 @dataclass(frozen=True)
 class TechEffectUnlock(TechEffect):
