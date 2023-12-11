@@ -64,6 +64,11 @@ class TechStatusPanel(SideStatusPanel):
             manager=manager,
             container=self.container,)
         
+        self.research_button = UIButton(pygame.Rect(0, 600, 400, 100),
+                                        text="Research",
+                                        manager=manager,
+                                        container=self.container,)
+        
         
 
 
@@ -76,5 +81,6 @@ class TechStatusPanel(SideStatusPanel):
             self.effects_list.set_item_list(["Unlock" + e.domain + str(e.id) for e in self.tech.effects])
 
             self.requires_list.set_item_list([self.model.techTree.nodeById(a).name for a in self.tech.ancestors])
+
             
 

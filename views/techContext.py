@@ -20,6 +20,9 @@ from pygame.locals import (
     K_LEFT,
     K_RIGHT,
 )
+from pygame_gui import (
+    UI_BUTTON_PRESSED
+)
 
 
 class TechView(pygame.sprite.Sprite):
@@ -103,6 +106,7 @@ class TechContext(GUIContext):
         self.link_sprites = pygame.sprite.Group()
 
         self.techTree = model.techTree
+        self.playerTech = model.playerTech
 
         self.selectedTech = None
 
@@ -201,6 +205,24 @@ class TechContext(GUIContext):
             self.tech_panel.show()
             self.computeLayout()
 
+    def handleMouseClick(self, event):
+        pos = pygame.mouse.get_pos()
+
+        if self.tech_panel.rect.collidepoint(pos):
+            return
+
+        clicked_items = [
+            s for s in self.tech_sprites if s.rect.collidepoint(pos)
+        ]             
+        for item in clicked_items:
+            self.resolveNodeClick(item)      
+
+        if not clicked_items:
+            self.tech_panel.tech = None
+            self.tech_panel.hide()    
+            self.selectedTech = None
+            self.computeLayout()
+
     def run(self):
         returnCode = 0
 
@@ -212,19 +234,11 @@ class TechContext(GUIContext):
                 self.handleKeyPress(event)
 
             elif event.type == MOUSEBUTTONUP:
-                pos = pygame.mouse.get_pos()
+                self.handleMouseClick(event)
 
-                clicked_items = [
-                    s for s in self.tech_sprites if s.rect.collidepoint(pos)
-                ]             
-                for item in clicked_items:
-                    self.resolveNodeClick(item)      
-
-                if not clicked_items:
-                    self.tech_panel.tech = None
-                    self.tech_panel.hide()    
-                    self.selectedTech = None
-                    self.computeLayout()
+            elif event.type == UI_BUTTON_PRESSED:
+                if event.ui_element == self.tech_panel.research_button:
+                    self.playerTech.setActiveTech(self.selectedTech.id)
 
             self.manager.process_events(event)
 
