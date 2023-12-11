@@ -1,4 +1,4 @@
-from techtree import TechTree
+from techtree import TechTree, PlayerTech
 from orbitsim import OrbitSim
 from colonysim import ColonySim
 from planetsim import PlanetSim
@@ -13,10 +13,12 @@ class GameModel:
     # Tech tree
     # People
     def __init__(self):
-        self.techTree = None
-        self.orbitSim = None
-        self.planetSim = None
-        self.timingMaster = None
+        self.techTree: TechTree = None
+        self.playerTech: PlayerTech = None
+        self.orbitSim: OrbitSim = None
+        self.planetSim: PlanetSim = None
+        self.timingMaster: TimingMaster = None
+        self.colonySim: ColonySim = None
         self.init = False
 
     def load(self, jsonRoot="json", reload=False):
@@ -27,6 +29,8 @@ class GameModel:
         # TODO: Wrap these in a try/catch to do special exception handling
         # rather than just the default file errors.
         self.techTree = TechTree(jsonRoot + "/Technologies.json")
+        self.playerTech = PlayerTech(self.techTree)
+        
         self.orbitSim = OrbitSim(
             jsonRoot + "/Orbits.json", jsonRoot + "/Particles.json"
         )
