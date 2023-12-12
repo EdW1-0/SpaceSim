@@ -14,7 +14,8 @@ from views.panels.sideStatusPanels import SideStatusPanel
 from gameModel import GameModel
 from techtree import (
     TechNode,
-    TechTree
+    TechTree,
+    PlayerTech
 )
 
 
@@ -84,3 +85,27 @@ class TechStatusPanel(SideStatusPanel):
 
             
 
+class TechProgressPanel(SideStatusPanel):
+    def __init__(self, rect: pygame.Rect, manager: UIManager=None, playerTech: PlayerTech=None) -> None:
+        super(TechProgressPanel, self).__init__(rect, manager)
+        self.playerTech = playerTech
+
+        self.tech_label =  UILabel(pygame.Rect(0, 0, 100, 50), 
+                                  "<Active tech placeholder>", 
+                                  manager=manager, 
+                                  container=self.container)
+
+        self.progress_label = UILabel(pygame.Rect(100, 0, 50, 50), 
+                                  "0", 
+                                  manager=manager, 
+                                  container=self.container)
+        
+        self.hide_button.hide()
+
+    def update(self):
+        if self.playerTech.activeTech:
+            self.tech_label.set_text(self.playerTech.activeTech.name)
+            self.progress_label.set_text(str(self.playerTech.progress) + "/" + str(self.playerTech.activeTech.cost))
+        else:
+            self.tech_label.set_text("None")
+            self.progress_label.set_text("0")

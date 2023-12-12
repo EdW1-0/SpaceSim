@@ -1,6 +1,6 @@
 from views.guiContext import GUIContext
 
-from views.panels import TechStatusPanel
+from views.panels import TechStatusPanel, TechProgressPanel
 
 from techtree import (
     TechNode,
@@ -117,10 +117,13 @@ class TechContext(GUIContext):
         self.computeLayout()
 
         summary_rect = pygame.Rect(800, 100, 400, 800)
-
+        progress_rect = pygame.Rect(600, 0, 200, 50)
 
         self.tech_panel = TechStatusPanel(summary_rect, manager, model)
         self.tech_panel.hide()
+
+        self.progress_panel = TechProgressPanel(progress_rect, manager, playerTech=model.playerTech)
+        self.progress_panel.update()
 
     def computeLayout(self):
         self.tech_sprites.empty()
@@ -239,6 +242,7 @@ class TechContext(GUIContext):
             elif event.type == UI_BUTTON_PRESSED:
                 if event.ui_element == self.tech_panel.research_button:
                     self.playerTech.setActiveTech(self.selectedTech.id)
+                    self.progress_panel.update()
 
             self.manager.process_events(event)
 

@@ -26,5 +26,6 @@ from .surfaceStatusPanels import (
 )
 from .techStatusPanels import (
     TechStatusPanel,
+    TechProgressPanel,
 )
 from .timingPanel import TimingPanel
