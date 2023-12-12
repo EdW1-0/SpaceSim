@@ -1,6 +1,6 @@
 from views.guiContext import GUIContext
 
-from views.panels import TechStatusPanel, TechProgressPanel
+from views.panels import TechStatusPanel, TechProgressPanel, TimingPanel
 
 from techtree import (
     TechNode,
@@ -20,10 +20,13 @@ from pygame.locals import (
     K_LEFT,
     K_RIGHT,
 )
+from pygame.event import Event
+from pygame_gui.elements import UIButton
 from pygame_gui import (
-    UI_BUTTON_PRESSED
+    UI_BUTTON_PRESSED,
 )
 
+from views.guiContext import GUICode
 
 class TechView(pygame.sprite.Sprite):
     def __init__(self, tech: TechNode, center: tuple[int, int]=(0,0), tier=-1, selected=False):
@@ -116,14 +119,26 @@ class TechContext(GUIContext):
         self.basePoint = (150, 700)
         self.computeLayout()
 
+        self.orbit_button = UIButton(
+            relative_rect=pygame.Rect((0, 0), (100, 50)),
+            text="Orbit Map",
+            manager=manager,
+        )
+
         summary_rect = pygame.Rect(800, 100, 400, 800)
         progress_rect = pygame.Rect(600, 0, 200, 50)
+        timing_rect = pygame.Rect(800, 0, 400, 100)
+
 
         self.tech_panel = TechStatusPanel(summary_rect, manager, model)
         self.tech_panel.hide()
 
         self.progress_panel = TechProgressPanel(progress_rect, manager, playerTech=model.playerTech)
         self.progress_panel.update()
+
+        self.timing_panel = TimingPanel(
+            timing_rect, manager=manager, timingMaster=self.model.timingMaster
+        )
 
     def computeLayout(self):
         self.tech_sprites.empty()
@@ -208,7 +223,7 @@ class TechContext(GUIContext):
             self.tech_panel.show()
             self.computeLayout()
 
-    def handleMouseClick(self, event):
+    def handleMouseClick(self, event: Event) -> None:
         pos = pygame.mouse.get_pos()
 
         if self.tech_panel.rect.collidepoint(pos):
@@ -226,6 +241,16 @@ class TechContext(GUIContext):
             self.selectedTech = None
             self.computeLayout()
 
+    def handleGuiButton(self, event: Event) -> GUICode:
+        if event.ui_element == self.orbit_button:
+            return GUICode.LOADORBITVIEW
+        elif event.ui_element == self.tech_panel.research_button:
+            self.playerTech.setActiveTech(self.selectedTech.id)
+            self.progress_panel.update()
+        elif self.timing_panel.handle_event(event):
+            pass
+        return 0
+
     def run(self):
         returnCode = 0
 
@@ -240,19 +265,20 @@ class TechContext(GUIContext):
                 self.handleMouseClick(event)
 
             elif event.type == UI_BUTTON_PRESSED:
-                if event.ui_element == self.tech_panel.research_button:
-                    self.playerTech.setActiveTech(self.selectedTech.id)
-                    self.progress_panel.update()
+                returnCode = self.handleGuiButton(event)
+                if returnCode != 0:
+                    break
 
             self.manager.process_events(event)
 
-
         self.screen.fill((140, 0, 25))
-
 
         for tv in self.link_sprites:
             self.screen.blit(tv.surf, tv.rect)
         for entity in self.tech_sprites:
             self.screen.blit(entity.surf, entity.rect)
+
+        self.timing_panel.update()
+        self.progress_panel.update()
 
         return returnCode
