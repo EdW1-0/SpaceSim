@@ -41,6 +41,10 @@ class PlayerTech:
             self._completeTech()
             self.progress = 0
 
+    def tick(self, increment):
+        if self.activeTech:
+            self.addResearch(1)
+
     @property
     def discovered(self):
         return self._discovered
