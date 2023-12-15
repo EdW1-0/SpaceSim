@@ -29,7 +29,7 @@ from pygame_gui import (
 from views.guiContext import GUICode
 
 class TechView(pygame.sprite.Sprite):
-    def __init__(self, tech: TechNode, center: tuple[int, int]=(0,0), tier=-1, selected=False):
+    def __init__(self, tech: TechNode, center: tuple[int, int]=(0,0), tier=-1, selected=False, discovered=False):
         super(TechView, self).__init__()
         self.center = center
         self.tech = tech
@@ -38,8 +38,10 @@ class TechView(pygame.sprite.Sprite):
         self.surf.set_colorkey((0, 0, 0))
         if selected:
             color = (200, 200, 50)
-        else:
+        elif discovered:
             color = (150, 250, 100)
+        else:
+            color = (50, 250, 250)
         pygame.draw.rect(self.surf, color, (0, 0, 200, 100))
 
         font = pygame.font.Font(size=16)
@@ -156,7 +158,8 @@ class TechContext(GUIContext):
             if self.selectedTech == tech:            
                 self.tech_sprites.add(TechView(tech, spritePos, tier, selected = True))
             else:
-                self.tech_sprites.add(TechView(tech, spritePos, tier))
+                discovered = tech.id in self.playerTech.discovered
+                self.tech_sprites.add(TechView(tech, spritePos, tier, discovered=discovered))
                         
 
         for tv in self.tech_sprites:
