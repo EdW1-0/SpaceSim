@@ -78,7 +78,7 @@ class TestTechNodeData(unittest.TestCase):
         node3 = self.techTree.nodeById(3)
         self.assertEqual(node3.id, 3)
         self.assertEqual(node3.ancestors, [1, 2])
-        self.assertEqual(node3.effects[0], TechEffectUnlock(domain = "BUILDING", id= 7))
+        self.assertEqual(node3.effects[0], TechEffectUnlock(domain = "BUILDING", id= "HAB"))
          #self.assertEqual(node3.effects[1], TechEffectParameter(parameter="RAD_RESISTANCE", value=20))
 
 

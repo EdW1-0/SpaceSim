@@ -22,11 +22,11 @@ class TestPlayerTechDiscovered(unittest.TestCase):
         self.pt = playerTech.PlayerTech()
 
     def test_playerTechDiscoveredEmpty(self):
-        self.assertEqual(self.pt.discovered, set())
+        self.assertEqual(self.pt.discoveredTechs, set())
 
     def test_playerTechDiscoveredReadOnly(self):
         with self.assertRaises(AttributeError):
-            self.pt.discovered = {4}
+            self.pt.discoveredTechs = {4}
 
 
 class TestPlayerTechActiveTech(unittest.TestCase):
@@ -50,7 +50,7 @@ class TestPlayerTechDiscoverTech(unittest.TestCase):
     def test_playerTechDiscoverTech(self):
         self.pt.setActiveTech(0)
         self.pt._completeTech()
-        self.assertEqual(self.pt.discovered, {0})
+        self.assertEqual(self.pt.discoveredTechs, {0})
         self.assertEqual(self.pt.activeTech, None)
 
     def test_playerTechDiscoverException(self):
@@ -75,9 +75,9 @@ class TestPlayerTechProgressTech(unittest.TestCase):
     def test_playerTechMakeFullProgress(self):
         self.pt.setActiveTech(1)
         self.pt.addResearch(50)
-        self.assertEqual(self.pt.discovered, set())
+        self.assertTrue(self.pt._discovered, dict)
         self.pt.addResearch(100)
-        self.assertEqual(self.pt.discovered, {1})
+        self.assertEqual(self.pt._discovered["TECH"], {1})
         self.assertEqual(self.pt.activeTech, None)
         self.assertEqual(self.pt.progress, 0)
 
@@ -87,7 +87,7 @@ class TestPlayerTechProgressTech(unittest.TestCase):
         self.assertEqual(self.pt.progress, 50)
         self.pt.setActiveTech(0)
         self.assertEqual(self.pt.progress, 0)
-        self.assertEqual(self.pt.discovered, set())
+        self.assertEqual(self.pt._discovered["TECH"], set())
 
 
 class test_playerTechAccessPossibleTargets(unittest.TestCase):

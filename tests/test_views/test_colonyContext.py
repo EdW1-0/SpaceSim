@@ -202,6 +202,13 @@ class TestColonyContextHandleListSelection(unittest.TestCase):
         self.model = GameModel()
         self.model.load()
 
+        self.model.playerTech.setActiveTech(1)
+        self.model.playerTech._completeTech()
+        self.model.playerTech.setActiveTech(2)
+        self.model.playerTech._completeTech()
+        self.model.playerTech.setActiveTech(3)
+        self.model.playerTech._completeTech()
+
         self.cm = ModelMock()
         self.cm.vehicles = {}
         self.cm.ships = {}
@@ -270,6 +277,8 @@ class TestColonyContextHandleListSelection(unittest.TestCase):
         self.assertEqual(self.cc.handleListSelection(event), 0)
         self.assertEqual(self.cc.detail_panel, self.cc.building_detail_panel)
         self.assertEqual(self.cc.building_detail_panel.building, building)
+
+
 
         event.ui_element = self.cc.construction_panel.item_list
         buildingClass = next(iter(self.cc.model.colonySim.buildingClassesForColony(self.cc.colony.id).values()))
