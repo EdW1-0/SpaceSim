@@ -29,7 +29,7 @@
          {
            "class": "UNLOCK",
            "domain": "BUILDING",
-           "id": 7
+           "id": "HAB"
          },
          {
            "class": "PARAMETER", 

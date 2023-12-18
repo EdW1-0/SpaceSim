@@ -69,3 +69,15 @@ class TestColonySimObjectLookup(unittest.TestCase):
     def testColonySimReactionById(self):
         self.assertTrue(self.cs.reactionById("SABATIER"))
         self.assertEqual(self.cs.reactionById("SABATIER").inputs, {"CO2": 1, "H2O": 2})
+
+class TestColonySimBuildingClassFiltering(unittest.TestCase):
+    def setUp(self):
+        class PlayerTechMock:
+            def __init__(self):
+                self.discoveredBuildings = {"BUILDING", "HAB"}
+
+        self.cs = ColonySim(playerTech=PlayerTechMock())
+
+    def testColonySimBuildingClassFiltering(self):
+        self.assertTrue("HAB" in self.cs.buildingClassesForColony("NOTAREALCOLONY"))
+        self.assertFalse("SOLARARRAY" in self.cs.buildingClassesForColony("NOTAREALCOLONY"))

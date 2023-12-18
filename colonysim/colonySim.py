@@ -20,18 +20,22 @@ from colonysim.productionOrder import ProductionOrder
 
 from utility import loadEntityFile, getIntId, getStringId, IDGenerator
 
+from techtree import PlayerTech
+
 
 class ColonySim:
     def __init__(
         self,
         orbitSim=None,
         planetSim=None,
+        playerTech: PlayerTech=None,
         colonyPath="json/colonies",
         resourcePath="json/resources",
         reactionPath="json/reactions",
         buildingPath="json/buildingClasses",
     ):
         self.orbitSim = orbitSim
+        self.playerTech = playerTech
         self._buildingClasses = {}
         self._resources = {}
         self._reactions = {}
@@ -144,7 +148,7 @@ class ColonySim:
         return None
 
     def buildingClassesForColony(self, colonyId):
-        return self._buildingClasses
+        return {key: self._buildingClasses[key] for key in self._buildingClasses if key in self.playerTech.discoveredBuildings}
 
     def colonyById(self, id):
         return getIntId(id, self._colonies)

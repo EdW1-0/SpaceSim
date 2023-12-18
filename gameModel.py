@@ -41,7 +41,7 @@ class GameModel:
             vehicleRegisterCallback=self.orbitSim.registerVehicleId,
         )
         self.colonySim = ColonySim(
-            self.orbitSim, self.planetSim, jsonRoot + "/planets/colonies"
+            self.orbitSim, self.planetSim, self.playerTech, jsonRoot + "/planets/colonies"
         )
 
         self.orbitSim.landCallback = self.planetSim.landShip
