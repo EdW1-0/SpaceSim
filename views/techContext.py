@@ -29,7 +29,7 @@ from pygame_gui import (
 from views.guiContext import GUICode
 
 class TechView(pygame.sprite.Sprite):
-    def __init__(self, tech: TechNode, center: tuple[int, int]=(0,0), tier=-1, selected=False, discovered=False):
+    def __init__(self, tech: TechNode, center: tuple[int, int]=(0,0), tier=-1, selected=False, discovered=False, available=False):
         super(TechView, self).__init__()
         self.center = center
         self.tech = tech
@@ -40,8 +40,10 @@ class TechView(pygame.sprite.Sprite):
             color = (200, 200, 50)
         elif discovered:
             color = (150, 250, 100)
-        else:
+        elif available:
             color = (50, 250, 250)
+        else:
+            color = (150, 150, 150)
         pygame.draw.rect(self.surf, color, (0, 0, 200, 100))
 
         font = pygame.font.Font(size=16)
@@ -157,9 +159,12 @@ class TechContext(GUIContext):
                         self.basePoint[1] - 250*tier)
             if self.selectedTech == tech:            
                 self.tech_sprites.add(TechView(tech, spritePos, tier, selected = True))
+            elif tech.id in self.playerTech.discovered:
+                self.tech_sprites.add(TechView(tech, spritePos, tier, discovered=True))
+            elif tech.id in self.playerTech.possibleTargets:
+                self.tech_sprites.add(TechView(tech, spritePos, tier, available=True))
             else:
-                discovered = tech.id in self.playerTech.discovered
-                self.tech_sprites.add(TechView(tech, spritePos, tier, discovered=discovered))
+                self.tech_sprites.add(TechView(tech, spritePos, tier))
                         
 
         for tv in self.tech_sprites:
@@ -231,6 +236,9 @@ class TechContext(GUIContext):
 
         if self.tech_panel.rect.collidepoint(pos):
             return
+        
+        if self.timing_panel.rect.collidepoint(pos):
+            return
 
         clicked_items = [
             s for s in self.tech_sprites if s.rect.collidepoint(pos)
@@ -282,6 +290,7 @@ class TechContext(GUIContext):
             self.screen.blit(entity.surf, entity.rect)
 
         self.timing_panel.update()
+        self.tech_panel.update()
         self.progress_panel.update()
 
         return returnCode

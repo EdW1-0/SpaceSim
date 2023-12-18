@@ -13,6 +13,9 @@ class PlayerTech:
         self.allowedVehicles = []
 
     def setActiveTech(self, id):
+        if id not in self.possibleTargets:
+            return 
+        
         tech = self.techTree.nodeById(id)
         self.activeTech = tech
         self.progress = 0

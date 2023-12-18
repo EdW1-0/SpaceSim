@@ -74,6 +74,8 @@ class TechStatusPanel(SideStatusPanel):
 
 
     def update(self):
+        self.research_button.hide()
+
         if self.tech:
             self.name_label.set_text(self.tech.name)
             self.cost_label.set_text(str(self.tech.cost))
@@ -82,6 +84,9 @@ class TechStatusPanel(SideStatusPanel):
             self.effects_list.set_item_list(["Unlock" + e.domain + str(e.id) for e in self.tech.effects])
 
             self.requires_list.set_item_list([self.model.techTree.nodeById(a).name for a in self.tech.ancestors])
+
+            if self.tech.id in self.model.playerTech.possibleTargets:
+                self.research_button.show()
 
             
 
