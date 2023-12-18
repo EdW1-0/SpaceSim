@@ -159,7 +159,7 @@ class TechContext(GUIContext):
                         self.basePoint[1] - 250*tier)
             if self.selectedTech == tech:            
                 self.tech_sprites.add(TechView(tech, spritePos, tier, selected = True))
-            elif tech.id in self.playerTech.discovered:
+            elif tech.id in self.playerTech.discoveredTechs:
                 self.tech_sprites.add(TechView(tech, spritePos, tier, discovered=True))
             elif tech.id in self.playerTech.possibleTargets:
                 self.tech_sprites.add(TechView(tech, spritePos, tier, available=True))

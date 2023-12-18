@@ -2,6 +2,7 @@ import unittest
 
 import techtree as playerTech
 import techtree.techTree as techTree
+from techtree import TechEffectUnlock
 
 
 class TestPlayerTechImport(unittest.TestCase):
@@ -106,11 +107,10 @@ class test_playerTechEffects(unittest.TestCase):
         tt = techTree.TechTree()
         self.pt = playerTech.PlayerTech(tt)
 
-    def test_playerTechHasAllowedBuildings(self):
-        self.assertTrue(hasattr(self.pt, "allowedBuildings"))
-
-    def test_playerTechHasAllowedVehicles(self):
-        self.assertTrue(hasattr(self.pt, "allowedVehicles"))
+    def test_playerTechHasDiscoveredMatrix(self):
+        self.assertTrue(hasattr(self.pt, "_discovered"))
 
     def test_playerTechEffectsWork(self):
-        pass
+        self.assertFalse("HAB" in self.pt.discoveredBuildings)
+        self.pt._processEffects([TechEffectUnlock("BUILDING", "HAB")])
+        self.assertTrue("HAB" in self.pt.discoveredBuildings)
