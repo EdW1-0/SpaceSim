@@ -1,5 +1,5 @@
 import unittest
-from techtree.techEffect import TechEffect, TechEffectClass, TechEffectUnlock, TechEffectParameter
+from techtree.techEffect import TechEffect, TechEffectUnlock, TechEffectParameter
 
 from dataclasses import is_dataclass, FrozenInstanceError
 from enum import Enum
@@ -31,17 +31,11 @@ class TestTechEffect(unittest.TestCase):
         with self.assertRaises(FrozenInstanceError):
             TechEffectUnlock("foo", 3).id = 7
 
+    def test_techEffectStr(self):
+        teu = TechEffectUnlock("foo", "bar")
+        self.assertEqual(teu.__str__(), "Unlock {0} {1}".format("foo", "bar"))
 
-class TestTechEffectClass(unittest.TestCase):
-    def test_techEffectClassInit(self):
-        self.assertNotEqual(TechEffectClass, False)
-        self.assertTrue(TechEffectClass(0))
+        tep = TechEffectParameter("baz", 9)
+        self.assertEqual(tep.__str__(), "Modify {0}: {1}".format("baz", 9))
 
-    def test_techEffectClassIntrospection(self):
-        self.assertTrue(issubclass(TechEffectClass, Enum))
-        self.assertTrue(
-            isinstance(TechEffectClass.BUILDING, TechEffectClass)
-        )
-        self.assertTrue(
-            isinstance(TechEffectClass(1), TechEffectClass)
-        )
+

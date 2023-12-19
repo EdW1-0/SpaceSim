@@ -1,4 +1,4 @@
-from techtree.techEffect import TechEffect, TechEffectClass, TechEffectUnlock
+from techtree.techEffect import TechEffect, TechEffectUnlock, TechEffectParameter
 
 
 class TechNode:
@@ -15,5 +15,11 @@ class TechNode:
                         domain = effect["domain"],
                         id = effect["id"]
                     )
+                self.effects.append(te)
+            elif effect["class"] == "PARAMETER":
+                te = TechEffectParameter(
+                    parameter=effect["effect"],
+                    amount=effect["value"]
+                )
                 self.effects.append(te)
 
