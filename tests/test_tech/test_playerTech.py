@@ -2,7 +2,7 @@ import unittest
 
 import techtree as playerTech
 import techtree.techTree as techTree
-from techtree import TechEffectUnlock
+from techtree import TechEffectUnlock, TechEffectParameter
 
 
 class TestPlayerTechImport(unittest.TestCase):
@@ -114,3 +114,6 @@ class test_playerTechEffects(unittest.TestCase):
         self.assertFalse("HAB" in self.pt.discoveredBuildings)
         self.pt._processEffects([TechEffectUnlock("BUILDING", "HAB")])
         self.assertTrue("HAB" in self.pt.discoveredBuildings)
+        self.pt._processEffects([TechEffectParameter("LUNAR_CONSTRUCTION_SPEED", 7)])
+        self.assertTrue("LUNAR_CONSTRUCTION_SPEED" in self.pt._discovered)
+        self.assertEqual(self.pt._discovered["LUNAR_CONSTRUCTION_SPEED"], [1, 7])

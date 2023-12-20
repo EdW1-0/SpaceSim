@@ -1,20 +1,22 @@
-from techtree.techEffect import TechEffectUnlock
-
+from techtree.techEffect import TechEffectUnlock, TechEffectParameter
+from techtree.techTree import TechTree
+from techtree.techNode import TechNode
 
 # TODO: Not sure it should be resposibility of this class to be passed tech tree.
 # Think it should just discover instance internally.
 class PlayerTech:
-    def __init__(self, techTree=None):
+    def __init__(self, techTree: TechTree=None):
         self._discovered = {
             "TECH": set(),
             "BUILDING": set(),
             "VEHICLE": set(),
+            "LUNAR_CONSTRUCTION_SPEED": [1],
         }
-        self.techTree = techTree
-        self.activeTech = None
-        self.progress = 0
+        self.techTree: TechTree = techTree
+        self.activeTech: TechNode = None
+        self.progress: int = 0
 
-    def setActiveTech(self, id):
+    def setActiveTech(self, id: str):
         if id not in self.possibleTargets:
             return 
         
@@ -34,14 +36,17 @@ class PlayerTech:
         for effect in effects:
             if isinstance(effect, TechEffectUnlock):
                 self._discovered[effect.domain].add(effect.id)
+            elif isinstance(effect, TechEffectParameter):
+                self._discovered[effect.parameter].append(effect.amount)
 
-    def addResearch(self, increment):
+
+    def addResearch(self, increment: int):
         self.progress += increment
         if self.activeTech and self.progress >= self.activeTech.cost:
             self._completeTech()
             self.progress = 0
 
-    def tick(self, increment):
+    def tick(self, increment: int):
         if self.activeTech:
             self.addResearch(1)
 
