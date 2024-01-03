@@ -6,6 +6,8 @@ from colonysim import (
     ExtractionBuildingClass,
 )
 
+from techtree import PlayerTech, TechEffectParameter
+
 
 class TestBuildingClass(unittest.TestCase):
     def testBuildingClass(self):
@@ -30,14 +32,14 @@ class TestBuildingClass(unittest.TestCase):
         )
 
     def testBuildingClassAttributes(self):
-        bc = BuildingClass("BOX", "Box")
+        bc = BuildingClass("BOX", "Box", playerTech=PlayerTech())
         self.assertTrue(hasattr(bc, "id"))
         self.assertTrue(hasattr(bc, "name"))
-        self.assertTrue(hasattr(bc, "constructionCost"))
-        self.assertTrue(hasattr(bc, "constructionTime"))
+        self.assertTrue(hasattr(bc, "baseConstructionCost"))
+        self.assertTrue(hasattr(bc, "baseConstructionTime"))
         self.assertTrue(hasattr(bc, "demolitionTime"))
         self.assertTrue(hasattr(bc, "demolitionCost"))
-        self.assertTrue(isinstance(bc.constructionCost, dict))
+        self.assertTrue(isinstance(bc.baseConstructionCost, dict))
 
 
 class TestStorageBuildingClass(unittest.TestCase):
@@ -68,3 +70,21 @@ class TestExtractionBuildingClass(unittest.TestCase):
     def testExtractionBuildingClassAttributes(self):
         ebc = ExtractionBuildingClass("FOO", "Bar")
         self.assertTrue(hasattr(ebc, "extracts"))
+
+class TestBuildingClassParameters(unittest.TestCase):
+    def setUp(self):
+        self.pt = PlayerTech()
+        self.bc = BuildingClass(0, "Test", self.pt)
+
+    def testBuildingClassConstructionTime(self):
+        self.assertEqual(self.bc.constructionTime(), 10)
+        te = TechEffectParameter("LUNAR_CONSTRUCTION_SPEED", 1)
+        self.pt._processEffects([te])
+        self.assertEqual(self.bc.constructionTime(), 5)
+        self.pt._processEffects([TechEffectParameter("LUNAR_CONSTRUCTION_SPEED", 8)])
+        self.assertEqual(self.bc.constructionTime(), 1)
+
+        # self.pt._processEffects([TechEffectParameter("ORBITAL_CONSTRUCTION_SPEED", 5)])
+        # self.assertEqual(self.bc.constructionTime(), 1)
+
+

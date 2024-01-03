@@ -289,7 +289,7 @@ class Colony:
             if building.status == BuildingStatus.CONSTRUCTION:
                 if (
                     building.constructionProgress
-                    == building.buildingClass.constructionTime
+                    >= building.buildingClass.constructionTime()
                 ):
                     self.constructBuilding(building.id)
                 else:

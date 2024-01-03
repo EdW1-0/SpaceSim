@@ -18,6 +18,8 @@ from gameModel import GameModel
 from planetsim.surfacePoint import SurfacePoint
 from planetsim.vehicle import Vehicle
 
+from techtree import PlayerTech
+
 
 class TestColony(unittest.TestCase):
     def testColony(self):
@@ -325,11 +327,12 @@ class TestColonyTickExtraction(unittest.TestCase):
 
 class TestColonyTickConstruction(unittest.TestCase):
     def setUp(self):
-        self.bc = BuildingClass("MOCK", "Mock Building", constructionTime=20)
+        self.pt = PlayerTech()
+        self.bc = BuildingClass("MOCK", "Mock Building", constructionTime=20, playerTech=self.pt)
         self.pbc = ProductionBuildingClass(
-            "MOCKP", "Production", reactions={"ELECTROLYSIS": 1.0}
+            "MOCKP", "Production", reactions={"ELECTROLYSIS": 1.0}, playerTech=self.pt
         )
-        self.sbc = StorageBuildingClass("MOCKS", "Storage", stores={"H2O": 100})
+        self.sbc = StorageBuildingClass("MOCKS", "Storage", stores={"H2O": 100}, playerTech=self.pt)
         self.cs = ColonySim()
 
     def testColonyTickConstruction(self):
@@ -358,12 +361,14 @@ class TestColonyTickConstruction(unittest.TestCase):
 
 class TestColonyTickDemolition(unittest.TestCase):
     def setUp(self):
-        self.bc = BuildingClass("MOCK", "Mock Building", demolitionTime=20)
+        self.pt = PlayerTech()
+
+        self.bc = BuildingClass("MOCK", "Mock Building", demolitionTime=20, playerTech=self.pt)
         self.pbc = ProductionBuildingClass(
-            "MOCKP", "Production", reactions={"ELECTROLYSIS": 1.0}
+            "MOCKP", "Production", reactions={"ELECTROLYSIS": 1.0}, playerTech=self.pt
         )
-        self.sbc = StorageBuildingClass("MOCKS", "Storage", stores={"H2O": 100})
-        self.cs = ColonySim()
+        self.sbc = StorageBuildingClass("MOCKS", "Storage", stores={"H2O": 100}, playerTech=self.pt)
+        self.cs = ColonySim(playerTech=self.pt)
 
     def testColonyTickDemolition(self):
         self.c = Colony(0, "Test")

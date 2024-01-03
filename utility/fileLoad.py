@@ -13,7 +13,7 @@ def extractEntityJson(path, id):
     return entities
 
 
-def loadEntityFile(path, id, EntityClass, altClasses={}):
+def loadEntityFile(path, id, EntityClass, altClasses={}, **kwargs):
     entityDict = {}
     for subdir, dirs, files in os.walk(path):
         for file in files:
@@ -22,9 +22,9 @@ def loadEntityFile(path, id, EntityClass, altClasses={}):
                 foundAlt = False
                 for altId in altClasses:
                     if altId in e:
-                        entityDict.update({e["id"]: altClasses[altId](**e)})
+                        entityDict.update({e["id"]: altClasses[altId](**e, **kwargs)})
                         foundAlt = True
                         break
                 if not foundAlt:
-                    entityDict.update({e["id"]: EntityClass(**e)})
+                    entityDict.update({e["id"]: EntityClass(**e, **kwargs)})
     return entityDict

@@ -34,7 +34,7 @@
          {
            "class": "PARAMETER", 
            "effect": "LUNAR_CONSTRUCTION_SPEED",
-           "value": 3
+           "value": 1
          }
       ]
     },

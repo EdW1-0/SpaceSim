@@ -57,6 +57,9 @@ class PlayerTech:
     @property
     def discoveredBuildings(self):
         return self._discovered["BUILDING"]
+    
+    def parameter(self, param):
+        return sum(self._discovered[param])
 
     @property
     def possibleTargets(self):

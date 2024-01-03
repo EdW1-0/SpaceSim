@@ -50,8 +50,8 @@ class TestColonySim(unittest.TestCase):
 
         csb = ColonySim(buildingPath="test_json/test_colony/test_buildingClasses")
         self.assertEqual(len(csb._buildingClasses.values()), 2)
-        self.assertEqual(csb._buildingClasses["HAB"].constructionTime, 30)
-        self.assertEqual(csb._buildingClasses["SOL"].constructionCost, 200.0)
+        self.assertEqual(csb._buildingClasses["HAB"].baseConstructionTime, 30)
+        self.assertEqual(csb._buildingClasses["SOL"].baseConstructionCost, 200.0)
 
     def testColonySimCreateColony(self):
         cs = ColonySim()

@@ -56,6 +56,7 @@ class ColonySim:
                 "stores": StorageBuildingClass,
                 "extracts": ExtractionBuildingClass,
             },
+            playerTech = self.playerTech,
         )
 
         self._colonies = {}

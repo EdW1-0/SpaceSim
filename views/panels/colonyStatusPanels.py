@@ -653,7 +653,7 @@ class ColonyConstructionDetailPanel(SideStatusPanel):
         self.buildingClass_name.set_text(self.buildingClass.name)
         self.construction_text.set_text(
             "Time: {0}<br>Cost: {1}".format(
-                self.buildingClass.constructionTime, self.buildingClass.constructionCost
+                self.buildingClass.constructionTime(), self.buildingClass.constructionCost
             )
         )
         self.function_text.set_text("Stuff here")

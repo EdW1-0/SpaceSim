@@ -1,8 +1,11 @@
+from techtree import PlayerTech
+
 class BuildingClass:
     def __init__(
         self,
         id,
         name,
+        playerTech: PlayerTech = None,
         constructionTime=10,
         constructionCost={},
         demolitionTime=5,
@@ -10,10 +13,17 @@ class BuildingClass:
     ):
         self.id = id
         self.name = name
-        self.constructionCost = constructionCost
-        self.constructionTime = constructionTime
+        self.playerTech = playerTech
+        self.baseConstructionCost = constructionCost
+        self.baseConstructionTime = constructionTime
         self.demolitionCost = demolitionCost
         self.demolitionTime = demolitionTime
+
+    def constructionTime(self):
+        return self.baseConstructionTime / self.playerTech.parameter("LUNAR_CONSTRUCTION_SPEED")
+    
+    def constructionCost(self):
+        return self.baseConstructionCost
 
 
 class ProductionBuildingClass(BuildingClass):
