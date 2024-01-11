@@ -1,0 +1,8 @@
+{
+    "Parameters": [
+        "LUNAR_CONSTRUCTION_SPEED",
+        "ORBITAL_CONSTRUCTION_SPEED",
+        "AEROSTAT_CONSTRUCTION_SPEED",
+        "PLUTONIC_CONSTRUCTION_SPEED"
+    ]
+}
