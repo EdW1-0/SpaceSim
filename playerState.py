@@ -16,6 +16,10 @@ class PlayerState:
     def constructionTime(self, id, base):
         return base
     
+    def applyModifier(self, id, modifier):
+        if id not in self._parameters:
+            raise KeyError
+        self._parameters[id].append(modifier)
 
 # Things to figure out:
     # How this class gets modifiers it needs (from playerTech or elsewhere)
