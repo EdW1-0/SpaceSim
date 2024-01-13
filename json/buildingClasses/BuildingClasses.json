@@ -3,12 +3,14 @@
         {
             "id": "HAB",
             "name": "Habitation Module",
+            "environId": "MARTIAN",
             "constructionCost": 1000,
             "constructionTime": 30
         },
         {
             "id": "SOL",
             "name": "Solar Array",
+            "environId": "MARTIAN",
             "constructionCost": 200,
             "constructionTime": 10,
             "extracts": {
@@ -18,6 +20,7 @@
         {
             "id": "REACTOR",
             "name": "Chemical Reactor",
+            "environId": "MARTIAN",
             "constructionCost": 2000,
             "constructionTime": 200,
             "reactions": {
@@ -28,6 +31,7 @@
         {
             "id": "TANK",
             "name": "Gas Tank",
+            "environId": "MARTIAN",
             "constructionCost": 500,
             "constructionTime": 50,
             "stores": {
@@ -41,6 +45,7 @@
         {
             "id": "BATTERY",
             "name": "Battery Array",
+            "environId": "MARTIAN",
             "constructionCost": 1000,
             "constructionTime": 100,
             "stores": {

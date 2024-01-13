@@ -44,11 +44,11 @@ class TestColony(unittest.TestCase):
 
 class TestColonyBuildingConstruction(unittest.TestCase):
     def setUp(self):
-        self.bc = BuildingClass("MOCK", "Mock Building")
+        self.bc = BuildingClass("MOCK", "Mock Building", "MARTIAN")
         self.pbc = ProductionBuildingClass(
-            "MOCKP", "Production", reactions={"ELECTROLYSIS": 1.0}
+            "MOCKP", "Production", "MARTIAN", reactions={"ELECTROLYSIS": 1.0}
         )
-        self.sbc = StorageBuildingClass("MOCKS", "Storage", stores={"H2O": 100})
+        self.sbc = StorageBuildingClass("MOCKS", "Storage", "MARTIAN", stores={"H2O": 100})
         self.cs = ColonySim()
 
     def testColonyAddBuilding(self):
@@ -106,7 +106,7 @@ class TestColonyProductionManagement(unittest.TestCase):
     def setUp(self):
         self.cs = ColonySim()
         self.pbc = ProductionBuildingClass(
-            "MOCK", "Mock", reactions={"ELECTROLYSIS": 2.0}
+            "MOCK", "Mock", "MARTIAN", reactions={"ELECTROLYSIS": 2.0}
         )
         self.reaction = self.cs.reactionById("ELECTROLYSIS")
 
@@ -126,8 +126,8 @@ class TestColonyProductionManagement(unittest.TestCase):
         self.assertEqual(c.productionOrderById(0).status, OrderStatus.PAUSED)
 
     def testColonyProductionBuildings(self):
-        self.sbc = StorageBuildingClass("S", "s", stores={"REGOLITH": 2000})
-        self.bc = BuildingClass("B", "b")
+        self.sbc = StorageBuildingClass("S", "s", "MARTIAN", stores={"REGOLITH": 2000})
+        self.bc = BuildingClass("B", "b", "MARTIAN")
         c = Colony(0, "TEST")
         c.addBuilding(self.bc)
         c.addBuilding(self.sbc)
@@ -143,11 +143,11 @@ class TestColonyGetSetResources(unittest.TestCase):
     def setUp(self):
         self.sbc1 = StorageBuildingClass(
             "SBC1",
-            "Gas",
+            "Gas", "MARTIAN",
             stores={"H2": 1000, "O2": 1000, "H2O": 1000, "He": 1000, "CO2": 1000},
         )
         self.sbc2 = StorageBuildingClass(
-            "SBC2", "Ore", stores={"HEMATITE": 1000, "BAUXITE": 1000, "MALACHITE": 1000}
+            "SBC2", "Ore", "MARTIAN", stores={"HEMATITE": 1000, "BAUXITE": 1000, "MALACHITE": 1000}
         )
         self.c = Colony(0, "TEST")
         for i in range(3):
@@ -190,11 +190,11 @@ class TestColonyReportResources(unittest.TestCase):
     def setUp(self):
         self.sbc1 = StorageBuildingClass(
             "SBC1",
-            "Gas",
+            "Gas", "MARTIAN",
             stores={"H2": 1000, "O2": 1000, "H2O": 1000, "He": 1000, "CO2": 1000},
         )
         self.sbc2 = StorageBuildingClass(
-            "SBC2", "Ore", stores={"HEMATITE": 1000, "BAUXITE": 1000, "MALACHITE": 1000}
+            "SBC2", "Ore", "MARTIAN", stores={"HEMATITE": 1000, "BAUXITE": 1000, "MALACHITE": 1000}
         )
         self.c = Colony(0, "TEST")
         for i in range(3):
@@ -229,12 +229,12 @@ class TestColonyTick(unittest.TestCase):
     def setUp(self):
         self.cs = ColonySim()
         self.pbc = ProductionBuildingClass(
-            "MOCK", "Mock", reactions={"ELECTROLYSIS": 2.0}
+            "MOCK", "Mock", "MARTIAN", reactions={"ELECTROLYSIS": 2.0}
         )
         self.sbc = StorageBuildingClass(
-            "SBC", "Sbc", stores={"H2": 1000, "O2": 1000, "H2O": 1000}
+            "SBC", "Sbc", "MARTIAN", stores={"H2": 1000, "O2": 1000, "H2O": 1000}
         )
-        self.sbce = StorageBuildingClass("SBCE", "Battery", stores={"ENERGY": 100000})
+        self.sbce = StorageBuildingClass("SBCE", "Battery", "MARTIAN", stores={"ENERGY": 100000})
         self.reaction = self.cs.reactionById("ELECTROLYSIS")
         self.c = Colony(0, "TEST")
         self.c.addProductionOrder(self.reaction, 100)
@@ -298,9 +298,9 @@ class TestColonyTick(unittest.TestCase):
 
 class TestColonyTickExtraction(unittest.TestCase):
     def setUp(self):
-        self.sbc = StorageBuildingClass("BATTERY", "Battery", stores={"ENERGY": 10000})
+        self.sbc = StorageBuildingClass("BATTERY", "Battery", "MARTIAN", stores={"ENERGY": 10000})
         self.ebc = ExtractionBuildingClass(
-            "SOLAR", "Solar Array", extracts={"ENERGY": 100}
+            "SOLAR", "Solar Array", "MARTIAN", extracts={"ENERGY": 100}
         )
 
     def testColonyTickExtract(self):
@@ -328,11 +328,11 @@ class TestColonyTickExtraction(unittest.TestCase):
 class TestColonyTickConstruction(unittest.TestCase):
     def setUp(self):
         self.pt = PlayerTech()
-        self.bc = BuildingClass("MOCK", "Mock Building", constructionTime=20, playerTech=self.pt)
+        self.bc = BuildingClass("MOCK", "Mock Building", "MARTIAN", constructionTime=20, playerTech=self.pt)
         self.pbc = ProductionBuildingClass(
-            "MOCKP", "Production", reactions={"ELECTROLYSIS": 1.0}, playerTech=self.pt
+            "MOCKP", "Production", "MARTIAN", reactions={"ELECTROLYSIS": 1.0}, playerTech=self.pt
         )
-        self.sbc = StorageBuildingClass("MOCKS", "Storage", stores={"H2O": 100}, playerTech=self.pt)
+        self.sbc = StorageBuildingClass("MOCKS", "Storage", "MARTIAN", stores={"H2O": 100}, playerTech=self.pt)
         self.cs = ColonySim()
 
     def testColonyTickConstruction(self):
@@ -363,11 +363,11 @@ class TestColonyTickDemolition(unittest.TestCase):
     def setUp(self):
         self.pt = PlayerTech()
 
-        self.bc = BuildingClass("MOCK", "Mock Building", demolitionTime=20, playerTech=self.pt)
+        self.bc = BuildingClass("MOCK", "Mock Building", "MARTIAN", demolitionTime=20, playerTech=self.pt)
         self.pbc = ProductionBuildingClass(
-            "MOCKP", "Production", reactions={"ELECTROLYSIS": 1.0}, playerTech=self.pt
+            "MOCKP", "Production", "MARTIAN", reactions={"ELECTROLYSIS": 1.0}, playerTech=self.pt
         )
-        self.sbc = StorageBuildingClass("MOCKS", "Storage", stores={"H2O": 100}, playerTech=self.pt)
+        self.sbc = StorageBuildingClass("MOCKS", "Storage", "MARTIAN", stores={"H2O": 100}, playerTech=self.pt)
         self.cs = ColonySim(playerTech=self.pt)
 
     def testColonyTickDemolition(self):

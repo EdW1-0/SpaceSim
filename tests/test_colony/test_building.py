@@ -16,7 +16,7 @@ from colonysim import (
 
 class TestBuilding(unittest.TestCase):
     def setUp(self):
-        self.bc = BuildingClass("MOCK", "Mock Building")
+        self.bc = BuildingClass("MOCK", "Mock Building", "MARTIAN")
 
     def testBuilding(self):
         self.assertTrue(Building)
@@ -73,7 +73,7 @@ class TestBuilding(unittest.TestCase):
 class TestProductionBuilding(unittest.TestCase):
     def setUp(self):
         self.pbc = ProductionBuildingClass(
-            "MOCK", "Mock", reactions={"SABATIER": 2.0, "ELECTROLYSIS": 3.0}
+            "MOCK", "Mock", "MARTIAN", reactions={"SABATIER": 2.0, "ELECTROLYSIS": 3.0}
         )
         self.cs = ColonySim()
 
@@ -165,7 +165,7 @@ class TestProductionBuilding(unittest.TestCase):
 
 class TestStorageBuilding(unittest.TestCase):
     def setUp(self):
-        self.sbc = StorageBuildingClass("MOCK", "Mock", stores={"O2": 1000, "H2": 8000})
+        self.sbc = StorageBuildingClass("MOCK", "Mock", "MARTIAN", stores={"O2": 1000, "H2": 8000})
 
     def testStorageBuilding(self):
         self.assertTrue(StorageBuilding)
@@ -231,7 +231,7 @@ class TestStorageBuilding(unittest.TestCase):
 
 class TestExtractionBuilding(unittest.TestCase):
     def setUp(self):
-        self.ebc = ExtractionBuildingClass("MOCK", "Mock", extracts={"ENERGY": 100})
+        self.ebc = ExtractionBuildingClass("MOCK", "Mock", "MARTIAN", extracts={"ENERGY": 100})
 
     def testExtractionBuilding(self):
         self.assertTrue(ExtractionBuilding)

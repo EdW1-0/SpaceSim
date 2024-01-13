@@ -3,12 +3,14 @@
         {
             "id": "HAB",
             "name": "Habitation Module",
+            "environId": "MARTIAN",
             "constructionCost": 1000,
             "constructionTime": 30
         },
         {
             "id": "SOL",
             "name": "Solar Array",
+            "environId": "ORBITAL",
             "constructionCost": 200,
             "constructionTime": 10
         }

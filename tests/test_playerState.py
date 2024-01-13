@@ -57,7 +57,7 @@ class TestPlayerStateParamArithmetic(unittest.TestCase):
 class TestPlayerStateBuildingParams(unittest.TestCase):
     def setUp(self):
         self.ps = PlayerState()
-        self.bc = BuildingClass("ROB_FAC", "robot factory")
+        self.bc = BuildingClass("ROB_FAC", "robot factory", "MARTIAN")
 
     def testPlayerStateBaseConstructionTime(self):
         self.assertTrue(self.ps.constructionTime(self.bc, 100))

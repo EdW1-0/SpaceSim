@@ -3,8 +3,9 @@ from techtree import PlayerTech
 class BuildingClass:
     def __init__(
         self,
-        id,
-        name,
+        id: str,
+        name: str,
+        environId: str, 
         playerTech: PlayerTech = None,
         constructionTime=10,
         constructionCost={},
@@ -13,6 +14,7 @@ class BuildingClass:
     ):
         self.id = id
         self.name = name
+        self.environId = environId
         self.playerTech = playerTech
         self.baseConstructionCost = constructionCost
         self.baseConstructionTime = constructionTime
