@@ -10,7 +10,7 @@ class PlayerTech:
             "TECH": set(),
             "BUILDING": set(),
             "VEHICLE": set(),
-            "LUNAR_CONSTRUCTION_SPEED": [1],
+            "MARTIAN_CONSTRUCTION_SPEED": [1],
         }
         self.techTree: TechTree = techTree
         self.activeTech: TechNode = None

@@ -1,4 +1,5 @@
 import json
+from colonysim import BuildingClass
 
 class PlayerState:
     def __init__(self, filePath = "json/Parameters.json"):
@@ -13,8 +14,11 @@ class PlayerState:
 
         file.close()
 
-    def constructionTime(self, id, base):
-        return base
+    def _paramSum(self, paramId):
+        return sum(self._parameters[paramId])
+
+    def constructionTime(self, buildingClass: BuildingClass, base):
+        return base / self._paramSum("GENERAL_CONSTRUCTION_SPEED")
     
     def applyModifier(self, id, modifier):
         if id not in self._parameters:

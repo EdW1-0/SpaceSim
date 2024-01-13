@@ -78,10 +78,10 @@ class TestBuildingClassParameters(unittest.TestCase):
 
     def testBuildingClassConstructionTime(self):
         self.assertEqual(self.bc.constructionTime(), 10)
-        te = TechEffectParameter("LUNAR_CONSTRUCTION_SPEED", 1)
+        te = TechEffectParameter("MARTIAN_CONSTRUCTION_SPEED", 1)
         self.pt._processEffects([te])
         self.assertEqual(self.bc.constructionTime(), 5)
-        self.pt._processEffects([TechEffectParameter("LUNAR_CONSTRUCTION_SPEED", 8)])
+        self.pt._processEffects([TechEffectParameter("MARTIAN_CONSTRUCTION_SPEED", 8)])
         self.assertEqual(self.bc.constructionTime(), 1)
 
         # self.pt._processEffects([TechEffectParameter("ORBITAL_CONSTRUCTION_SPEED", 5)])

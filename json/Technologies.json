@@ -33,7 +33,7 @@
          },
          {
            "class": "PARAMETER", 
-           "effect": "LUNAR_CONSTRUCTION_SPEED",
+           "effect": "MARTIAN_CONSTRUCTION_SPEED",
            "value": 1
          }
       ]

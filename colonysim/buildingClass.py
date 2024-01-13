@@ -20,7 +20,7 @@ class BuildingClass:
         self.demolitionTime = demolitionTime
 
     def constructionTime(self):
-        return self.baseConstructionTime / self.playerTech.parameter("LUNAR_CONSTRUCTION_SPEED")
+        return self.baseConstructionTime / self.playerTech.parameter("MARTIAN_CONSTRUCTION_SPEED")
     
     def constructionCost(self):
         return self.baseConstructionCost

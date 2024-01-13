@@ -1,6 +1,7 @@
 import unittest
 
 from playerState import PlayerState
+from colonysim import BuildingClass
 
 class TestPlayerState(unittest.TestCase):
     def testPlayerState(self):
@@ -42,11 +43,29 @@ class TestPlayerStateResearchEffects(unittest.TestCase):
         with self.assertRaises(KeyError):
             self.ps.applyModifier("TEST_PARAMETER_NONE", 0.1)
 
+class TestPlayerStateParamArithmetic(unittest.TestCase):
+    def setUp(self):
+        self.ps = PlayerState(filePath = "test_json/test_parameters.json")
 
+    def testPlayerStateParamSum(self):
+        self.ps.applyModifier("TEST_PARAMETER_1", 0.1)
+        self.ps.applyModifier("TEST_PARAMETER_1", 0.4)
+        self.ps.applyModifier("TEST_PARAMETER_1", -0.2)
+
+        self.assertEqual(self.ps._paramSum("TEST_PARAMETER_1"), 1.3)
 
 class TestPlayerStateBuildingParams(unittest.TestCase):
     def setUp(self):
         self.ps = PlayerState()
+        self.bc = BuildingClass("ROB_FAC", "robot factory")
 
-    def testPlayerStateConstructionTime(self):
-        self.assertTrue(self.ps.constructionTime(id, 100))
+    def testPlayerStateBaseConstructionTime(self):
+        self.assertTrue(self.ps.constructionTime(self.bc, 100))
+
+    def testPlayerStateGenConstructionTime(self):
+        self.ps.applyModifier("GENERAL_CONSTRUCTION_SPEED", 1.0)
+
+        self.assertTrue(self.ps.constructionTime(self.bc, 50))
+
+    def testPlayerStateMartianConstructionTime(self):
+        self.ps.applyModifier("MARTIAN_CONSTRUCTION_SPEED", 1.0)
