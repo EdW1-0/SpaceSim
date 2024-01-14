@@ -18,7 +18,19 @@ class PlayerState:
         return sum(self._parameters[paramId])
 
     def constructionTime(self, buildingClass: BuildingClass, base):
-        return base / self._paramSum("GENERAL_CONSTRUCTION_SPEED")
+        general = self._paramSum("GENERAL_CONSTRUCTION_SPEED")
+        if buildingClass.environId == "MARTIAN":
+            environ = self._paramSum("MARTIAN_CONSTRUCTION_SPEED")
+        elif buildingClass.environId == "ORBITAL":
+            environ = self._paramSum("ORBITAL_CONSTRUCTION_SPEED")
+        elif buildingClass.environId == "AEROSTAT":
+            environ = self._paramSum("AEROSTAT_CONSTRUCTION_SPEED")
+        elif buildingClass.environId == "PLUTONIC":
+            environ = self._paramSum("PLUTONIC_CONSTRUCTION_SPEED")
+        else:
+            environ = 1.0
+
+        return base / general / environ 
     
     def applyModifier(self, id, modifier):
         if id not in self._parameters:
