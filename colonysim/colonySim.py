@@ -21,6 +21,7 @@ from colonysim.productionOrder import ProductionOrder
 from utility import loadEntityFile, getIntId, getStringId, IDGenerator
 
 from techtree import PlayerTech
+from playerState import PlayerState
 
 
 class ColonySim:
@@ -29,6 +30,7 @@ class ColonySim:
         orbitSim=None,
         planetSim=None,
         playerTech: PlayerTech=None,
+        playerState: PlayerState=None,
         colonyPath="json/colonies",
         resourcePath="json/resources",
         reactionPath="json/reactions",
@@ -36,6 +38,7 @@ class ColonySim:
     ):
         self.orbitSim = orbitSim
         self.playerTech = playerTech
+        self.playerState = playerState
         self._buildingClasses = {}
         self._resources = {}
         self._reactions = {}
@@ -56,7 +59,7 @@ class ColonySim:
                 "stores": StorageBuildingClass,
                 "extracts": ExtractionBuildingClass,
             },
-            playerTech = self.playerTech,
+            playerState = self.playerState,
         )
 
         self._colonies = {}

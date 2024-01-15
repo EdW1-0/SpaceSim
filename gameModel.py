@@ -3,6 +3,7 @@ from orbitsim import OrbitSim
 from colonysim import ColonySim
 from planetsim import PlanetSim
 from timingMaster import TimingMaster
+from playerState import PlayerState
 
 import pickle
 
@@ -30,6 +31,8 @@ class GameModel:
         # rather than just the default file errors.
         self.techTree = TechTree(jsonRoot + "/Technologies.json")
         self.playerTech = PlayerTech(self.techTree)
+
+        self.playerState = PlayerState()
         
         self.orbitSim = OrbitSim(
             jsonRoot + "/Orbits.json", jsonRoot + "/Particles.json"
@@ -41,7 +44,7 @@ class GameModel:
             vehicleRegisterCallback=self.orbitSim.registerVehicleId,
         )
         self.colonySim = ColonySim(
-            self.orbitSim, self.planetSim, self.playerTech, jsonRoot + "/planets/colonies"
+            self.orbitSim, self.planetSim, self.playerTech, self.playerState, jsonRoot + "/planets/colonies"
         )
 
         self.orbitSim.landCallback = self.planetSim.landShip

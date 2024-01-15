@@ -7,6 +7,7 @@ from colonysim import (
 )
 
 from techtree import PlayerTech, TechEffectParameter
+from playerState import PlayerState
 
 
 class TestBuildingClass(unittest.TestCase):
@@ -33,7 +34,7 @@ class TestBuildingClass(unittest.TestCase):
         )
 
     def testBuildingClassAttributes(self):
-        bc = BuildingClass("BOX", "Box", "MARTIAN", playerTech=PlayerTech())
+        bc = BuildingClass("BOX", "Box", "MARTIAN", playerState=PlayerState())
         self.assertTrue(hasattr(bc, "id"))
         self.assertTrue(hasattr(bc, "name"))
         self.assertTrue(hasattr(bc, "environId"))
@@ -76,7 +77,8 @@ class TestExtractionBuildingClass(unittest.TestCase):
 class TestBuildingClassParameters(unittest.TestCase):
     def setUp(self):
         self.pt = PlayerTech()
-        self.bc = BuildingClass(0, "Test", "MARTIAN", self.pt)
+        self.ps = PlayerState()
+        self.bc = BuildingClass(0, "Test", "MARTIAN", self.ps)
 
     def testBuildingClassConstructionTime(self):
         self.assertEqual(self.bc.constructionTime(), 10)

@@ -19,6 +19,7 @@ from planetsim.surfacePoint import SurfacePoint
 from planetsim.vehicle import Vehicle
 
 from techtree import PlayerTech
+from playerState import PlayerState
 
 
 class TestColony(unittest.TestCase):
@@ -327,12 +328,12 @@ class TestColonyTickExtraction(unittest.TestCase):
 
 class TestColonyTickConstruction(unittest.TestCase):
     def setUp(self):
-        self.pt = PlayerTech()
-        self.bc = BuildingClass("MOCK", "Mock Building", "MARTIAN", constructionTime=20, playerTech=self.pt)
+        self.pt = PlayerState()
+        self.bc = BuildingClass("MOCK", "Mock Building", "MARTIAN", constructionTime=20, playerState=self.pt)
         self.pbc = ProductionBuildingClass(
-            "MOCKP", "Production", "MARTIAN", reactions={"ELECTROLYSIS": 1.0}, playerTech=self.pt
+            "MOCKP", "Production", "MARTIAN", playerState=self.pt, reactions={"ELECTROLYSIS": 1.0}
         )
-        self.sbc = StorageBuildingClass("MOCKS", "Storage", "MARTIAN", stores={"H2O": 100}, playerTech=self.pt)
+        self.sbc = StorageBuildingClass("MOCKS", "Storage", "MARTIAN", stores={"H2O": 100}, playerState=self.pt)
         self.cs = ColonySim()
 
     def testColonyTickConstruction(self):
@@ -361,14 +362,14 @@ class TestColonyTickConstruction(unittest.TestCase):
 
 class TestColonyTickDemolition(unittest.TestCase):
     def setUp(self):
-        self.pt = PlayerTech()
+        self.pt = PlayerState()
 
-        self.bc = BuildingClass("MOCK", "Mock Building", "MARTIAN", demolitionTime=20, playerTech=self.pt)
+        self.bc = BuildingClass("MOCK", "Mock Building", "MARTIAN", demolitionTime=20, playerState=self.pt)
         self.pbc = ProductionBuildingClass(
-            "MOCKP", "Production", "MARTIAN", reactions={"ELECTROLYSIS": 1.0}, playerTech=self.pt
+            "MOCKP", "Production", "MARTIAN", reactions={"ELECTROLYSIS": 1.0}, playerState=self.pt
         )
-        self.sbc = StorageBuildingClass("MOCKS", "Storage", "MARTIAN", stores={"H2O": 100}, playerTech=self.pt)
-        self.cs = ColonySim(playerTech=self.pt)
+        self.sbc = StorageBuildingClass("MOCKS", "Storage", "MARTIAN", stores={"H2O": 100}, playerState=self.pt)
+        self.cs = ColonySim(playerState=self.pt)
 
     def testColonyTickDemolition(self):
         self.c = Colony(0, "Test")

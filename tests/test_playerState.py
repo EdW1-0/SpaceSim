@@ -64,42 +64,42 @@ class TestPlayerStateBuildingParams(unittest.TestCase):
         self.rc = BuildingClass("NEX_SPL", "Nexus splicer", "UNDEFINED")
 
     def testPlayerStateBaseConstructionTime(self):
-        self.assertEqual(self.ps.constructionTime(self.bc, 100), 100)
+        self.assertEqual(self.ps.constructionTime(self.bc.environId, 100), 100)
 
     def testPlayerStateGenConstructionTime(self):
         self.ps.applyModifier("GENERAL_CONSTRUCTION_SPEED", 1.0)
 
-        self.assertEqual(self.ps.constructionTime(self.bc, 100), 50)
+        self.assertEqual(self.ps.constructionTime(self.bc.environId, 100), 50)
 
     def testPlayerStateMartianConstructionTime(self):
 
-        self.assertEqual(self.ps.constructionTime(self.bc, 100), 100)
+        self.assertEqual(self.ps.constructionTime(self.bc.environId, 100), 100)
 
         self.ps.applyModifier("MARTIAN_CONSTRUCTION_SPEED", 1.0)
 
-        self.assertEqual(self.ps.constructionTime(self.bc, 100), 50)
+        self.assertEqual(self.ps.constructionTime(self.bc.environId, 100), 50)
     
     def testPlayerStateOrbitalConstructionTime(self):
         
         self.ps.applyModifier("ORBITAL_CONSTRUCTION_SPEED", 3.0)
 
-        self.assertEqual(self.ps.constructionTime(self.oc, 100), 25)
+        self.assertEqual(self.ps.constructionTime(self.oc.environId, 100), 25)
 
     def testPlayerStateAerosatConstructionTime(self):
         
         self.ps.applyModifier("AEROSTAT_CONSTRUCTION_SPEED", 3.0)
 
-        self.assertEqual(self.ps.constructionTime(self.ac, 100), 25)
+        self.assertEqual(self.ps.constructionTime(self.ac.environId, 100), 25)
 
     def testPlayerStatePlutonicConstructionTime(self):
         
         self.ps.applyModifier("PLUTONIC_CONSTRUCTION_SPEED", 3.0)
 
-        self.assertEqual(self.ps.constructionTime(self.pc, 100), 25)
+        self.assertEqual(self.ps.constructionTime(self.pc.environId, 100), 25)
 
     def testPlayerStateUndefinedConstructionTime(self):
 
-        self.assertEqual(self.ps.constructionTime(self.rc, 100), 100)
+        self.assertEqual(self.ps.constructionTime(self.rc.environId, 100), 100)
 
     def testPlayerStateConstructionTimeCrosstalk(self):
         self.ps.applyModifier("GENERAL_CONSTRUCTION_SPEED", 1.0)
@@ -107,11 +107,11 @@ class TestPlayerStateBuildingParams(unittest.TestCase):
         self.ps.applyModifier("MARTIAN_CONSTRUCTION_SPEED", 4.0)
         self.ps.applyModifier("AEROSTAT_CONSTRUCTION_SPEED", 9.0)
 
-        self.assertEqual(self.ps.constructionTime(self.bc, 100), 10)
-        self.assertEqual(self.ps.constructionTime(self.oc, 100), 25)
-        self.assertEqual(self.ps.constructionTime(self.ac, 100), 5)
-        self.assertEqual(self.ps.constructionTime(self.pc, 100), 50)
-        self.assertEqual(self.ps.constructionTime(self.rc, 100), 50)
+        self.assertEqual(self.ps.constructionTime(self.bc.environId, 100), 10)
+        self.assertEqual(self.ps.constructionTime(self.oc.environId, 100), 25)
+        self.assertEqual(self.ps.constructionTime(self.ac.environId, 100), 5)
+        self.assertEqual(self.ps.constructionTime(self.pc.environId, 100), 50)
+        self.assertEqual(self.ps.constructionTime(self.rc.environId, 100), 50)
 
 
     

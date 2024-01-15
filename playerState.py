@@ -1,5 +1,4 @@
 import json
-from colonysim import BuildingClass
 
 class PlayerState:
     def __init__(self, filePath = "json/Parameters.json"):
@@ -17,15 +16,15 @@ class PlayerState:
     def _paramSum(self, paramId):
         return sum(self._parameters[paramId])
 
-    def constructionTime(self, buildingClass: BuildingClass, base):
+    def constructionTime(self, environId: str, base: int):
         general = self._paramSum("GENERAL_CONSTRUCTION_SPEED")
-        if buildingClass.environId == "MARTIAN":
+        if environId == "MARTIAN":
             environ = self._paramSum("MARTIAN_CONSTRUCTION_SPEED")
-        elif buildingClass.environId == "ORBITAL":
+        elif environId == "ORBITAL":
             environ = self._paramSum("ORBITAL_CONSTRUCTION_SPEED")
-        elif buildingClass.environId == "AEROSTAT":
+        elif environId == "AEROSTAT":
             environ = self._paramSum("AEROSTAT_CONSTRUCTION_SPEED")
-        elif buildingClass.environId == "PLUTONIC":
+        elif environId == "PLUTONIC":
             environ = self._paramSum("PLUTONIC_CONSTRUCTION_SPEED")
         else:
             environ = 1.0
