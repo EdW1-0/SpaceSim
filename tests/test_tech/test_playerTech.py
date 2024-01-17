@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import MagicMock
 
 import techtree as playerTech
 import techtree.techTree as techTree
@@ -114,6 +115,12 @@ class test_playerTechEffects(unittest.TestCase):
         self.assertFalse("HAB" in self.pt.discoveredBuildings)
         self.pt._processEffects([TechEffectUnlock("BUILDING", "HAB")])
         self.assertTrue("HAB" in self.pt.discoveredBuildings)
-        self.pt._processEffects([TechEffectParameter("MARTIAN_CONSTRUCTION_SPEED", 7)])
-        self.assertTrue("MARTIAN_CONSTRUCTION_SPEED" in self.pt._discovered)
-        self.assertEqual(self.pt._discovered["MARTIAN_CONSTRUCTION_SPEED"], [1, 7])
+
+
+    def test_playerTechParamCalback(self):
+        mock = MagicMock()
+        self.pt.parameterModifierCallback = mock
+
+        self.pt._processEffects([TechEffectParameter("MAGIC_PARAMETER", 3)])
+
+        mock.assert_called_once_with("MAGIC_PARAMETER", 3)

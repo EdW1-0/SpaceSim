@@ -29,11 +29,12 @@ class GameModel:
 
         # TODO: Wrap these in a try/catch to do special exception handling
         # rather than just the default file errors.
+        self.playerState = PlayerState()
+
         self.techTree = TechTree(jsonRoot + "/Technologies.json")
         self.playerTech = PlayerTech(self.techTree)
+        self.playerTech.parameterModifierCallback = self.playerState.applyModifier
 
-        self.playerState = PlayerState()
-        
         self.orbitSim = OrbitSim(
             jsonRoot + "/Orbits.json", jsonRoot + "/Particles.json"
         )

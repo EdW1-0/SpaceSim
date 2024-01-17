@@ -10,11 +10,12 @@ class PlayerTech:
             "TECH": set(),
             "BUILDING": set(),
             "VEHICLE": set(),
-            "MARTIAN_CONSTRUCTION_SPEED": [1],
         }
         self.techTree: TechTree = techTree
         self.activeTech: TechNode = None
         self.progress: int = 0
+
+        self.parameterModifierCallback = None
 
     def setActiveTech(self, id: str):
         if id not in self.possibleTargets:
@@ -37,7 +38,7 @@ class PlayerTech:
             if isinstance(effect, TechEffectUnlock):
                 self._discovered[effect.domain].add(effect.id)
             elif isinstance(effect, TechEffectParameter):
-                self._discovered[effect.parameter].append(effect.amount)
+                self.parameterModifierCallback(effect.parameter, effect.amount)
 
 
     def addResearch(self, increment: int):

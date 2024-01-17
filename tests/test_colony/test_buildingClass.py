@@ -78,6 +78,7 @@ class TestBuildingClassParameters(unittest.TestCase):
     def setUp(self):
         self.pt = PlayerTech()
         self.ps = PlayerState()
+        self.pt.parameterModifierCallback = self.ps.applyModifier
         self.bc = BuildingClass(0, "Test", "MARTIAN", self.ps)
 
     def testBuildingClassConstructionTime(self):
