@@ -6,7 +6,13 @@
       "description": "Basic singe-staged rockets allow for sub-orbital space flight",
       "cost": 50,
       "ancestors": [],
-      "effects": []
+      "effects": [
+        {
+          "class": "UNLOCK",
+          "domain": "SHIP",
+          "id": "SATURNVI"
+        }
+      ]
     },
     {
       "name": "Lunar Excavation",
@@ -18,7 +24,14 @@
       "name": "Pressure Hulls",
       "id": 2,
       "cost":  100,
-      "ancestors": []
+      "ancestors": [],
+      "effects": [
+        {
+          "class": "UNLOCK",
+          "domain": "VEHICLE",
+          "id": "ROVER"
+        }
+      ]
     },
     {
       "name": "Lunar Construction",
@@ -32,6 +45,11 @@
            "id": "HAB"
          },
          {
+          "class": "UNLOCK",
+          "domain": "BUILDING",
+          "id": "SOL"
+         },
+         {
            "class": "PARAMETER", 
            "effect": "MARTIAN_CONSTRUCTION_SPEED",
            "value": 1
@@ -42,25 +60,59 @@
       "name": "Lunar Mining",
       "id": 4,
       "cost": 100,
-      "ancestors": [1]
+      "ancestors": [1],
+      "effects": [
+        {
+          "class": "UNLOCK",
+          "domain": "VEHICLE",
+          "id": "TANKER"
+        }
+      ]
     },
     {
       "name": "Lunar Industry",
       "id": 5,
       "cost": 400,
-      "ancestors": [3,4]
+      "ancestors": [3,4],
+      "effects": [
+        {
+          "class": "UNLOCK",
+          "domain": "BUILDING",
+          "id": "BATTERY"
+        },
+        {
+          "class": "UNLOCK",
+          "domain": "BUILDING",
+          "id": "REACTOR"
+        }
+
+      ]
     },
     {
       "name": "Lunar Bulk Storage",
       "id": 6,
       "cost": 200,
-      "ancestors": [3,4]
+      "ancestors": [3,4],
+      "effects": [
+        {
+          "class": "UNLOCK",
+          "domain": "BUILDING",
+          "id": "TANK"
+        }
+      ]
     },
     {
       "name": "Fusion Drives",
       "id": 7,
       "cost": 10000,
-      "ancestors": [0, 3, 5]
+      "ancestors": [0, 3, 5],
+      "effects": [
+        {
+          "class": "UNLOCK",
+          "domain": "SHIP",
+          "id": "SOLARSAIL"
+        }
+      ]
     }
   ]
 

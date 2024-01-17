@@ -10,6 +10,7 @@ class PlayerTech:
             "TECH": set(),
             "BUILDING": set(),
             "VEHICLE": set(),
+            "SHIP": set()
         }
         self.techTree: TechTree = techTree
         self.activeTech: TechNode = None
@@ -58,6 +59,10 @@ class PlayerTech:
     @property
     def discoveredBuildings(self):
         return self._discovered["BUILDING"]
+    
+    @property
+    def discoveredShips(self):
+        return self._discovered["SHIP"]
     
     def parameter(self, param):
         return sum(self._discovered[param])

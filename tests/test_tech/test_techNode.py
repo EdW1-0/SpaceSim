@@ -72,7 +72,7 @@ class TestTechNodeData(unittest.TestCase):
             "Basic singe-staged rockets allow for sub-orbital space flight",
         )
         self.assertEqual(self.nodeZero.ancestors, [])
-        self.assertEqual(self.nodeZero.effects, [])
+        self.assertEqual(self.nodeZero.effects[0], TechEffectUnlock(domain= "SHIP", id= "SATURNVI"))
 
     def test_techNodeEffects(self):
         node3 = self.techTree.nodeById(3)
@@ -80,7 +80,7 @@ class TestTechNodeData(unittest.TestCase):
         self.assertEqual(node3.ancestors, [1, 2])
         self.assertEqual(node3.effects[0], TechEffectUnlock(domain = "BUILDING", id= "HAB"))
          #self.assertEqual(node3.effects[1], TechEffectParameter(parameter="RAD_RESISTANCE", value=20))
-        self.assertEqual(node3.effects[1], TechEffectParameter(parameter="MARTIAN_CONSTRUCTION_SPEED", amount=1))
+        self.assertEqual(node3.effects[2], TechEffectParameter(parameter="MARTIAN_CONSTRUCTION_SPEED", amount=1))
 
 
 

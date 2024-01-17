@@ -111,6 +111,12 @@ class test_playerTechEffects(unittest.TestCase):
     def test_playerTechHasDiscoveredMatrix(self):
         self.assertTrue(hasattr(self.pt, "_discovered"))
 
+    def test_playerTechDiscoveredKeys(self):
+        self.assertTrue("TECH" in self.pt._discovered)
+        self.assertTrue("VEHICLE" in self.pt._discovered)
+        self.assertTrue("BUILDING" in self.pt._discovered)
+        self.assertTrue("SHIP" in self.pt._discovered)
+
     def test_playerTechEffectsWork(self):
         self.assertFalse("HAB" in self.pt.discoveredBuildings)
         self.pt._processEffects([TechEffectUnlock("BUILDING", "HAB")])
