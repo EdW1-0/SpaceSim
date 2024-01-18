@@ -4,6 +4,7 @@ from colonysim import (
     BuildingClass,
     StorageBuildingClass,
     ExtractionBuildingClass,
+    ResearchBuildingClass
 )
 
 from techtree import PlayerTech, TechEffectParameter
@@ -73,6 +74,20 @@ class TestExtractionBuildingClass(unittest.TestCase):
     def testExtractionBuildingClassAttributes(self):
         ebc = ExtractionBuildingClass("FOO", "Bar", "MARTIAN")
         self.assertTrue(hasattr(ebc, "extracts"))
+
+class TestReseachBuildingClass(unittest.TestCase):
+    def testResearchBuildingClass(self):
+        self.assertTrue(ResearchBuildingClass)
+
+    def testResearchBuildingClassConstructor(self):
+        self.assertTrue(ResearchBuildingClass("MOONLAB", "Lunar Laboratory", "MARTIAN"))
+        self.assertTrue(ResearchBuildingClass("BIOLAB", "Biolaboratory", "ORBITAL", researchOutput=20))
+
+    def testResearchBuildingClassAttributes(self):
+        rbc = ResearchBuildingClass("RESEARCHREACTOR", "Research Reactor", "PLUTONIC")
+        self.assertTrue(hasattr(rbc, "researchOutput"))
+
+    
 
 class TestBuildingClassParameters(unittest.TestCase):
     def setUp(self):
