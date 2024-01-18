@@ -82,12 +82,15 @@ class TestReseachBuildingClass(unittest.TestCase):
     def testResearchBuildingClassConstructor(self):
         self.assertTrue(ResearchBuildingClass("MOONLAB", "Lunar Laboratory", "MARTIAN"))
         self.assertTrue(ResearchBuildingClass("BIOLAB", "Biolaboratory", "ORBITAL", researchOutput=20))
+        self.assertTrue(ResearchBuildingClass("OBSERVATORY", "Observatory", "MARTIAN", researchOutput=10, researchCallback=self.rbcCallback))
 
     def testResearchBuildingClassAttributes(self):
         rbc = ResearchBuildingClass("RESEARCHREACTOR", "Research Reactor", "PLUTONIC")
         self.assertTrue(hasattr(rbc, "researchOutput"))
+        self.assertTrue(hasattr(rbc, "researchCallback"))
 
-    
+    def rbcCallback(self):
+        pass    
 
 class TestBuildingClassParameters(unittest.TestCase):
     def setUp(self):

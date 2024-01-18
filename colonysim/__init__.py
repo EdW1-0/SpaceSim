@@ -7,13 +7,14 @@ from .building import (
     ProductionBuilding,
     StorageBuilding,
     ExtractionBuilding,
+    ResearchBuilding,
 )
 from .buildingClass import (
     BuildingClass,
     ProductionBuildingClass,
     StorageBuildingClass,
     ExtractionBuildingClass,
-    ResearchBuildingClass
+    ResearchBuildingClass,
 )
 from .productionOrder import ProductionOrder, OrderStatus
 from .reaction import Reaction

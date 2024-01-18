@@ -46,6 +46,7 @@ class ExtractionBuildingClass(BuildingClass):
         self.extracts = extracts
 
 class ResearchBuildingClass(BuildingClass):
-    def __init__(self, *args, researchOutput=0, **kwargs):
+    def __init__(self, *args, researchOutput=0, researchCallback = None, **kwargs):
         super(ResearchBuildingClass, self).__init__(*args, **kwargs)
         self.researchOutput = researchOutput
+        self.researchCallback = researchCallback

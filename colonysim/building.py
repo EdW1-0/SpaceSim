@@ -171,3 +171,11 @@ class ExtractionBuilding(Building):
         if amount is None:
             amount = self.rate()
         return min(amount, self.rate())
+    
+class ResearchBuilding(Building):
+    def __init__(self, id, buildingClass):
+        super(ResearchBuilding, self).__init__(id, buildingClass)
+
+    def research(self, amount):
+        if self.buildingClass.researchCallback:
+            self.buildingClass.researchCallback(amount * self.buildingClass.researchOutput)

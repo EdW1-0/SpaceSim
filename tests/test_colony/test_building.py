@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import MagicMock
 
 from colonysim import (
     ColonySim,
@@ -8,10 +9,12 @@ from colonysim import (
     ProductionBuilding,
     StorageBuilding,
     ExtractionBuilding,
+    ResearchBuilding,
     BuildingClass,
     ProductionBuildingClass,
     StorageBuildingClass,
     ExtractionBuildingClass,
+    ResearchBuildingClass,
 )
 
 class TestBuilding(unittest.TestCase):
@@ -249,3 +252,28 @@ class TestExtractionBuilding(unittest.TestCase):
         self.assertEqual(eb.extract(200), 100)
         self.assertEqual(eb.extract(), 100)
         self.assertEqual(eb.extract(0), 0)
+
+class MockThing:
+    pass
+
+class TestResearchBuilding(unittest.TestCase):
+    def setUp(self):
+        self.mm  = MockThing()
+        self.mm.cb = MagicMock()
+        self.rbc = ResearchBuildingClass("ORB_LINAC", "Orbital Linac", "ORBITAL", researchOutput=1000, researchCallback=self.mm.cb)
+
+
+    def testResearchBuilding(self):
+        self.assertTrue(ResearchBuilding)
+
+    def testResearchBuildingConstructor(self):
+        self.assertTrue(ResearchBuilding(0, self.rbc))
+
+    def testResearchBuildingResearch(self):
+        rb = ResearchBuilding(0, self.rbc)
+
+        rb.research(10)
+        self.mm.cb.assert_called_with(10000)
+
+
+    
