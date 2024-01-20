@@ -1,5 +1,6 @@
 import json
 import os
+from inspect import isclass
 
 
 def extractEntityJson(path, id):
@@ -22,7 +23,15 @@ def loadEntityFile(path: str, id, EntityClass, altClasses={}, **kwargs):
                 foundAlt = False
                 for altId in altClasses:
                     if altId in e:
-                        entityDict.update({e["id"]: altClasses[altId](**e, **kwargs)})
+                        if isinstance(altClasses[altId], tuple):
+                            ac = altClasses[altId][0]
+                            aargs = altClasses[altId][1]
+                            entityDict.update({e["id"]: ac(**e, **kwargs, **aargs)})
+                        elif isclass(altClasses[altId]):
+                            entityDict.update({e["id"]: altClasses[altId](**e, **kwargs)})
+                        else:
+                            print("Unknown altClasses argument: ", altClasses[altId])
+                            raise TypeError
                         foundAlt = True
                         break
                 if not foundAlt:
