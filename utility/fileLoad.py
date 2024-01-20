@@ -13,7 +13,7 @@ def extractEntityJson(path, id):
     return entities
 
 
-def loadEntityFile(path, id, EntityClass, altClasses={}, **kwargs):
+def loadEntityFile(path: str, id, EntityClass, altClasses={}, **kwargs):
     entityDict = {}
     for subdir, dirs, files in os.walk(path):
         for file in files:

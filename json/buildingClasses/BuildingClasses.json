@@ -51,6 +51,14 @@
             "stores": {
                 "ENERGY": 50000
             }
+        },
+        {
+            "id": "LAB",
+            "name": "Basic Laboratory",
+            "environId": "MARTIAN",
+            "constructionCost": 400,
+            "constructionTime": 100,
+            "researchOutput": 30
         }
     ]
 }

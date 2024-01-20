@@ -8,6 +8,7 @@ from colonysim.buildingClass import (
     ProductionBuildingClass,
     StorageBuildingClass,
     ExtractionBuildingClass,
+    ResearchBuildingClass
 )
 from colonysim.building import (
     Building,
@@ -58,6 +59,7 @@ class ColonySim:
                 "reactions": ProductionBuildingClass,
                 "stores": StorageBuildingClass,
                 "extracts": ExtractionBuildingClass,
+                "researchOutput": ResearchBuildingClass,
             },
             playerState = self.playerState,
         )
