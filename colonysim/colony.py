@@ -44,8 +44,14 @@ class Colony:
             self.productionOrders = productionOrders
         else:
             self.productionOrders = {}
+
         self.buildingIdGenerator = IDGenerator()
         self.productionOrderIdGenerator = IDGenerator()
+        for building in self.buildings:
+            self.buildingIdGenerator.setId(building)
+        for po in self.productionOrders:
+            self.productionOrderIdGenerator.setId(po)
+
         self.ships = {}
         for shipId in ships:
             ship = orbitSim.transferShip(shipId)
