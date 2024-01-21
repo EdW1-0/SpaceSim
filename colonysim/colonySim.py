@@ -39,6 +39,10 @@ class ColonySim:
     ):
         self.orbitSim = orbitSim
         self.playerTech = playerTech
+        if self.playerTech:
+            ptCallback = self.playerTech.addResearch
+        else:
+            ptCallback = None
         self.playerState = playerState
         self._buildingClasses = {}
         self._resources = {}
@@ -59,7 +63,7 @@ class ColonySim:
                 "reactions": ProductionBuildingClass,
                 "stores": StorageBuildingClass,
                 "extracts": ExtractionBuildingClass,
-                "researchOutput": (ResearchBuildingClass, {"researchCallback": self.playerTech.addResearch}),
+                "researchOutput": (ResearchBuildingClass, {"researchCallback": ptCallback}),
             },
             playerState = self.playerState,
         )

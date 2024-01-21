@@ -45,12 +45,13 @@ class TestColony(unittest.TestCase):
 
 class TestColonyBuildingConstruction(unittest.TestCase):
     def setUp(self):
+        self.pt = PlayerTech()
         self.bc = BuildingClass("MOCK", "Mock Building", "MARTIAN")
         self.pbc = ProductionBuildingClass(
             "MOCKP", "Production", "MARTIAN", reactions={"ELECTROLYSIS": 1.0}
         )
         self.sbc = StorageBuildingClass("MOCKS", "Storage", "MARTIAN", stores={"H2O": 100})
-        self.cs = ColonySim()
+        self.cs = ColonySim(playerTech=self.pt)
 
     def testColonyAddBuilding(self):
         c = Colony(0, "Default")
@@ -105,7 +106,7 @@ class TestColonyBuildingConstruction(unittest.TestCase):
 
 class TestColonyProductionManagement(unittest.TestCase):
     def setUp(self):
-        self.cs = ColonySim()
+        self.cs = ColonySim(playerTech=PlayerTech())
         self.pbc = ProductionBuildingClass(
             "MOCK", "Mock", "MARTIAN", reactions={"ELECTROLYSIS": 2.0}
         )
@@ -228,7 +229,7 @@ class TestColonyReportResources(unittest.TestCase):
 
 class TestColonyTick(unittest.TestCase):
     def setUp(self):
-        self.cs = ColonySim()
+        self.cs = ColonySim(playerTech=PlayerTech())
         self.pbc = ProductionBuildingClass(
             "MOCK", "Mock", "MARTIAN", reactions={"ELECTROLYSIS": 2.0}
         )
@@ -328,13 +329,16 @@ class TestColonyTickExtraction(unittest.TestCase):
 
 class TestColonyTickConstruction(unittest.TestCase):
     def setUp(self):
+        class PT:
+            def addResearch(self, amount):
+                pass
         self.pt = PlayerState()
         self.bc = BuildingClass("MOCK", "Mock Building", "MARTIAN", constructionTime=20, playerState=self.pt)
         self.pbc = ProductionBuildingClass(
             "MOCKP", "Production", "MARTIAN", playerState=self.pt, reactions={"ELECTROLYSIS": 1.0}
         )
         self.sbc = StorageBuildingClass("MOCKS", "Storage", "MARTIAN", stores={"H2O": 100}, playerState=self.pt)
-        self.cs = ColonySim()
+        self.cs = ColonySim(playerTech=PT())
 
     def testColonyTickConstruction(self):
         self.c = Colony(0, "Test")
@@ -369,7 +373,7 @@ class TestColonyTickDemolition(unittest.TestCase):
             "MOCKP", "Production", "MARTIAN", reactions={"ELECTROLYSIS": 1.0}, playerState=self.pt
         )
         self.sbc = StorageBuildingClass("MOCKS", "Storage", "MARTIAN", stores={"H2O": 100}, playerState=self.pt)
-        self.cs = ColonySim(playerState=self.pt)
+        self.cs = ColonySim(playerState=self.pt, playerTech=PlayerTech())
 
     def testColonyTickDemolition(self):
         self.c = Colony(0, "Test")

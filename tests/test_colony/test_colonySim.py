@@ -75,6 +75,8 @@ class TestColonySimBuildingClassFiltering(unittest.TestCase):
         class PlayerTechMock:
             def __init__(self):
                 self.discoveredBuildings = {"BUILDING", "HAB"}
+            def addResearch(self, amount):
+                pass
 
         self.cs = ColonySim(playerTech=PlayerTechMock())
 

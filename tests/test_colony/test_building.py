@@ -75,10 +75,13 @@ class TestBuilding(unittest.TestCase):
 
 class TestProductionBuilding(unittest.TestCase):
     def setUp(self):
+        class AR:
+            def addResearch(self, amount):
+                pass
         self.pbc = ProductionBuildingClass(
             "MOCK", "Mock", "MARTIAN", reactions={"SABATIER": 2.0, "ELECTROLYSIS": 3.0}
         )
-        self.cs = ColonySim()
+        self.cs = ColonySim(playerTech=AR())
 
     def testProductionBuilding(self):
         self.assertTrue(ProductionBuilding)
