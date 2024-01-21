@@ -84,6 +84,7 @@ class TechStatusPanel(SideStatusPanel):
             self.effects_list.set_item_list([e.__str__() for e in self.tech.effects])
 
             self.requires_list.set_item_list([self.model.techTree.nodeById(a).name for a in self.tech.ancestors])
+            self.unlocks_list.set_item_list([tech.name for tech in self.model.techTree.descendentsOfId(self.tech.id)])
 
             if self.tech.id in self.model.playerTech.possibleTargets:
                 self.research_button.show()
