@@ -102,6 +102,13 @@ class Colony:
             for building in self.buildings.values()
             if isinstance(building, ExtractionBuilding)
         ]
+    
+    def researchBuildings(self):
+        return [
+            building
+            for building in self.buildings.values()
+            if isinstance(building, ResearchBuilding)
+        ]
 
     def addProductionOrder(self, reaction, amount):
         id = self.productionOrderIdGenerator.generateId()
@@ -245,6 +252,7 @@ class Colony:
             self.tickProduction()
             self.tickConstruction()
             self.tickDemolition()
+            self.tickResearch()
 
     # Algorithm for this:
     # Get input reagants and amounts
@@ -293,6 +301,11 @@ class Colony:
             if building.status == BuildingStatus.ACTIVE:
                 production = building.extract()
                 wastage += self.storeResources(building.material(), production)
+
+    def tickResearch(self):
+        for building in self.researchBuildings():
+            if building.status == BuildingStatus.ACTIVE:
+                building.research(1)
 
     def tickConstruction(self):
         for building in self.buildings.values():
