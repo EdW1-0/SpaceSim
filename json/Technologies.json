@@ -50,6 +50,11 @@
           "id": "SOL"
          },
          {
+          "class": "UNLOCK",
+          "domain": "BUILDING",
+          "id": "LAB"
+         },
+         {
            "class": "PARAMETER", 
            "effect": "MARTIAN_CONSTRUCTION_SPEED",
            "value": 1

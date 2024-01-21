@@ -59,7 +59,7 @@ class ColonySim:
                 "reactions": ProductionBuildingClass,
                 "stores": StorageBuildingClass,
                 "extracts": ExtractionBuildingClass,
-                "researchOutput": ResearchBuildingClass,
+                "researchOutput": (ResearchBuildingClass, {"researchCallback": self.playerTech.addResearch}),
             },
             playerState = self.playerState,
         )

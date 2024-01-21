@@ -4,12 +4,14 @@ from colonysim.building import (
     StorageBuilding,
     BuildingStatus,
     ExtractionBuilding,
+    ResearchBuilding,
 )
 from colonysim.buildingClass import (
     BuildingClass,
     ProductionBuildingClass,
     StorageBuildingClass,
     ExtractionBuildingClass,
+    ResearchBuildingClass,
 )
 from colonysim.productionOrder import ProductionOrder, OrderStatus
 from planetsim.planetSurface import PlanetSurface
@@ -73,6 +75,8 @@ class Colony:
             self.buildings[id] = StorageBuilding(id, buildingClass)
         elif isinstance(buildingClass, ExtractionBuildingClass):
             self.buildings[id] = ExtractionBuilding(id, buildingClass)
+        elif isinstance(buildingClass, ResearchBuildingClass):
+            self.buildings[id] = ResearchBuilding(id, buildingClass)
         elif isinstance(buildingClass, BuildingClass):
             self.buildings[id] = Building(id, buildingClass)
         else:
