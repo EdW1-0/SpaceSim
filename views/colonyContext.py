@@ -55,6 +55,11 @@ class ColonyContext(GUIContext):
             text="Environ",
             manager=manager,
         )
+        self.tech_button = UIButton(
+            relative_rect=pygame.Rect((100, 0), (100, 50)),
+            text="Technology",
+            manager=manager,
+        )
 
         self.tab_panel = ColonyTabPanel(tab_rect, manager=manager)
         self.timing_panel = TimingPanel(
@@ -182,6 +187,8 @@ class ColonyContext(GUIContext):
         if event.ui_element == self.settings_button:
             self.upperContext = {"planet": self.colony.locale.id}
             return GUICode.LOADSURFACEVIEW
+        elif event.ui_element == self.tech_button:
+            return GUICode.LOADTECHVIEW
         if self.timing_panel.handle_event(event):
             return 0
         elif self.tab_panel.handle_event(event):

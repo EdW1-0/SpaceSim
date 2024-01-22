@@ -180,6 +180,11 @@ class SurfaceContext(GUIContext):
             text="Settings",
             manager=manager,
         )
+        self.tech_button = UIButton(
+            relative_rect=pygame.Rect((100, 0), (100, 50)),
+            text="Technology",
+            manager=manager,
+        )
 
         summary_rect = pygame.Rect(800, 200, 400, 600)
         timing_rect = pygame.Rect(800, 0, 400, 200)
@@ -615,6 +620,8 @@ class SurfaceContext(GUIContext):
     def handleGuiButton(self, event: Event) -> GUICode:
         if event.ui_element == self.settings_button:
             return GUICode.LOADORBITVIEW
+        elif event.ui_element == self.tech_button:
+            return GUICode.LOADTECHVIEW
         elif self.timing_panel.handle_event(event):
             return 0
         elif self.active_panel.handle_event(event):
