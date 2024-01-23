@@ -46,6 +46,13 @@
                     "status": "ACTIVE",
                     "contents": "O2",
                     "amount": 0
+                },
+                {
+                    "id": 7,
+                    "buildingClass": "WAREHOUSE",
+                    "status": "ACTIVE",
+                    "contents": "AL",
+                    "amount": 1000
                 }
             ],
             "productionOrders": [

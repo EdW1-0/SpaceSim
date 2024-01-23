@@ -18,7 +18,14 @@
       "name": "Lunar Excavation",
       "id": 1,
       "cost":  100,
-      "ancestors": []
+      "ancestors": [],
+      "effects": [
+        {
+          "class": "UNLOCK",
+          "domain": "BUILDING",
+          "id": "WAREHOUSE"
+        }
+      ]
     },
     {
       "name": "Pressure Hulls",

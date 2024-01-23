@@ -59,6 +59,16 @@
             "constructionCost": 400,
             "constructionTime": 100,
             "researchOutput": 30
+        },
+        {
+            "id": "WAREHOUSE",
+            "name": "Warehouse",
+            "environId": "MARTIAN",
+            "constructionCost": 100,
+            "constructionTime": 50,
+            "stores": {
+                "AL": 50000
+            }
         }
     ]
 }

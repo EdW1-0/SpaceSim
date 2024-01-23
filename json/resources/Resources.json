@@ -24,6 +24,12 @@
         "name": "Water",
         "baseValue": 1.0,
         "units": "m^3"
+       },
+       {
+        "id": "AL",
+        "name": "Aluminium",
+        "baseValue": 10.0,
+        "units": "kg"
        }
 
     ]
