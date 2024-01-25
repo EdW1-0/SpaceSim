@@ -76,8 +76,12 @@ class Colony:
     # and this saves an extra lookup through colonysim.
     def addBuilding(self, buildingClass: BuildingClass, colonySim=None):
 
+        costDict = {}
         for key, value in buildingClass.constructionCost().items():
-            if self.reportResources(key) < value:
+            costDict[key] = self.getResources(key, value)
+            if costDict[key] < value:
+                for claimedKey, claimedValue in costDict.items():
+                    self.storeResources(claimedKey, claimedValue)
                 return None
 
         id = self.buildingIdGenerator.generateId()
@@ -93,10 +97,8 @@ class Colony:
             self.buildings[id] = Building(id, buildingClass)
         else:
             raise TypeError
-        
-        for key, value in buildingClass.constructionCost().items():
-            self.getResources(key, value)
-            
+    
+
         return id
 
     def productionBuildings(self):
