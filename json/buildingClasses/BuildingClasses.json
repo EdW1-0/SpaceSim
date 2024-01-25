@@ -4,14 +4,20 @@
             "id": "HAB",
             "name": "Habitation Module",
             "environId": "MARTIAN",
-            "constructionCost": 1000,
+            "constructionCost": {
+                "ENERGY": 1000,
+                "AL": 100
+            },
             "constructionTime": 30
         },
         {
             "id": "SOL",
             "name": "Solar Array",
             "environId": "MARTIAN",
-            "constructionCost": 200,
+            "constructionCost": {
+                "ENERGY": 600,
+                "AL": 70
+            },
             "constructionTime": 10,
             "extracts": {
                 "ENERGY": 100.0
@@ -21,7 +27,10 @@
             "id": "REACTOR",
             "name": "Chemical Reactor",
             "environId": "MARTIAN",
-            "constructionCost": 2000,
+            "constructionCost": {
+                "ENERGY": 5000,
+                "AL": 300
+            },
             "constructionTime": 200,
             "reactions": {
                 "SABATIER": 2.0,
@@ -32,7 +41,10 @@
             "id": "TANK",
             "name": "Gas Tank",
             "environId": "MARTIAN",
-            "constructionCost": 500,
+            "constructionCost": {
+                "ENERGY": 500,
+                "AL": 150
+            },
             "constructionTime": 50,
             "stores": {
                 "CH4": 16000,
@@ -46,7 +58,10 @@
             "id": "BATTERY",
             "name": "Battery Array",
             "environId": "MARTIAN",
-            "constructionCost": 1000,
+            "constructionCost": {
+                "ENERGY": 2000,
+                "AL": 100
+            },
             "constructionTime": 100,
             "stores": {
                 "ENERGY": 50000
@@ -56,7 +71,10 @@
             "id": "LAB",
             "name": "Basic Laboratory",
             "environId": "MARTIAN",
-            "constructionCost": 400,
+            "constructionCost": {
+                "ENERGY": 1000,
+                "AL": 100
+            },
             "constructionTime": 100,
             "researchOutput": 30
         },
@@ -64,7 +82,10 @@
             "id": "WAREHOUSE",
             "name": "Warehouse",
             "environId": "MARTIAN",
-            "constructionCost": 100,
+            "constructionCost": {
+                "ENERGY": 100,
+                "AL": 200
+            },
             "constructionTime": 50,
             "stores": {
                 "AL": 50000

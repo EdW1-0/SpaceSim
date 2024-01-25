@@ -16,6 +16,7 @@ from colonysim.buildingClass import (
 from colonysim.productionOrder import ProductionOrder, OrderStatus
 from planetsim.planetSurface import PlanetSurface
 from planetsim.vehicle import Vehicle
+from colonysim.ship import Ship
 
 from utility import getIntId, IDGenerator
 
@@ -73,7 +74,12 @@ class Colony:
     # though we will proliferate refs to buildingClass instances - these should all
     # be singleton objects with lifespan equal to the life of the game instance anyway,
     # and this saves an extra lookup through colonysim.
-    def addBuilding(self, buildingClass, colonySim=None):
+    def addBuilding(self, buildingClass: BuildingClass, colonySim=None):
+
+        for key, value in buildingClass.constructionCost().items():
+            if self.reportResources(key) < value:
+                return None
+
         id = self.buildingIdGenerator.generateId()
         if isinstance(buildingClass, ProductionBuildingClass):
             self.buildings[id] = ProductionBuilding(id, buildingClass, colonySim)
@@ -87,6 +93,10 @@ class Colony:
             self.buildings[id] = Building(id, buildingClass)
         else:
             raise TypeError
+        
+        for key, value in buildingClass.constructionCost().items():
+            self.getResources(key, value)
+            
         return id
 
     def productionBuildings(self):
@@ -330,14 +340,14 @@ class Colony:
         for id in removeIds:
             self.removeBuilding(id)
 
-    def buildingById(self, id):
+    def buildingById(self, id) -> Building:
         return getIntId(id, self.buildings)
 
-    def productionOrderById(self, id):
+    def productionOrderById(self, id) -> ProductionOrder:
         return getIntId(id, self.productionOrders)
 
-    def vehicleById(self, id):
+    def vehicleById(self, id) -> Vehicle:
         return getIntId(id, self.vehicles)
 
-    def shipById(self, id):
+    def shipById(self, id) -> Ship:
         return getIntId(id, self.ships)

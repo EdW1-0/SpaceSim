@@ -103,6 +103,47 @@ class TestColonyBuildingConstruction(unittest.TestCase):
         with self.assertRaises(KeyError):
             c.buildingById(id)
 
+class TestColonyBuildingCosts(unittest.TestCase):
+    def setUp(self):
+        self.pt = PlayerTech()
+        self.bc = BuildingClass("MOCK", "Mock Building", "MARTIAN", constructionCost={"ENERGY": 1000, "AL": 100})
+        self.sbc = StorageBuildingClass("STORE", "store", "MARTIAN", stores={"ENERGY": 10000, "AL": 10000})
+
+        self.colony = Colony(0, "Default")
+        self.colony.addBuilding(self.sbc)    
+        self.colony.constructBuilding(0)
+        self.colony.activateBuilding(0)
+        self.colony.addBuilding(self.sbc)
+        self.colony.constructBuilding(1)
+        self.colony.activateBuilding(1)
+
+    def testColonyBuildingCostsNoResource(self):
+        self.assertIsNone(self.colony.addBuilding(self.bc))
+
+    def testColonyBuildingCostsInsufficientResource(self):
+        self.colony.buildingById(0).setContents("ENERGY")
+        self.colony.buildingById(1).setContents("AL")
+        self.colony.buildingById(0).add({"ENERGY":10000})
+        self.colony.buildingById(1).add({"AL":50})
+
+        self.assertIsNone(self.colony.addBuilding(self.bc))
+
+        self.assertEqual(self.colony.reportResources("ENERGY"), 10000)
+        self.assertEqual(self.colony.reportResources("AL"), 50)
+
+    def testColonyBuildingResouceDeduction(self):
+        self.colony.buildingById(0).setContents("ENERGY")
+        self.colony.buildingById(1).setContents("AL")
+        self.colony.buildingById(0).add({"ENERGY":10000})
+        self.colony.buildingById(1).add({"AL":200})
+
+        self.assertTrue(self.colony.addBuilding(self.bc))
+
+        self.assertEqual(self.colony.buildingById(0).amount, 9000)
+        self.assertEqual(self.colony.buildingById(1).amount, 100)
+
+
+
 
 class TestColonyProductionManagement(unittest.TestCase):
     def setUp(self):
