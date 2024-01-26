@@ -31,6 +31,22 @@ class PlayerState:
 
         return base / general / environ 
     
+    def constructionCost(self, environId: str, base: dict):
+        general = self._paramSum("GENERAL_CONSTRUCTION_COST_MODIFIER")
+
+        if environId == "MARTIAN":
+            environ = self._paramSum("MARTIAN_CONSTRUCTION_COST_MODIFIER")
+        elif environId == "ORBITAL":
+            environ = self._paramSum("ORBITAL_CONSTRUCTION_COST_MODIFIER")
+        elif environId == "AEROSTAT":
+            environ = self._paramSum("AEROSTAT_CONSTRUCTION_COST_MODIFIER")
+        elif environId == "PLUTONIC":
+            environ = self._paramSum("PLUTONIC_CONSTRUCTION_COST_MODIFIER")
+        else:
+            environ = 1.0
+
+        return {key: base[key] / general / environ for key in base}
+    
     def applyModifier(self, id, modifier):
         if id not in self._parameters:
             raise KeyError

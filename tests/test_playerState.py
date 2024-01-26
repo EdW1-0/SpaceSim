@@ -113,6 +113,23 @@ class TestPlayerStateBuildingParams(unittest.TestCase):
         self.assertEqual(self.ps.constructionTime(self.pc.environId, 100), 50)
         self.assertEqual(self.ps.constructionTime(self.rc.environId, 100), 50)
 
+    def testPlayerStateBaseConstructionCost(self):
+        self.assertEqual(self.ps.constructionCost(self.bc.environId, {"ENERGY": 100, "AL": 50}), {"ENERGY": 100, "AL": 50})
 
+    def testPlayerStateGenConstructionCost(self):
+        self.ps.applyModifier("GENERAL_CONSTRUCTION_COST_MODIFIER", 1.0)
+        self.assertEqual(self.ps.constructionCost(self.bc.environId, {"ENERGY": 100, "AL": 50}), {"ENERGY": 50, "AL": 25})
 
+    def testPlayerStateEnvironConstructionCost(self):
+        baseCC = {"ENERGY": 100, "AL": 50}
+        self.ps.applyModifier("ORBITAL_CONSTRUCTION_COST_MODIFIER", 1.0)
+        self.ps.applyModifier("MARTIAN_CONSTRUCTION_COST_MODIFIER", 2.0)
+        self.ps.applyModifier("AEROSTAT_CONSTRUCTION_COST_MODIFIER", 4.0)
+        self.ps.applyModifier("PLUTONIC_CONSTRUCTION_COST_MODIFIER", 8.0)
+
+        self.assertEqual(self.ps.constructionCost(self.rc.environId, baseCC), baseCC)
+        self.assertEqual(self.ps.constructionCost(self.oc.environId, baseCC), {k: baseCC[k]/2.0 for k in baseCC})
+        self.assertEqual(self.ps.constructionCost(self.bc.environId, baseCC), {k: baseCC[k]/3.0 for k in baseCC})
+        self.assertEqual(self.ps.constructionCost(self.ac.environId, baseCC), {k: baseCC[k]/5.0 for k in baseCC})
+        self.assertEqual(self.ps.constructionCost(self.pc.environId, baseCC), {k: baseCC[k]/9.0 for k in baseCC})
     
