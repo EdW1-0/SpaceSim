@@ -5,6 +5,7 @@ from .colonyStatusPanels import (
     ColonyResourcePanel,
     ColonyShipDetailPanel,
     ColonyShipLoadingPanel,
+    ColonyShipConstructionPanel,
     ColonyShipPanel,
     ColonyTabPanel,
     ColonyVehicleDetailPanel,

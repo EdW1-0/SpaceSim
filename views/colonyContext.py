@@ -6,6 +6,7 @@ from views.panels import (
     ColonyShipPanel,
     ColonyShipDetailPanel,
     ColonyShipLoadingPanel,
+    ColonyShipConstructionPanel,
     ColonyItemPanel,
     ColonyBuildingDetailPanel,
     ColonyConstructionDetailPanel,
@@ -136,6 +137,12 @@ class ColonyContext(GUIContext):
             colonySim=self.model.colonySim,
             colony=self.colony,
         )
+        self.ship_construction_panel = ColonyShipConstructionPanel(
+            detail_rect,
+            manager=manager,
+            orbitSim=self.model.orbitSim,
+        )
+        self.ship_construction_panel.hide()
         self.ship_loading_panel.hide()
         self.building_detail_panel = ColonyBuildingDetailPanel(
             detail_rect, manager=manager, colony=self.colony
@@ -240,6 +247,8 @@ class ColonyContext(GUIContext):
             elif self.active_panel.upperAction == 2:
                 self.detail_panel = self.ship_loading_panel
                 self.ship_loading_panel.ship = self.ship_panel.ship
+            elif self.active_panel.upperAction == 3:
+                self.detail_panel = self.ship_construction_panel
             self.detail_panel.update()
             self.detail_panel.show()
         elif self.active_panel == self.vehicle_panel:

@@ -8,6 +8,7 @@ from pygame_gui.elements import (
     UILabel,
     UITextBox,
     UIHorizontalSlider,
+    UISelectionList,
 )
 
 from views.widgets.selectionListId import SelectionListId
@@ -217,14 +218,20 @@ class ColonyShipPanel(ColonyItemPanel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs, itemRect=pygame.Rect(0, 100, 400, 200))
         self.target_button = UIButton(
-            pygame.Rect(0, 300, 200, 50),
+            pygame.Rect(0, 300, 100, 50),
             "Trajectory",
             manager=self.manager,
             container=self.container,
         )
         self.loading_button = UIButton(
-            pygame.Rect(200, 300, 200, 50),
+            pygame.Rect(100, 300, 100, 50),
             "Payload",
+            manager=self.manager,
+            container=self.container,
+        )
+        self.construction_button = UIButton(
+            pygame.Rect(200, 300, 100, 50),
+            "Construction",
             manager=self.manager,
             container=self.container,
         )
@@ -242,6 +249,9 @@ class ColonyShipPanel(ColonyItemPanel):
             return True
         elif event.ui_element == self.loading_button:
             self.upperAction = 2
+            return True
+        elif event.ui_element == self.construction_button:
+            self.upperAction = 3
             return True
         else:
             return False
@@ -360,6 +370,56 @@ class ColonyShipDetailPanel(SideStatusPanel):
             return True
         else:
             return False
+        
+class ColonyShipConstructionPanel(SideStatusPanel):
+    def __init__(self, rect, manager=None, orbitSim=None):
+        super().__init__(rect, manager)
+        self.orbitSim = orbitSim  
+
+        self.title = UILabel(
+        pygame.Rect(200, 0, 200, 50),
+        text="Ship construction",
+        manager=manager,
+        container=self.container,
+        )
+
+        self.buildingClass_name = UILabel(
+            pygame.Rect(200, 50, 200, 50),
+            text="Default ship",
+            manager=manager,
+            container=self.container,
+        )
+
+        self.construction_list = UISelectionList(
+            pygame.Rect(0, 100, 400, 100),
+            [("foo", "bar")],
+            manager=manager,
+            container=self.container,
+        )
+
+        self.construction_text = UITextBox(
+            "Placeholder",
+            pygame.Rect(400, 100, 100, 100),
+            manager=manager,
+            container=self.container,
+        )
+
+        self.function_text = UITextBox(
+            "Condition",
+            pygame.Rect(500, 100, 100, 100),
+            manager=manager,
+            container=self.container,
+        )
+
+        self.construct_button = UIButton(
+            pygame.Rect(600, 100, 100, 50),
+            "Construct",
+            manager=manager,
+            container=self.container,
+        )
+    
+    def update(self):
+        pass
 
 
 # TODO: Overengineering for now. Eventually this will prune the full list of
@@ -611,16 +671,23 @@ class ColonyConstructionDetailPanel(SideStatusPanel):
             container=self.container,
         )
 
+        self.construction_list = UISelectionList(
+            pygame.Rect(0, 100, 400, 100),
+            [("foo", "bar")],
+            manager=manager,
+            container=self.container,
+        )
+
         self.construction_text = UITextBox(
             "Placeholder",
-            pygame.Rect(0, 100, 100, 100),
+            pygame.Rect(400, 100, 100, 100),
             manager=manager,
             container=self.container,
         )
 
         self.function_text = UITextBox(
             "Condition",
-            pygame.Rect(100, 100, 100, 100),
+            pygame.Rect(500, 100, 100, 100),
             manager=manager,
             container=self.container,
         )
