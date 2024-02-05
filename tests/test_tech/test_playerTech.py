@@ -130,3 +130,13 @@ class test_playerTechEffects(unittest.TestCase):
         self.pt._processEffects([TechEffectParameter("MAGIC_PARAMETER", 3)])
 
         mock.assert_called_once_with("MAGIC_PARAMETER", 3)
+
+class TestPlayerTechDiscoveredParameters(unittest.TestCase):
+    def setUp(self):
+        tt = techTree.TechTree()
+        self.pt = playerTech.PlayerTech(tt)
+
+    def test_playerTechDiscoveredShips(self):
+        self.assertFalse("SATURNVI" in self.pt.discoveredShips) 
+        self.pt._processEffects([TechEffectUnlock("SHIP", "SATURNVI")])
+        self.assertTrue("SATURNVI" in self.pt.discoveredShips)

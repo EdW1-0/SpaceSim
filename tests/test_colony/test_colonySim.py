@@ -1,6 +1,7 @@
 import unittest
 
-from colonysim import ColonySim, ProductionBuildingClass
+from colonysim import ColonySim, ProductionBuildingClass, ShipClass
+
 
 
 class MockLocale:
@@ -83,3 +84,22 @@ class TestColonySimBuildingClassFiltering(unittest.TestCase):
     def testColonySimBuildingClassFiltering(self):
         self.assertTrue("HAB" in self.cs.buildingClassesForColony("NOTAREALCOLONY"))
         self.assertFalse("SOLARARRAY" in self.cs.buildingClassesForColony("NOTAREALCOLONY"))
+
+class TestColonySimShipClassFiltering(unittest.TestCase):
+    def setUp(self):
+        class PlayerTechMock:
+            def __init__(self):
+                self.discoveredShips = {"SATURNVI"}
+            def addResearch(self, amount):
+                pass
+
+        class OrbitSimMock:
+            def __init__(self):
+                self._shipClasses = {"SATURNVI": ShipClass("SATURNVI", "Saturn VI", maxDeltaV=100),
+                                     "SOLARSAIL": ShipClass("SOLARSAIL", "Solar Sail", maxDeltaV=1000)}
+
+        self.cs = ColonySim(orbitSim=OrbitSimMock(), playerTech=PlayerTechMock())
+
+    def testColonySimShipClassFiltering(self):
+        self.assertTrue("SATURNVI" in self.cs.shipClassesForColony("NOTAREALCOLONY"))
+        self.assertFalse("SOLARSAIL" in self.cs.shipClassesForColony("NOTAREALCOLONY"))

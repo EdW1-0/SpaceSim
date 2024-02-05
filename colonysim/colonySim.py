@@ -159,6 +159,9 @@ class ColonySim:
 
     def buildingClassesForColony(self, colonyId):
         return {key: self._buildingClasses[key] for key in self._buildingClasses if key in self.playerTech.discoveredBuildings}
+    
+    def shipClassesForColony(self, colonyId):
+        return {key: self.orbitSim._shipClasses[key] for key in self.orbitSim._shipClasses if key in self.playerTech.discoveredShips}
 
     def colonyById(self, id):
         return getIntId(id, self._colonies)
