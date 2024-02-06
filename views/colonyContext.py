@@ -140,7 +140,8 @@ class ColonyContext(GUIContext):
         self.ship_construction_panel = ColonyShipConstructionPanel(
             detail_rect,
             manager=manager,
-            orbitSim=self.model.orbitSim,
+            model = self.model,
+            colony=self.colony
         )
         self.ship_construction_panel.hide()
         self.ship_loading_panel.hide()

@@ -372,9 +372,10 @@ class ColonyShipDetailPanel(SideStatusPanel):
             return False
         
 class ColonyShipConstructionPanel(SideStatusPanel):
-    def __init__(self, rect, manager=None, orbitSim=None):
+    def __init__(self, rect, manager=None, model=None, colony=None):
         super().__init__(rect, manager)
-        self.orbitSim = orbitSim  
+        self.model = model
+        self.colony = colony  
 
         self.title = UILabel(
         pygame.Rect(200, 0, 200, 50),
@@ -419,7 +420,8 @@ class ColonyShipConstructionPanel(SideStatusPanel):
         )
     
     def update(self):
-        pass
+        if self.colony:
+            self.construction_list.set_item_list(self.model.colonySim.shipClassesForColony(self.colony))
 
 
 # TODO: Overengineering for now. Eventually this will prune the full list of
