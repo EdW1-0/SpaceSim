@@ -442,6 +442,12 @@ class ColonyShipConstructionPanel(SideStatusPanel):
 
         if self.shipClass:
             self.shipClass_name.set_text(self.shipClass.name)
+            self.construction_text.set_text("Time: {0}<br>Cost: {1}".format(
+                self.shipClass.constructionTime(), self.shipClass.constructionCost()
+            ))
+            self.construct_button.show()
+        else:
+            self.construct_button.hide()
 
     def handle_event(self, event):
         self.upperAction = 0

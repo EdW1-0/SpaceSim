@@ -3,12 +3,22 @@
         {
             "id": "SATURNVI",
             "name": "Saturn VI",
-            "maxDeltaV": 1000
+            "maxDeltaV": 1000,
+            "constructionTime": 100,
+            "constructionCost": {
+                "AL": 100,
+                "ENERGY": 2000
+            } 
         },
         {
             "id": "SOLARSAIL",
             "name": "Solar Sail",
-            "maxDeltaV": 10000
+            "maxDeltaV": 10000,
+            "constructionTime": 1000,
+            "constructionCost": {
+                "AL": 400,
+                "ENERGY": 10000
+            }
         }
     ]
 }
