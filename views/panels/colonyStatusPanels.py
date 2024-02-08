@@ -12,7 +12,9 @@ from pygame_gui.elements import (
 )
 
 from views.widgets.selectionListId import SelectionListId
-from colonysim import Building, ProductionOrder
+from colonysim import Building, ProductionOrder, ShipClass
+
+from gameModel import GameModel
 
 
 class ColonyTabPanel(SideStatusPanel):
@@ -372,10 +374,13 @@ class ColonyShipDetailPanel(SideStatusPanel):
             return False
         
 class ColonyShipConstructionPanel(SideStatusPanel):
-    def __init__(self, rect, manager=None, model=None, colony=None):
+    def __init__(self, rect, manager=None, model: GameModel=None, colony=None):
         super().__init__(rect, manager)
         self.model = model
         self.colony = colony  
+        self.shipClass: ShipClass = None
+        self.item_hash = ""
+
 
         self.title = UILabel(
         pygame.Rect(200, 0, 200, 50),
@@ -384,7 +389,7 @@ class ColonyShipConstructionPanel(SideStatusPanel):
         container=self.container,
         )
 
-        self.buildingClass_name = UILabel(
+        self.shipClass_name = UILabel(
             pygame.Rect(200, 50, 200, 50),
             text="Default ship",
             manager=manager,
@@ -419,9 +424,31 @@ class ColonyShipConstructionPanel(SideStatusPanel):
             container=self.container,
         )
     
+    def setShipClassId(self, id):
+        self.shipClass = self.model.orbitSim.shipClassById(id)
+    
     def update(self):
         if self.colony:
-            self.construction_list.set_item_list(self.model.colonySim.shipClassesForColony(self.colony))
+            sourceList = self.model.colonySim.shipClassesForColony(self.colony)
+            newHash = "".join(map(str, [item for item in sourceList]))
+            if newHash != self.item_hash:
+                if len(sourceList) == 0:
+                    self.construction_list.set_item_list([])
+                else:
+                    self.construction_list.set_item_list(sourceList)
+
+                self.construction_list.show()
+                self.item_hash = newHash
+
+        if self.shipClass:
+            self.shipClass_name.set_text(self.shipClass.name)
+
+    def handle_event(self, event):
+        self.upperAction = 0
+        if super(ColonyShipConstructionPanel, self).handle_event(event):
+            return True
+        else:
+            return False
 
 
 # TODO: Overengineering for now. Eventually this will prune the full list of

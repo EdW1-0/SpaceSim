@@ -311,6 +311,9 @@ class ColonyContext(GUIContext):
                 if s.name == event.text:
                     ship = s
             self.ship_panel.setSelectedShip(ship)
+        elif event.ui_element == self.ship_construction_panel.construction_list:
+            self.ship_construction_panel.setShipClassId(event.text)
+            self.ship_construction_panel.update()
         elif (
             event.ui_element == self.ship_loading_panel.item_list
             or event.ui_element == self.vehicle_loading_panel.item_list
