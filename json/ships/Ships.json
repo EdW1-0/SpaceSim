@@ -4,31 +4,36 @@
             "id": 0,
             "name": "ISS Meghalaya",
             "shipClass": "SOLARSAIL", 
-            "deltaV": 10000
+            "deltaV": 10000,
+            "status": "ACTIVE"
         },
         {
             "id": 1,
             "name": "USS Enterprise",
             "shipClass": "SATURNVI",
-            "deltaV": 200 
+            "deltaV": 200,
+            "status": "ACTIVE"
         },
         {
             "id": 2,
             "name": "USS Constitution",
             "shipClass": "SATURNVI",
-            "deltaV": 200 
+            "deltaV": 200,
+            "status": "ACTIVE"
         },
         {
             "id": 3,
             "name": "USS Ticonderoga",
             "shipClass": "SATURNVI",
-            "deltaV": 200 
+            "deltaV": 200,
+            "status": "ACTIVE"
         },
         {
             "id": 4,
             "name": "MSS Viking",
             "shipClass": "SATURNVI",
-            "deltaV": 100
+            "deltaV": 100,
+            "status": "IDLE"
         }
     ]
 }
