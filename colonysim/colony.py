@@ -16,7 +16,7 @@ from colonysim.buildingClass import (
 from colonysim.productionOrder import ProductionOrder, OrderStatus
 from planetsim.planetSurface import PlanetSurface
 from planetsim.vehicle import Vehicle
-from colonysim.ship import Ship
+from colonysim.ship import Ship, ShipStatus
 
 from utility import getIntId, IDGenerator
 
@@ -329,6 +329,17 @@ class Colony:
                     self.constructBuilding(building.id)
                 else:
                     building.constructionProgress += 1
+
+        for ship in self.ships.values():
+            if ship.status == ShipStatus.CONSTRUCTION:
+                if (
+                    ship.constructionProgress >= ship.shipClass.constructionTime()
+                ):
+                    ship.construct()
+                else:
+                    ship.constructionProgress += 1
+                    
+
 
     def tickDemolition(self):
         removeIds = []

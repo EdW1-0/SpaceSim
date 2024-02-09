@@ -12,6 +12,9 @@ class TestShip(unittest.TestCase):
 
     def testShipConstructor(self):
         self.assertTrue(Ship(0, "Ship 0", self.sc))
+        self.assertEqual(Ship(0, "foo", self.sc).constructionProgress, 0)
+        self.assertEqual(Ship(0, "foo", self.sc, constructionProgress=67).constructionProgress, 67)
+        self.assertEqual(Ship(0, "bar", self.sc, status=ShipStatus.IDLE).constructionProgress, 100)
 
     def testShipAttributes(self):
         s = Ship(0, "Ship 1", self.sc)
@@ -20,6 +23,7 @@ class TestShip(unittest.TestCase):
         self.assertTrue(hasattr(s, "deltaV"))
         self.assertTrue(hasattr(s, "shipClass"))
         self.assertTrue(hasattr(s, "status"))
+        self.assertTrue(hasattr(s, "constructionProgress"))
 
     def testShipStateMachine(self):
         s = Ship(0, "Ship 1", self.sc)

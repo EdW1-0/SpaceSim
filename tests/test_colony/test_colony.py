@@ -11,7 +11,8 @@ from colonysim import (
     BuildingStatus,
     ProductionBuilding,
     StorageBuilding,
-    OrderStatus
+    OrderStatus,
+    ShipStatus
 )
 
 from gameModel import GameModel
@@ -483,6 +484,22 @@ class testColonyShip(unittest.TestCase):
         self.assertEqual(colony.reportResources("ENERGY"), 6300)
         self.assertEqual(colony.reportResources("H2O"), 400)
         self.assertEqual(colony.reportResources("CHEESE"), 0)
+
+    def testColonyShipConstruction(self):
+        self.c = Colony(0, "TEST", self.gm.orbitSim)
+        self.c.addShip("Test ship", self.sc, deltaV=56)
+        ship = self.c.shipById(5)
+        self.assertEqual(ship.status, ShipStatus.CONSTRUCTION)
+        self.assertEqual(ship.constructionProgress, 0)
+        self.c.tick(1)
+        self.assertEqual(ship.constructionProgress, 1)
+
+        self.c.tick(7)
+        self.assertEqual(ship.constructionProgress, 8)
+
+        self.c.tick(int(ship.shipClass.constructionTime()))
+        self.assertEqual(ship.constructionProgress, ship.shipClass.constructionTime())
+        self.assertEqual(ship.status, ShipStatus.IDLE)
 
 
 class testColonyVehicle(unittest.TestCase):

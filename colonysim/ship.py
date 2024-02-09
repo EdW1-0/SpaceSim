@@ -13,7 +13,7 @@ class ShipStatusError(Exception):
 
 
 class Ship(Vessel):
-    def __init__(self, id, name, shipClass, locale=None, deltaV=0, cargo=None, status=ShipStatus.CONSTRUCTION):
+    def __init__(self, id, name, shipClass, locale=None, deltaV=0, cargo=None, status=ShipStatus.CONSTRUCTION, constructionProgress=0):
         super().__init__(cargo)
         self.id = id
         self.name = name
@@ -21,6 +21,10 @@ class Ship(Vessel):
         self.locale = locale
         self.dv = deltaV
         self.status = status
+        if self.status == ShipStatus.CONSTRUCTION:
+            self.constructionProgress = constructionProgress
+        else:
+            self.constructionProgress = 100
 
     def deltaV(self):
         return self.dv

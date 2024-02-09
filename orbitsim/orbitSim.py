@@ -77,6 +77,7 @@ class OrbitSim:
         self._shipClasses = loadEntityFile(shipClassPath, "ShipClasses", ShipClass)
 
         self.shipIdGenerator = IDGenerator()
+        
         self._ships = loadEntityFile(shipPath, "Ships", Ship)
         # TODO: Workaround to fix the fact ship gets the class id but should have a
         # direct reference. Long term would be better to adapt loadEntityFile to
