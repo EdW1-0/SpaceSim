@@ -12,7 +12,7 @@ from pygame_gui.elements import (
 )
 
 from views.widgets.selectionListId import SelectionListId
-from colonysim import Building, ProductionOrder, ShipClass
+from colonysim import Building, ProductionOrder, ShipClass, ShipStatus
 
 from gameModel import GameModel
 
@@ -329,8 +329,8 @@ class ColonyShipDetailPanel(SideStatusPanel):
             "Class: {0}<br>".format(self.ship.shipClass.name)
         )
         self.ship_status.set_text(
-            "DeltaV: {0}/{1}<br>".format(
-                self.ship.deltaV(), self.ship.shipClass.maxDeltaV
+            "DeltaV: {0}/{1}<br>Status: {2}<br>".format(
+                self.ship.deltaV(), self.ship.shipClass.maxDeltaV, self.ship.status
             )
         )
 
@@ -340,6 +340,10 @@ class ColonyShipDetailPanel(SideStatusPanel):
             self.launch_button.show()
         else:
             self.ship_mission.set_text("Orders: Not implemented<br>")
+            self.launch_button.hide()
+
+        if self.ship.status == ShipStatus.CONSTRUCTION:
+            self.target_button.hide()
             self.launch_button.hide()
 
     def trajectory(self):
