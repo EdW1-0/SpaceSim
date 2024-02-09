@@ -1,6 +1,6 @@
 import unittest
 
-from colonysim import Ship, ShipClass
+from colonysim import Ship, ShipClass, ShipStatus, ShipStatusError
 
 
 class TestShip(unittest.TestCase):
@@ -19,6 +19,33 @@ class TestShip(unittest.TestCase):
         self.assertTrue(hasattr(s, "name"))
         self.assertTrue(hasattr(s, "deltaV"))
         self.assertTrue(hasattr(s, "shipClass"))
+        self.assertTrue(hasattr(s, "status"))
+
+    def testShipStateMachine(self):
+        s = Ship(0, "Ship 1", self.sc)
+        self.assertTrue(s.status, ShipStatus.CONSTRUCTION)
+        with self.assertRaises(ShipStatusError):
+            s.active()
+        with self.assertRaises(ShipStatusError):
+            s.idle()
+        
+        s.construct()
+        self.assertTrue(s.status, ShipStatus.IDLE)
+        with self.assertRaises(ShipStatusError):
+            s.construct()
+
+        with self.assertRaises(ShipStatusError):
+            s.idle()
+
+        s.active()
+        self.assertTrue(s.status, ShipStatus.ACTIVE)
+
+        with self.assertRaises(ShipStatusError):
+            s.active()
+
+        s.idle()
+        self.assertTrue(s.status, ShipStatus.IDLE)
+        
 
 
 class TestShipCargo(unittest.TestCase):

@@ -1,3 +1,5 @@
+
+
 class ShipClass:
     def __init__(self, id, name, maxDeltaV=0, constructionTime = 1, constructionCost = {}):
         self.id = id

@@ -19,5 +19,5 @@ from .buildingClass import (
 from .productionOrder import ProductionOrder, OrderStatus
 from .reaction import Reaction
 from .resource import Resource
-from .ship import Ship
+from .ship import Ship, ShipStatus, ShipStatusError
 from .shipClass import ShipClass
