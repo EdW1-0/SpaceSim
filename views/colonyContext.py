@@ -283,6 +283,10 @@ class ColonyContext(GUIContext):
                     TrajectoryState.PENDING
                 )
                 return 0
+        elif self.detail_panel == self.ship_construction_panel:
+            if event.ui_element == self.ship_construction_panel.construct_button:
+                self.colony.addShip("Default Ship", shipClass=self.ship_construction_panel.shipClass)
+
 
     def handleListSelection(self, event):
         if event.ui_element == self.vehicle_panel.item_list:

@@ -453,6 +453,8 @@ class ColonyShipConstructionPanel(SideStatusPanel):
         self.upperAction = 0
         if super(ColonyShipConstructionPanel, self).handle_event(event):
             return True
+        elif event.ui_element == self.construct_button and self.shipClass:
+            return True
         else:
             return False
 
