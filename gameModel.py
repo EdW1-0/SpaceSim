@@ -36,7 +36,7 @@ class GameModel:
         self.playerTech.parameterModifierCallback = self.playerState.applyModifier
 
         self.orbitSim = OrbitSim(
-            jsonRoot + "/Orbits.json", jsonRoot + "/Particles.json"
+            jsonRoot + "/Orbits.json", jsonRoot + "/Particles.json", playerState=self.playerState
         )
         self.planetSim = PlanetSim(
             self.orbitSim,

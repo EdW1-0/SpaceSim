@@ -47,6 +47,10 @@ class PlayerState:
 
         return {key: base[key] / general / environ for key in base}
     
+    def shipConstructionTime(self, base: int):
+        return base
+
+    
     def applyModifier(self, id, modifier):
         if id not in self._parameters:
             raise KeyError

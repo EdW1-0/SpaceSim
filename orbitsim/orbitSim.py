@@ -11,6 +11,8 @@ from colonysim.colony import Colony
 
 from planetsim.planetSurface import PlanetSurface
 
+from playerState import PlayerState
+
 from utility import (
     loadEntityFile,
     getIntId,
@@ -27,6 +29,7 @@ class OrbitSim:
         shipClassPath="json/shipClasses",
         shipPath="json/ships",
         landCallback=None,
+        playerState: PlayerState=None
     ):
         self.landCallback = landCallback
 
@@ -74,7 +77,7 @@ class OrbitSim:
                     self.nodeById(destId).links.append(linkIdCount)
                     linkIdCount += 1
 
-        self._shipClasses = loadEntityFile(shipClassPath, "ShipClasses", ShipClass)
+        self._shipClasses = loadEntityFile(shipClassPath, "ShipClasses", ShipClass, playerState = playerState)
 
         self.shipIdGenerator = IDGenerator()
         

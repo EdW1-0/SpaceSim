@@ -132,4 +132,7 @@ class TestPlayerStateBuildingParams(unittest.TestCase):
         self.assertEqual(self.ps.constructionCost(self.bc.environId, baseCC), {k: baseCC[k]/3.0 for k in baseCC})
         self.assertEqual(self.ps.constructionCost(self.ac.environId, baseCC), {k: baseCC[k]/5.0 for k in baseCC})
         self.assertEqual(self.ps.constructionCost(self.pc.environId, baseCC), {k: baseCC[k]/9.0 for k in baseCC})
+
+    def testPlayerStateShipConstructionTime(self):
+        self.assertTrue(self.ps.shipConstructionTime(100), 100)
     
