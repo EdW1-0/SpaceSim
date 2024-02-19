@@ -11,6 +11,11 @@
           "class": "UNLOCK",
           "domain": "SHIP",
           "id": "SATURNVI"
+        },
+        {
+          "class": "PARAMETER", 
+          "effect": "SHIP_CONSTRUCTION_TIME_MODIFIER",
+          "value": 0.1
         }
       ]
     },

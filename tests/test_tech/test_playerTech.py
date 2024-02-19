@@ -47,6 +47,8 @@ class TestPlayerTechDiscoverTech(unittest.TestCase):
     def setUp(self):
         tt = techTree.TechTree()
         self.pt = playerTech.PlayerTech(tt)
+        self.pmc = MagicMock()
+        self.pt.parameterModifierCallback = self.pmc
 
     def test_playerTechDiscoverTech(self):
         self.pt.setActiveTech(0)

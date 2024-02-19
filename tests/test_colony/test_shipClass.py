@@ -1,6 +1,7 @@
 import unittest
 
 from colonysim import ShipClass
+from playerState import PlayerState
 
 
 class TestShipClass(unittest.TestCase):
@@ -23,7 +24,8 @@ class TestShipClass(unittest.TestCase):
 
 class TestShipClassParameters(unittest.TestCase):
     def setUp(self):
-        self.sc = ShipClass("LIFTER", "Lifter", maxDeltaV=1000, constructionCost={"AL": 10}, constructionTime=100)
+        self.ps = PlayerState()
+        self.sc = ShipClass("LIFTER", "Lifter", playerState=self.ps, maxDeltaV=1000, constructionCost={"AL": 10}, constructionTime=100)
 
     def testShipClassConstructionParams(self):
         self.assertEqual(self.sc.constructionTime(), 100)

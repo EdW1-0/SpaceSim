@@ -48,8 +48,8 @@ class PlayerState:
         return {key: base[key] / general / environ for key in base}
     
     def shipConstructionTime(self, base: int):
-        return base
-
+        modifier = self._paramSum("SHIP_CONSTRUCTION_TIME_MODIFIER")
+        return base / modifier
     
     def applyModifier(self, id, modifier):
         if id not in self._parameters:

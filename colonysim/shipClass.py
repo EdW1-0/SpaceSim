@@ -16,6 +16,6 @@ class ShipClass:
         return self.baseConstructionCost
     
     def constructionTime(self):
-        return self.playerState(self.baseConstructionTime) 
+        return self.playerState.shipConstructionTime(self.baseConstructionTime) 
 
 
