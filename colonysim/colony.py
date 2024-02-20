@@ -198,12 +198,11 @@ class Colony:
         self.ships[shipId] = ship
         ship.locale = self
 
-    def addVehicle(self, name, fuel=0):
+    def addVehicle(self, name, vehicleClass, fuel=0):
         if not self.locale and not isinstance(self.locale, PlanetSurface):
             raise TypeError
         vehicleId = self.orbitSim.getVehicleId()
-        vc = next(iter(self.locale.vehicleClasses.values()))
-        vehicle = Vehicle(vehicleId, name, vc, fuel)
+        vehicle = Vehicle(vehicleId, name, vehicleClass, fuel)
         self.vehicles[vehicleId] = vehicle
         return vehicleId
 
