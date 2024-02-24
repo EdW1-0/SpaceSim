@@ -5,14 +5,25 @@
             "name": "Rover",
             "maxV": 1,
             "maxFuel": 100,
-            "fuelPerM": 1.0
+            "fuelPerM": 1.0,
+            "constructionTime": 30,
+            "constructionCost": {
+                "AL": 30,
+                "ENERGY": 500
+            } 
         },
         {
             "id": "TANKER",
             "name": "Tanker",
             "maxV": 2,
             "maxFuel": 1000, 
-            "fuelPerM": 2.0
+            "fuelPerM": 2.0,
+            "constructionTime": 40,
+            "constructionCost": {
+                "AL": 40,
+                "ENERGY": 600
+            } 
+
         }
     ]
 }
