@@ -142,3 +142,8 @@ class TestPlayerTechDiscoveredParameters(unittest.TestCase):
         self.assertFalse("SATURNVI" in self.pt.discoveredShips) 
         self.pt._processEffects([TechEffectUnlock("SHIP", "SATURNVI")])
         self.assertTrue("SATURNVI" in self.pt.discoveredShips)
+
+    def test_playerTechDiscoveredVehicles(self):
+        self.assertFalse("ROVER" in self.pt.discoveredVehicles) 
+        self.pt._processEffects([TechEffectUnlock("VEHICLE", "ROVER")])
+        self.assertTrue("ROVER" in self.pt.discoveredVehicles)

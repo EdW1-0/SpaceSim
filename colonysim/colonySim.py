@@ -38,6 +38,7 @@ class ColonySim:
         buildingPath="json/buildingClasses",
     ):
         self.orbitSim = orbitSim
+        self.planetSim = planetSim
         self.playerTech = playerTech
         if self.playerTech:
             ptCallback = self.playerTech.addResearch
@@ -162,6 +163,9 @@ class ColonySim:
     
     def shipClassesForColony(self, colonyId):
         return {key: self.orbitSim._shipClasses[key] for key in self.orbitSim._shipClasses if key in self.playerTech.discoveredShips}
+
+    def vehicleClassesForColony(self, colonyId):
+        return {key: self.planetSim.vehicleClasses[key] for key in self.planetSim.vehicleClasses if key in self.playerTech.discoveredVehicles}
 
     def colonyById(self, id):
         return getIntId(id, self._colonies)

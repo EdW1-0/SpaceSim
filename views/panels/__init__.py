@@ -9,6 +9,7 @@ from .colonyStatusPanels import (
     ColonyShipPanel,
     ColonyTabPanel,
     ColonyVehicleDetailPanel,
+    ColonyVehicleConstructionPanel,
     ColonyBuildingDetailPanel,
     ColonyConstructionDetailPanel,
     ColonyItemPanel,

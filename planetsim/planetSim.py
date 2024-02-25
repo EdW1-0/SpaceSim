@@ -86,6 +86,9 @@ class PlanetSim:
 
     def planetById(self, id):
         return getStringId(id, self.planets)
+    
+    def vehicleClassById(self, id):
+        return getStringId(id, self.vehicleClasses)
 
     def tick(self, increment):
         for planet in self.planets.values():

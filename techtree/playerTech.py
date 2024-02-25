@@ -64,6 +64,10 @@ class PlayerTech:
     def discoveredShips(self):
         return self._discovered["SHIP"]
     
+    @property
+    def discoveredVehicles(self):
+        return self._discovered["VEHICLE"]
+    
     def parameter(self, param):
         return sum(self._discovered[param])
 

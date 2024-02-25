@@ -462,6 +462,91 @@ class ColonyShipConstructionPanel(SideStatusPanel):
         else:
             return False
 
+class ColonyVehicleConstructionPanel(SideStatusPanel):
+    def __init__(self, rect, manager=None, model: GameModel=None, colony=None):
+        super().__init__(rect, manager)
+        self.model = model
+        self.colony = colony  
+        self.vehicleClass: VehicleClass = None
+        self.item_hash = ""
+
+
+        self.title = UILabel(
+        pygame.Rect(200, 0, 200, 50),
+        text="Vehicle construction",
+        manager=manager,
+        container=self.container,
+        )
+
+        self.vehicleClass_name = UILabel(
+            pygame.Rect(200, 50, 200, 50),
+            text="Default vehicle",
+            manager=manager,
+            container=self.container,
+        )
+
+        self.construction_list = UISelectionList(
+            pygame.Rect(0, 100, 400, 100),
+            [("foo", "bar")],
+            manager=manager,
+            container=self.container,
+        )
+
+        self.construction_text = UITextBox(
+            "Placeholder",
+            pygame.Rect(400, 100, 100, 100),
+            manager=manager,
+            container=self.container,
+        )
+
+        self.function_text = UITextBox(
+            "Condition",
+            pygame.Rect(500, 100, 100, 100),
+            manager=manager,
+            container=self.container,
+        )
+
+        self.construct_button = UIButton(
+            pygame.Rect(600, 100, 100, 50),
+            "Construct",
+            manager=manager,
+            container=self.container,
+        )
+    
+    def setVehicleClassId(self, id):
+        self.vehicleClass = self.model.planetSim.vehicleClassById(id)
+    
+    def update(self):
+        if self.colony:
+            sourceList = self.model.colonySim.vehicleClassesForColony(self.colony)
+            newHash = "".join(map(str, [item for item in sourceList]))
+            if newHash != self.item_hash:
+                if len(sourceList) == 0:
+                    self.construction_list.set_item_list([])
+                else:
+                    self.construction_list.set_item_list(sourceList)
+
+                self.construction_list.show()
+                self.item_hash = newHash
+
+        if self.vehicleClass:
+            self.vehicleClass_name.set_text(self.vehicleClass.name)
+            self.construction_text.set_text("Time: {0}<br>Cost: {1}".format(
+                self.vehicleClass.constructionTime(), self.vehicleClass.constructionCost()
+            ))
+            self.construct_button.show()
+        else:
+            self.construct_button.hide()
+
+    def handle_event(self, event):
+        self.upperAction = 0
+        if super(ColonyVehicleConstructionPanel, self).handle_event(event):
+            return True
+        elif event.ui_element == self.construct_button and self.vehicleClass:
+            return True
+        else:
+            return False
+
 
 # TODO: Overengineering for now. Eventually this will prune the full list of
 # resources existing in the game down to just those

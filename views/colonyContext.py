@@ -3,6 +3,7 @@ from views.guiContext import GUIContext, GUICode
 from views.panels import (
     ColonyTabPanel,
     ColonyVehicleDetailPanel,
+    ColonyVehicleConstructionPanel,
     ColonyShipPanel,
     ColonyShipDetailPanel,
     ColonyShipLoadingPanel,
@@ -145,6 +146,12 @@ class ColonyContext(GUIContext):
         )
         self.ship_construction_panel.hide()
         self.ship_loading_panel.hide()
+
+        self.vehicle_construction_panel = ColonyVehicleConstructionPanel(
+            detail_rect, manager=manager, model=self.model, colony=self.colony
+        )
+        self.vehicle_construction_panel.hide()
+
         self.building_detail_panel = ColonyBuildingDetailPanel(
             detail_rect, manager=manager, colony=self.colony
         )
@@ -260,6 +267,8 @@ class ColonyContext(GUIContext):
             elif self.active_panel.upperAction == 2:
                 self.detail_panel = self.vehicle_loading_panel
                 self.vehicle_loading_panel.ship = self.vehicle_panel.ship
+            elif self.active_panel.upperAction == 3:
+                self.detail_panel = self.vehicle_construction_panel
             self.detail_panel.update()
             self.detail_panel.show()
         return 0
