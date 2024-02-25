@@ -295,6 +295,9 @@ class ColonyContext(GUIContext):
         elif self.detail_panel == self.ship_construction_panel:
             if event.ui_element == self.ship_construction_panel.construct_button:
                 self.colony.addShip("Default Ship", shipClass=self.ship_construction_panel.shipClass)
+        elif self.detail_panel == self.vehicle_construction_panel:
+            if event.ui_element == self.vehicle_construction_panel.construct_button:
+                self.colony.addVehicle("Default Vehicle", vehicleClass=self.vehicle_construction_panel.vehicleClass)
 
 
     def handleListSelection(self, event):
@@ -311,6 +314,9 @@ class ColonyContext(GUIContext):
                 if v.name == event.text:
                     vehicle = v
             self.vehicle_panel.setSelectedShip(vehicle)
+        elif event.ui_element == self.vehicle_construction_panel.construction_list:
+            self.vehicle_construction_panel.setVehicleClassId(event.text)
+            self.vehicle_construction_panel.update()
         elif event.ui_element == self.ship_panel.item_list:
             self.populateDetailPanel(
                 event.text,

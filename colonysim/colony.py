@@ -15,7 +15,7 @@ from colonysim.buildingClass import (
 )
 from colonysim.productionOrder import ProductionOrder, OrderStatus
 from planetsim.planetSurface import PlanetSurface
-from planetsim.vehicle import Vehicle
+from planetsim.vehicle import Vehicle, VehicleStatus
 from colonysim.ship import Ship, ShipStatus
 
 from utility import getIntId, IDGenerator
@@ -337,6 +337,16 @@ class Colony:
                     ship.construct()
                 else:
                     ship.constructionProgress += 1
+
+        for vehicle in self.vehicles.values():
+            if vehicle.status == VehicleStatus.CONSTRUCTION:
+                if (
+                    vehicle.constructionProgress
+                    >= vehicle.vehicleClass.constructionTime()
+                ):
+                    vehicle.construct()
+                else:
+                    vehicle.constructionProgress += 1
                     
 
 
