@@ -8,5 +8,5 @@ from .surfacePoint import SurfacePoint
 from .surfacePath import SurfacePath
 from .surfaceRegion import SurfaceRegion 
 from .surfaceVehicle import SurfaceVehicle
-from .vehicle import Vehicle
+from .vehicle import Vehicle, VehicleStatus, VehicleStatusError
 from .vehicleClass import VehicleClass
