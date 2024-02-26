@@ -16,7 +16,7 @@ from colonysim import (
 )
 
 from gameModel import GameModel
-from planetsim import VehicleClass, Vehicle, SurfacePoint
+from planetsim import VehicleClass, Vehicle, SurfacePoint, VehicleStatus
 
 from techtree import PlayerTech
 from playerState import PlayerState
@@ -507,7 +507,7 @@ class testColonyVehicle(unittest.TestCase):
         self.gm.load()
         self.ps = self.gm.planetSim.planetById("MERCURY").surface
         self.ps.createBase(None, SurfacePoint(30, 30), "Foo", 3)
-        self.vc = VehicleClass("ROLLER", "Roller")
+        self.vc = VehicleClass("ROLLER", "Roller", constructionTime=30)
 
     def testColonyAddVehicle(self):
         self.c = Colony(0, "TEST", self.gm.orbitSim, self.ps)
@@ -533,3 +533,17 @@ class testColonyVehicle(unittest.TestCase):
         v = Vehicle(99, "Test Vehicle", next(iter(self.ps.vehicleClasses.values())), 60)
         self.assertTrue(self.c.vehicleArrival(v))
         self.assertEqual(len(self.c.vehicles), 1)
+
+
+    def testVehicleConstruction(self):
+        self.c = Colony(0, "TEST", self.gm.orbitSim, self.ps)
+        self.c.addVehicle("Test vehicle", self.vc, fuel=100)
+        vehicle = self.c.vehicleById(2)
+        self.assertEqual(vehicle.constructionProgress, 0)
+        self.assertEqual(vehicle.status, VehicleStatus.CONSTRUCTION)
+
+        self.c.tick(100) 
+        self.assertEqual(vehicle.status, VehicleStatus.IDLE)
+        self.assertEqual(vehicle.constructionProgress, 30)
+
+
