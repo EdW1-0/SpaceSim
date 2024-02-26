@@ -13,6 +13,7 @@ from pygame_gui.elements import (
 
 from views.widgets.selectionListId import SelectionListId
 from colonysim import Building, ProductionOrder, ShipClass, ShipStatus
+from planetsim import VehicleStatus, VehicleClass
 
 from gameModel import GameModel
 
@@ -200,11 +201,15 @@ class ColonyVehicleDetailPanel(SideStatusPanel):
             )
         )
         self.vehicle_status.set_text(
-            "Fuel: {0}/{1}<br>".format(
-                self.vehicle.fuel, self.vehicle.vehicleClass.maxFuel
+            "Fuel: {0}/{1}<br>Status: {2}".format(
+                self.vehicle.fuel, self.vehicle.vehicleClass.maxFuel, self.vehicle.status
             )
         )
         self.vehicle_mission.set_text("Orders: Not implemented<br>")
+
+        if self.vehicle.status == VehicleStatus.CONSTRUCTION:
+            self.target_button.hide()
+            self.embark_button.hide()
 
     def handle_event(self, event):
         if super().handle_event(event):
