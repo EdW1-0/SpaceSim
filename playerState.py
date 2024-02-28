@@ -51,6 +51,10 @@ class PlayerState:
         modifier = self._paramSum("SHIP_CONSTRUCTION_TIME_MODIFIER")
         return base / modifier
     
+    def vehicleConstructionTime(self, base: int):
+        modifier = self._paramSum("VEHICLE_CONSTRUCTION_TIME_MODIFIER")
+        return base / modifier
+    
     def applyModifier(self, id, modifier):
         if id not in self._parameters:
             raise KeyError

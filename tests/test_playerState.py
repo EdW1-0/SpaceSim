@@ -135,4 +135,11 @@ class TestPlayerStateBuildingParams(unittest.TestCase):
 
     def testPlayerStateShipConstructionTime(self):
         self.assertTrue(self.ps.shipConstructionTime(100), 100)
+        self.ps.applyModifier("SHIP_CONSTRUCTION_TIME_MODIFIER", 1.0)
+        self.assertTrue(self.ps.shipConstructionTime(100), 50)
+
+    def testPlayerStateVehicleConstructionTime(self):
+        self.assertTrue(self.ps.vehicleConstructionTime(100), 100)
+        self.ps.applyModifier("VEHICLE_CONSTRUCTION_TIME_MODIFIER", 1.0)
+        self.assertTrue(self.ps.vehicleConstructionTime(100), 50)
     
