@@ -1,7 +1,7 @@
 import unittest
 
 from planetsim import VehicleClass
-
+from playerState import PlayerState
 
 class TestVehicleClass(unittest.TestCase):
     def testVehicleClass(self):
@@ -26,7 +26,15 @@ class TestVehicleClass(unittest.TestCase):
 
 class TestVehicleClassParameters(unittest.TestCase):
     def setUp(self):
-        self.vc = VehicleClass("ROVER", "Rover", maxFuel=1000, maxV=2.0, fuelPerM=5.0, constructionCost={"AL": 10}, constructionTime=100)
+        self.ps = PlayerState()
+        self.vc = VehicleClass("ROVER", 
+                               "Rover", 
+                               playerState=self.ps, 
+                               maxFuel=1000, 
+                               maxV=2.0, 
+                               fuelPerM=5.0, 
+                               constructionCost={"AL": 10}, 
+                               constructionTime=100)
 
     def testVehicleClassConstructionParams(self):
         self.assertEqual(self.vc.maxV, 2.0)
