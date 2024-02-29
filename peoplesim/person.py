@@ -1,4 +1,4 @@
-from personmodel.task import Task, TaskCategory
+from peoplesim.task import Task, TaskCategory
 
 
 class Person:

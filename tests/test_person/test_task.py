@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 from enum import Enum
 
-from personmodel.task import Task, TaskCategory
+from peoplesim.task import Task, TaskCategory
 
 
 class TestTask(unittest.TestCase):

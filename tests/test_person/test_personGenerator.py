@@ -1,7 +1,7 @@
 import unittest
 
-from personmodel.personGenerator import PersonGenerator
-from personmodel.person import Person
+from peoplesim.personGenerator import PersonGenerator
+from peoplesim.person import Person
 
 
 class TestPersonGenerator(unittest.TestCase):

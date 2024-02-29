@@ -1,7 +1,7 @@
 import random
 import json
 
-from personmodel.person import Person
+from peoplesim.person import Person
 
 from utility import IDGenerator
 

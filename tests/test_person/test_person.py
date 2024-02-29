@@ -1,6 +1,6 @@
 import unittest
 
-from personmodel import (
+from peoplesim import (
     Person,
     Task,
     TaskCategory
