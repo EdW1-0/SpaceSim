@@ -507,7 +507,8 @@ class testColonyVehicle(unittest.TestCase):
         self.gm.load()
         self.ps = self.gm.planetSim.planetById("MERCURY").surface
         self.ps.createBase(None, SurfacePoint(30, 30), "Foo", 3)
-        self.vc = VehicleClass("ROLLER", "Roller", constructionTime=30)
+        self.state = PlayerState()
+        self.vc = VehicleClass("ROLLER", "Roller", playerState=self.state, constructionTime=30)
 
     def testColonyAddVehicle(self):
         self.c = Colony(0, "TEST", self.gm.orbitSim, self.ps)
