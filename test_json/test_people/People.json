@@ -1,0 +1,28 @@
+{
+    "People": [
+        {
+            "id": 0,
+            "name": "John Doe",
+            "age": 25,
+            "sex": "M"            
+        },
+        {
+            "id": 1,
+            "name": "Jane Doe",
+            "age": 24,
+            "sex": "F"
+        },
+        {
+            "id": 2,
+            "name": "Jim Doe",
+            "age": 23,
+            "sex": "M"
+        },
+        {
+            "id": 3,
+            "name": "Jill Doe",
+            "age": 22,
+            "sex": "F"
+        }
+    ]
+}
