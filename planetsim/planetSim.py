@@ -11,11 +11,14 @@ from planetsim.surfaceBase import SurfaceBase
 from utility.fileLoad import loadEntityFile
 from utility.dictLookup import getStringId
 
+from playerState import PlayerState
+
 
 class PlanetSim:
     def __init__(
         self,
         orbitSim,
+        playerState: PlayerState = None,
         jsonPath="json/Planets.json",
         vehicleClassPath="json/vehicleClasses",
         vehicleRegisterCallback=None,
@@ -44,7 +47,7 @@ class PlanetSim:
                 classFile.close()
         if vehicleClassPath:
             self.vehicleClasses = loadEntityFile(
-                vehicleClassPath, "VehicleClasses", VehicleClass
+                vehicleClassPath, "VehicleClasses", VehicleClass, playerState=playerState
             )
         else:
             self.vehicleClasses = {}

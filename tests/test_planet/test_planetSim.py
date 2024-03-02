@@ -12,7 +12,7 @@ class TestPlanetSim(unittest.TestCase):
 
     def testPlanetSimConstructor(self):
         with self.assertRaises(FileNotFoundError):
-            PlanetSim(None, "")
+            PlanetSim(None, jsonPath="")
         self.assertTrue(PlanetSim(None, jsonPath="json/Planets.json"))
         self.assertNotEqual(
             len(PlanetSim(None, jsonPath="json/Planets.json").planets), 0

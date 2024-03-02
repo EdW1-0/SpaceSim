@@ -40,6 +40,7 @@ class GameModel:
         )
         self.planetSim = PlanetSim(
             self.orbitSim,
+            self.playerState,
             jsonRoot + "/Planets.json",
             vehicleClassPath="json/vehicleClasses",
             vehicleRegisterCallback=self.orbitSim.registerVehicleId,
