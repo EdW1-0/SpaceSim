@@ -12,3 +12,6 @@ class TestPeopleSim(unittest.TestCase):
 
     def testPeopleSimAttributes(self):
         self.assertTrue(hasattr(PeopleSim(), "_people"))
+
+    def testPeopleSimPersonById(self):
+        self.assertTrue(PeopleSim().personById(1))
