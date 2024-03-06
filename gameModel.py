@@ -2,6 +2,7 @@ from techtree import TechTree, PlayerTech
 from orbitsim import OrbitSim
 from colonysim import ColonySim
 from planetsim import PlanetSim
+from peoplesim import PeopleSim
 from timingMaster import TimingMaster
 from playerState import PlayerState
 
@@ -20,6 +21,7 @@ class GameModel:
         self.planetSim: PlanetSim = None
         self.timingMaster: TimingMaster = None
         self.colonySim: ColonySim = None
+        self.planetSim: PlanetSim = None
         self.init = False
 
     def load(self, jsonRoot="json", reload=False):
@@ -52,6 +54,12 @@ class GameModel:
         self.orbitSim.landCallback = self.planetSim.landShip
 
         self.orbitSim.validatePlanets(self.planetSim)
+
+        self.peopleSim = PeopleSim(
+            colonySim=self.colonySim,
+            planetSim=self.planetSim,
+            orbitSim=self.orbitSim,
+        )
 
         self.timingMaster = TimingMaster(0)
         # If we got here all the module loads succeeded so set our init flag

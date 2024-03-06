@@ -86,3 +86,28 @@ class TestLoadEntityFile(unittest.TestCase):
         self.assertEqual(altArgs["ALT"].bonusParam, "Sparkly")
         self.assertEqual(altArgs["ALT"].callback(), "Howdy")
         cb.assert_called_once()
+
+    def testLoadEntityFileKwModifier(self):
+        class KWMock:
+            def __init__(self, id: str, data: int, kwData: int):
+                self.id = id
+                self.data = data 
+                self.funnyData = kwData
+
+        def modifier(modData, modClass):
+            if modClass == "DOUBLE":
+                return int(modData) * 2
+            elif modClass == "HALF":
+                return int(modData) / 2
+
+        dictOutput = loadEntityFile(
+            path="test_json/test_fileLoad", 
+            id="ModifierTest", 
+            EntityClass=KWMock, 
+            modifiers = {"kwData": [modifier, "class"]})
+        
+        self.assertTrue(dictOutput)
+        self.assertEqual(dictOutput[0].funnyData, 8)
+        self.assertEqual(dictOutput[1].funnyData, 3)
+        self.assertFalse(hasattr(dictOutput[0], "class"))
+        self.assertFalse(hasattr(dictOutput[1], "class"))

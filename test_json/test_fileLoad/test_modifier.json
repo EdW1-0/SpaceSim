@@ -1,0 +1,16 @@
+{
+    "ModifierTest": [
+        {
+            "id": 0,
+            "data": 5,
+            "class": "DOUBLE",
+            "kwData": "4"
+        },
+        {
+            "id": 1,
+            "data": 7,
+            "class": "HALF",
+            "kwData": "6"
+        }
+    ]
+}
