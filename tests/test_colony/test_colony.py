@@ -41,6 +41,11 @@ class TestColony(unittest.TestCase):
         self.assertTrue(isinstance(c.vehicles, dict))
         self.assertTrue(hasattr(c, "orbitSim"))
         self.assertTrue(hasattr(c, "locale"))
+        self.assertTrue(hasattr(c, "productionOrders"))
+        self.assertTrue(isinstance(c.productionOrders, dict))
+        self.assertTrue(hasattr(c, "crew"))
+        self.assertTrue(isinstance(c.crew, set))
+
 
 
 class TestColonyBuildingConstruction(unittest.TestCase):

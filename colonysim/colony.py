@@ -64,6 +64,8 @@ class Colony:
             vehicle = locale.transferVehicle(vehicleId)
             self.vehicles[vehicleId] = vehicle
 
+        self.crew = set()
+
         if locale:
             self.locale.connectColony(self)
 

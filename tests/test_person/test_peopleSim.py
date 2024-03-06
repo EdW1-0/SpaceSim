@@ -25,16 +25,16 @@ class TestPeopleSim(unittest.TestCase):
 
     def testPeopleSim(self):
         self.assertTrue(PeopleSim)
-        self.assertTrue(PeopleSim())
+        self.assertTrue(PeopleSim(colonySim=self.cs))
 
     def testPeopleSimConstructor(self):
         self.assertTrue(PeopleSim(jsonPath="test_json/test_people", colonySim=self.cs))
 
     def testPeopleSimAttributes(self):
-        self.assertTrue(hasattr(PeopleSim(), "_people"))
+        self.assertTrue(hasattr(PeopleSim(colonySim=self.cs), "_people"))
 
     def testPeopleSimPersonById(self):
-        self.assertTrue(PeopleSim().personById(1))
+        self.assertTrue(PeopleSim(colonySim=self.cs).personById(1))
 
 
 class TestPeopleSimLoading(unittest.TestCase):

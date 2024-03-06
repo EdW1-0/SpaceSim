@@ -4,25 +4,33 @@
             "id": 0,
             "name": "John Doe",
             "age": 25,
-            "sex": "M"
+            "sex": "M",
+            "location": 0,
+            "locationClass": "Colony"    
         },
         {
             "id": 1,
             "name": "Jane Doe",
             "age": 24,
-            "sex": "F"
+            "sex": "F",
+            "location": 0,
+            "locationClass": "Colony"    
         },
         {
             "id": 2,
             "name": "Jim Doe",
             "age": 23,
-            "sex": "M"
+            "sex": "M",
+            "location": 0,
+            "locationClass": "Colony"    
         },
         {
             "id": 3,
             "name": "Jill Doe",
             "age": 22,
-            "sex": "F"
+            "sex": "F",
+            "location": 0,
+            "locationClass": "Colony"    
         }
     ]
 }
