@@ -21,8 +21,8 @@
             "name": "Jim Doe",
             "age": 23,
             "sex": "M",
-            "location": 0,
-            "locationClass": "Colony"    
+            "location": 4,
+            "locationClass": "Ship"    
         },
         {
             "id": 3,
@@ -30,7 +30,7 @@
             "age": 22,
             "sex": "F",
             "location": 0,
-            "locationClass": "Colony"    
+            "locationClass": "Ship"    
         }
     ]
 }

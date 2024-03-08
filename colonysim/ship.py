@@ -26,6 +26,8 @@ class Ship(Vessel):
         else:
             self.constructionProgress = 100
 
+        self.crew = set()
+
     def deltaV(self):
         return self.dv
 
