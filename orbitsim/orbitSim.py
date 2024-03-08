@@ -159,7 +159,6 @@ class OrbitSim:
         particle = self.particleForShip(ship)
         if particle:
             self.destroyParticle(particle.id)
-        del self._ships[ship.id]
         return ship
 
     def createParticle(self, node, payload=None):
