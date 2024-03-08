@@ -45,10 +45,10 @@ class TestPeopleSim(unittest.TestCase):
         self.assertTrue(PeopleSim(jsonPath="test_json/test_people", colonySim=self.cs, orbitSim=self.os))
 
     def testPeopleSimAttributes(self):
-        self.assertTrue(hasattr(PeopleSim(colonySim=self.cs), "_people"))
+        self.assertTrue(hasattr(PeopleSim(colonySim=self.cs, orbitSim=self.os), "_people"))
 
     def testPeopleSimPersonById(self):
-        self.assertTrue(PeopleSim(colonySim=self.cs).personById(1))
+        self.assertTrue(PeopleSim(colonySim=self.cs, orbitSim=self.os).personById(1))
 
 
 class TestPeopleSimLoading(unittest.TestCase):
