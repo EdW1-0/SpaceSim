@@ -41,7 +41,10 @@ class PeopleSim:
         if locationClass == "Colony":
             retVal = self.colonySim.colonyById(location) 
         elif locationClass == "Ship":
-            raise NotImplementedError
+            if self.orbitSim:
+                retVal = self.orbitSim.shipById(location)
+            else:
+                raise NotImplementedError
         elif locationClass == "Vehicle":
             raise NotImplementedError 
         else:

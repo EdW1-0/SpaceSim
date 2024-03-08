@@ -34,6 +34,14 @@
             "location": 2,
             "locationClass": "Colony"    
 
+        },
+        {
+            "id": 4,
+            "name": "Kim Ray",
+            "age": 21,
+            "sex":"F",
+            "location": 1,
+            "locationClass": "Ship"
         }
     ]
 }
