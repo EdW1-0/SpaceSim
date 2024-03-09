@@ -527,16 +527,16 @@ class testColonyVehicle(unittest.TestCase):
         self.ps.connectColony(self.c)
         id = self.c.addVehicle("Test vehicle", self.vc, fuel=100)
         self.assertEqual(len(self.c.vehicles), 1)
-        self.assertEqual(len(self.ps.vehicles), 1)
+        self.assertEqual(len(self.ps.points), 4)
         self.c.deployVehicle(id)
         self.assertEqual(len(self.c.vehicles), 0)
-        self.assertEqual(len(self.ps.vehicles), 2)
+        self.assertEqual(len(self.ps.points), 5)
 
     def testColonyVehicleArrival(self):
         self.c = Colony(4, "TEST", self.gm.orbitSim, self.ps)
         self.ps.connectColony(self.c)
         self.assertEqual(len(self.c.vehicles), 0)
-        v = Vehicle(99, "Test Vehicle", next(iter(self.ps.vehicleClasses.values())), 60)
+        v = Vehicle(99, "Test Vehicle", self.vc, 60)
         self.assertTrue(self.c.vehicleArrival(v))
         self.assertEqual(len(self.c.vehicles), 1)
 

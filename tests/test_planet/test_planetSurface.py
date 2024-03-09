@@ -65,10 +65,10 @@ class TestPlanetSurfaceLoading(unittest.TestCase):
 class TestGreatCircleGeodetics(unittest.TestCase):
     def setUp(self):
         self.ps = PlanetSurface(
-            "test_json/test_surfaces/single_region.json", vehiclePath=None
+            "test_json/test_surfaces/single_region.json"
         )
         self.twor = PlanetSurface(
-            "test_json/test_surfaces/2_hemispheres.json", vehiclePath=None
+            "test_json/test_surfaces/2_hemispheres.json"
         )
 
     def testGreatCircleDistance(self):
