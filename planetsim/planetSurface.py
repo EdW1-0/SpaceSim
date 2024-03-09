@@ -19,14 +19,12 @@ class PlanetSurface:
         self,
         orbitSim,
         jsonPath="json/planets/surfaces/Surface.json",
-        vehiclePath=None,
-        radius=EARTH_RADIUS,
-        vehicleClasses={},
-        vehicleRegisterCallback=None,
+        vehicleAccessor=None,
+        radius=EARTH_RADIUS
     ):
         self.orbitSim = orbitSim
         self.radius = radius
-        self.vehicleClasses = vehicleClasses
+        self.vehicleAccessor = vehicleAccessor
         self.regions = {}
         self.points = {}
         self.pointIdGenerator = IDGenerator()
@@ -58,15 +56,15 @@ class PlanetSurface:
             )
             self.regions[region.id] = region
 
-        if vehiclePath:
-            self.vehicles = loadEntityFile(vehiclePath, self.id, Vehicle)
-        else:
-            self.vehicles = {}
-        # TODO: See same thing in orbitSim for ship classes
-        for vehicle in self.vehicles.values():
-            vehicle.vehicleClass = self.vehicleClasses[vehicle.vehicleClass]
-            if vehicleRegisterCallback:
-                vehicleRegisterCallback(vehicle.id)
+        # if vehiclePath:
+        #     self.vehicles = loadEntityFile(vehiclePath, self.id, Vehicle)
+        # else:
+        #     self.vehicles = {}
+        # # TODO: See same thing in orbitSim for ship classes
+        # for vehicle in self.vehicles.values():
+        #     vehicle.vehicleClass = self.vehicleClasses[vehicle.vehicleClass]
+        #     if vehicleRegisterCallback:
+        #         vehicleRegisterCallback(vehicle.id)
 
         jsonObjects = jsonNodes.get("Objects")
 
@@ -83,7 +81,7 @@ class PlanetSurface:
                         None,
                         point,
                         name=object["name"],
-                        payload=self.vehicles[object["vehicle"]],
+                        payload=vehicleAccessor(object["vehicle"]),
                     )
                 else:
                     self.createObject(None, point, name=object["name"])
@@ -107,8 +105,8 @@ class PlanetSurface:
         self.points[id] = SurfaceVehicle(
             id, content, position, name=name, payload=payload
         )
-        if payload:
-            self.vehicles[payload.id] = payload
+        # if payload:
+        #     self.vehicles[payload.id] = payload
         return id
 
     def createBase(self, content, position, name="", colonyId=None):
@@ -159,11 +157,11 @@ class PlanetSurface:
             self.destroyObject(objectId)
 
     def transferVehicle(self, id):
-        vehicle = self.vehicleById(id)
+        vehicle = self.vehicleAccessor(id)
         for point in self.points.values():
             if isinstance(point, SurfaceVehicle) and point.payload == vehicle:
                 self.destroyObject(point.id)
-        del self.vehicles[id]
+        # del self.vehicles[id]
         return vehicle
 
     def regionForPointId(self, id):
@@ -261,5 +259,5 @@ class PlanetSurface:
     def pointById(self, id):
         return getIntId(id, self.points)
 
-    def vehicleById(self, id):
-        return getIntId(id, self.vehicles)
+    # def vehicleById(self, id):
+    #     return getIntId(id, self.vehicles)

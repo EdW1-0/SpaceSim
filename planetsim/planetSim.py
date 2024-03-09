@@ -5,6 +5,7 @@ from planetsim.planet import Planet
 from planetsim.planetSurface import PlanetSurface
 from planetsim.planetTerrain import PlanetTerrain
 from planetsim.vehicleClass import VehicleClass
+from planetsim.vehicle import Vehicle
 from planetsim.surfacePoint import SurfacePoint
 from planetsim.surfaceBase import SurfaceBase
 
@@ -21,6 +22,7 @@ class PlanetSim:
         playerState: PlayerState = None,
         jsonPath="json/Planets.json",
         vehicleClassPath="json/vehicleClasses",
+        vehiclePath="json/vehicles",
         vehicleRegisterCallback=None,
     ):
         planetsFile = open(jsonPath, "r")
@@ -52,6 +54,16 @@ class PlanetSim:
         else:
             self.vehicleClasses = {}
 
+        if vehiclePath:
+            self.vehicles = loadEntityFile(vehiclePath, "Vehicles", Vehicle)
+        else:
+            self.vehicles = {}
+        # TODO: See same thing in orbitSim for ship classes
+        for vehicle in self.vehicles.values():
+            vehicle.vehicleClass = self.vehicleClasses[vehicle.vehicleClass]
+            if vehicleRegisterCallback:
+                vehicleRegisterCallback(vehicle.id)
+
         surfacesFolder = "json/planets/surfaces/"
 
         for subdir, dirs, files in os.walk(surfacesFolder):
@@ -60,9 +72,7 @@ class PlanetSim:
                     orbitSim,
                     surfacesFolder + file,
                     radius=1000,
-                    vehiclePath="json/planets/vehicles",
-                    vehicleClasses=self.vehicleClasses,
-                    vehicleRegisterCallback=vehicleRegisterCallback,
+                    vehicleAccessor=self.vehicleById
                 )
                 for planetId in self.planets.keys():
                     if planetId == surface.id:
@@ -70,6 +80,9 @@ class PlanetSim:
                         # in via constructor. Should load all these first, then call
                         # constructor
                         self.planets[planetId].surface = surface
+
+
+
 
     def landShip(self, ship, planet, surfaceCoordinates):
         planet = self.planetById(planet)
@@ -92,6 +105,9 @@ class PlanetSim:
     
     def vehicleClassById(self, id):
         return getStringId(id, self.vehicleClasses)
+
+    def vehicleById(self, id):
+        return getStringId(id, self.vehicles)
 
     def tick(self, increment):
         for planet in self.planets.values():
