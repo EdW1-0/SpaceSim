@@ -30,6 +30,7 @@ class Colony:
         locale=None,
         ships=[],
         vehicles=[],
+        vehicleFactory=None,
         buildings=None,
         productionOrders=None,
     ):
@@ -37,6 +38,7 @@ class Colony:
         self.name = name
         self.orbitSim = orbitSim
         self.locale = locale
+        self.vehicleFactory = vehicleFactory
         if buildings:
             self.buildings = buildings
         else:
@@ -203,8 +205,10 @@ class Colony:
     def addVehicle(self, name, vehicleClass, fuel=0):
         if not self.locale and not isinstance(self.locale, PlanetSurface):
             raise TypeError
-        vehicleId = self.orbitSim.getVehicleId()
-        vehicle = Vehicle(vehicleId, name, vehicleClass, fuel)
+        
+        vehicleId = self.vehicleFactory(name, vehicleClass, fuel)
+        vehicle = self.locale.transferVehicle(vehicleId)
+
         self.vehicles[vehicleId] = vehicle
         return vehicleId
 
@@ -219,7 +223,7 @@ class Colony:
             if not position:
                 raise KeyError
 
-            self.locale.createVehicle(
+            self.locale.createSurfaceVehicle(
                 None, position, name=vehicle.name, payload=vehicle
             )
             del self.vehicles[id]

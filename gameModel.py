@@ -45,10 +45,15 @@ class GameModel:
             self.playerState,
             jsonRoot + "/Planets.json",
             vehicleClassPath="json/vehicleClasses",
-            vehicleRegisterCallback=self.orbitSim.registerVehicleId,
         )
+
         self.colonySim = ColonySim(
-            self.orbitSim, self.planetSim, self.playerTech, self.playerState, jsonRoot + "/planets/colonies"
+            self.orbitSim,
+            self.planetSim,
+            self.playerTech,
+            self.playerState,
+            jsonRoot + "/planets/colonies",
+            vehicleFactory=self.planetSim.createVehicle
         )
 
         self.orbitSim.landCallback = self.planetSim.landShip

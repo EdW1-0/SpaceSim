@@ -36,6 +36,7 @@ class ColonySim:
         resourcePath="json/resources",
         reactionPath="json/reactions",
         buildingPath="json/buildingClasses",
+        vehicleFactory=None,
     ):
         self.orbitSim = orbitSim
         self.planetSim = planetSim
@@ -45,6 +46,7 @@ class ColonySim:
         else:
             ptCallback = None
         self.playerState = playerState
+        self.vehicleFactory = vehicleFactory
         self._buildingClasses = {}
         self._resources = {}
         self._reactions = {}
@@ -134,6 +136,7 @@ class ColonySim:
                             locale=surface,
                             ships=ships,
                             vehicles=vehicles,
+                            vehicleFactory=self.vehicleFactory,
                             buildings=buildings,
                             productionOrders=productionOrders,
                         )
@@ -143,7 +146,7 @@ class ColonySim:
 
     def createColony(self, name="Default Colony", locale=None):
         id = self.idGenerator.generateId()
-        colony = Colony(id, name, orbitSim=self.orbitSim, locale=locale)
+        colony = Colony(id, name, orbitSim=self.orbitSim, locale=locale, vehicleFactory=self.vehicleFactory)
         self._colonies[id] = colony
         return colony
 

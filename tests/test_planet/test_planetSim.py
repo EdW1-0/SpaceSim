@@ -1,4 +1,4 @@
-from planetsim import PlanetSim
+from planetsim import PlanetSim, VehicleClass, Vehicle
 
 import unittest
 
@@ -33,3 +33,15 @@ class TestPlanetSimInteraction(unittest.TestCase):
 
     def test_planetSimAccessNode(self):
         self.assertNotEqual(self.planetSim.planetById("MERCURY"), None)
+
+class TestPlanetSimVehicles(unittest.TestCase):
+    def setUp(self):
+        self.planetSim = PlanetSim(None, "json/Planets.json")
+        self.vc = VehicleClass(0, "Rover")
+
+    def test_planetSimCreateVehicle(self):
+        vehicle_id = self.planetSim.createVehicle("Rover 1", self.vc, fuel=100)
+        self.assertIn(vehicle_id, self.planetSim.vehicles)
+        self.assertIsInstance(self.planetSim.vehicles[vehicle_id], Vehicle)
+        self.assertEqual(self.planetSim.vehicles[vehicle_id].name, "Rover 1")
+        self.assertEqual(self.planetSim.vehicles[vehicle_id].fuel, 100)

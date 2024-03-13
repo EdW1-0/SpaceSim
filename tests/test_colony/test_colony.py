@@ -516,14 +516,14 @@ class testColonyVehicle(unittest.TestCase):
         self.vc = VehicleClass("ROLLER", "Roller", playerState=self.state, constructionTime=30)
 
     def testColonyAddVehicle(self):
-        self.c = Colony(0, "TEST", self.gm.orbitSim, self.ps)
-        self.assertFalse(2 in self.gm.orbitSim._vehicleIds)
+        self.c = Colony(0, "TEST", self.gm.orbitSim, self.ps, vehicleFactory=self.gm.planetSim.createVehicle)
+        self.assertFalse(2 in self.gm.planetSim.vehicles)
         self.assertEqual(self.c.addVehicle("Test vehicle", self.vc, fuel=100), 2)
         self.assertGreater(len(self.c.vehicles), 0)
-        self.assertTrue(2 in self.gm.orbitSim._vehicleIds)
+        self.assertTrue(2 in self.gm.planetSim.vehicles)
 
     def testColonyDeployVehicle(self):
-        self.c = Colony(3, "TEST", self.gm.orbitSim, self.ps)
+        self.c = Colony(3, "TEST", self.gm.orbitSim, self.ps, vehicleFactory=self.gm.planetSim.createVehicle)
         self.ps.connectColony(self.c)
         id = self.c.addVehicle("Test vehicle", self.vc, fuel=100)
         self.assertEqual(len(self.c.vehicles), 1)
@@ -542,7 +542,7 @@ class testColonyVehicle(unittest.TestCase):
 
 
     def testVehicleConstruction(self):
-        self.c = Colony(0, "TEST", self.gm.orbitSim, self.ps)
+        self.c = Colony(0, "TEST", self.gm.orbitSim, self.ps, vehicleFactory=self.gm.planetSim.createVehicle)
         self.c.addVehicle("Test vehicle", self.vc, fuel=100)
         vehicle = self.c.vehicleById(2)
         self.assertEqual(vehicle.constructionProgress, 0)

@@ -77,7 +77,7 @@ class PlanetSurface:
                         None, point, name=object["name"], colonyId=object["colonyId"]
                     )
                 elif "vehicle" in object:
-                    self.createVehicle(
+                    self.createSurfaceVehicle(
                         None,
                         point,
                         name=object["name"],
@@ -100,7 +100,7 @@ class PlanetSurface:
         self.points[id] = SurfaceObject(id, content, position, name=name)
         return id
 
-    def createVehicle(self, content, position, name="", payload=None):
+    def createSurfaceVehicle(self, content, position, name="", payload=None):
         id = self.pointIdGenerator.generateId()
         self.points[id] = SurfaceVehicle(
             id, content, position, name=name, payload=payload

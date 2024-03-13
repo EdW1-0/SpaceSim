@@ -117,27 +117,10 @@ class OrbitSim:
 
         jsonFile.close()
 
-        # Vehicles aren't stored here, but we register them here so
-        # ids are globally unique.
-        self.vehicleIdGenerator = IDGenerator()
-        self._vehicleIds = set()
-
     def validatePlanets(self, planetSim):
         for node in self._nodes.values():
             if node.planet:
                 assert node.planet in planetSim.planets.keys()
-
-
-    def registerVehicleId(self, id):
-        if id in self._vehicleIds:
-            raise KeyError
-        self._vehicleIds.add(id)
-        self.vehicleIdGenerator.setId(id)
-
-    def getVehicleId(self):
-        id = self.vehicleIdGenerator.generateId()
-        self._vehicleIds.add(id)
-        return id
 
     def createShip(self, name, shipClass, deltaV=0):
         id = self.shipIdGenerator.generateId()

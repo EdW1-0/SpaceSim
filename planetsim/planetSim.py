@@ -11,6 +11,7 @@ from planetsim.surfaceBase import SurfaceBase
 
 from utility.fileLoad import loadEntityFile
 from utility.dictLookup import getStringId
+from utility.idGenerator import IDGenerator
 
 from playerState import PlayerState
 
@@ -23,7 +24,6 @@ class PlanetSim:
         jsonPath="json/Planets.json",
         vehicleClassPath="json/vehicleClasses",
         vehiclePath="json/vehicles",
-        vehicleRegisterCallback=None,
     ):
         planetsFile = open(jsonPath, "r")
         planetsJson = json.load(planetsFile)
@@ -54,6 +54,9 @@ class PlanetSim:
         else:
             self.vehicleClasses = {}
 
+        self.vehicleIdGenerator = IDGenerator()
+        self._vehicleIds = set()
+
         if vehiclePath:
             self.vehicles = loadEntityFile(vehiclePath, "Vehicles", Vehicle)
         else:
@@ -61,8 +64,7 @@ class PlanetSim:
         # TODO: See same thing in orbitSim for ship classes
         for vehicle in self.vehicles.values():
             vehicle.vehicleClass = self.vehicleClasses[vehicle.vehicleClass]
-            if vehicleRegisterCallback:
-                vehicleRegisterCallback(vehicle.id)
+            self.vehicleIdGenerator.setId(vehicle.id)
 
         surfacesFolder = "json/planets/surfaces/"
 
@@ -82,6 +84,13 @@ class PlanetSim:
                         self.planets[planetId].surface = surface
 
 
+
+    def createVehicle(self, name, vehicleClass, fuel=0):
+        id = self.vehicleIdGenerator.generateId()
+        while id in self.vehicles:
+            id = next(self.vehicleIdGenerator)
+        self.vehicles[id] = Vehicle(id, name, vehicleClass, fuel=fuel)
+        return id
 
 
     def landShip(self, ship, planet, surfaceCoordinates):
