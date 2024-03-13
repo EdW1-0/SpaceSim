@@ -110,3 +110,21 @@ class TestPeopleSimLoading(unittest.TestCase):
         self.assertEqual(self.peopleSim.personById(5).location.id, 3)
         self.assertTrue(5 in self.ps.vehicleById(3).crew)
 
+class TestPeopleSimLifecycle(unittest.TestCase):
+    def setUp(self) -> None:
+        self.cs = CSMock()
+        self.os = OSMock()
+        self.ps = PSMock()
+        self.peopleSim = PeopleSim(
+            jsonPath="test_json/test_people", 
+            colonySim=self.cs, 
+            orbitSim=self.os, 
+            planetSim=self.ps
+            )
+        
+    def testPeopleSimCreatePerson(self):
+        self.assertEqual(self.peopleSim.createPerson("John Doe", 30, "M", self.os.shipById(5)), 6)
+        self.assertEqual(self.peopleSim.personById(6).name, "John Doe")
+        self.assertEqual(self.peopleSim.personById(6).location.id, 5)
+        self.assertTrue(isinstance(self.peopleSim.personById(6).location, SMock))
+        self.assertIn(6, self.os.shipById(5).crew)

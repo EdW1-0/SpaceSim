@@ -1,8 +1,8 @@
-from utility import loadEntityFile
+from utility import loadEntityFile, IDGenerator
 from peoplesim.person import Person
 
-from colonysim import ColonySim
-from planetsim import PlanetSim
+from colonysim import ColonySim, Colony, Ship
+from planetsim import PlanetSim, Vehicle
 from orbitsim import OrbitSim
 
 class PeopleSim:
@@ -18,6 +18,8 @@ class PeopleSim:
         self.planetSim = planetSim
         self.orbitSim = orbitSim
 
+        self.personIdGenerator = IDGenerator()
+
         self._people = loadEntityFile(
             path=jsonPath, 
             id="People", 
@@ -25,14 +27,10 @@ class PeopleSim:
             modifiers={"location": [self.locationLoadModifier, "locationClass"]})
         
         for person in self._people.values():
+            self.personIdGenerator.setId(person.id)
             if person.location:
                 person.location.crew.add(person.id)
         
-        # for person in self._people.values():
-        #     if person.location == "Colony":
-        #         person
-        #     person.location.crew.add(person.id)s
-
 
     def personById(self, id: int) -> Person:
         return self._people[id]
@@ -54,4 +52,18 @@ class PeopleSim:
             raise ValueError("Invalid location class {0}".format(locationClass))
         
         return retVal
+    
+    def createPerson(self, name: str, age: int=0, sex: str="F", location: Colony | Vehicle | Ship=None) -> int:
+        personId = self.personIdGenerator.generateId()
+        person = Person(
+            id=personId, 
+            name=name, 
+            age=age,
+            sex=sex,
+            location=location
+            )
+        self._people[personId] = person
+        location.crew.add(personId)
+        return personId
+        
         
