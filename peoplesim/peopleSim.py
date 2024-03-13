@@ -46,7 +46,10 @@ class PeopleSim:
             else:
                 raise NotImplementedError
         elif locationClass == "Vehicle":
-            raise NotImplementedError 
+            if self.planetSim:
+                retVal = self.planetSim.vehicleById(location)
+            else:
+                raise NotImplementedError
         else:
             raise ValueError("Invalid location class {0}".format(locationClass))
         

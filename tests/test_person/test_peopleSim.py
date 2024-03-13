@@ -29,6 +29,20 @@ class OSMock:
             self._ships[id] = SMock(id)
             
         return self._ships[id]
+    
+class VMock:
+    def __init__(self, id):
+        self.id = id
+        self.crew = set()
+
+class PSMock:
+    def __init__(self):
+        self.vehicles = {}
+    def vehicleById(self, id: int):
+        if not id in self.vehicles:
+            self.vehicles[id] = VMock(id)
+            
+        return self.vehicles[id]
 
 
 
@@ -36,26 +50,33 @@ class TestPeopleSim(unittest.TestCase):
     def setUp(self):
         self.cs = CSMock()
         self.os = OSMock()
+        self.ps = PSMock()
 
     def testPeopleSim(self):
         self.assertTrue(PeopleSim)
-        self.assertTrue(PeopleSim(colonySim=self.cs, orbitSim=self.os))
+        self.assertTrue(PeopleSim(colonySim=self.cs, orbitSim=self.os, planetSim=self.ps))
 
     def testPeopleSimConstructor(self):
-        self.assertTrue(PeopleSim(jsonPath="test_json/test_people", colonySim=self.cs, orbitSim=self.os))
+        self.assertTrue(PeopleSim(jsonPath="test_json/test_people", colonySim=self.cs, orbitSim=self.os, planetSim=self.ps))
 
     def testPeopleSimAttributes(self):
-        self.assertTrue(hasattr(PeopleSim(colonySim=self.cs, orbitSim=self.os), "_people"))
+        self.assertTrue(hasattr(PeopleSim(colonySim=self.cs, orbitSim=self.os, planetSim=self.ps), "_people"))
 
     def testPeopleSimPersonById(self):
-        self.assertTrue(PeopleSim(colonySim=self.cs, orbitSim=self.os).personById(1))
+        self.assertTrue(PeopleSim(colonySim=self.cs, orbitSim=self.os, planetSim=self.ps).personById(1))
 
 
 class TestPeopleSimLoading(unittest.TestCase):
     def setUp(self):     
         self.cs = CSMock()
         self.os = OSMock()
-        self.peopleSim = PeopleSim(jsonPath="test_json/test_people", colonySim=self.cs, orbitSim=self.os)
+        self.ps = PSMock()
+        self.peopleSim = PeopleSim(
+            jsonPath="test_json/test_people", 
+            colonySim=self.cs, 
+            orbitSim=self.os, 
+            planetSim=self.ps
+            )
 
     def testPeopleSimBasicBiographics(self):
         self.assertEqual(self.peopleSim.personById(1).name, "Jane Doe")
@@ -74,8 +95,8 @@ class TestPeopleSimLoading(unittest.TestCase):
         self.assertEqual(self.peopleSim.locationLoadModifier(location = 0, locationClass = "Ship").id, 0)
         self.assertTrue(isinstance(self.peopleSim.locationLoadModifier(location = 0, locationClass = "Ship"), SMock))   
 
-        with self.assertRaises(NotImplementedError):
-            self.peopleSim.locationLoadModifier(location = 0, locationClass = "Vehicle")
+        self.assertEqual(self.peopleSim.locationLoadModifier(location = 0, locationClass = "Vehicle").id, 0)
+        self.assertTrue(isinstance(self.peopleSim.locationLoadModifier(location = 0, locationClass = "Vehicle"), VMock))
 
     def testPeopleSimLocationLinking(self):
         self.assertEqual(self.peopleSim.personById(1).location.id, 0)
@@ -85,4 +106,7 @@ class TestPeopleSimLoading(unittest.TestCase):
         
         self.assertEqual(self.peopleSim.personById(4).location.id, 1)
         self.assertTrue(4 in self.os.shipById(1).crew)
+
+        self.assertEqual(self.peopleSim.personById(5).location.id, 3)
+        self.assertTrue(5 in self.ps.vehicleById(3).crew)
 

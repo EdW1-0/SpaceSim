@@ -23,6 +23,8 @@ class Vehicle(Vessel):
         else:
             self.constructionProgress = 100
 
+        self.crew = set()
+
     def maxV(self):
         return self.vehicleClass.maxV
 

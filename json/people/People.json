@@ -31,6 +31,14 @@
             "sex": "F",
             "location": 0,
             "locationClass": "Ship"    
+        },
+        {
+            "id": 4,
+            "name": "Jack Doe",
+            "age": 21,
+            "sex": "M",
+            "location": 0,
+            "locationClass": "Vehicle"
         }
     ]
 }

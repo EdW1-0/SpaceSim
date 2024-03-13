@@ -42,6 +42,14 @@
             "sex":"F",
             "location": 1,
             "locationClass": "Ship"
+        },
+        {
+            "id": 5,
+            "name": "Jan So",
+            "age": 20,
+            "sex": "F",
+            "location": 3,
+            "locationClass": "Vehicle"
         }
     ]
 }
