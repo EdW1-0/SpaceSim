@@ -129,6 +129,18 @@ class TestPeopleSimLifecycle(unittest.TestCase):
         self.assertTrue(isinstance(self.peopleSim.personById(6).location, SMock))
         self.assertIn(6, self.os.shipById(5).crew)
 
+    def testPeopleSimDestroyPerson(self):
+        self.peopleSim.destroyPerson(1)
+        with self.assertRaises(KeyError):
+            self.peopleSim.personById(1)
+
+        self.assertEqual(self.peopleSim.createPerson("John Doe", 30, "M", self.os.shipById(5)), 6)
+        self.assertEqual(self.peopleSim.personById(6).name, "John Doe")
+        self.peopleSim.destroyPerson(6)
+        with self.assertRaises(KeyError):
+            self.peopleSim.personById(6)
+
+
     def testPeopleSimTransferPerson(self):
         self.peopleSim.transferPerson(self.peopleSim.personById(1), self.os.shipById(5))
         self.assertEqual(self.peopleSim.personById(1).location.id, 5)

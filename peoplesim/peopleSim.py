@@ -66,6 +66,11 @@ class PeopleSim:
         location.crew.add(personId)
         return personId
     
+    def destroyPerson(self, id: int):
+        person = self._people[id]
+        person.location.crew.remove(id)
+        del self._people[id]
+    
     def transferPerson(self, person: Person, location: Colony | Vehicle | Ship):
         person.location.crew.remove(person.id)
         person.location = location
