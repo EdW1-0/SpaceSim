@@ -65,5 +65,10 @@ class PeopleSim:
         self._people[personId] = person
         location.crew.add(personId)
         return personId
+    
+    def transferPerson(self, person: Person, location: Colony | Vehicle | Ship):
+        person.location.crew.remove(person.id)
+        person.location = location
+        location.crew.add(person.id)
         
         

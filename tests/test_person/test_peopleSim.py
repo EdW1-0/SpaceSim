@@ -128,3 +128,8 @@ class TestPeopleSimLifecycle(unittest.TestCase):
         self.assertEqual(self.peopleSim.personById(6).location.id, 5)
         self.assertTrue(isinstance(self.peopleSim.personById(6).location, SMock))
         self.assertIn(6, self.os.shipById(5).crew)
+
+    def testPeopleSimTransferPerson(self):
+        self.peopleSim.transferPerson(self.peopleSim.personById(1), self.os.shipById(5))
+        self.assertEqual(self.peopleSim.personById(1).location.id, 5)
+        self.assertIsInstance(self.peopleSim.personById(1).location, SMock)
