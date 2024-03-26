@@ -17,6 +17,7 @@ from views.panels import (
     TargetSettingPanel,
     ShipStatusPanel,
     TimingPanel,
+    CrewDetailPanel,
 )
 
 from gameModel import GameModel
@@ -131,6 +132,11 @@ class OrbitContext(GUIContext):
         self.timing_panel = TimingPanel(
             timing_rect, manager=manager, timingMaster=self.model.timingMaster
         )
+
+        self.crew_panel = CrewDetailPanel(
+            target_rect, manager=manager, model=self.model
+        )
+        self.crew_panel.hide()
 
         self.targetMode = mode
         self.info = info
@@ -537,6 +543,8 @@ class OrbitContext(GUIContext):
             pass
         elif self.target_panel.handle_event(event):
             return self.handleTargetPanel(event)
+        elif self.crew_panel.handle_event(event):
+            pass
 
         else:
             assert "Unknown UI element {0}".format(event.ui_element)
@@ -544,7 +552,7 @@ class OrbitContext(GUIContext):
 
 
     def handleListSelection(self, event):
-        if event.ui_element == self.active_summary.station_list:
+        if event.ui_element == self.orbit_summary.station_list:
             particle = None
             for s in self.model.orbitSim._particles.values():
                 if s.payload.name == event.text:
@@ -560,6 +568,20 @@ class OrbitContext(GUIContext):
 
             self.active_summary.update()
             self.active_summary.show()
+        elif event.ui_element == self.ship_summary.crewList:
+            crew = None
+            for c in self.model.peopleSim._people.values():
+                if c.name == event.text:
+                    crew = c
+
+            assert crew
+
+            if self.target_panel:
+                self.target_panel.hide()
+
+            self.crew_panel.setPerson(crew)
+            self.crew_panel.update()
+            self.crew_panel.show()
 
     def handleShipPanel(self, event):
         if self.ship_summary.upperAction == 1:
@@ -575,6 +597,8 @@ class OrbitContext(GUIContext):
                     break
             self.resolveNodeClick(locationView)
         elif self.ship_summary.upperAction == 2:
+            if self.crew_panel:
+                self.crew_panel.hide()
             self.target_panel.set_ship(self.ship_summary.particle.payload)
             self.target_panel.set_source(self.ship_summary.ship_location())
             self.target_panel.show()
@@ -649,7 +673,7 @@ class OrbitContext(GUIContext):
         self.screen.fill((20, 20, 120))
 
         self.timing_panel.update()
-        self.ship_summary.update()
+        # self.ship_summary.update()
         self.updateParticles()
 
         for entity in self.all_sprites:
