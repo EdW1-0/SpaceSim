@@ -153,6 +153,7 @@ class TestShipStatusPanel(unittest.TestCase):
         ship.velocity = 50
         ship.payload = ModelMock()
         ship.payload.name = "Test Ship"
+        ship.payload.crew = set()
         ssp.set_particle(ship)
         self.assertEqual(ssp.ship_location().id, "EAS")
         ssp.update()
