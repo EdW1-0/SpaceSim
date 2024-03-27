@@ -1,7 +1,7 @@
 import pygame
 
 
-from views.panels.sideStatusPanels import SideStatusPanel
+from views.panels.sideStatusPanels import SideStatusPanel, ItemListPanel
 
 from pygame_gui.elements import (
     UIButton,
@@ -11,8 +11,7 @@ from pygame_gui.elements import (
     UISelectionList,
 )
 
-from views.widgets.selectionListId import SelectionListId
-from colonysim import Building, ProductionOrder, ShipClass, ShipStatus
+from colonysim import ShipClass, ShipStatus
 from planetsim import VehicleStatus, VehicleClass
 
 from gameModel import GameModel
@@ -83,62 +82,7 @@ class ColonyTabPanel(SideStatusPanel):
             return False
 
 
-class ColonyItemPanel(SideStatusPanel):
-    def __init__(
-        self,
-        rect,
-        manager=None,
-        colony=None,
-        title="Default title",
-        sourceList=None,
-        itemRect=None,
-    ):
-        super().__init__(rect, manager)
-        self.colony = colony
-        self.sourceList = sourceList
-        self.item_hash = ""
-        self.manager = manager
-        if not itemRect:
-            self.itemRect = pygame.Rect(0, 100, 400, 500)
-        else:
-            self.itemRect = itemRect
 
-        self.title_text = UILabel(
-            pygame.Rect(0, 50, 400, 50),
-            text=title,
-            manager=manager,
-            container=self.container,
-        )
-
-        self.item_list = SelectionListId(
-            self.itemRect, [], manager=manager, container=self.container
-        )
-
-    def update(self):
-        newHash = "".join(map(str, [item.id for item in self.sourceList.values()]))
-        if newHash != self.item_hash:
-            if len(self.sourceList) == 0:
-                self.item_list.set_item_list([])
-            elif isinstance(next(iter(self.sourceList.values())), Building):
-                self.item_list.set_item_list(
-                    [
-                        (item.buildingClass.name + " " + str(item.id))
-                        for item in self.sourceList.values()
-                    ]
-                )
-            elif isinstance(next(iter(self.sourceList.values())), ProductionOrder):
-                self.item_list.set_item_list(
-                    [
-                        (item.reaction.name + " " + str(item.amount), str(item.id))
-                        for item in self.sourceList.values()
-                    ]
-                )
-            else:
-                self.item_list.set_item_list(
-                    [item.name for item in self.sourceList.values()]
-                )
-            self.item_list.show()
-            self.item_hash = newHash
 
 
 class ColonyVehicleDetailPanel(SideStatusPanel):
@@ -221,7 +165,7 @@ class ColonyVehicleDetailPanel(SideStatusPanel):
             return False
 
 
-class ColonyShipPanel(ColonyItemPanel):
+class ColonyShipPanel(ItemListPanel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs, itemRect=pygame.Rect(0, 100, 400, 200))
         self.target_button = UIButton(
@@ -568,7 +512,7 @@ class ResourceUnion:
         # for k in self.
 
 
-class ColonyShipLoadingPanel(ColonyItemPanel):
+class ColonyShipLoadingPanel(ItemListPanel):
     def __init__(self, rect, manager=None, colonySim=None, colony=None):
         super().__init__(
             rect,
@@ -857,7 +801,7 @@ class ColonyConstructionDetailPanel(SideStatusPanel):
         self.function_text.set_text("Stuff here")
 
 
-class ColonyProductionDetailPanel(ColonyItemPanel):
+class ColonyProductionDetailPanel(ItemListPanel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.reaction = None
@@ -915,7 +859,7 @@ class ColonyProductionDetailPanel(ColonyItemPanel):
             return False
 
 
-class ColonyProductionPanel(ColonyItemPanel):
+class ColonyProductionPanel(ItemListPanel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs, itemRect=pygame.Rect(0, 100, 400, 200))
         self.productionOrder = None
@@ -999,7 +943,7 @@ class ColonyProductionPanel(ColonyItemPanel):
             self.cancel_button.hide()
 
 
-class ColonyResourcePanel(ColonyItemPanel):
+class ColonyResourcePanel(ItemListPanel):
     pass
 
 

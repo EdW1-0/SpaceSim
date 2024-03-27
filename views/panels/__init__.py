@@ -12,7 +12,6 @@ from .colonyStatusPanels import (
     ColonyVehicleConstructionPanel,
     ColonyBuildingDetailPanel,
     ColonyConstructionDetailPanel,
-    ColonyItemPanel,
 )
 from .orbitStatusPanels import (
     OrbitStatusPanel,
@@ -33,5 +32,8 @@ from .surfaceStatusPanels import (
 from .techStatusPanels import (
     TechStatusPanel,
     TechProgressPanel,
+)
+from .sideStatusPanels import (
+    ItemListPanel, 
 )
 from .timingPanel import TimingPanel

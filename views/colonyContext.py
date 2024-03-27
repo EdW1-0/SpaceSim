@@ -8,7 +8,7 @@ from views.panels import (
     ColonyShipDetailPanel,
     ColonyShipLoadingPanel,
     ColonyShipConstructionPanel,
-    ColonyItemPanel,
+    ItemListPanel,
     ColonyBuildingDetailPanel,
     ColonyConstructionDetailPanel,
     ColonyProductionPanel,
@@ -84,7 +84,7 @@ class ColonyContext(GUIContext):
             sourceList=self.colony.ships,
         )
         self.ship_panel.hide()
-        self.building_panel = ColonyItemPanel(
+        self.building_panel = ItemListPanel(
             summary_rect,
             manager=manager,
             colony=colony,
@@ -100,7 +100,7 @@ class ColonyContext(GUIContext):
             sourceList=self.colony.productionOrders,
         )
         self.production_panel.hide()
-        self.construction_panel = ColonyItemPanel(
+        self.construction_panel = ItemListPanel(
             summary_rect,
             manager=manager,
             colony=colony,
@@ -108,7 +108,7 @@ class ColonyContext(GUIContext):
             sourceList=self.model.colonySim.buildingClassesForColony(colony.id),
         )
         self.construction_panel.hide()
-        self.resource_panel = ColonyItemPanel(
+        self.resource_panel = ItemListPanel(
             summary_rect,
             manager=manager,
             colony=colony,
