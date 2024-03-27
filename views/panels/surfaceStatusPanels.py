@@ -6,7 +6,7 @@ from planetsim import SurfaceVehicle, SurfaceBase
 
 from colonysim import Ship
 
-from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox
+from pygame_gui.elements import UIButton, UIImage, UILabel, UITextBox, UISelectionList
 
 
 class RegionStatusPanel(SideStatusPanel):
@@ -89,35 +89,42 @@ class VehicleStatusPanel(SideStatusPanel):
 
         vehicle_text = "Placeholder stuff"
         self.vehicle_text = UITextBox(
-            vehicle_text, (0, 200, 400, 200), manager=manager, container=self.container
+            vehicle_text, (0, 200, 400, 100), manager=manager, container=self.container
         )
 
         self.stopButton = UIButton(
-            pygame.Rect(0, 400, 200, 100),
+            pygame.Rect(0, 300, 100, 100),
             text="Stop",
             container=self.container,
             manager=manager,
         )
 
         self.target_button = UIButton(
-            pygame.Rect(200, 400, 200, 100),
+            pygame.Rect(100, 300, 100, 100),
             text="Set Target",
             container=self.container,
             manager=manager,
         )
 
         self.colony_button = UIButton(
-            pygame.Rect(200, 400, 200, 100),
+            pygame.Rect(200, 300, 100, 100),
             text="Colony View",
             container=self.container,
             manager=manager,
         )
 
         self.build_button = UIButton(
-            pygame.Rect(0, 500, 200, 100),
+            pygame.Rect(300, 300, 100, 100),
             text="Build Colony",
             container=self.container,
             manager=manager,
+        )
+
+        self.crewList = UISelectionList(
+            pygame.Rect(0, 400, 400, 100),
+            [("foo", "bar")],
+            manager=manager,
+            container=self.container,            
         )
 
         self.upperAction = 0
@@ -171,6 +178,9 @@ class VehicleStatusPanel(SideStatusPanel):
             self.stopButton.hide()
             self.colony_button.hide()
             self.build_button.hide()
+
+        if isinstance(self.vehicle, SurfaceVehicle):
+            self.crewList.set_item_list([self.model.peopleSim.personById(id).name for id in self.vehicle.payload.crew])
 
         destination_text = "<None>"
         if isinstance(self.vehicle, SurfaceVehicle) and self.vehicle.destination:
