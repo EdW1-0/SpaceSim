@@ -20,8 +20,11 @@ from .orbitStatusPanels import (
     PlanetStatusPanel,
     LinkStatusPanel,
     ShipStatusPanel,
-    CrewDetailPanel
 )
+from .peopleStatusPanels import (
+    CrewDetailPanel,
+)
+
 from .surfaceStatusPanels import (
     RegionStatusPanel,
     VehicleStatusPanel,
