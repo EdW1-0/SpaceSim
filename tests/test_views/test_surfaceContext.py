@@ -248,9 +248,11 @@ class TestSurfaceContextEventHandling(unittest.TestCase):
         event.ui_element = "foo"
         self.assertEqual(self.sc.handleGuiButton(event), None)
 
+        pl = ModelMock()
+        pl.crew = {}
         event.ui_element = self.sc.vehicle_panel.target_button
         self.sc.targetMode = SCMode.Standard
-        self.sc.vehicle_panel.set_vehicle(SurfaceVehicle(0, [], []))
+        self.sc.vehicle_panel.set_vehicle(SurfaceVehicle(0, [], [], payload=pl))
 
         self.assertEqual(self.sc.handleGuiButton(event), 0)
         self.assertEqual(self.sc.targetMode, SCMode.Target)
@@ -271,7 +273,7 @@ class TestSurfaceContextEventHandling(unittest.TestCase):
         self.assertEqual(self.sc.handleGuiButton(event), GUICode.LOADORBITVIEW)
         self.assertTrue(self.sc.info)
 
-        vehicle = SurfaceVehicle(0, [], [])
+        vehicle = SurfaceVehicle(0, [], [], payload=pl)
         self.sc.vehicle_panel.set_vehicle(vehicle)
         vehicle.setDestination("mock")
         self.assertEqual(vehicle.destination, "mock")

@@ -1,6 +1,6 @@
 import pygame
 
-from views.panels.sideStatusPanels import SideStatusPanel
+from views.panels.sideStatusPanels import SideStatusPanel, ItemListPanel
 
 from planetsim import SurfaceVehicle, SurfaceBase
 
@@ -61,15 +61,15 @@ class RegionStatusPanel(SideStatusPanel):
         )
 
 
-class VehicleStatusPanel(SideStatusPanel):
-    def __init__(self, rect, manager=None, model=None):
-        super(VehicleStatusPanel, self).__init__(rect, manager)
+class VehicleStatusPanel(ItemListPanel):
+    def __init__(self, *args, model=None, **kwargs):
+        super(VehicleStatusPanel, self).__init__(*args, **kwargs, itemRect=pygame.Rect(0, 400, 500, 200))
         self.model = model
 
         self.vehicle_name_label = UILabel(
-            pygame.Rect(0, 0, rect.width, 100),
+            pygame.Rect(0, 0, self.rect.width, 100),
             text="Vehicle placeholder",
-            manager=manager,
+            manager=self.manager,
             container=self.container,
         )
 
@@ -78,59 +78,56 @@ class VehicleStatusPanel(SideStatusPanel):
         self.vehicle_image = UIImage(
             pygame.Rect(50, 100, 50, 50),
             vehicle_image,
-            manager=manager,
+            manager=self.manager,
             container=self.container,
         )
 
         route_text = """Placeholder"""
         self.route_text = UITextBox(
-            route_text, (100, 100, 300, 100), manager=manager, container=self.container
+            route_text, (100, 100, 300, 100), manager=self.manager, container=self.container
         )
 
         vehicle_text = "Placeholder stuff"
         self.vehicle_text = UITextBox(
-            vehicle_text, (0, 200, 400, 100), manager=manager, container=self.container
+            vehicle_text, (0, 200, 400, 100), manager=self.manager, container=self.container
         )
 
         self.stopButton = UIButton(
             pygame.Rect(0, 300, 100, 100),
             text="Stop",
             container=self.container,
-            manager=manager,
+            manager=self.manager,
         )
 
         self.target_button = UIButton(
             pygame.Rect(100, 300, 100, 100),
             text="Set Target",
             container=self.container,
-            manager=manager,
+            manager=self.manager,
         )
 
         self.colony_button = UIButton(
             pygame.Rect(200, 300, 100, 100),
             text="Colony View",
             container=self.container,
-            manager=manager,
+            manager=self.manager,
         )
 
         self.build_button = UIButton(
             pygame.Rect(300, 300, 100, 100),
             text="Build Colony",
             container=self.container,
-            manager=manager,
-        )
-
-        self.crewList = UISelectionList(
-            pygame.Rect(0, 400, 400, 100),
-            [("foo", "bar")],
-            manager=manager,
-            container=self.container,            
+            manager=self.manager,
         )
 
         self.upperAction = 0
 
     def set_vehicle(self, vehicle):
         self.vehicle = vehicle
+        if isinstance(self.vehicle, SurfaceVehicle):
+            self.sourceList = self.vehicle.payload.crew
+        else:
+            self.sourceList = {}
 
     def handle_event(self, event):
         self.upperAction = 0
@@ -152,6 +149,7 @@ class VehicleStatusPanel(SideStatusPanel):
             return False
 
     def update(self):
+        super().update()
         if self.vehicle.killed:
             self.hide()
             return
@@ -179,8 +177,7 @@ class VehicleStatusPanel(SideStatusPanel):
             self.colony_button.hide()
             self.build_button.hide()
 
-        if isinstance(self.vehicle, SurfaceVehicle):
-            self.crewList.set_item_list([self.model.peopleSim.personById(id).name for id in self.vehicle.payload.crew])
+
 
         destination_text = "<None>"
         if isinstance(self.vehicle, SurfaceVehicle) and self.vehicle.destination:

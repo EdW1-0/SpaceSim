@@ -75,10 +75,17 @@ class ItemListPanel(SideStatusPanel):
         )
 
     def update(self):
-        newHash = "".join(map(str, [item.id for item in self.sourceList.values()]))
+        if isinstance(self.sourceList, dict):
+            newHash = "".join(map(str, [item.id for item in self.sourceList.values()]))
+        elif isinstance(self.sourceList, set):
+            newHash = "".join(map(str, self.sourceList))
         if newHash != self.item_hash:
             if len(self.sourceList) == 0:
                 self.item_list.set_item_list([])
+            elif isinstance(self.sourceList, set):
+                self.item_list.set_item_list(
+                    [str(item) for item in self.sourceList]
+                )
             elif isinstance(next(iter(self.sourceList.values())), Building):
                 self.item_list.set_item_list(
                     [
