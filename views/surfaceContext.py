@@ -6,7 +6,8 @@ from views.panels import (
     VehicleStatusPanel,
     VehicleRoutingPanel,
     ColonyShipDetailPanel,
-    TimingPanel
+    TimingPanel,
+    CrewDetailPanel,
 )
 
 from planetsim import (
@@ -47,6 +48,7 @@ from pygame_gui.elements import UIButton
 from pygame_gui import (
     UI_BUTTON_PRESSED,
     UI_BUTTON_ON_HOVERED,
+    UI_SELECTION_LIST_NEW_SELECTION,
 )
 
 
@@ -204,7 +206,7 @@ class SurfaceContext(GUIContext):
         self.region_panel.hide()
 
         self.vehicle_panel = VehicleStatusPanel(
-            summary_rect, manager=manager, model=model
+            summary_rect, manager=manager, model=model, sourceList=None
         )
         self.vehicle_panel.hide()
 
@@ -230,6 +232,11 @@ class SurfaceContext(GUIContext):
         self.timing_panel = TimingPanel(
             timing_rect, manager=manager, timingMaster=model.timingMaster
         )
+
+        self.crew_panel = CrewDetailPanel(
+            target_rect, manager=manager, model=model
+        )
+        self.crew_panel.hide()
 
         self.active_panel = self.planet_panel
 
@@ -633,6 +640,26 @@ class SurfaceContext(GUIContext):
             return self.handleTargetPanel(event)
         elif self.ship_panel.handle_event(event):
             return self.handleShipPanel(event)
+        elif self.crew_panel.handle_event(event):
+            return 0
+        else:
+            return 0
+        
+    def handleListSelection(self, event: Event):
+        if event.ui_element == self.vehicle_panel.item_list:
+            crew = None
+            for c in self.model.peopleSim._people.values():
+                if str(c.id) == event.text:
+                    crew = c
+
+            assert crew
+
+            if self.target_panel:
+                self.target_panel.hide()
+
+            self.crew_panel.setPerson(crew)
+            self.crew_panel.update()
+            self.crew_panel.show()
 
 
     def handleVehiclePanel(self, event: Event):
@@ -792,6 +819,8 @@ class SurfaceContext(GUIContext):
                 returnCode = self.handleGuiButton(event)
                 if returnCode != 0:
                     break
+            elif event.type == UI_SELECTION_LIST_NEW_SELECTION:
+                self.handleListSelection(event)
             if event.type == UI_BUTTON_ON_HOVERED:
                 print(event.ui_element)
 

@@ -246,7 +246,7 @@ class TestSurfaceContextEventHandling(unittest.TestCase):
         event = ModelMock()
         self.sc.active_panel = self.sc.vehicle_panel
         event.ui_element = "foo"
-        self.assertEqual(self.sc.handleGuiButton(event), None)
+        self.assertEqual(self.sc.handleGuiButton(event), 0)
 
         pl = ModelMock()
         pl.crew = {}
