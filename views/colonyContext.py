@@ -14,7 +14,8 @@ from views.panels import (
     ColonyProductionPanel,
     ColonyProductionDetailPanel,
     ColonyResourceDetailPanel,
-    TimingPanel
+    TimingPanel,
+    CrewDetailPanel,
 )
 
 from orbitsim import TrajectoryState
@@ -116,6 +117,20 @@ class ColonyContext(GUIContext):
             sourceList=self.model.colonySim._resources,
         )
         self.resource_panel.hide()
+
+        self.crew_panel = ItemListPanel(
+            summary_rect,
+            manager=manager,
+            colony=colony,
+            title="Crew",
+            sourceList=self.colony.crew,
+        )
+        self.crew_panel.hide()
+
+        self.crew_detail_panel = CrewDetailPanel(
+            detail_rect, manager=manager, model=self.model
+        )
+        self.crew_detail_panel.hide()
 
         self.vehicle_detail_panel = ColonyVehicleDetailPanel(
             detail_rect, manager=manager
@@ -239,6 +254,8 @@ class ColonyContext(GUIContext):
             self.active_panel = self.construction_panel
         elif event.ui_element == self.tab_panel.resource_button:
             self.active_panel = self.resource_panel
+        elif event.ui_element == self.tab_panel.crew_button:
+            self.active_panel = self.crew_panel
 
         self.active_panel.update()
         self.active_panel.show()
@@ -386,6 +403,14 @@ class ColonyContext(GUIContext):
                 self.resource_detail_panel.setResource,
                 lambda item, key: item.name == key,
             )        
+        elif event.ui_element == self.crew_panel.item_list:
+            self.populateDetailPanel(
+                event.text,
+                self.model.peopleSim._people.values(),
+                self.crew_detail_panel,
+                self.crew_detail_panel.setPerson,
+                lambda item, key: item.id == int(key)
+            )
 
         return 0
 

@@ -27,6 +27,7 @@ class ModelMock:
     orbitSim = None
     buildings = None
     productionOrders = None
+    crew = {}
     colonySim = ColonySimMock()
 
 @unittest.skipUnless(isLocal(), "requires Windows")

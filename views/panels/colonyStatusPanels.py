@@ -62,6 +62,13 @@ class ColonyTabPanel(SideStatusPanel):
             manager=manager,
         )
 
+        self.crew_button = UIButton(
+            pygame.Rect(200, 50, 100, 50),
+            text="Crew",
+            container=self.container,
+            manager=manager,
+        )
+
     def handle_event(self, event):
         self.upperEvent = 0
         if super().handle_event(event):
@@ -77,6 +84,8 @@ class ColonyTabPanel(SideStatusPanel):
         elif event.ui_element == self.construction_button:
             return True
         elif event.ui_element == self.resource_button:
+            return True
+        elif event.ui_element == self.crew_button:
             return True
         else:
             return False
