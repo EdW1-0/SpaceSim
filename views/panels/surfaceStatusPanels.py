@@ -125,7 +125,7 @@ class VehicleStatusPanel(ItemListPanel):
     def set_vehicle(self, vehicle):
         self.vehicle = vehicle
         if isinstance(self.vehicle, SurfaceVehicle):
-            self.sourceList = self.vehicle.payload.crew
+            self.sourceList = {id: self.model.peopleSim.personById(id) for id in self.vehicle.payload.crew}
         else:
             self.sourceList = {}
 

@@ -649,7 +649,7 @@ class SurfaceContext(GUIContext):
         if event.ui_element == self.vehicle_panel.item_list:
             crew = None
             for c in self.model.peopleSim._people.values():
-                if str(c.id) == event.text:
+                if str(c.name) == event.text:
                     crew = c
 
             assert crew
