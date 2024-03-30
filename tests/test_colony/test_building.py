@@ -39,6 +39,8 @@ class TestBuilding(unittest.TestCase):
         self.assertTrue(hasattr(b, "condition"))
         self.assertTrue(hasattr(b, "constructionProgress"))
         self.assertTrue(hasattr(b, "demolitionProgress"))
+        self.assertTrue(hasattr(b, "crew"))
+        self.assertTrue(isinstance(b.crew, set))
 
     def testBuildingStateMachine(self):
         b = Building(5, self.bc)

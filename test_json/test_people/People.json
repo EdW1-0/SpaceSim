@@ -50,6 +50,14 @@
             "sex": "F",
             "location": 3,
             "locationClass": "Vehicle"
+        },
+        {
+            "id": 6,
+            "name": "Jen Mi",
+            "age": 19,
+            "sex": "F",
+            "location": [2,3],
+            "locationClass": "Colony"
         }
     ]
 }

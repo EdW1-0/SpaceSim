@@ -6,6 +6,18 @@ class CMock:
     def __init__(self, id):
         self.id = id
         self.crew = set()
+        self.buildings = {}
+    
+    def buildingById(self, id: int):
+        if not id in self.buildings:
+            self.buildings[id] = BMock(id)
+
+        return self.buildings[id]
+    
+class BMock:
+    def __init__(self, id):
+        self.id = id
+        self.crew = set()
 
 class CSMock:
     def __init__(self):
@@ -87,6 +99,7 @@ class TestPeopleSimLoading(unittest.TestCase):
         self.assertEqual(self.peopleSim.locationLoadModifier(location = 0, locationClass = "Colony").id, 0)
         self.assertTrue(isinstance(self.peopleSim.locationLoadModifier(location = 0, locationClass = "Colony"), CMock))
         self.assertEqual(self.peopleSim.locationLoadModifier(location = 2, locationClass = "Colony").id, 2)
+        self.assertTrue(isinstance(self.peopleSim.locationLoadModifier(location = [2,4], locationClass = "Colony"), BMock))
 
         with self.assertRaises(ValueError):
             self.peopleSim.locationLoadModifier(location = 0, locationClass = "Planet")
@@ -110,6 +123,10 @@ class TestPeopleSimLoading(unittest.TestCase):
         self.assertEqual(self.peopleSim.personById(5).location.id, 3)
         self.assertTrue(5 in self.ps.vehicleById(3).crew)
 
+        self.assertEqual(self.peopleSim.personById(6).location.id, 3)
+        self.assertTrue(6 in self.cs.colonyById(2).buildingById(3).crew)
+
+
 class TestPeopleSimLifecycle(unittest.TestCase):
     def setUp(self) -> None:
         self.cs = CSMock()
@@ -123,22 +140,22 @@ class TestPeopleSimLifecycle(unittest.TestCase):
             )
         
     def testPeopleSimCreatePerson(self):
-        self.assertEqual(self.peopleSim.createPerson("John Doe", 30, "M", self.os.shipById(5)), 6)
-        self.assertEqual(self.peopleSim.personById(6).name, "John Doe")
-        self.assertEqual(self.peopleSim.personById(6).location.id, 5)
-        self.assertTrue(isinstance(self.peopleSim.personById(6).location, SMock))
-        self.assertIn(6, self.os.shipById(5).crew)
+        self.assertEqual(self.peopleSim.createPerson("John Doe", 30, "M", self.os.shipById(5)), 7)
+        self.assertEqual(self.peopleSim.personById(7).name, "John Doe")
+        self.assertEqual(self.peopleSim.personById(7).location.id, 5)
+        self.assertTrue(isinstance(self.peopleSim.personById(7).location, SMock))
+        self.assertIn(7, self.os.shipById(5).crew)
 
     def testPeopleSimDestroyPerson(self):
         self.peopleSim.destroyPerson(1)
         with self.assertRaises(KeyError):
             self.peopleSim.personById(1)
 
-        self.assertEqual(self.peopleSim.createPerson("John Doe", 30, "M", self.os.shipById(5)), 6)
-        self.assertEqual(self.peopleSim.personById(6).name, "John Doe")
-        self.peopleSim.destroyPerson(6)
+        self.assertEqual(self.peopleSim.createPerson("John Doe", 30, "M", self.os.shipById(5)), 7)
+        self.assertEqual(self.peopleSim.personById(7).name, "John Doe")
+        self.peopleSim.destroyPerson(7)
         with self.assertRaises(KeyError):
-            self.peopleSim.personById(6)
+            self.peopleSim.personById(7)
 
 
     def testPeopleSimTransferPerson(self):

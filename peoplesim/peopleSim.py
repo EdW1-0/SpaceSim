@@ -35,9 +35,15 @@ class PeopleSim:
     def personById(self, id: int) -> Person:
         return self._people[id]
     
-    def locationLoadModifier(self, location: int, locationClass: str):
+    def locationLoadModifier(self, location: int | list[int], locationClass: str):
         if locationClass == "Colony":
-            retVal = self.colonySim.colonyById(location) 
+            if isinstance(location, int):
+                retVal = self.colonySim.colonyById(location) 
+            elif isinstance(location, list):
+                colony = self.colonySim.colonyById(location[0])
+                retVal = colony.buildingById(location[1])
+            else:    
+                raise ValueError("Invalid location {0}".format(location))
         elif locationClass == "Ship":
             if self.orbitSim:
                 retVal = self.orbitSim.shipById(location)

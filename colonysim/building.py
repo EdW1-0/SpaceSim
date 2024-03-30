@@ -21,6 +21,8 @@ class Building:
         self.constructionProgress = 0
         self.demolitionProgress = 0
 
+        self.crew = set()
+
     def construct(self):
         if self.status != BuildingStatus.CONSTRUCTION:
             raise BuildingStatusError

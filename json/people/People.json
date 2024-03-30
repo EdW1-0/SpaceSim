@@ -13,7 +13,7 @@
             "name": "Jane Doe",
             "age": 24,
             "sex": "F",
-            "location": 0,
+            "location": [0, 1],
             "locationClass": "Colony"    
         },
         {
