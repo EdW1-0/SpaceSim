@@ -552,4 +552,59 @@ class testColonyVehicle(unittest.TestCase):
         self.assertEqual(vehicle.status, VehicleStatus.IDLE)
         self.assertEqual(vehicle.constructionProgress, 30)
 
+class TestColonyCrew(unittest.TestCase):
+    def setUp(self):
+        self.gm = GameModel()
+        self.gm.load()
+        self.sc = self.gm.orbitSim.shipClassById("SATURNVI")
+        self.vc = self.gm.planetSim.vehicleClassById("ROVER")
+        self.c = Colony(0, 
+                        "TEST", 
+                        self.gm.orbitSim, 
+                        locale=self.gm.planetSim.planetById("MERCURY").surface,
+                        vehicleFactory=self.gm.planetSim.createVehicle)
+        self.bc = BuildingClass("MOCK", "Mock Building", "MARTIAN", constructionTime=20)
+
+    def testColonyCrew(self):
+        self.assertSetEqual(self.c.wholeCrew(), set())
+        self.c.crew.add(7)
+        self.c.crew.add(2)
+        self.assertSetEqual(self.c.wholeCrew(), {7, 2})
+
+    def testColonyShipsCrew(self):
+        self.c.crew.add(2)
+        self.c.crew.add(4)
+        self.assertSetEqual(self.c.wholeCrew(), {2, 4})
+        self.c.addShip("Test ship", self.sc, deltaV=56)
+        self.c.shipById(5).crew.add(7)
+        self.c.shipById(5).crew.add(9)
+        self.c.addShip("Test ship 2", self.sc, deltaV=56)
+        self.c.shipById(6).crew.add(12)
+
+        self.assertSetEqual(self.c.wholeCrew(), {2, 4, 7, 9, 12})
+
+    def testColonyVehiclesCrew(self):
+        self.c.crew.add(2)
+        self.c.crew.add(4)
+        self.assertSetEqual(self.c.wholeCrew(), {2, 4})
+        self.c.addVehicle("Test vehicle", self.vc, fuel=100)
+        self.c.vehicleById(2).crew.add(7)
+        self.c.vehicleById(2).crew.add(9)
+        self.c.addVehicle("Test vehicle 2", self.vc, fuel=100)
+        self.c.vehicleById(3).crew.add(12)
+
+        self.assertSetEqual(self.c.wholeCrew(), {2, 4, 7, 9, 12})
+
+    def testColonyBuildingsCrew(self):
+        self.c.crew.add(2)
+        self.assertSetEqual(self.c.wholeCrew(), {2})
+        self.c.addBuilding(self.bc)
+        self.c.addBuilding(self.bc)
+        self.c.buildingById(0).crew.add(3)
+        self.c.buildingById(0).crew.add(7)
+        self.c.buildingById(1).crew.add(9)
+
+        self.assertSetEqual(self.c.wholeCrew(), {2, 3, 7, 9})
+
+ 
 

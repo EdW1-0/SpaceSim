@@ -20,6 +20,8 @@ from colonysim.ship import Ship, ShipStatus
 
 from utility import getIntId, IDGenerator
 
+from functools import reduce
+
 
 class Colony:
     def __init__(
@@ -71,7 +73,23 @@ class Colony:
         if locale:
             self.locale.connectColony(self)
 
-
+    def wholeCrew(self):
+        shipsCrew = reduce(
+            set.union, 
+            [ship.crew for ship in self.ships.values()], 
+            set()
+            )
+        vehiclesCrew = reduce(
+            set.union, 
+            [vehicle.crew for vehicle in self.vehicles.values()], 
+            set()
+            )
+        buildingsCrew = reduce(
+            set.union,
+            [building.crew for building in self.buildings.values()],
+            set()
+        )
+        return self.crew.union(buildingsCrew).union(shipsCrew).union(vehiclesCrew)
 
     # Question over whether this should be given a buildingClass reference directly,
     # or just an id and look it up from colonySim. I think this should be OK even
