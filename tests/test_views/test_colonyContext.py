@@ -29,6 +29,8 @@ class ModelMock:
     productionOrders = None
     crew = {}
     colonySim = ColonySimMock()
+    def wholeCrew(self):
+        return set()
 
 @unittest.skipUnless(isLocal(), "requires Windows")
 class TestColonyContext(unittest.TestCase):

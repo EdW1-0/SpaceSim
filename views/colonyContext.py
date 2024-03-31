@@ -123,7 +123,7 @@ class ColonyContext(GUIContext):
             manager=manager,
             colony=colony,
             title="Crew",
-            sourceList=self.colony.crew,
+            sourceList=self.colony.wholeCrew(),
         )
         self.crew_panel.hide()
 
