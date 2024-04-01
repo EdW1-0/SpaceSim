@@ -5,6 +5,7 @@ from views.panels.sideStatusPanels import SideStatusPanel
 from pygame_gui.elements import UILabel, UITextBox
 
 from peoplesim import Person
+from colonysim import Building
 
 class CrewDetailPanel(SideStatusPanel):
     def __init__(self, rect, manager=None, model=None):
@@ -21,6 +22,13 @@ class CrewDetailPanel(SideStatusPanel):
         self.person_text = UITextBox(
             "Person text",  (0, 100, 200, 200), manager=manager, container=self.container)
         
+        self.location_label = UILabel(
+            pygame.Rect(200, 0, 200, 100),
+            text="Location placeholder",
+            manager=manager,
+            container=self.container,
+        )
+        
     def setPerson(self, person: Person):
         self.person = person    
 
@@ -34,4 +42,8 @@ class CrewDetailPanel(SideStatusPanel):
         if self.person:
             self.person_label.set_text(self.person.name)
             self.person_text.set_text("Age: {0}<br>Sex: {1}".format(self.person.age, self.person.sex))
+            if isinstance(self.person.location, Building):
+                self.location_label.set_text(self.person.location.buildingClass.name)
+            else:
+                self.location_label.set_text(self.person.location.name)
         
