@@ -154,8 +154,8 @@ class ColonyVehicleDetailPanel(SideStatusPanel):
             )
         )
         self.vehicle_status.set_text(
-            "Fuel: {0}/{1}<br>Status: {2}".format(
-                self.vehicle.fuel, self.vehicle.vehicleClass.maxFuel, self.vehicle.status
+            "Fuel: {0}/{1}<br>Status: {2}<br>Crew: {3}".format(
+                self.vehicle.fuel, self.vehicle.vehicleClass.maxFuel, self.vehicle.status, len(self.vehicle.crew)
             )
         )
         self.vehicle_mission.set_text("Orders: Not implemented<br>")
@@ -287,8 +287,8 @@ class ColonyShipDetailPanel(SideStatusPanel):
             "Class: {0}<br>".format(self.ship.shipClass.name)
         )
         self.ship_status.set_text(
-            "DeltaV: {0}/{1}<br>Status: {2}<br>".format(
-                self.ship.deltaV(), self.ship.shipClass.maxDeltaV, self.ship.status
+            "DeltaV: {0}/{1}<br>Status: {2}<br>Crew: {3}".format(
+                self.ship.deltaV(), self.ship.shipClass.maxDeltaV, self.ship.status, len(self.ship.crew)
             )
         )
 
@@ -679,9 +679,9 @@ class ColonyBuildingDetailPanel(SideStatusPanel):
             container=self.container,
         )
 
-        self.condition_text = UITextBox(
+        self.contents_text = UITextBox(
             "Condition",
-            pygame.Rect(100, 100, 100, 100),
+            pygame.Rect(100, 100, 400, 200),
             manager=manager,
             container=self.container,
         )
@@ -739,7 +739,7 @@ class ColonyBuildingDetailPanel(SideStatusPanel):
             status = "{0}".format(str(self.building.status))
         self.status_text.set_text(status)
 
-        self.condition_text.set_text("Condition: " + str(self.building.condition) + "%")
+        self.contents_text.set_text("Condition: {0}%<br>Crew: {1}".format(str(self.building.condition), len(self.building.crew)))
         self.class_specific_text.set_text(self.building.summaryString())
 
 
