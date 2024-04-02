@@ -160,7 +160,7 @@ class TestShipStatusPanel(unittest.TestCase):
         self.assertEqual(ssp.ship_name_label.text, "Test Ship")
         self.assertEqual(
             ssp.ship_text.html_text,
-            "Delta V: 7m/s<br>Velocity: 50m/s<br>Location: Earth",
+            "Delta V: 7m/s<br>Velocity: 50m/s<br>Location: Earth<br>Crew: 0",
         )
 
     def testShipStatusPanelHandleEvent(self):
