@@ -255,8 +255,8 @@ class ShipStatusPanel(SideStatusPanel):
             )
 
         self.ship_text.set_text(
-            "Delta V: {0}m/s<br>Velocity: {1}m/s<br>Location: {2}".format(
-                self.particle.deltaV(), self.particle.velocity, locationText
+            "Delta V: {0}m/s<br>Velocity: {1}m/s<br>Location: {2}<br>Crew: {3}".format(
+                self.particle.deltaV(), self.particle.velocity, locationText, len(self.particle.payload.crew)
             )
         )
 

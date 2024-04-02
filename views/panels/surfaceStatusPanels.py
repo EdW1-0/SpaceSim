@@ -193,16 +193,20 @@ class VehicleStatusPanel(ItemListPanel):
 
             self.vehicle_text.set_text(
                 """
-            Type: not implemented
-            Crew: not implemented
+            Type: {4}
+            Crew: {3}
             Fuel: {0}
             Top speed: {1}
             Range: {2}
             """.format(
-                    self.vehicle.fuel(), self.vehicle.maxV(), self.vehicle.fuelPerM()
+                    self.vehicle.fuel(), 
+                    self.vehicle.maxV(), 
+                    self.vehicle.fuelPerM(), 
+                    len(self.vehicle.payload.crew), 
+                    self.vehicle.payload.vehicleClass.name
                 )
             )
-        else:
+        elif isinstance(self.vehicle, SurfaceVehicle):
             self.route_text.set_text(
                 """
             Location: {0}""".format(
@@ -211,8 +215,24 @@ class VehicleStatusPanel(ItemListPanel):
             )
             self.vehicle_text.set_text(
                 """
-            Type: not implemented
-            Crew: not implemented"""
+            Type: {0}
+            Crew: {1}""".format(
+                self.vehicle.payload.vehicleClass.name, len(self.vehicle.payload.crew)
+            )
+            )
+        else:
+            self.route_text.set_text(
+                """
+            Location: {0}""".format(
+                    self.vehicle.name
+                )
+            )
+            self.vehicle_text.set_text(
+                """
+            Type: {0}
+            """.format(
+                self.vehicle.name
+            )
             )
 
 
