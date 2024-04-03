@@ -1,7 +1,7 @@
 from utility import loadEntityFile, IDGenerator
 from peoplesim.person import Person
 
-from colonysim import ColonySim, Colony, Ship
+from colonysim import ColonySim, Colony, Ship, Building
 from planetsim import PlanetSim, Vehicle
 from orbitsim import OrbitSim
 
@@ -77,7 +77,7 @@ class PeopleSim:
         person.location.crew.remove(id)
         del self._people[id]
     
-    def transferPerson(self, person: Person, location: Colony | Vehicle | Ship):
+    def transferPerson(self, person: Person, location: Colony | Vehicle | Ship | Building):
         person.location.crew.remove(person.id)
         person.location = location
         location.crew.add(person.id)

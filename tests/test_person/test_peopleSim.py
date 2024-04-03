@@ -162,3 +162,15 @@ class TestPeopleSimLifecycle(unittest.TestCase):
         self.peopleSim.transferPerson(self.peopleSim.personById(1), self.os.shipById(5))
         self.assertEqual(self.peopleSim.personById(1).location.id, 5)
         self.assertIsInstance(self.peopleSim.personById(1).location, SMock)
+
+        self.peopleSim.transferPerson(self.peopleSim.personById(1), self.ps.vehicleById(3))
+        self.assertEqual(self.peopleSim.personById(1).location.id, 3)
+        self.assertIsInstance(self.peopleSim.personById(1).location, VMock)
+
+        self.peopleSim.transferPerson(self.peopleSim.personById(1), self.cs.colonyById(2))
+        self.assertEqual(self.peopleSim.personById(1).location.id, 2)
+        self.assertIsInstance(self.peopleSim.personById(1).location, CMock)
+
+        self.peopleSim.transferPerson(self.peopleSim.personById(1), self.cs.colonyById(2).buildingById(3))
+        self.assertEqual(self.peopleSim.personById(1).location.id, 3)   
+        self.assertIsInstance(self.peopleSim.personById(1).location, BMock)
