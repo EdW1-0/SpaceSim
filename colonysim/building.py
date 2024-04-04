@@ -1,6 +1,5 @@
 import enum
 
-
 class BuildingStatus(enum.StrEnum):
     CONSTRUCTION = "CONSTRUCTION"
     IDLE = "IDLE"
@@ -13,9 +12,10 @@ class BuildingStatusError(Exception):
 
 
 class Building:
-    def __init__(self, id, buildingClass):
+    def __init__(self, id, buildingClass, locale=None):
         self.id = id
         self.buildingClass = buildingClass
+        self.locale = locale
         self.status = BuildingStatus.CONSTRUCTION
         self.condition = 100.0
         self.constructionProgress = 0
@@ -58,8 +58,8 @@ class Building:
 
 
 class ProductionBuilding(Building):
-    def __init__(self, id, buildingClass, colonySim):
-        super(ProductionBuilding, self).__init__(id, buildingClass)
+    def __init__(self, id, buildingClass, colonySim, locale=None):
+        super(ProductionBuilding, self).__init__(id, buildingClass, locale=locale)
         self.reaction = next(iter(buildingClass.reactions))
         self.rate = self.buildingClass.reactions[self.reaction]
         self.colonySim = colonySim
@@ -116,8 +116,8 @@ class ProductionBuilding(Building):
 
 
 class StorageBuilding(Building):
-    def __init__(self, id, buildingClass):
-        super(StorageBuilding, self).__init__(id, buildingClass)
+    def __init__(self, id, buildingClass, locale=None):
+        super(StorageBuilding, self).__init__(id, buildingClass, locale=locale)
         self.amount = 0
         self.contents = next(iter(buildingClass.stores))
 
@@ -160,8 +160,8 @@ class StorageBuilding(Building):
 
 
 class ExtractionBuilding(Building):
-    def __init__(self, id, buildingClass):
-        super(ExtractionBuilding, self).__init__(id, buildingClass)
+    def __init__(self, *args, **kwargs):
+        super(ExtractionBuilding, self).__init__(*args, **kwargs)
 
     def material(self):
         return next(iter(self.buildingClass.extracts))
@@ -175,8 +175,8 @@ class ExtractionBuilding(Building):
         return min(amount, self.rate())
     
 class ResearchBuilding(Building):
-    def __init__(self, id, buildingClass):
-        super(ResearchBuilding, self).__init__(id, buildingClass)
+    def __init__(self, *args, **kwargs):
+        super(ResearchBuilding, self).__init__(*args, **kwargs)
 
     def research(self, amount):
         if self.buildingClass.researchCallback:

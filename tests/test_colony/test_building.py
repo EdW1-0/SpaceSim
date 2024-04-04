@@ -35,6 +35,7 @@ class TestBuilding(unittest.TestCase):
         b = Building(1, self.bc)
         self.assertTrue(hasattr(b, "id"))
         self.assertTrue(hasattr(b, "buildingClass"))
+        self.assertTrue(hasattr(b, "locale"))
         self.assertTrue(hasattr(b, "status"))
         self.assertTrue(hasattr(b, "condition"))
         self.assertTrue(hasattr(b, "constructionProgress"))

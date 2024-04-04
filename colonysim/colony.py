@@ -43,6 +43,8 @@ class Colony:
         self.vehicleFactory = vehicleFactory
         if buildings:
             self.buildings = buildings
+            for b in self.buildings.values():
+                b.locale = self
         else:
             self.buildings = {}
         if productionOrders:
@@ -108,15 +110,15 @@ class Colony:
 
         id = self.buildingIdGenerator.generateId()
         if isinstance(buildingClass, ProductionBuildingClass):
-            self.buildings[id] = ProductionBuilding(id, buildingClass, colonySim)
+            self.buildings[id] = ProductionBuilding(id, buildingClass, colonySim, locale=self)
         elif isinstance(buildingClass, StorageBuildingClass):
-            self.buildings[id] = StorageBuilding(id, buildingClass)
+            self.buildings[id] = StorageBuilding(id, buildingClass, locale=self)
         elif isinstance(buildingClass, ExtractionBuildingClass):
-            self.buildings[id] = ExtractionBuilding(id, buildingClass)
+            self.buildings[id] = ExtractionBuilding(id, buildingClass, locale=self)
         elif isinstance(buildingClass, ResearchBuildingClass):
-            self.buildings[id] = ResearchBuilding(id, buildingClass)
+            self.buildings[id] = ResearchBuilding(id, buildingClass, locale=self)
         elif isinstance(buildingClass, BuildingClass):
-            self.buildings[id] = Building(id, buildingClass)
+            self.buildings[id] = Building(id, buildingClass, locale=self)
         else:
             raise TypeError
     
