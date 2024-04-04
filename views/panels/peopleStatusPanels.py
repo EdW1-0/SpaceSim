@@ -2,7 +2,7 @@ import pygame
 
 from views.panels.sideStatusPanels import SideStatusPanel
 
-from pygame_gui.elements import UILabel, UITextBox
+from pygame_gui.elements import UILabel, UITextBox, UIDropDownMenu
 
 from peoplesim import Person
 from colonysim import Building
@@ -27,6 +27,14 @@ class CrewDetailPanel(SideStatusPanel):
             text="Location placeholder",
             manager=manager,
             container=self.container,
+        )
+
+        self.transfer_menu = UIDropDownMenu(
+            ["Transfer"], 
+            "Transfer", 
+            pygame.Rect(200, 100, 200, 50), 
+            manager=manager, 
+            container=self.container
         )
         
     def setPerson(self, person: Person):
