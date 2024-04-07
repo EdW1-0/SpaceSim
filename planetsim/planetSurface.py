@@ -124,6 +124,7 @@ class PlanetSurface:
     def launchShip(self, ship):
         object = self.objectForContent(ship)
         self.destroyObject(object.id)
+        ship.locale = None
 
     # Only used during initialisation. Gives SurfaceBase objects a direct link
     # to their colony object. Probably could be avoided by just storing the id

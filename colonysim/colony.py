@@ -255,6 +255,7 @@ class Colony:
         return True
 
     def launchShip(self, ship):
+        self.ships[ship.id].locale = None
         del self.ships[ship.id]
 
     def shipArrival(self, ship):
