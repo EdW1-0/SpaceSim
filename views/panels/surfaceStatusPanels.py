@@ -2,7 +2,7 @@ import pygame
 
 from views.panels.sideStatusPanels import SideStatusPanel, ItemListPanel
 
-from planetsim import SurfaceVehicle, SurfaceBase
+from planetsim import SurfaceParticle, SurfaceBase
 
 from colonysim import Ship
 
@@ -124,7 +124,7 @@ class VehicleStatusPanel(ItemListPanel):
 
     def set_vehicle(self, vehicle):
         self.vehicle = vehicle
-        if isinstance(self.vehicle, SurfaceVehicle):
+        if isinstance(self.vehicle, SurfaceParticle):
             self.sourceList = {id: self.model.peopleSim.personById(id) for id in self.vehicle.payload.crew}
         else:
             self.sourceList = {}
@@ -156,7 +156,7 @@ class VehicleStatusPanel(ItemListPanel):
 
         self.vehicle_name_label.set_text(self.vehicle.name)
 
-        if isinstance(self.vehicle, SurfaceVehicle):
+        if isinstance(self.vehicle, SurfaceParticle):
             self.target_button.show()
             self.stopButton.show()
             self.colony_button.hide()
@@ -180,7 +180,7 @@ class VehicleStatusPanel(ItemListPanel):
 
 
         destination_text = "<None>"
-        if isinstance(self.vehicle, SurfaceVehicle) and self.vehicle.destination:
+        if isinstance(self.vehicle, SurfaceParticle) and self.vehicle.destination:
             destination_text = str(self.vehicle.destination)
 
             self.route_text.set_text(
@@ -206,7 +206,7 @@ class VehicleStatusPanel(ItemListPanel):
                     self.vehicle.payload.vehicleClass.name
                 )
             )
-        elif isinstance(self.vehicle, SurfaceVehicle):
+        elif isinstance(self.vehicle, SurfaceParticle):
             self.route_text.set_text(
                 """
             Location: {0}""".format(
@@ -298,7 +298,7 @@ class VehicleRoutingPanel(SideStatusPanel):
         if super(VehicleRoutingPanel, self).handle_event(event):
             return True
         elif event.ui_element == self.confirm_button:
-            if self.vehicle and isinstance(self.vehicle, SurfaceVehicle):
+            if self.vehicle and isinstance(self.vehicle, SurfaceParticle):
                 self.vehicle.setDestination(self.target)
                 self.hide()
                 self.upperAction = 1

@@ -11,7 +11,7 @@ from unittest.mock import MagicMock
 from tests.test_views.test_guiContext import ModelMock, isLocal
 
 from planetsim.surfacePoint import SurfacePoint
-from planetsim.surfaceVehicle import SurfaceVehicle, SurfaceObject
+from planetsim.surfaceParticle import SurfaceParticle, SurfaceObject
 from planetsim.planet import Planet
 from colonysim.colony import Colony
 from colonysim.ship import Ship
@@ -252,7 +252,7 @@ class TestSurfaceContextEventHandling(unittest.TestCase):
         pl.crew = {}
         event.ui_element = self.sc.vehicle_panel.target_button
         self.sc.targetMode = SCMode.Standard
-        self.sc.vehicle_panel.set_vehicle(SurfaceVehicle(0, [], [], payload=pl))
+        self.sc.vehicle_panel.set_vehicle(SurfaceParticle(0, [], [], payload=pl))
 
         self.assertEqual(self.sc.handleGuiButton(event), 0)
         self.assertEqual(self.sc.targetMode, SCMode.Target)
@@ -273,7 +273,7 @@ class TestSurfaceContextEventHandling(unittest.TestCase):
         self.assertEqual(self.sc.handleGuiButton(event), GUICode.LOADORBITVIEW)
         self.assertTrue(self.sc.info)
 
-        vehicle = SurfaceVehicle(0, [], [], payload=pl)
+        vehicle = SurfaceParticle(0, [], [], payload=pl)
         self.sc.vehicle_panel.set_vehicle(vehicle)
         vehicle.setDestination("mock")
         self.assertEqual(vehicle.destination, "mock")

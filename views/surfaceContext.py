@@ -15,7 +15,7 @@ from planetsim import (
     SurfaceRegion,
     SurfacePath,
     SurfaceBase,
-    SurfaceVehicle,
+    SurfaceParticle,
     Planet,
 )
 from planetsim.surfacePoint import dot, vector, latLong
@@ -90,12 +90,12 @@ class SurfaceObjectSprite(pygame.sprite.Sprite):
             colour = (230, 230, 5)
         elif isinstance(self.surfaceObject, SurfaceBase):
             colour = (250, 200, 200)
-        elif isinstance(self.surfaceObject, SurfaceVehicle):
+        elif isinstance(self.surfaceObject, SurfaceParticle):
             colour = (5, 5, 250)
         else:
             colour = (5, 250, 5)
 
-        if isinstance(self.surfaceObject, SurfaceVehicle):
+        if isinstance(self.surfaceObject, SurfaceParticle):
             pygame.draw.polygon(self.surf, colour, [(0, 22), (11, 0), (22, 22)])
         elif isinstance(self.surfaceObject, SurfaceBase):
             pygame.draw.rect(self.surf, colour, (0, 0, 22, 22))
@@ -666,7 +666,7 @@ class SurfaceContext(GUIContext):
         if event.ui_element == self.vehicle_panel.target_button:
             if self.targetMode == SCMode.Standard:
                 if isinstance(
-                    self.vehicle_panel.vehicle, SurfaceVehicle
+                    self.vehicle_panel.vehicle, SurfaceParticle
                 ):
                     self.target_panel.set_vehicle(
                         self.vehicle_panel.vehicle
@@ -757,7 +757,7 @@ class SurfaceContext(GUIContext):
             selected = self.selectedObject
             if selected and isinstance(selected, SurfaceObjectSprite):
                 so = selected.surfaceObject
-                if not (isinstance(so, SurfaceVehicle) and so.destination):
+                if not (isinstance(so, SurfaceParticle) and so.destination):
                     continue
                 destination_sprite.surfaceObject = so
                 (lat, long) = destination_sprite.latLong()

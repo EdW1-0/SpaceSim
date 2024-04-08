@@ -8,7 +8,7 @@ from planetsim.vehicle import Vehicle
 
 
 @dataclass
-class SurfaceVehicle(SurfaceObject):
+class SurfaceParticle(SurfaceObject):
     payload: Vehicle = None
     destination: SurfacePoint = None
 

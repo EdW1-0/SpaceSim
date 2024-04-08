@@ -7,6 +7,6 @@ from .surfaceObject import SurfaceObject
 from .surfacePoint import SurfacePoint
 from .surfacePath import SurfacePath
 from .surfaceRegion import SurfaceRegion 
-from .surfaceVehicle import SurfaceVehicle
+from .surfaceParticle import SurfaceParticle
 from .vehicle import Vehicle, VehicleStatus, VehicleStatusError
 from .vehicleClass import VehicleClass

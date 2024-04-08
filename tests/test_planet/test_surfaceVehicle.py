@@ -1,6 +1,6 @@
 import unittest
 
-from planetsim import SurfaceVehicle, SurfacePoint
+from planetsim import SurfaceParticle, SurfacePoint
 
 
 class ContentMock:
@@ -9,36 +9,36 @@ class ContentMock:
 
 class TestSurfaceVehicle(unittest.TestCase):
     def testSurfaceVehicle(self):
-        self.assertTrue(SurfaceVehicle)
-        self.assertTrue(SurfaceVehicle(0, ContentMock(), SurfacePoint(0, 0)))
+        self.assertTrue(SurfaceParticle)
+        self.assertTrue(SurfaceParticle(0, ContentMock(), SurfacePoint(0, 0)))
 
     def testSurfaceVehicleAttributes(self):
         self.assertTrue(
-            hasattr(SurfaceVehicle(0, ContentMock(), SurfacePoint(0, 0)), "id")
+            hasattr(SurfaceParticle(0, ContentMock(), SurfacePoint(0, 0)), "id")
         )
         self.assertTrue(
-            hasattr(SurfaceVehicle(0, ContentMock(), SurfacePoint(0, 0)), "point")
+            hasattr(SurfaceParticle(0, ContentMock(), SurfacePoint(0, 0)), "point")
         )
         self.assertTrue(
-            hasattr(SurfaceVehicle(0, ContentMock(), SurfacePoint(0, 0)), "content")
+            hasattr(SurfaceParticle(0, ContentMock(), SurfacePoint(0, 0)), "content")
         )
         self.assertTrue(
-            hasattr(SurfaceVehicle(0, ContentMock(), SurfacePoint(0, 0)), "name")
+            hasattr(SurfaceParticle(0, ContentMock(), SurfacePoint(0, 0)), "name")
         )
         self.assertTrue(
-            hasattr(SurfaceVehicle(0, ContentMock(), SurfacePoint(0, 0)), "destination")
+            hasattr(SurfaceParticle(0, ContentMock(), SurfacePoint(0, 0)), "destination")
         )
 
     def testSurfaceVehicleConstructor(self):
-        self.assertTrue(SurfaceVehicle(0, ContentMock(), SurfacePoint(20, 20)))
+        self.assertTrue(SurfaceParticle(0, ContentMock(), SurfacePoint(20, 20)))
         cm = ContentMock()
-        self.assertEqual(SurfaceVehicle(3, cm, SurfacePoint(10, 10)).content, cm)
-        self.assertEqual(SurfaceVehicle(3, cm, SurfacePoint(10, 10)).id, 3)
+        self.assertEqual(SurfaceParticle(3, cm, SurfacePoint(10, 10)).content, cm)
+        self.assertEqual(SurfaceParticle(3, cm, SurfacePoint(10, 10)).id, 3)
         self.assertEqual(
-            SurfaceVehicle(3, cm, SurfacePoint(10, 10)).point, SurfacePoint(10, 10)
+            SurfaceParticle(3, cm, SurfacePoint(10, 10)).point, SurfacePoint(10, 10)
         )
 
     def testSurfaceVehicleSetTarget(self):
-        so = SurfaceVehicle(0, ContentMock(), SurfacePoint(10, 10))
+        so = SurfaceParticle(0, ContentMock(), SurfacePoint(10, 10))
         so.setDestination(SurfacePoint(50, 50))
         self.assertEqual(so.destination, SurfacePoint(50, 50))

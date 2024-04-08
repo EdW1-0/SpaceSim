@@ -5,7 +5,7 @@ from planetsim.surfaceRegion import SurfaceRegion
 from planetsim.surfacePath import SurfacePath
 from planetsim.surfacePoint import SurfacePoint
 from planetsim.surfaceObject import SurfaceObject
-from planetsim.surfaceVehicle import SurfaceVehicle
+from planetsim.surfaceParticle import SurfaceParticle
 from planetsim.surfaceBase import SurfaceBase
 from planetsim.vehicle import Vehicle
 
@@ -77,7 +77,7 @@ class PlanetSurface:
                         None, point, name=object["name"], colonyId=object["colonyId"]
                     )
                 elif "vehicle" in object:
-                    self.createSurfaceVehicle(
+                    self.createSurfaceParticle(
                         None,
                         point,
                         name=object["name"],
@@ -100,9 +100,9 @@ class PlanetSurface:
         self.points[id] = SurfaceObject(id, content, position, name=name)
         return id
 
-    def createSurfaceVehicle(self, content, position, name="", payload=None):
+    def createSurfaceParticle(self, content, position, name="", payload=None):
         id = self.pointIdGenerator.generateId()
-        self.points[id] = SurfaceVehicle(
+        self.points[id] = SurfaceParticle(
             id, content, position, name=name, payload=payload
         )
         # if payload:
@@ -145,7 +145,7 @@ class PlanetSurface:
             name="Placeholder colony",
             colonyId=colony.id,
         )
-        if isinstance(object, SurfaceVehicle):
+        if isinstance(object, SurfaceParticle):
             colony.vehicleArrival(object.payload)
             self.destroyObject(objectId)
         elif isinstance(object, SurfaceObject):
@@ -160,7 +160,7 @@ class PlanetSurface:
     def transferVehicle(self, id):
         vehicle = self.vehicleAccessor(id)
         for point in self.points.values():
-            if isinstance(point, SurfaceVehicle) and point.payload == vehicle:
+            if isinstance(point, SurfaceParticle) and point.payload == vehicle:
                 self.destroyObject(point.id)
         # del self.vehicles[id]
         return vehicle
@@ -186,7 +186,7 @@ class PlanetSurface:
     def tick(self, increment):
         purgeIds = set()
         for p in self.points.values():
-            if isinstance(p, SurfaceVehicle) and p.destination:
+            if isinstance(p, SurfaceParticle) and p.destination:
                 # First work out how far we can travel in this time
                 maxDistance = self._distanceForTime(p.id, increment)
                 path = SurfacePath(p.point, p.destination)

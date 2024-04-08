@@ -243,7 +243,7 @@ class Colony:
             if not position:
                 raise KeyError
 
-            self.locale.createSurfaceVehicle(
+            self.locale.createSurfaceParticle(
                 None, position, name=vehicle.name, payload=vehicle
             )
             del self.vehicles[id]
