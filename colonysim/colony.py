@@ -230,6 +230,7 @@ class Colony:
         vehicle = self.locale.transferVehicle(vehicleId)
 
         self.vehicles[vehicleId] = vehicle
+        vehicle.locale = self
         return vehicleId
 
     def deployVehicle(self, id):
@@ -252,6 +253,7 @@ class Colony:
 
     def vehicleArrival(self, vehicle):
         self.vehicles[vehicle.id] = vehicle
+        vehicle.locale = self
         return True
 
     def launchShip(self, ship):

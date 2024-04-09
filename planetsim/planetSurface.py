@@ -105,6 +105,8 @@ class PlanetSurface:
         self.points[id] = SurfaceParticle(
             id, content, position, name=name, payload=payload
         )
+        if payload:
+            payload.locale = self
         # if payload:
         #     self.vehicles[payload.id] = payload
         return id
