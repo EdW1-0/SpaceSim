@@ -21,6 +21,8 @@ class Building:
         self.constructionProgress = 0
         self.demolitionProgress = 0
 
+        self.name = buildingClass.name + " " + str(id)
+
         self.crew = set()
 
     def construct(self):
