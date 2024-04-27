@@ -69,6 +69,7 @@ class Colony:
         for vehicleId in vehicles:
             vehicle = locale.transferVehicle(vehicleId)
             self.vehicles[vehicleId] = vehicle
+            vehicle.locale = self
 
         self.crew = set()
 

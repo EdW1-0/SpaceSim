@@ -28,6 +28,7 @@ from pygame_gui.elements import UILabel, UIButton
 from pygame_gui import (
     UI_BUTTON_PRESSED,
     UI_SELECTION_LIST_NEW_SELECTION,
+    UI_DROP_DOWN_MENU_CHANGED,
 )
 
 from pygame.event import Event
@@ -414,6 +415,17 @@ class ColonyContext(GUIContext):
 
         return 0
 
+    def handleDropDownMenu(self, event):
+        if event.ui_element == self.crew_detail_panel.transfer_menu:
+            (text, targetLocation) = self.crew_detail_panel.transfer_menu.get_selected_option()
+            assert text == event.text
+            self.model.peopleSim.transferPerson(
+                self.crew_detail_panel.person,
+                targetLocation,
+            )
+            self.crew_detail_panel.update()
+        return 0
+
     def updatePanels(self):
         self.timing_panel.update()
         if self.active_panel:
@@ -442,6 +454,8 @@ class ColonyContext(GUIContext):
                     break
             elif event.type == UI_SELECTION_LIST_NEW_SELECTION:
                 self.handleListSelection(event)
+            elif event.type == UI_DROP_DOWN_MENU_CHANGED:
+                self.handleDropDownMenu(event)
 
             self.manager.process_events(event)
 

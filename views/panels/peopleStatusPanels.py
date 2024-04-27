@@ -2,7 +2,9 @@ import pygame
 
 from views.panels.sideStatusPanels import SideStatusPanel
 
-from pygame_gui.elements import UILabel, UITextBox, UIDropDownMenu
+from pygame_gui.elements import UILabel, UITextBox
+
+from views.widgets.dropDownMenuId import DropDownMenuId
 
 from peoplesim import Person
 from colonysim import Building, Colony, Ship
@@ -31,8 +33,8 @@ class CrewDetailPanel(SideStatusPanel):
             container=self.container,
         )
 
-        self.transfer_menu = UIDropDownMenu(
-            ["Transfer"], 
+        self.transfer_menu = DropDownMenuId(
+            {"Transfer": None}, 
             "Transfer", 
             pygame.Rect(200, 100, 200, 50), 
             manager=manager, 
@@ -59,17 +61,17 @@ class CrewDetailPanel(SideStatusPanel):
                 buildings = list(colony.buildings.values())
                 ships = list(colony.ships.values())
                 vehicles = list(colony.vehicles.values())
-                locations = [b.name for b in buildings] + [s.name for s in ships] + [v.name for v in vehicles] + [self.person.location.name]
+                locations = {b.name: b for b in buildings} | {s.name: s for s in ships} | {v.name: v for v in vehicles} | {self.person.location.name: self.person.location}
                 return locations
             elif isinstance(self.person.location.locale, Colony):
                 colony = self.person.location.locale
                 buildings = list(colony.buildings.values())
                 ships = list(colony.ships.values())
                 vehicles = list(colony.vehicles.values())
-                locations = [b.name for b in buildings] + [s.name for s in ships] + [v.name for v in vehicles] + [self.person.location.locale.name]
+                locations = {b.name: b for b in buildings} | {s.name: s for s in ships} | {v.name: v for v in vehicles} | {self.person.location.locale.name: self.person.location.locale}
                 return locations
             else:
-                return []
+                return {}
 
     def update(self):
         if self.person:
@@ -84,9 +86,9 @@ class CrewDetailPanel(SideStatusPanel):
                 # Get all locations
                 # This means all buildings and ships and vehices plus colony itself
                 locations = self.validLocations()
-                newHash = "".join(locations)
+                newHash = "".join(locations.keys())
                 if newHash != self.item_hash:
-                    self.transfer_menu = UIDropDownMenu(
+                    self.transfer_menu = DropDownMenuId(
                         locations, 
                         self.person.location.name, 
                         pygame.Rect(200, 100, 200, 50), 
