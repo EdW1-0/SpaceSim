@@ -1,17 +1,15 @@
 from enum import Enum
 
+from peoplesim.taskClass import TaskClass
 
-class TaskCategory(Enum):
-    IDLE = 0
-    SLEEP = 1
-    PLANT_WHEAT = 2
 
 
 class Task:
-    def __init__(self, category=TaskCategory.IDLE, target=None):
-        self.category = category
+    def __init__(self, id: str, taskClass: TaskClass = None, target: object=None):
+        self.id = id
+        self.taskClass = taskClass
         self.progress = 0
-        # Target the task is working on, typically a work order
+        # Target the task is working on
         self.target = target
 
     def complete(self, actor):
