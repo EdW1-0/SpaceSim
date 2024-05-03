@@ -1,6 +1,7 @@
 from utility import loadEntityFile, IDGenerator
 from peoplesim.person import Person
 from peoplesim.taskClass import TaskClass
+from peoplesim.task import Task
 
 from colonysim import ColonySim, Colony, Ship, Building
 from planetsim import PlanetSim, Vehicle
@@ -38,6 +39,9 @@ class PeopleSim:
             id="Tasks",
             EntityClass=TaskClass
         )
+
+        self.taskQueue = []
+        self.taskIdGenerator = IDGenerator()
         
 
     def personById(self, id: int) -> Person:
@@ -90,4 +94,10 @@ class PeopleSim:
         person.location = location
         location.crew.add(person.id)
         
+    def createTask(self, taskClassId: str, target: Colony | Vehicle | Ship | Building | Person):
+        taskClass = self._taskClasses[taskClassId]
+        taskId = self.taskIdGenerator.generateId()
+        task = Task(id=taskId, taskClass=taskClass, target=target)
+        self.taskQueue.append(task)
+        return taskId
         

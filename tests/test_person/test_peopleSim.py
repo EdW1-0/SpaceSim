@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import MagicMock
 
 from peoplesim.peopleSim import PeopleSim
 
@@ -73,6 +74,7 @@ class TestPeopleSim(unittest.TestCase):
 
     def testPeopleSimAttributes(self):
         self.assertTrue(hasattr(PeopleSim(colonySim=self.cs, orbitSim=self.os, planetSim=self.ps), "_people"))
+        self.assertTrue(hasattr(PeopleSim(colonySim=self.cs, orbitSim=self.os, planetSim=self.ps), "_taskClasses"))
 
     def testPeopleSimPersonById(self):
         self.assertTrue(PeopleSim(colonySim=self.cs, orbitSim=self.os, planetSim=self.ps).personById(1))
@@ -174,3 +176,22 @@ class TestPeopleSimLifecycle(unittest.TestCase):
         self.peopleSim.transferPerson(self.peopleSim.personById(1), self.cs.colonyById(2).buildingById(3))
         self.assertEqual(self.peopleSim.personById(1).location.id, 3)   
         self.assertIsInstance(self.peopleSim.personById(1).location, BMock)
+
+
+class TestPeopleSimTaskLifecycle(unittest.TestCase):
+    def setUp(self) -> None:
+        self.cs = CSMock()
+        self.os = OSMock()
+        self.ps = PSMock()
+        self.peopleSim = PeopleSim(
+            jsonPath="test_json/test_people", 
+            colonySim=self.cs, 
+            orbitSim=self.os, 
+            planetSim=self.ps
+            )
+
+    def testPeopleSimTaskCreation(self):
+        mockPerson = MagicMock()
+        self.assertEqual(len(self.peopleSim.taskQueue), 0)
+        self.peopleSim.createTask("IDLE", target=mockPerson)
+        self.assertEqual(len(self.peopleSim.taskQueue), 1)
