@@ -1,0 +1,11 @@
+{
+    "Tasks": [
+        {
+            "id": "IDLE",
+            "name": "Idle",
+            "inputs": [],
+            "duration": 1,
+            "effects": []
+        }
+    ]
+}

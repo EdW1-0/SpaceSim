@@ -1,5 +1,6 @@
 from utility import loadEntityFile, IDGenerator
 from peoplesim.person import Person
+from peoplesim.taskClass import TaskClass
 
 from colonysim import ColonySim, Colony, Ship, Building
 from planetsim import PlanetSim, Vehicle
@@ -9,6 +10,7 @@ class PeopleSim:
     def __init__(
             self, 
             jsonPath: str = "json/people", 
+            taskClassPath: str = "json/tasks",
             colonySim: ColonySim = None, 
             planetSim: PlanetSim = None, 
             orbitSim: OrbitSim = None
@@ -30,6 +32,12 @@ class PeopleSim:
             self.personIdGenerator.setId(person.id)
             if person.location:
                 person.location.crew.add(person.id)
+
+        self._taskClasses = loadEntityFile(
+            path=taskClassPath,
+            id="Tasks",
+            EntityClass=TaskClass
+        )
         
 
     def personById(self, id: int) -> Person:

@@ -1,4 +1,4 @@
-from peoplesim.task import Task, TaskCategory
+from peoplesim.task import Task
 
 from colonysim import Colony, Ship
 from planetsim import Vehicle
@@ -12,7 +12,7 @@ class Person:
 
         self.location = location
 
-        self.task: Task = Task(TaskCategory.IDLE)
+        self.task: Task = None
 
     def setTask(self, task: Task):
         self.task = task
@@ -21,8 +21,6 @@ class Person:
         # Some tasks are placeholders and will never be complete.
         # Later should make this more sophisticated to
         # Handle other cases.
-        if self.task.category == TaskCategory.IDLE:
-            return
         while increment:
             if self.task.progress + increment < 100:
                 self.task.progress += increment
@@ -36,4 +34,4 @@ class Person:
         # Apply any back effects
         # Delete task
         self.task.complete(self)
-        self.task = Task(TaskCategory.IDLE)
+        self.task = None
