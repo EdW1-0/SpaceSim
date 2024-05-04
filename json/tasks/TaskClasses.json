@@ -6,6 +6,13 @@
             "inputs": [],
             "duration": 1,
             "effects": []
+        },
+        {
+            "id": "BUILD",
+            "name": "Build",
+            "inputs:": [],
+            "duration": 10,
+            "effects": []
         }
     ]
 }
