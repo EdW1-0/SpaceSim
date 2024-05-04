@@ -195,3 +195,20 @@ class TestPeopleSimTaskLifecycle(unittest.TestCase):
         self.assertEqual(len(self.peopleSim.taskQueue), 0)
         self.peopleSim.createTask("IDLE", target=mockPerson)
         self.assertEqual(len(self.peopleSim.taskQueue), 1)
+
+class TestPeopleSimTick(unittest.TestCase):
+    def setUp(self) -> None:
+        self.cs = CSMock()
+        self.os = OSMock()
+        self.ps = PSMock()
+        self.peopleSim = PeopleSim(
+            jsonPath="test_json/test_people", 
+            colonySim=self.cs, 
+            orbitSim=self.os, 
+            planetSim=self.ps
+            )
+        
+    def testPeopleSimTick(self):
+        self.peopleSim.createTask("BUILD", target=self.peopleSim.personById(1))
+        self.peopleSim.tick()
+        self.assertTrue(self.peopleSim.personById(1).task.taskClass.id == "BUILD")
