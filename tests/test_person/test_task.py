@@ -19,6 +19,7 @@ class TestTask(unittest.TestCase):
         self.assertTrue(isinstance(Task(0, self.taskClass).taskClass, TaskClass))
         self.assertTrue(isinstance(Task(0, self.taskClass).progress, int))
         self.assertTrue(isinstance(Task(0, self.taskClass).target, object))
+        self.assertTrue(hasattr(Task(0, self.taskClass), "assigneeId"))
 
     def testTaskConstructor(self):
         self.assertTrue(Task(0, self.taskClass))

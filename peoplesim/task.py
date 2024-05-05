@@ -11,6 +11,7 @@ class Task:
         self.progress = 0
         # Target the task is working on
         self.target = target
+        self.assigneeId = None
 
     def complete(self, actor):
         if self.target:

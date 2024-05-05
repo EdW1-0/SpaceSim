@@ -40,12 +40,15 @@ class PeopleSim:
             EntityClass=TaskClass
         )
 
-        self.taskQueue = []
+        self.taskQueue = {}
         self.taskIdGenerator = IDGenerator()
         
 
     def personById(self, id: int) -> Person:
         return self._people[id]
+    
+    def taskById(self, id: int) -> Task:
+        return self.taskQueue[id]
     
     def locationLoadModifier(self, location: int | list[int], locationClass: str):
         if locationClass == "Colony":
@@ -98,6 +101,41 @@ class PeopleSim:
         taskClass = self._taskClasses[taskClassId]
         taskId = self.taskIdGenerator.generateId()
         task = Task(id=taskId, taskClass=taskClass, target=target)
-        self.taskQueue.append(task)
+        self.taskQueue[taskId] = task
         return taskId
+    
+    def assignTask(self, task: Task, person: Person):
+        if task.assigneeId:
+            oldAssignee = self._people[task.assigneeId]
+            oldAssignee.task = None
+
+        if person.task:
+            oldTask = person.task
+            oldTask.assigneeId = None
+
+        task.assigneeId = person.id
+        person.task = task
         
+
+    def tick(self):
+        # What this needs to do:
+        # - Tick each person so they update passive interactions
+        # - Check the task queue and assign any tasks that are not assigned
+        # - Tick each task so they update progress
+
+        # Decisions here:
+        # - How do we track which tasks have been assigned to whom?
+        # - Where do we store tasks? Do we pull them off queue when assigned?
+        # For now - I think store task reference in person object and store person id in task object
+        # Mediate task assignment through dedicated method responsible for cleaning this up.
+        # For now, stick everything on task queue. Later, we can optimize this, and implement a priority queue.
+        for task in self.taskQueue.values():
+            if task.assigneeId:
+                continue
+
+            for person in self._people.values():
+                if not person.task:
+                    self.assignTask(task, person)
+                    break
+
+
