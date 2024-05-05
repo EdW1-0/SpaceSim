@@ -115,6 +115,16 @@ class PeopleSim:
 
         task.assigneeId = person.id
         person.task = task
+
+
+    def completeTask(self, task: Task):
+        # Trigger task complete
+        # Apply any back effects
+        # Delete task
+        #self.task.complete(self)
+        person = self._people[task.assigneeId]
+        person.task = None
+        del self.taskQueue[task.id]
         
 
     def tick(self):
@@ -129,13 +139,20 @@ class PeopleSim:
         # For now - I think store task reference in person object and store person id in task object
         # Mediate task assignment through dedicated method responsible for cleaning this up.
         # For now, stick everything on task queue. Later, we can optimize this, and implement a priority queue.
+        # 1 - Handle task assignment
         for task in self.taskQueue.values():
-            if task.assigneeId:
+            if task.assigneeId is not None:
                 continue
 
             for person in self._people.values():
                 if not person.task:
                     self.assignTask(task, person)
                     break
-
+        
+        # 2 - Update progress on tasks
+        for person in self._people.values():
+            if person.task:
+                person.task.progress += 1
+                if person.task.progress >= person.task.taskClass.duration:
+                    self.completeTask(person.task)
 

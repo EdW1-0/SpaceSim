@@ -17,21 +17,4 @@ class Person:
     def setTask(self, task: Task):
         self.task = task
 
-    def tick(self, increment: int):
-        # Some tasks are placeholders and will never be complete.
-        # Later should make this more sophisticated to
-        # Handle other cases.
-        while increment:
-            if self.task.progress + increment < 100:
-                self.task.progress += increment
-                increment = 0
-            else:
-                increment -= 100 - self.task.progress
-                self.completeTask()
 
-    def completeTask(self):
-        # Trigger task complete
-        # Apply any back effects
-        # Delete task
-        self.task.complete(self)
-        self.task = None

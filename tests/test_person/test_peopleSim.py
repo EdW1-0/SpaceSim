@@ -221,6 +221,17 @@ class TestPeopleSimTaskLifecycle(unittest.TestCase):
         self.peopleSim.assignTask(task2, person2)
         self.assertIsNone(person.task)
 
+    def testPeopleSimTaskCompletion(self):
+        mockPerson = MagicMock()
+        self.peopleSim.createTask("BUILD", target=mockPerson)
+        task = self.peopleSim.taskById(0)
+        self.peopleSim.assignTask(task, self.peopleSim.personById(1))
+        self.assertEqual(self.peopleSim.personById(1).task.taskClass.id, "BUILD")
+        self.assertEqual(self.peopleSim.taskQueue[0].assigneeId, 1)
+        self.peopleSim.completeTask(task)
+        self.assertIsNone(self.peopleSim.personById(1).task)
+        self.assertEqual(len(self.peopleSim.taskQueue), 0)
+
 class TestPeopleSimTick(unittest.TestCase):
     def setUp(self) -> None:
         self.cs = CSMock()
@@ -235,5 +246,16 @@ class TestPeopleSimTick(unittest.TestCase):
         
     def testPeopleSimTick(self):
         self.peopleSim.createTask("BUILD", target=self.peopleSim.personById(1))
+        task = self.peopleSim.taskById(0)
         self.peopleSim.tick()
         self.assertTrue(self.peopleSim.personById(0).task.taskClass.id == "BUILD")
+
+        self.assertEqual(self.peopleSim.personById(0).task, task)
+        self.assertEqual(task.assigneeId, 0)
+        self.assertEqual(task.progress, 1)
+
+        for i in range(1, 10):
+            self.peopleSim.tick()
+        
+        self.assertEqual(len(self.peopleSim.taskQueue), 0)
+        self.assertIsNone(self.peopleSim.personById(0).task)
