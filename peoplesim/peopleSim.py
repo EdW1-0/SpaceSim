@@ -2,6 +2,7 @@ from utility import loadEntityFile, IDGenerator
 from peoplesim.person import Person
 from peoplesim.taskClass import TaskClass
 from peoplesim.task import Task
+from peoplesim.taskEffect import TaskEffectStateChange, TaskEffectParameter
 
 from colonysim import ColonySim, Colony, Ship, Building
 from planetsim import PlanetSim, Vehicle
@@ -122,6 +123,11 @@ class PeopleSim:
         # Apply any back effects
         # Delete task
         #self.task.complete(self)
+        for effect in task.taskClass.effects:
+            if isinstance(effect, TaskEffectStateChange):
+                setattr(task.target, effect.state, effect.value)
+
+
         person = self._people[task.assigneeId]
         person.task = None
         del self.taskQueue[task.id]

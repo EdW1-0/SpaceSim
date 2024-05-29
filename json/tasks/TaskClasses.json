@@ -12,7 +12,13 @@
             "name": "Build",
             "inputs": [],
             "duration": 10,
-            "effects": []
+            "effects": [
+                {
+                    "type": "STATE",
+                    "state": "buildingStatus",
+                    "value": "IDLE"
+                }
+            ]
         }
     ]
 }

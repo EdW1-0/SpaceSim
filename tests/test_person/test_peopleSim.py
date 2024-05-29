@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from peoplesim.peopleSim import PeopleSim
+from colonysim import BuildingStatus
 
 class CMock:
     def __init__(self, id):
@@ -19,6 +20,7 @@ class BMock:
     def __init__(self, id):
         self.id = id
         self.crew = set()
+        self.buildingStatus = BuildingStatus.CONSTRUCTION
 
 class CSMock:
     def __init__(self):
@@ -231,6 +233,16 @@ class TestPeopleSimTaskLifecycle(unittest.TestCase):
         self.peopleSim.completeTask(task)
         self.assertIsNone(self.peopleSim.personById(1).task)
         self.assertEqual(len(self.peopleSim.taskQueue), 0)
+
+    def testPeopleSimTaskCompleteBuilding(self):
+        mockPerson = MagicMock()
+        building = self.cs.colonyById(0).buildingById(0)
+        self.peopleSim.createTask("BUILD", target=building)
+        task = self.peopleSim.taskById(0)
+        self.peopleSim.assignTask(task, self.peopleSim.personById(1))
+        self.assertEqual(building.buildingStatus, "CONSTRUCTION")
+        self.peopleSim.completeTask(task)
+        self.assertEqual(building.buildingStatus, "IDLE")
 
 class TestPeopleSimTick(unittest.TestCase):
     def setUp(self) -> None:

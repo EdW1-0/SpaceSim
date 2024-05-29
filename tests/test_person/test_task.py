@@ -9,7 +9,7 @@ from peoplesim.taskClass import TaskClass
 
 class TestTask(unittest.TestCase):
     def setUp(self):
-        self.taskClass = TaskClass(0)
+        self.taskClass = TaskClass(0, effects=[])
 
     def testTask(self):
         self.assertTrue(Task)
