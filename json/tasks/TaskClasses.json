@@ -19,6 +19,19 @@
                     "value": "IDLE"
                 }
             ]
+        },
+        {
+            "id": "REPAIR",
+            "name": "Repair",
+            "inputs": [],
+            "duration": 5,
+            "effects": [
+                {
+                    "type": "PARAMETER",
+                    "parameter": "condition",
+                    "amount": 100.0
+                }
+            ]
         }
     ]
 }

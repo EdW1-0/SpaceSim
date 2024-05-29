@@ -244,6 +244,17 @@ class TestPeopleSimTaskLifecycle(unittest.TestCase):
         self.peopleSim.completeTask(task)
         self.assertEqual(building.buildingStatus, "IDLE")
 
+    def testPeopleSimTaskRepairBuilding(self):
+        mockPerson = MagicMock()
+        building = self.cs.colonyById(0).buildingById(0)
+        building.condition = 50.0
+        self.peopleSim.createTask("REPAIR", target=building)
+        task = self.peopleSim.taskById(0)
+        self.peopleSim.assignTask(task, self.peopleSim.personById(1))
+        self.assertEqual(building.condition, 50.0)
+        self.peopleSim.completeTask(task)
+        self.assertEqual(building.condition, 100.0)        
+
 class TestPeopleSimTick(unittest.TestCase):
     def setUp(self) -> None:
         self.cs = CSMock()

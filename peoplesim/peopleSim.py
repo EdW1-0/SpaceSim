@@ -126,6 +126,8 @@ class PeopleSim:
         for effect in task.taskClass.effects:
             if isinstance(effect, TaskEffectStateChange):
                 setattr(task.target, effect.state, effect.value)
+            if isinstance(effect, TaskEffectParameter):
+                setattr(task.target, effect.parameter, effect.amount)
 
 
         person = self._people[task.assigneeId]
