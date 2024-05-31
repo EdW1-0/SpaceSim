@@ -4,7 +4,7 @@ from peoplesim.taskClass import TaskClass
 from peoplesim.task import Task
 from peoplesim.taskEffect import TaskEffectStateChange, TaskEffectParameter
 
-from colonysim import ColonySim, Colony, Ship, Building
+from colonysim import ColonySim, Colony, Ship, Building, BuildingStatus
 from planetsim import PlanetSim, Vehicle
 from orbitsim import OrbitSim
 
@@ -135,8 +135,21 @@ class PeopleSim:
         del self.taskQueue[task.id]
         
 
+    def generateTasks(self):
+        for colony in self.colonySim._colonies.values():
+            for building in colony.buildings.values():
+                if building.status == BuildingStatus.CONSTRUCTION:
+                    task = None
+                    for t in self.taskQueue.values():
+                        if t.target == building:
+                            task = t
+                            break
+                    if not task:
+                        self.createTask("BUILD", building)
+
     def tick(self):
         # What this needs to do:
+         #  - Check for new tasks to make
         # - Tick each person so they update passive interactions
         # - Check the task queue and assign any tasks that are not assigned
         # - Tick each task so they update progress
@@ -148,6 +161,8 @@ class PeopleSim:
         # Mediate task assignment through dedicated method responsible for cleaning this up.
         # For now, stick everything on task queue. Later, we can optimize this, and implement a priority queue.
         # 1 - Handle task assignment
+        self.generateTasks()
+
         for task in self.taskQueue.values():
             if task.assigneeId is not None:
                 continue

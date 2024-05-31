@@ -20,7 +20,7 @@ class BMock:
     def __init__(self, id):
         self.id = id
         self.crew = set()
-        self.buildingStatus = BuildingStatus.CONSTRUCTION
+        self.status = BuildingStatus.CONSTRUCTION
 
 class CSMock:
     def __init__(self):
@@ -240,9 +240,9 @@ class TestPeopleSimTaskLifecycle(unittest.TestCase):
         self.peopleSim.createTask("BUILD", target=building)
         task = self.peopleSim.taskById(0)
         self.peopleSim.assignTask(task, self.peopleSim.personById(1))
-        self.assertEqual(building.buildingStatus, "CONSTRUCTION")
+        self.assertEqual(building.status, "CONSTRUCTION")
         self.peopleSim.completeTask(task)
-        self.assertEqual(building.buildingStatus, "IDLE")
+        self.assertEqual(building.status, "IDLE")
 
     def testPeopleSimTaskRepairBuilding(self):
         mockPerson = MagicMock()
@@ -282,3 +282,23 @@ class TestPeopleSimTick(unittest.TestCase):
         
         self.assertEqual(len(self.peopleSim.taskQueue), 0)
         self.assertIsNone(self.peopleSim.personById(0).task)
+
+class TestPeopleSimTaskGeneration(unittest.TestCase):
+    def setUp(self) -> None:
+        self.cs = CSMock()
+        self.os = OSMock()
+        self.ps = PSMock()
+        self.peopleSim = PeopleSim(
+            jsonPath="test_json/test_people", 
+            colonySim=self.cs, 
+            orbitSim=self.os, 
+            planetSim=self.ps
+            )
+        
+    def testPeopleSimBuildTaskGeneration(self):
+        building = self.cs.colonyById(0).buildingById(0)
+        self.assertEqual(len(self.peopleSim.taskQueue), 0)
+        self.peopleSim.tick()
+        self.assertGreater(len(self.peopleSim.taskQueue), 0)
+        self.assertEqual(self.peopleSim.taskQueue[0].target, building)
+        self.assertEqual(self.peopleSim.taskQueue[0].taskClass.id, "BUILD")
